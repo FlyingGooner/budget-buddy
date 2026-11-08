@@ -1,0 +1,75 @@
+﻿<!doctype html>
+<html lang="sv">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; require-trusted-types-for 'script'; img-src 'self'; manifest-src 'self'; worker-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'">
+<meta name="referrer" content="no-referrer">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#f9f9ff" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#111318" media="(prefers-color-scheme: dark)">
+<link rel="icon" href="../icons/icon-192.png">
+<title>Budget buddy</title>
+<link rel="stylesheet" href="presentation.css">
+</head>
+<body>
+
+<main class="deck" id="deck">
+
+  <section class="band"><div class="slide">
+    <div class="hero-top"><img class="icon" src="../icons/icon-192.png" alt=""><span class="ver">v0.3.1</span></div>
+    <span class="eyebrow">Din månadsbudget</span>
+    <h1>Budget buddy</h1>
+    <p class="lead">Planera ekonomin månad för månad – inkomster, räkningar och det oväntade.</p>
+  </div></section>
+
+  <section><div class="slide">
+    <span class="eyebrow">Problemet</span>
+    <h2>Varför den här appen?</h2>
+    <p class="lead">De flesta budgetappar vill att du loggar varje köp. Budget buddy gör tvärtom: du lägger in inkomster och fasta räkningar en gång, och fyller bara i avvikelserna – nya däck, en tandläkarräkning – på den månad de hör till. Då ser du direkt hur varje månad går ihop, även månader framåt.</p>
+  </div></section>
+
+  <section><div class="slide">
+    <span class="eyebrow">Funktioner</span>
+    <h2>Det du faktiskt behöver</h2>
+    <div class="feats">
+      <div class="feat"><div class="k" aria-hidden="true">▦</div><div><h3>Månad</h3><p>Vad som är kvar efter månadens kostnader – och hur mycket du sparar.</p></div></div>
+      <div class="feat"><div class="k" aria-hidden="true">↻</div><div><h3>Fasta poster</h3><p>Lön och räkningar en gång – varje månad, kvartal eller år.</p></div></div>
+      <div class="feat"><div class="k" aria-hidden="true">±</div><div><h3>Avvikelser</h3><p>Det oväntade läggs på den månad det hör till.</p></div></div>
+      <div class="feat"><div class="k" aria-hidden="true">↗</div><div><h3>12 månader framåt</h3><p>Saldot efter varje månad, så du ser om det går ihop.</p></div></div>
+      <div class="feat"><div class="k" aria-hidden="true">⇩</div><div><h3>Offline</h3><p>Fungerar utan nät efter första besöket.</p></div></div>
+      <div class="feat"><div class="k" aria-hidden="true">◐</div><div><h3>Ljust och mörkt</h3><p>Följer telefonens inställning.</p></div></div>
+    </div>
+  </div></section>
+
+  <section><div class="slide">
+    <span class="eyebrow">Under huven</span>
+    <h2>Litet med flit</h2>
+    <div class="facts">
+      <div class="fact"><b>0</b><span>ramverk och byggsteg.</span></div>
+      <div class="fact"><b>0</b><span>annonser, konton eller spårare.</span></div>
+      <div class="fact"><b>100 %</b><span>av datan stannar i telefonen.</span></div>
+      <div class="fact"><b>PWA</b><span>installeras från webben.</span></div>
+    </div>
+  </div></section>
+
+  <section class="band"><div class="slide">
+    <span class="eyebrow">Kom igång</span>
+    <h2>Installera på 30 sekunder</h2>
+    <ol class="steps">
+      <li><span>Öppna adressen i Chrome på mobilen:<br><span class="url">flyinggooner.github.io/Budget-buddy</span></span></li>
+      <li><span>Tryck på ⋮ och välj <b>Installera app</b>. På iPhone: Dela → <b>Lägg till på hemskärmen</b>.</span></li>
+      <li><span>Öppna appen från hemskärmen. Den startar i eget fönster.</span></li>
+    </ol>
+  </div></section>
+
+</main>
+<nav class="nav" aria-label="Bläddra">
+  <button type="button" class="prev" id="prev">‹ Föregående</button>
+  <span class="count" id="count" aria-live="polite"></span>
+  <button type="button" class="next" id="next">Nästa ›</button>
+</nav>
+
+<script src="presentation.js"></script>
+</body>
+</html>
