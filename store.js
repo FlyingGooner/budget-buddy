@@ -33,7 +33,7 @@ const isObj = (v) => v !== null && typeof v === 'object' && !Array.isArray(v);
 const MONTH_RE = /^(19|20)\d{2}-(0[1-9]|1[0-2])$/; // 1900–2099: keeps string comparison of months valid
 const ID_RE = /^[A-Za-z0-9_-]{1,40}$/;
 const isMonth = (v) => typeof v === 'string' && MONTH_RE.test(v);
-const isId = (v) => typeof v === 'string' && ID_RE.test(v);
+const isId = (v) => typeof v === 'string' && ID_RE.test(v) && v !== '__proto__';
 const isAmount = (v) => Number.isInteger(v) && v >= 0 && v <= MAX_AMOUNT;
 const cleanName = (v, max = 60) => (typeof v === 'string' ? v.trim().slice(0, max) : '');
 
@@ -179,6 +179,76 @@ function loadData(d) {
   }
   // v0.6.0: "paid" (bocka av betalt) removed – old d.paid is dropped here and disappears on the next save.
   return out;
+}
+
+// ---------- Export/import as text (U5, shared standard: format level 1 = slim JSON in an envelope) ----------
+const EXPORT_APP = 'budget-buddy';
+const EXPORT_FORMAT = 1;
+const MAX_IMPORT_CHARS = 2000000;
+
+// Full data → slim: no default values or empty fields, type as "i"/"e". Input is always validated data.
+function packData(d) {
+  const s = d.settings, out = {}, set = {};
+  const t = (type) => (type === 'income' ? 'i' : 'e');
+  if (JSON.stringify(s.categories) !== JSON.stringify(DEFAULT_CATEGORIES)) set.categories = s.categories.map((c) => ({ id: c.id, name: c.name, type: t(c.type) }));
+  if (s.people.length) set.people = s.people.map((p) => ({ id: p.id, name: p.name }));
+  if (s.startMonth) { set.startBalance = s.startBalance; set.startMonth = s.startMonth; }
+  if (s.ratesOwn) { set.rates = { ...s.rates }; set.ratesDate = s.ratesDate; }
+  if (Object.keys(set).length) out.settings = set;
+  const item = (r) => {
+    const o = { id: r.id, name: r.name, type: t(r.type), amount: r.amount, category: r.category };
+    if (r.person) o.person = r.person;
+    return o;
+  };
+  if (d.recurring.length) out.recurring = d.recurring.map((r) => Object.assign(item(r),
+    r.every !== 1 ? { every: r.every } : {}, { start: r.start }, r.end ? { end: r.end } : {}));
+  if (d.oneOffs.length) out.oneOffs = d.oneOffs.map((o) => ({ month: o.month, ...item(o) }));
+  if (Object.keys(d.adjustments).length) out.adjustments = d.adjustments;
+  if (d.accounts.length) out.accounts = d.accounts.map((a) => Object.assign({ id: a.id, name: a.name },
+    a.currency !== 'SEK' ? { currency: a.currency } : {}, Object.keys(a.balances).length ? { balances: a.balances } : {}));
+  return out;
+}
+
+// Slim → full shape. Builds new objects from known keys only; loadData() then validates everything.
+function unpackData(p) {
+  if (!isObj(p)) return null;
+  const type = (v) => (v === 'i' ? 'income' : v === 'e' ? 'expense' : null);
+  const list = (v) => (Array.isArray(v) ? v.filter(isObj) : []);
+  const s = isObj(p.settings) ? p.settings : {};
+  const settings = { catsV: CATS_V, startBalance: s.startBalance, startMonth: s.startMonth };
+  if (Array.isArray(s.categories)) settings.categories = list(s.categories).map((c) => ({ id: c.id, name: c.name, type: type(c.type) }));
+  if (Array.isArray(s.people)) settings.people = list(s.people).map((x) => ({ id: x.id, name: x.name }));
+  if (isObj(s.rates)) { settings.rates = { ...s.rates }; settings.ratesDate = s.ratesDate; settings.ratesOwn = true; }
+  const item = (r) => ({ id: r.id, name: r.name, type: type(r.type), amount: r.amount, category: r.category, person: r.person ?? null });
+  return {
+    version: 1,
+    settings,
+    recurring: list(p.recurring).map((r) => ({ ...item(r), every: r.every ?? 1, start: r.start, end: r.end ?? null })),
+    oneOffs: list(p.oneOffs).map((o) => ({ ...item(o), month: o.month })),
+    adjustments: isObj(p.adjustments) ? p.adjustments : {},
+    accounts: list(p.accounts).map((a) => ({ id: a.id, name: a.name, currency: a.currency ?? 'SEK', balances: isObj(a.balances) ? a.balances : {} })),
+  };
+}
+
+function exportText(d, today) {
+  return JSON.stringify({ app: EXPORT_APP, format: EXPORT_FORMAT, exported: today, data: packData(d) }, null, 1);
+}
+
+// Text → { data, counts, skipped } or { error }. Nothing is saved here; the caller confirms first.
+function importText(text) {
+  if (typeof text !== 'string' || !text.trim()) return { error: 'Klistra in en exporterad text först.' };
+  if (text.length > MAX_IMPORT_CHARS) return { error: 'Texten är för lång (max 2 MB).' };
+  let env;
+  try { env = JSON.parse(text); } catch { return { error: 'Texten är inte en giltig export (trasig JSON). Kopiera hela texten igen.' }; }
+  if (!isObj(env) || env.app !== EXPORT_APP) return { error: 'Texten kommer inte från Budget buddy.' };
+  if (env.format !== EXPORT_FORMAT) return { error: 'Okänt exportformat – uppdatera appen och försök igen.' };
+  const raw = unpackData(env.data);
+  if (!raw) return { error: 'Exporten saknar data.' };
+  const data = loadData(raw);
+  const n = (k) => data[k].length;
+  const inCount = raw.recurring.length + raw.oneOffs.length + raw.accounts.length;
+  return { data, counts: { recurring: n('recurring'), oneOffs: n('oneOffs'), accounts: n('accounts') },
+    skipped: Math.max(0, inCount - n('recurring') - n('oneOffs') - n('accounts')), exported: typeof env.exported === 'string' ? env.exported.slice(0, 10) : '' };
 }
 
 // ---------- Month maths ----------

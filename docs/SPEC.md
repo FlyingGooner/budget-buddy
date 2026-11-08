@@ -190,9 +190,10 @@ Allt i `localStorage` under nyckeln `bb.data`. Belopp lagras som **heltal i öre
 - Inga hemligheter i koden.
 - Sparkonton (v0.7.0) sparas i samma `bb.data` i `localStorage` – ingen ny nyckel, ingen ny lagringsteknik, inget undantag. Kontonamn renderas med `textContent`/`el()`, staplarna med `createElementNS`. Saldona går genom `loadData()` innan de används.
 - Valutakurser (v0.8.0): **appen hämtar aldrig kurser** – de är konstanter i `store.js` eller skrivs in av användaren. Konstanterna uppdateras med `tools/update-rates.ps1` (Frankfurter, `api.frankfurter.dev`, ECB-data), ett utvecklarverktyg som körs för hand på datorn. Inga anrop, ingen ny nyckel (samma `bb.data`), inget undantag.
+- **Export/import som text (U5, godkänd 2026-11-08, byggd i v0.9.0).** Gemensam standard i `../CLAUDE.md` (punkt 5). Inställningar → kort **Data**: exportruta (skrivskyddad, "Markera allt") och importruta. Kuvert `{"app":"budget-buddy","format":1,"exported":…,"data":…}`. **Nivå 1, smal JSON:** samma struktur som `bb.data` men utan standardvärden och tomma fält (t.ex. `every: 1`, `person: null`, `end: null`, tomma `adjustments`/`balances`, `currency: "SEK"`, standardkategorier och `rates` när `ratesOwn` är falskt); `type` som `"i"`/`"e"`. Import: max 2 MB → `JSON.parse` → `app`/`format` kontrolleras → koder och standardvärden återställs → `loadData()` → sammanfattning (poster, avvikelser, konton, period, antal ogiltiga) → bekräftelsedialog → ersätter allt → ångra-snackbar. Fel = inget ändras. Renderas med `textContent`/`el()` som i dag. Ersätter "Ingen backup i v1" som enda skydd: exporten är användarens egen backup.
 - `docs/presentation.html` har CSS och JS i egna filer, utan `'unsafe-inline'` och utan `style`-attribut.
 - Arbetsytans agent `granskning` bestämmer över säkerheten.
-- **Ingen backup i v1:** rensas webbplatsdata försvinner allt. Det sägs tydligt i Inställningar (se Framtida idéer: export).
+- **Backup:** rensas webbplatsdata försvinner allt. Exporten (kortet Data, v0.9.0) är användarens egen backup; Inställningar påminner om att exportera då och då.
 
 ## PWA-krav
 - `manifest.webmanifest` med ikoner 192/512 (any + maskable), `display: standalone`.
@@ -223,21 +224,7 @@ Material Design 3 enligt `../CLAUDE.md`. Nyckelfärg blå `#2a6fb0`. Bottenmeny 
 - [ ] `granskning` utan anmärkning.
 
 ## Framtida idéer
-- **Export och import av data** (backup och flytt mellan enheter):
-  - **JSON** – hela datan, för backup och återställning i appen.
-  - **CSV** – månader och poster, för att öppna i Excel eller Google Kalkylark.
-  - Export via nedladdning (`Blob` + `a[download]`), import via filväljare (`<input type="file">` + `FileReader`). Fortfarande inga nätverksanrop.
-  - **Säkerhet:** filinläsning och nedladdning ligger utanför arbetsytans grund (bara `localStorage`). Kräver ett godkänt undantag (U4) i `granskning` innan det byggs. En importerad fil är opålitlig data och ska gå genom samma validering som `store.js`.
-  - **Förhandsprövad 2026-11-08: Tillstyrkt med villkor** (inte godkänd av användaren, inte byggd). CSP:n behöver inte ändras och `connect-src 'none'` står kvar. Förslaget nedan läggs in i `granskning.md` och `tools/check.ps1` först när användaren godkänt det.
-    - *Föreslagen U4 – Export och import via fil.* Tillåter export (JSON + CSV) via `Blob` + `URL.createObjectURL` + `<a download>` och import av JSON via `<input type="file" accept=".json,application/json">` + `FileReader`/`file.text()`.
-    - Bara på användarens knapptryck i Inställningar. Inget automatiskt, ingen Web Share API, `showSaveFilePicker`/`showOpenFilePicker` eller drag-och-släpp.
-    - Export: bara data som `loadData()` godkänner, rätt MIME-typ (`application/json`, `text/csv;charset=utf-8`), `revokeObjectURL` direkt efter nedladdning, en kort text om att filen innehåller känslig ekonomidata.
-    - CSV: alla fält citeras och `"` dubbleras. Textfält som börjar med `=`, `+`, `-`, `@`, tab eller CR får `'` först (skydd mot formelinjektion i Excel).
-    - Import: bara JSON, inte CSV. Filer över 5 MB avvisas före läsning. `JSON.parse` i try, resultatet går *bara* genom `loadData()` – aldrig direkt till `localStorage` eller rendering. Fel ger en kort text i `#status` och befintlig data lämnas orörd.
-    - Innan något skrivs över: `<dialog>` som visar vad filen innehåller (antal poster, månader), och ångra-snackbar som återställer tidigare data.
-    - Importerad data renderas som all annan data (`textContent`/`el()`), aldrig i `href`, `src` eller CSS.
-    - Föreslagen tabellrad: `budget-buddy | bb- (cache), bb. (data) | U4 | Inga anrop: connect-src 'none'. Ekonomidata lämnar bara enheten som fil när användaren själv exporterar (U4). Import valideras via loadData().`
-    - Vid bygge: uppdatera även undantagstabellen i `tools/check.ps1` och avsnittet Integritet och säkerhet ovan, och kör efterkontroll.
+- CSV-export av poster för Excel (bara export). Den tidigare idén om export/import via **fil** (U4, förhandsprövad 2026-11-08) är ersatt av export/import som **text** (U5) – se Integritet och säkerhet.
 - Sparmål (t.ex. "semester 15 000 kr till juni") som visas i översikten.
 - Diagram per kategori (vart pengarna går).
 

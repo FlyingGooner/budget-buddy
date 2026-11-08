@@ -361,7 +361,10 @@ function renderOverview() { renderOverviewInto($('overview'), false); }
 // SVG helper: createElementNS + setAttribute only (no markup strings).
 function svg(tag, attrs = {}, ...children) {
   const n = document.createElementNS('http://www.w3.org/2000/svg', tag);
-  for (const [k, v] of Object.entries(attrs)) n.setAttribute(k, String(v));
+  for (const [k, v] of Object.entries(attrs)) {
+    if (/^(on|style$|href$|src$|xlink:href$)/i.test(k)) throw new Error('svg: unsafe attribute ' + k);
+    n.setAttribute(k, String(v));
+  }
   for (const c of children.flat(Infinity)) if (c != null && c !== false) n.append(c);
   return n;
 }
@@ -718,6 +721,40 @@ $('s-save').addEventListener('click', () => {
   save();
   snackbar('Startsaldo sparat', null, null, 3000);
 });
+// ---------- Export/import as text (U5) – nothing is saved before the user confirms ----------
+const isoToday = () => { const t = new Date(); return `${t.getFullYear()}-${String(t.getMonth() + 1).padStart(2, '0')}-${String(t.getDate()).padStart(2, '0')}`; };
+$('export-btn').addEventListener('click', () => {
+  $('export-text').value = exportText(data, isoToday());
+  $('export-text').focus();
+  $('export-text').select();
+  snackbar('Markerat – kopiera texten och spara den', null, null, 4000);
+});
+let pendingImport = null;
+$('import-btn').addEventListener('click', () => {
+  const r = importText($('import-text').value);
+  $('import-error').textContent = r.error || '';
+  if (r.error) return;
+  pendingImport = r.data;
+  const c = r.counts, d = r.data;
+  const months = [...d.recurring.map((x) => x.start), ...d.oneOffs.map((x) => x.month), ...Object.keys(d.adjustments)].sort();
+  const parts = [`${c.recurring} återkommande poster`, `${c.oneOffs} engångsposter`, `${c.accounts} sparkonton`];
+  $('imp-sum').textContent = parts.join(', ') + (months.length ? `, ${monthLabel(months[0]).toLowerCase()}–${monthLabel(months[months.length - 1]).toLowerCase()}` : '')
+    + (r.exported ? `. Exporterad ${r.exported}.` : '.') + (r.skipped ? ` ${r.skipped} ogiltiga hoppas över.` : '');
+  $('import-dialog').showModal();
+});
+// Runs on the "Ersätt" click itself (the form then closes the dialog), so it does not depend on the close event.
+$('imp-ok').addEventListener('click', () => {
+  const next = pendingImport;
+  pendingImport = null;
+  if (!next) return;
+  const before = data;
+  if (!store.set(CONFIG.storageKey, next)) { status('Kunde inte spara – lagringen är full eller blockerad. Inget ändrades.', true); return; }
+  data = next;
+  $('import-text').value = '';
+  render();
+  snackbar('Data importerad', 'Ångra', () => { data = before; save(); });
+});
+
 $('reset').addEventListener('click', () => $('confirm-dialog').showModal());
 $('confirm-dialog').addEventListener('close', () => {
   if ($('confirm-dialog').returnValue !== 'ok') return;

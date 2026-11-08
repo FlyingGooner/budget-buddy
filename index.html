@@ -167,8 +167,17 @@
         <div class="actions"><button type="button" class="btn text" id="rates-reset" hidden>Använd appens kurser</button><span class="spacer"></span><button type="button" class="btn tonal" id="rates-save">Spara</button></div>
       </div>
       <div class="card">
+        <h2>Data</h2>
+        <p class="muted">Backup och flytt till en annan enhet: exportera, kopiera texten och spara den där du vill. Texten innehåller all din data – klistra bara in den där du litar på mottagaren.</p>
+        <label class="field"><span>Export</span><textarea id="export-text" rows="5" readonly placeholder="Tryck Exportera"></textarea></label>
+        <div class="actions"><span class="spacer"></span><button type="button" class="btn tonal" id="export-btn">Exportera och markera</button></div>
+        <label class="field"><span>Importera (ersätter all data)</span><textarea id="import-text" rows="4" autocomplete="off" spellcheck="false" placeholder="Klistra in en exporterad text"></textarea></label>
+        <p class="error" id="import-error" role="alert"></p>
+        <div class="actions"><span class="spacer"></span><button type="button" class="btn tonal" id="import-btn">Importera</button></div>
+      </div>
+      <div class="card">
         <h2>App</h2>
-        <p class="muted">All data sparas bara i den här webbläsaren och lämnar aldrig enheten. Det finns ingen backup – rensas webbplatsdata försvinner allt.</p>
+        <p class="muted">All data sparas bara i den här webbläsaren och lämnar aldrig enheten av sig själv. Rensas webbplatsdata försvinner allt – exportera då och då som backup.</p>
         <div class="actions wrap">
           <button type="button" class="btn filled" id="install" hidden>Installera appen</button>
           <button type="button" class="btn text danger" id="reset">Rensa all data</button>
@@ -258,6 +267,18 @@
     <div class="actions"><span class="spacer"></span>
       <button type="submit" class="btn text" value="cancel">Avbryt</button>
       <button type="submit" class="btn filled danger-fill" value="ok">Rensa</button>
+    </div>
+  </form>
+</dialog>
+
+<dialog id="import-dialog" aria-labelledby="imp-title">
+  <form method="dialog">
+    <h2 id="imp-title">Ersätta all data?</h2>
+    <p id="imp-sum"></p>
+    <p class="muted">All nuvarande data i appen ersätts. Du kan ångra direkt efteråt.</p>
+    <div class="actions"><span class="spacer"></span>
+      <button type="submit" class="btn text" value="cancel">Avbryt</button>
+      <button type="submit" class="btn filled" value="ok" id="imp-ok">Ersätt</button>
     </div>
   </form>
 </dialog>

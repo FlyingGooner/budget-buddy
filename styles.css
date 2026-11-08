@@ -239,3 +239,7 @@ dialog { width: min(400px, calc(100vw - 32px)); }
 #acc-form .btn { min-height: 48px; flex: none; }
 #acc-rates { margin: 4px 0 0; }
 #acc-rates:empty { display: none; }
+
+/* Data: export/import text boxes */
+.field textarea { min-height: 96px; padding: 8px 12px; border: 1px solid var(--outline); border-radius: var(--r-sm); background: var(--surface); color: var(--on-surface); font: .8125rem/1.4 ui-monospace, Consolas, monospace; width: 100%; resize: vertical; }
+.field textarea:focus { outline: 2px solid var(--primary); outline-offset: 0; border-color: var(--primary); }
