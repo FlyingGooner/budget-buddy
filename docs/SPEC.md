@@ -88,6 +88,7 @@ Kostnadskategorin **Sparande** (id `savings`, standard sedan v0.5.0) är pengar 
 
 ### Statistik
 Följer månaden som är vald i Månad (samma ◀ ▶ och svep).
+- **Sparkonton** (v0.7.0): kort där man fyller i vad som står på sina sparkonton (t.ex. Buffert, ISK). Varje konto visar saldot för vald månad (senast ifyllda saldo till och med den månaden) och förändringen mot närmast föregående ifyllda saldo. Överst summan för alla konton. Tryck på ett konto → dialog "Saldo i <månad>" med belopp, Spara och Ta bort konto (ångra-snackbar). "+ Nytt konto" (namn) längst ner. Ett saldo per konto och månad; fyller man i igen samma månad ersätts det. Under listan staplar med totalt sparsaldo de 12 månaderna fram till vald månad (samma SVG-teknik som In och ut). Tomt läge: "Inga sparkonton än – lägg till det första". Saldona påverkar inte Kvar eller kontosaldot – de är en egen uppföljning.
 - **Nyckeltal** (rutor som Vecka i follow-diet-tracker): kvar av inkomst, sparkvot (sparande av inkomst), snitt kvar per månad (de 12 senaste månaderna med poster, hela kronor), största kostnaden, sparat 12 mån och sparat den här månaden.
 - **Kostnader per kategori:** staplar, störst först.
 - **In och ut, 12 månader:** inline-SVG med staplar för inkomster och kostnader fram till vald månad (vald månad markerad). Ritas med DOM (createElementNS), ingen markup-sträng, inget bibliotek.
@@ -157,6 +158,9 @@ Allt i `localStorage` under nyckeln `bb.data`. Belopp lagras som **heltal i öre
       "amount": 650000, "category": "transport" }
   ],
   "adjustments": { "2027-01": { "r3": 210000 } },
+  "accounts": [
+    { "id": "a1", "name": "Buffert", "balances": { "2026-10": 4000000, "2026-11": 4500000 } }
+  ]
 }
 ```
 
@@ -169,6 +173,7 @@ Allt i `localStorage` under nyckeln `bb.data`. Belopp lagras som **heltal i öre
 - `adjustments[månad][postId]` ersätter beloppet den månaden. `0` = posten utgår den månaden.
 - Kategorier har `type` (`income`/`expense`); en post får bara ha en kategori av sin egen typ, annars "Övrig inkomst"/"Övrigt". Borttagen kategori: poster flyttas dit.
 - `person`: id i `settings.people` eller `null` (= Gemensamt). Borttagen person: posterna blir gemensamma.
+- `accounts` (v0.7.0): sparkonton, max 20. `balances[månad]` = saldo i ören (heltal 0–100 000 000 kr), ett per månad, max 600 per konto. Valideras i `store.js` som övrig data (giltigt id, namn ≤ 30 tecken, giltiga månader); äldre data utan `accounts` får en tom lista.
 - All sparad data valideras i `store.js` innan den används (typer, belopp heltal inom rimligt intervall, giltiga månader, kända id:n). Trasig data ger standardvärden, aldrig blank skärm.
 - Vid ny `version` körs en migreringsfunktion.
 
@@ -181,6 +186,7 @@ Allt i `localStorage` under nyckeln `bb.data`. Belopp lagras som **heltal i öre
 - CSP: arbetsytans grund-CSP med `connect-src 'none'` och `require-trusted-types-for 'script'`. Inga undantag.
 - `no-referrer`. All inmatning renderas med `textContent`/`el()`, aldrig `innerHTML`.
 - Inga hemligheter i koden.
+- Sparkonton (v0.7.0) sparas i samma `bb.data` i `localStorage` – ingen ny nyckel, ingen ny lagringsteknik, inget undantag. Kontonamn renderas med `textContent`/`el()`, staplarna med `createElementNS`. Saldona går genom `loadData()` innan de används.
 - `docs/presentation.html` har CSS och JS i egna filer, utan `'unsafe-inline'` och utan `style`-attribut.
 - Arbetsytans agent `granskning` bestämmer över säkerheten.
 - **Ingen backup i v1:** rensas webbplatsdata försvinner allt. Det sägs tydligt i Inställningar (se Framtida idéer: export).
@@ -210,6 +216,7 @@ Material Design 3 enligt `../CLAUDE.md`. Nyckelfärg blå `#2a6fb0`. Bottenmeny 
 - [ ] Fungerar offline.
 - [ ] Ljust och mörkt tema.
 - [ ] Layout fungerar på 390 px (mobil), 820 px (iPad stående) och 1280 px (dator).
+- [ ] Sparkonto: saldo för två månader visar förändring och summa; nytt saldo samma månad ersätter det gamla; ta bort konto går att ångra.
 - [ ] `granskning` utan anmärkning.
 
 ## Framtida idéer

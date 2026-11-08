@@ -67,6 +67,15 @@
     </div>
     <div class="col">
       <div class="card" id="stats-trend"></div>
+      <div class="card" id="stats-accounts">
+        <h2 class="split"><span>🐷 Sparkonton</span><span id="acc-total"></span></h2>
+        <ul class="list" id="acc-list"></ul>
+        <div id="acc-chart"></div>
+        <form class="inline" id="acc-form" novalidate>
+          <label class="field grow"><span>Nytt sparkonto</span><input id="acc-name" maxlength="30" autocomplete="off" placeholder="t.ex. Buffert"></label>
+          <button type="submit" class="btn tonal">Lägg till</button>
+        </form>
+      </div>
     </div>
   </section>
 
@@ -203,6 +212,22 @@
       <button type="button" class="btn text danger" id="f-delete">Ta bort</button>
       <span class="spacer"></span>
       <button type="button" class="btn text" id="f-cancel">Avbryt</button>
+      <button type="submit" class="btn filled">Spara</button>
+    </div>
+  </form>
+</dialog>
+
+<!-- Dialog: saldo på sparkonto -->
+<dialog id="acc-dialog" aria-labelledby="ad-title">
+  <form method="dialog" id="ad-form" novalidate>
+    <h2 id="ad-title"></h2>
+    <p class="muted" id="ad-sub"></p>
+    <label class="field"><span>Saldo (kr)</span><input id="ad-amount" inputmode="decimal" autocomplete="off"></label>
+    <p class="error" id="ad-error" role="alert"></p>
+    <div class="actions wrap">
+      <button type="button" class="btn text danger" id="ad-delete">Ta bort konto</button>
+      <span class="spacer"></span>
+      <button type="button" class="btn text" id="ad-cancel">Avbryt</button>
       <button type="submit" class="btn filled">Spara</button>
     </div>
   </form>

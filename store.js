@@ -15,6 +15,8 @@ const MAX_AMOUNT = 10000000000; // 100 000 000 kr in öre
 const MAX_RECURRING = 500;
 const MAX_ONEOFFS = 5000;
 const MAX_PEOPLE = 10;
+const MAX_ACCOUNTS = 20;
+const MAX_BALANCES = 600;
 const EVERY = [1, 2, 3, 12];
 const TYPES = ['income', 'expense'];
 
@@ -58,6 +60,7 @@ function emptyData() {
     recurring: [],
     oneOffs: [],
     adjustments: {},
+    accounts: [],
   };
 }
 
@@ -137,6 +140,24 @@ function loadData(d) {
       if (Object.keys(clean).length) out.adjustments[m] = clean;
     }
   }
+  // Savings accounts (v0.7.0): { id, name, balances: { 'YYYY-MM': öre } }. New objects with only month keys
+  // that pass MONTH_RE – never copies untrusted keys such as __proto__.
+  if (Array.isArray(d.accounts)) {
+    const seenA = new Set();
+    for (const a of d.accounts) {
+      if (out.accounts.length >= MAX_ACCOUNTS) break;
+      if (!isObj(a) || !isId(a.id) || seenA.has(a.id)) continue;
+      const name = cleanName(a.name, 30);
+      if (!name) continue;
+      const balances = {};
+      if (isObj(a.balances)) {
+        const keys = Object.keys(a.balances).filter((m) => isMonth(m) && isAmount(a.balances[m])).sort().slice(-MAX_BALANCES);
+        for (const m of keys) balances[m] = a.balances[m];
+      }
+      seenA.add(a.id);
+      out.accounts.push({ id: a.id, name, balances });
+    }
+  }
   // v0.6.0: "paid" (bocka av betalt) removed – old d.paid is dropped here and disappears on the next save.
   return out;
 }
@@ -193,6 +214,17 @@ function balanceAfter(data, m) {
   let bal = data.settings.startBalance;
   for (let x = start; x <= m; x = addMonths(x, 1)) bal += totals(rowsForMonth(data, x)).left;
   return bal;
+}
+
+// Savings account balance at month m: the latest entered balance up to and including m.
+// Returns { amount, month } or null; prevBalance gives the one before that.
+function balanceAt(acc, m) {
+  const ms = Object.keys(acc.balances).filter((x) => x <= m).sort();
+  return ms.length ? { month: ms[ms.length - 1], amount: acc.balances[ms[ms.length - 1]] } : null;
+}
+function prevBalance(acc, m) {
+  const cur = balanceAt(acc, m);
+  return cur ? balanceAt(acc, addMonths(cur.month, -1)) : null;
 }
 
 function newId() {
