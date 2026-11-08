@@ -3,7 +3,8 @@
 importScripts('version.js');
 const CACHE_VERSION = 'bb-' + self.APP_VERSION;
 const ASSETS = ['./', 'index.html', 'styles.css', 'app.js', 'store.js', 'version.js', 'manifest.webmanifest',
-  'icons/icon.svg', 'icons/icon-180.png', 'icons/icon-192.png', 'icons/icon-512.png'];
+  'icons/icon.svg', 'icons/icon-180.png', 'icons/icon-192.png', 'icons/icon-512.png',
+  'docs/manual/manad.png', 'docs/manual/poster.png', 'docs/manual/oversikt.png', 'docs/manual/sparkonton.png', 'docs/manual/data.png'];
 
 self.addEventListener('install', (e) => {
   e.waitUntil(caches.open(CACHE_VERSION).then((c) => c.addAll(ASSETS.map((a) => new Request(a, { cache: 'reload' })))));

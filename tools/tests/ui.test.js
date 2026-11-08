@@ -41,4 +41,12 @@ T.test('import med fel text visar fel och ändrar inget', () => {
   T.ok(!$id('import-dialog').open, 'ingen dialog');
   T.eq(localStorage.getItem('bb.data'), before);
 });
-T.test('elak text visas som text, inga img i sidan', () => { T.eq(document.querySelectorAll('main img').length, 0); });
+T.test('elak text visas som text, inga img i sidan', () => { T.eq(document.querySelectorAll('main img:not(.shot)').length, 0); });
+T.test('Hjälp: 9 avsnitt, alla bilder laddas', async () => {
+  const help = document.querySelector('#tab-settings .help');
+  T.eq(help.querySelectorAll('details').length, 9);
+  const imgs = [...help.querySelectorAll('img.shot')];
+  T.eq(imgs.length, 5);
+  help.querySelectorAll('details').forEach((d) => { d.open = true; });
+  await T.until(() => imgs.every((i) => i.complete && i.naturalWidth > 0), 'en bild laddades inte');
+});

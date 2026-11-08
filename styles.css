@@ -243,3 +243,9 @@ dialog { width: min(400px, calc(100vw - 32px)); }
 /* Data: export/import text boxes */
 .field textarea { min-height: 96px; padding: 8px 12px; border: 1px solid var(--outline); border-radius: var(--r-sm); background: var(--surface); color: var(--on-surface); font: .8125rem/1.4 ui-monospace, Consolas, monospace; width: 100%; resize: vertical; }
 .field textarea:focus { outline: 2px solid var(--primary); outline-offset: 0; border-color: var(--primary); }
+
+/* Hjälp: in-app manual */
+.help details { border-top: 1px solid var(--outline-variant); }
+.help summary { padding: 13px 0; cursor: pointer; font-weight: 500; }
+.help details p { margin: 0 0 8px; font-size: .9375rem; }
+.help img.shot { display: block; width: 100%; max-width: 320px; height: auto; margin: 4px 0 12px; border: 1px solid var(--outline-variant); border-radius: var(--r-md); }

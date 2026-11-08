@@ -117,6 +117,41 @@
   <section class="tab" id="tab-settings" hidden>
     <h1>Inställningar</h1>
     <div class="col">
+      <!-- In-app manual. Same text as docs/MANUAL.md – change both together. -->
+      <div class="card help">
+        <h2>Hjälp</h2>
+        <details><summary>Kom igång</summary>
+          <img class="shot" src="docs/manual/poster.png" alt="Poster: inkomster och kostnader" width="390" loading="lazy">
+          <p>Gå till Poster och lägg in dina inkomster (efter skatt) och fasta kostnader. Ange hur ofta en kostnad kommer – varje månad, varannan, kvartal eller en gång om året – och från vilken månad.</p>
+          <p>Allt läggs in en gång. Sedan räknar appen ut varje månad åt dig.</p></details>
+        <details><summary>Månad</summary>
+          <img class="shot" src="docs/manual/manad.png" alt="Månad: kvar, sparande och per person" width="390" loading="lazy">
+          <p>Visar vad som är kvar efter månadens kostnader, och hur mycket av det som är sparande.</p>
+          <p>Byt månad med ◀ ▶ eller svep åt vänster/höger. Tryck på en rad för att ändra beloppet bara den här månaden. + Avvikelse lägger till en engångspost, t.ex. nya däck eller en tandläkarräkning.</p></details>
+        <details><summary>Översikt</summary>
+          <img class="shot" src="docs/manual/oversikt.png" alt="Översikt: kommande 12 månader" width="390" loading="lazy">
+          <p>De kommande 12 månaderna på en gång. Månader med underskott markeras.</p>
+          <p>Fyll i ett Startsaldo nedan för att se det löpande saldot efter varje månad.</p></details>
+        <details><summary>Statistik och sparande</summary>
+          <img class="shot" src="docs/manual/sparkonton.png" alt="Sparkonton med valuta" width="390" loading="lazy">
+          <p>Nyckeltal, sparkvot, kostnader per kategori och in/ut de senaste 12 månaderna. Kostnader i kategorin Sparande visas som sparande.</p>
+          <p>Sparkonton (längst ner i Statistik): lägg till ett konto och fyll i vad som står på det varje månad. Kontot kan ha en annan valuta (t.ex. USD); då räknas summan om till kronor med kurserna under Valutakurser.</p></details>
+        <details><summary>Personer och kategorier</summary>
+          <p>Valfritt: lägg till personerna i hushållet, så kan varje post höra till en person eller vara gemensam. Kategorierna kan byta namn, läggas till och tas bort.</p></details>
+        <details><summary>Valutakurser</summary>
+          <p>Appen har ungefärliga kurser från ECB inbyggda (datumet står i kortet). Du kan skriva in egna kurser och trycka Spara; Använd appens kurser återställer.</p></details>
+        <details><summary>Backup och flytt</summary>
+          <img class="shot" src="docs/manual/data.png" alt="Kortet Data: export och import" width="390" loading="lazy">
+          <p>Under Data: tryck Exportera och markera, kopiera texten och spara den, t.ex. i en anteckning. Gör det då och då.</p>
+          <p>För att läsa tillbaka: klistra in texten under Importera, tryck Importera, kontrollera sammanfattningen och tryck Ersätt. All nuvarande data ersätts – Ångra finns direkt efteråt.</p>
+          <p>Texten innehåller all din ekonomidata. Klistra bara in den där du litar på mottagaren.</p></details>
+        <details><summary>Installera och offline</summary>
+          <p>Android (Chrome): menyn ⋮ → Installera app. iPhone (Safari): Dela → Lägg till på hemskärmen.</p>
+          <p>Installerad fungerar appen helt utan nät. Nya versioner hämtas automatiskt.</p></details>
+        <details><summary>Integritet</summary>
+          <p>Appen gör inga anrop – ingen server, ingen bankkoppling, ingen analys, inget konto. All data finns bara i den här webbläsaren.</p>
+          <p>Rensar du webbplatsdata försvinner allt. Därför: exportera som backup.</p></details>
+      </div>
       <div class="card">
         <h2>Startsaldo</h2>
         <p class="muted">Valfritt. Visar löpande saldo i översikten från vald månad.</p>
@@ -166,7 +201,7 @@
         </div>
         <div class="actions"><button type="button" class="btn text" id="rates-reset" hidden>Använd appens kurser</button><span class="spacer"></span><button type="button" class="btn tonal" id="rates-save">Spara</button></div>
       </div>
-      <div class="card">
+      <div class="card" id="data-card">
         <h2>Data</h2>
         <p class="muted">Backup och flytt till en annan enhet: exportera, kopiera texten och spara den där du vill. Texten innehåller all din data – klistra bara in den där du litar på mottagaren.</p>
         <label class="field"><span>Export</span><textarea id="export-text" rows="5" readonly placeholder="Tryck Exportera"></textarea></label>

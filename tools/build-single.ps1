@@ -9,6 +9,7 @@
     - <script type="module" src>       -> inline <script>; ES modules are bundled
                                           (named imports/exports, each module in its own scope)
     - <link rel="icon"/"apple-touch-icon"> -> data: URI
+    - <img src> (local, also inside <template>) -> data: URI
   Drops the manifest link (PWA install and service workers do not work over file://).
   Loosens the CSP only in the generated file so inline code may run; the app's own CSP is untouched.
 
@@ -139,6 +140,14 @@ $html = [regex]::Replace($html, '(?i)[ \t]*<link\b[^>]*>\r?\n?', [Text.RegularEx
     if ($rel -eq 'stylesheet') { return "$indent<style>`n$(Protect (Read-Text (Clean-Path $href)) 'style')`n$indent</style>`n" }
     if ($rel -match '\bicon\b') { return $tag.Replace($href, (To-DataUri $href)) }
     $tag
+  })
+
+# Local <img src> (e.g. pictures in the in-app manual) -> data: URI, also inside <template>.
+$html = [regex]::Replace($html, '(?i)<img\b[^>]*>', [Text.RegularExpressions.MatchEvaluator] {
+    param($m)
+    $src = Get-Attr $m.Value 'src'
+    if (-not (Test-Local $src)) { return $m.Value }
+    $m.Value.Replace($src, (To-DataUri $src))
   })
 
 $html = [regex]::Replace($html, '(?is)<script\b([^>]*)>\s*</script>', [Text.RegularExpressions.MatchEvaluator] {

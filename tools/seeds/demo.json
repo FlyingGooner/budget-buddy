@@ -1,0 +1,29 @@
+{
+  "bb.tab": "month",
+  "bb.data": {
+    "version": 1,
+    "settings": { "people": [{ "id": "p1", "name": "Anna" }, { "id": "p2", "name": "Erik" }], "startBalance": 1500000, "startMonth": "2026-01" },
+    "recurring": [
+      { "id": "r1", "name": "Lön", "type": "income", "amount": 3200000, "category": "salary", "person": "p1", "every": 1, "start": "2026-01" },
+      { "id": "r2", "name": "Lön", "type": "income", "amount": 2800000, "category": "salary", "person": "p2", "every": 1, "start": "2026-01" },
+      { "id": "r3", "name": "Hyra", "type": "expense", "amount": 1376500, "category": "home", "every": 1, "start": "2026-01" },
+      { "id": "r4", "name": "El", "type": "expense", "amount": 90000, "category": "home", "every": 1, "start": "2026-01" },
+      { "id": "r5", "name": "Mat", "type": "expense", "amount": 900000, "category": "household", "every": 1, "start": "2026-01" },
+      { "id": "r6", "name": "Bil och bensin", "type": "expense", "amount": 340000, "category": "transport", "every": 1, "start": "2026-01" },
+      { "id": "r7", "name": "Mobil", "type": "expense", "amount": 29900, "category": "subs", "person": "p1", "every": 1, "start": "2026-01" },
+      { "id": "r8", "name": "Bilförsäkring", "type": "expense", "amount": 240000, "category": "insurance", "every": 3, "start": "2026-02" },
+      { "id": "r9", "name": "Hemförsäkring", "type": "expense", "amount": 180000, "category": "insurance", "every": 12, "start": "2026-03" },
+      { "id": "r10", "name": "Buffertsparande", "type": "expense", "amount": 400000, "category": "savings", "every": 1, "start": "2026-01" },
+      { "id": "r11", "name": "Studielån", "type": "expense", "amount": 150000, "category": "loan", "person": "p2", "every": 1, "start": "2026-01" }
+    ],
+    "oneOffs": [
+      { "id": "o1", "month": "2026-11", "name": "Vinterdäck", "type": "expense", "amount": 750000, "category": "transport" },
+      { "id": "o2", "month": "2026-12", "name": "Julklappar", "type": "expense", "amount": 600000, "category": "other" }
+    ],
+    "adjustments": { "2026-01": { "r4": 140000 }, "2026-02": { "r4": 130000 } },
+    "accounts": [
+      { "id": "a1", "name": "Buffert", "balances": { "2026-08": 3200000, "2026-09": 3600000, "2026-10": 4000000, "2026-11": 4400000 } },
+      { "id": "a2", "name": "Aktier jobbet", "currency": "USD", "balances": { "2026-09": 900000, "2026-10": 1000000, "2026-11": 1250000 } }
+    ]
+  }
+}
