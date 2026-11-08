@@ -40,6 +40,20 @@ function kr(ore, sign = false) {
   const s = (a % 100 === 0 ? nf0 : nf2).format(a / 100);
   return (neg ? '−' : sign && ore > 0 ? '+' : '') + s + ' kr';
 }
+// Amount in a savings account's currency (minor units). SEK → "1 250 kr", others → "1 250 USD".
+const curFmt = {};
+function money(v, cur, sign = false) {
+  if (cur === 'SEK') return kr(v, sign);
+  const neg = v < 0, a = Math.abs(v), d = a % 100 ? 2 : 0;
+  const key = cur + d;
+  curFmt[key] ||= new Intl.NumberFormat('sv-SE', { style: 'currency', currency: cur, currencyDisplay: 'code', minimumFractionDigits: d, maximumFractionDigits: d });
+  return (neg ? '−' : sign && v > 0 ? '+' : '') + curFmt[key].format(a / 100);
+}
+const toSek = (v, cur) => (cur === 'SEK' ? v : Math.round((v * data.settings.rates[cur]) / 100));
+const dayFmt = new Intl.DateTimeFormat('sv-SE', { day: 'numeric', month: 'short', year: 'numeric' });
+const dayLabel = (d) => { const [y, m, dd] = d.split('-').map(Number); return dayFmt.format(new Date(y, m - 1, dd)).replace('.', ''); };
+const ratesNote = () => (data.settings.ratesOwn ? `Egna kurser från ${dayLabel(data.settings.ratesDate)}`
+  : `Riksbankens mittkurser ${dayLabel(data.settings.ratesDate)}`);
 const monthFmt = new Intl.DateTimeFormat('sv-SE', { month: 'long', year: 'numeric' });
 const monthShort = new Intl.DateTimeFormat('sv-SE', { month: 'short' });
 const toDate = (m) => { const [y, mo] = m.split('-').map(Number); return new Date(y, mo - 1, 1); };
@@ -410,18 +424,21 @@ function renderStats() {
 let dialogAcc = null;
 function renderAccounts() {
   const accs = data.accounts;
-  const total = (m) => accs.reduce((s, a) => s + (balanceAt(a, m)?.amount || 0), 0);
-  $('acc-total').textContent = accs.length ? kr(total(month)) : '';
+  const total = (m) => accs.reduce((s, a) => s + toSek(balanceAt(a, m)?.amount || 0, a.currency), 0);
+  const foreign = accs.some((a) => a.currency !== 'SEK');
+  $('acc-total').textContent = accs.length ? (foreign ? '≈ ' : '') + kr(total(month)) : '';
+  $('acc-rates').textContent = foreign ? `Omräknat till kronor: ${ratesNote()}. Kurserna ändras under Inställningar.` : '';
   fill($('acc-list'), accs.length ? accs.map((a) => {
     const cur = balanceAt(a, month), prev = prevBalance(a, month);
     const diff = cur && prev ? cur.amount - prev.amount : null;
     const sub = !cur ? 'Inget saldo än – tryck för att fylla i'
       : cur.month === month ? 'Ifyllt den här månaden' : `Senast ifyllt ${monthLabel(cur.month).toLowerCase()}`;
     return el('li', { class: 'row' }, el('button', { type: 'button', class: 'row-main',
-      'aria-label': `${a.name}, ${cur ? kr(cur.amount) : 'inget saldo'}. Fyll i saldo`, on: { click: () => openAccDialog(a) } },
+      'aria-label': `${a.name}, ${cur ? money(cur.amount, a.currency) : 'inget saldo'}. Fyll i saldo`, on: { click: () => openAccDialog(a) } },
     el('span', { class: 'row-name' }, el('span', { text: a.name }), el('span', { class: 'row-sub', text: sub })),
-    el('span', { class: 'acc-amt amount' }, el('span', { text: cur ? kr(cur.amount) : '–' }),
-      diff != null ? el('span', { class: 'row-sub ' + (diff < 0 ? 'neg' : 'pos'), text: kr(diff, true) }) : null)));
+    el('span', { class: 'acc-amt amount' }, el('span', { text: cur ? money(cur.amount, a.currency) : '–' }),
+      cur && a.currency !== 'SEK' ? el('span', { class: 'row-sub', text: '≈ ' + kr(toSek(cur.amount, a.currency)) }) : null,
+      diff != null ? el('span', { class: 'row-sub ' + (diff < 0 ? 'neg' : 'pos'), text: money(diff, a.currency, true) }) : null)));
   }) : el('li', { class: 'muted empty-row', text: 'Inga sparkonton än – lägg till det första nedan.' }));
 
   // Total savings balance, the 12 months up to the chosen month
@@ -449,19 +466,27 @@ function openAccDialog(a) {
   dialogAcc = a;
   const cur = balanceAt(a, month);
   $('ad-title').textContent = a.name;
-  $('ad-sub').textContent = `Saldo i ${monthLabel(month).toLowerCase()}.` + (cur && cur.month !== month ? ` Senast: ${kr(cur.amount)} (${monthLabel(cur.month).toLowerCase()}).` : '');
+  $('ad-sub').textContent = `Saldo i ${monthLabel(month).toLowerCase()}.` + (cur && cur.month !== month ? ` Senast: ${money(cur.amount, a.currency)} (${monthLabel(cur.month).toLowerCase()}).` : '');
+  $('ad-currency').value = a.currency;
+  setAccCurrencyLabel();
   $('ad-amount').value = Object.hasOwn(a.balances, month) ? krInput(a.balances[month]) : '';
   $('ad-error').textContent = '';
   $('acc-dialog').showModal();
   $('ad-amount').focus();
 }
+function setAccCurrencyLabel() {
+  const c = $('ad-currency').value;
+  $('ad-amount-label').textContent = c === 'SEK' ? 'Saldo (kr)' : `Saldo (${c})`;
+}
+$('ad-currency').replaceChildren(...CURRENCIES.map((c) => el('option', { value: c, text: c === 'SEK' ? 'Kronor (SEK)' : c })));
+$('ad-currency').addEventListener('change', setAccCurrencyLabel);
 $('ad-cancel').addEventListener('click', () => $('acc-dialog').close());
 $('ad-form').addEventListener('submit', (e) => {
   e.preventDefault();
   const amount = parseKr($('ad-amount').value);
   if (amount == null || !isAmount(amount)) { $('ad-error').textContent = 'Skriv ett saldo, t.ex. 45 000 eller 1250,50.'; return; }
   const a = data.accounts.find((x) => x.id === dialogAcc.id);
-  if (a) a.balances[month] = amount;
+  if (a) { a.balances[month] = amount; a.currency = $('ad-currency').value; }
   data = loadData(data);
   $('acc-dialog').close();
   save();
@@ -635,7 +660,32 @@ function renderSettings() {
   $('s-balance').value = data.settings.startMonth ? krInput(Math.abs(data.settings.startBalance)) : '';
   if (data.settings.startBalance < 0) $('s-balance').value = '-' + $('s-balance').value;
   $('s-month').value = data.settings.startMonth || '';
+  for (const c of Object.keys(DEFAULT_RATES)) $('rate-' + c).value = nf2.format(data.settings.rates[c] / 100);
+  $('rates-note').textContent = ratesNote() + '.';
+  $('rates-reset').hidden = !data.settings.ratesOwn;
 }
+// Exchange rates: typed in by the user (kr per 1 unit) – the app never fetches rates.
+$('rates-save').addEventListener('click', () => {
+  const rates = {};
+  for (const c of Object.keys(DEFAULT_RATES)) {
+    const ore = parseKr($('rate-' + c).value);
+    if (ore == null || ore <= 0 || ore > MAX_RATE) { snackbar(`Skriv en kurs för ${c}, t.ex. 9,88.`, null, null, 4000); return; }
+    rates[c] = ore;
+  }
+  const t = new Date();
+  data.settings.rates = rates;
+  data.settings.ratesDate = `${t.getFullYear()}-${String(t.getMonth() + 1).padStart(2, '0')}-${String(t.getDate()).padStart(2, '0')}`;
+  data.settings.ratesOwn = true;
+  save();
+  snackbar('Kurserna sparade', null, null, 3000);
+});
+$('rates-reset').addEventListener('click', () => {
+  data.settings.rates = { ...DEFAULT_RATES };
+  data.settings.ratesDate = RATES_DATE;
+  data.settings.ratesOwn = false;
+  save();
+  snackbar('Appens kurser används igen', null, null, 3000);
+});
 document.querySelectorAll('.cat-form').forEach((form) => form.addEventListener('submit', (e) => {
   e.preventDefault();
   const n = cleanName(form.elements.name.value, 40);

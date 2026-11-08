@@ -18,6 +18,13 @@ const MAX_PEOPLE = 10;
 const MAX_ACCOUNTS = 20;
 const MAX_BALANCES = 600;
 const EVERY = [1, 2, 3, 12];
+// Currencies for savings accounts (v0.8.0). Rates = öre per 1 unit. Built-in defaults are Riksbanken's mid rates
+// on RATES_DATE, typed in by hand – the app never fetches rates. The user can change them in Inställningar.
+const CURRENCIES = ['SEK', 'USD', 'EUR', 'GBP', 'NOK', 'DKK'];
+const DEFAULT_RATES = { USD: 988, EUR: 1103, GBP: 1322, NOK: 105, DKK: 148 };
+const RATES_DATE = '2026-11-06';
+const MAX_RATE = 100000; // 1 000 kr per unit
+const DATE_RE = /^(19|20)\d{2}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])$/;
 const TYPES = ['income', 'expense'];
 
 // ---------- Validators (saved data may be old, odd or tampered with) ----------
@@ -56,7 +63,8 @@ const CATS_V = 2; // settings.catsV: one-time additions to older saved category 
 function emptyData() {
   return {
     version: 1,
-    settings: { categories: DEFAULT_CATEGORIES.map((c) => ({ ...c })), people: [], startBalance: 0, startMonth: null, catsV: CATS_V },
+    settings: { categories: DEFAULT_CATEGORIES.map((c) => ({ ...c })), people: [], startBalance: 0, startMonth: null, catsV: CATS_V,
+      rates: { ...DEFAULT_RATES }, ratesDate: RATES_DATE, ratesOwn: false },
     recurring: [],
     oneOffs: [],
     adjustments: {},
@@ -95,6 +103,15 @@ function loadData(d) {
   const cat = (v, type) => (catType.get(v) === type ? v : FALLBACK_CAT[type]);
   if (Number.isInteger(s.startBalance) && Math.abs(s.startBalance) <= MAX_AMOUNT) out.settings.startBalance = s.startBalance;
   if (isMonth(s.startMonth)) out.settings.startMonth = s.startMonth;
+  // Exchange rates: only own (user-saved) rates are kept; otherwise the built-in ones apply (newer after an update).
+  if (s.ratesOwn === true && isObj(s.rates) && typeof s.ratesDate === 'string' && DATE_RE.test(s.ratesDate)) {
+    for (const c of Object.keys(DEFAULT_RATES)) {
+      const r = s.rates[c];
+      if (Number.isInteger(r) && r > 0 && r <= MAX_RATE) out.settings.rates[c] = r;
+    }
+    out.settings.ratesDate = s.ratesDate;
+    out.settings.ratesOwn = true;
+  }
   // People (optional): who an item belongs to. null = gemensamt.
   if (Array.isArray(s.people)) {
     const seenP = new Set();
@@ -155,7 +172,8 @@ function loadData(d) {
         for (const m of keys) balances[m] = a.balances[m];
       }
       seenA.add(a.id);
-      out.accounts.push({ id: a.id, name, balances });
+      const currency = CURRENCIES.includes(a.currency) ? a.currency : 'SEK'; // v0.8.0; balances in minor units of it
+      out.accounts.push({ id: a.id, name, currency, balances });
     }
   }
   // v0.6.0: "paid" (bocka av betalt) removed – old d.paid is dropped here and disappears on the next save.

@@ -89,6 +89,7 @@ Kostnadskategorin **Sparande** (id `savings`, standard sedan v0.5.0) är pengar 
 ### Statistik
 Följer månaden som är vald i Månad (samma ◀ ▶ och svep).
 - **Sparkonton** (v0.7.0): kort där man fyller i vad som står på sina sparkonton (t.ex. Buffert, ISK). Varje konto visar saldot för vald månad (senast ifyllda saldo till och med den månaden) och förändringen mot närmast föregående ifyllda saldo. Överst summan för alla konton. Tryck på ett konto → dialog "Saldo i <månad>" med belopp, Spara och Ta bort konto (ångra-snackbar). "+ Nytt konto" (namn) längst ner. Ett saldo per konto och månad; fyller man i igen samma månad ersätts det. Under listan staplar med totalt sparsaldo de 12 månaderna fram till vald månad (samma SVG-teknik som In och ut). Tomt läge: "Inga sparkonton än – lägg till det första". Saldona påverkar inte Kvar eller kontosaldot – de är en egen uppföljning.
+- **Valuta på sparkonton** (v0.8.0): varje konto har en valuta (SEK, USD, EUR, GBP, NOK, DKK) som väljs i saldodialogen. Saldot visas i kontots valuta med "≈ X kr" under; summan och staplarna räknas om till kronor ("≈" när något konto är i utländsk valuta). Under listan: "Omräknat till kronor: Riksbankens mittkurser 6 nov 2026" (eller "Egna kurser från <datum>"). Inställningar → kortet **Valutakurser**: kr per 1 enhet för varje valuta, förifyllt med Riksbankens mittkurser från `RATES_DATE` (inskrivna för hand vid bygget), Spara gör dem till egna kurser med dagens datum, "Använd appens kurser" återställer.
 - **Nyckeltal** (rutor som Vecka i follow-diet-tracker): kvar av inkomst, sparkvot (sparande av inkomst), snitt kvar per månad (de 12 senaste månaderna med poster, hela kronor), största kostnaden, sparat 12 mån och sparat den här månaden.
 - **Kostnader per kategori:** staplar, störst först.
 - **In och ut, 12 månader:** inline-SVG med staplar för inkomster och kostnader fram till vald månad (vald månad markerad). Ritas med DOM (createElementNS), ingen markup-sträng, inget bibliotek.
@@ -174,6 +175,7 @@ Allt i `localStorage` under nyckeln `bb.data`. Belopp lagras som **heltal i öre
 - Kategorier har `type` (`income`/`expense`); en post får bara ha en kategori av sin egen typ, annars "Övrig inkomst"/"Övrigt". Borttagen kategori: poster flyttas dit.
 - `person`: id i `settings.people` eller `null` (= Gemensamt). Borttagen person: posterna blir gemensamma.
 - `accounts` (v0.7.0): sparkonton, max 20. `balances[månad]` = saldo i ören (heltal 0–100 000 000 kr), ett per månad, max 600 per konto. Valideras i `store.js` som övrig data (giltigt id, namn ≤ 30 tecken, giltiga månader); äldre data utan `accounts` får en tom lista.
+- `accounts[].currency` (v0.8.0): en av `CURRENCIES`, annars `SEK`; saldon i valutans minsta enhet (cent/öre). `settings.rates` (öre per enhet, heltal 1–100 000), `settings.ratesDate` (`ÅÅÅÅ-MM-DD`), `settings.ratesOwn` (bool). Egna kurser behålls bara om `ratesOwn` är `true` och allt validerar; annars gäller appens inbyggda kurser (som blir nyare vid uppdatering).
 - All sparad data valideras i `store.js` innan den används (typer, belopp heltal inom rimligt intervall, giltiga månader, kända id:n). Trasig data ger standardvärden, aldrig blank skärm.
 - Vid ny `version` körs en migreringsfunktion.
 
@@ -187,6 +189,7 @@ Allt i `localStorage` under nyckeln `bb.data`. Belopp lagras som **heltal i öre
 - `no-referrer`. All inmatning renderas med `textContent`/`el()`, aldrig `innerHTML`.
 - Inga hemligheter i koden.
 - Sparkonton (v0.7.0) sparas i samma `bb.data` i `localStorage` – ingen ny nyckel, ingen ny lagringsteknik, inget undantag. Kontonamn renderas med `textContent`/`el()`, staplarna med `createElementNS`. Saldona går genom `loadData()` innan de används.
+- Valutakurser (v0.8.0): **hämtas aldrig** – de är konstanter i `store.js` eller skrivs in av användaren. Inga anrop, ingen ny nyckel (samma `bb.data`), inget undantag.
 - `docs/presentation.html` har CSS och JS i egna filer, utan `'unsafe-inline'` och utan `style`-attribut.
 - Arbetsytans agent `granskning` bestämmer över säkerheten.
 - **Ingen backup i v1:** rensas webbplatsdata försvinner allt. Det sägs tydligt i Inställningar (se Framtida idéer: export).

@@ -70,6 +70,7 @@
       <div class="card" id="stats-accounts">
         <h2 class="split"><span>🐷 Sparkonton</span><span id="acc-total"></span></h2>
         <ul class="list" id="acc-list"></ul>
+        <p class="muted small" id="acc-rates"></p>
         <div id="acc-chart"></div>
         <form class="inline" id="acc-form" novalidate>
           <label class="field grow"><span>Nytt sparkonto</span><input id="acc-name" maxlength="30" autocomplete="off" placeholder="t.ex. Buffert"></label>
@@ -153,6 +154,19 @@
     </div>
     <div class="col">
       <div class="card">
+        <h2>Valutakurser</h2>
+        <p class="muted">Ungefärliga kurser för sparkonton i utländsk valuta. Appen hämtar inga kurser – ändra dem själv när du vill.</p>
+        <p class="small" id="rates-note"></p>
+        <div class="row2">
+          <label class="field"><span>1 USD = kr</span><input id="rate-USD" inputmode="decimal" autocomplete="off"></label>
+          <label class="field"><span>1 EUR = kr</span><input id="rate-EUR" inputmode="decimal" autocomplete="off"></label>
+          <label class="field"><span>1 GBP = kr</span><input id="rate-GBP" inputmode="decimal" autocomplete="off"></label>
+          <label class="field"><span>1 NOK = kr</span><input id="rate-NOK" inputmode="decimal" autocomplete="off"></label>
+          <label class="field"><span>1 DKK = kr</span><input id="rate-DKK" inputmode="decimal" autocomplete="off"></label>
+        </div>
+        <div class="actions"><button type="button" class="btn text" id="rates-reset" hidden>Använd appens kurser</button><span class="spacer"></span><button type="button" class="btn tonal" id="rates-save">Spara</button></div>
+      </div>
+      <div class="card">
         <h2>App</h2>
         <p class="muted">All data sparas bara i den här webbläsaren och lämnar aldrig enheten. Det finns ingen backup – rensas webbplatsdata försvinner allt.</p>
         <div class="actions wrap">
@@ -222,7 +236,10 @@
   <form method="dialog" id="ad-form" novalidate>
     <h2 id="ad-title"></h2>
     <p class="muted" id="ad-sub"></p>
-    <label class="field"><span>Saldo (kr)</span><input id="ad-amount" inputmode="decimal" autocomplete="off"></label>
+    <div class="row2">
+      <label class="field"><span>Valuta</span><select id="ad-currency"></select></label>
+      <label class="field"><span id="ad-amount-label">Saldo (kr)</span><input id="ad-amount" inputmode="decimal" autocomplete="off"></label>
+    </div>
     <p class="error" id="ad-error" role="alert"></p>
     <div class="actions wrap">
       <button type="button" class="btn text danger" id="ad-delete">Ta bort konto</button>

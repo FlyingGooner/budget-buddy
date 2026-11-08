@@ -237,3 +237,5 @@ dialog { width: min(400px, calc(100vw - 32px)); }
 #acc-form { border-top: 1px solid var(--outline-variant); margin-top: 4px; padding-top: 4px; }
 #acc-form .field { margin-bottom: 0; }
 #acc-form .btn { min-height: 48px; flex: none; }
+#acc-rates { margin: 4px 0 0; }
+#acc-rates:empty { display: none; }
