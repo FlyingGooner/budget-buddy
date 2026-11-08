@@ -78,6 +78,7 @@ Ren HTML, CSS och JavaScript – inga ramverk, inga beroenden, inget byggsteg f�
 | `docs/SPEC.md` | Specifikation av funktioner och beteende |
 | `docs/presentation.html` | Fristående mobilpresentation av appen |
 | `tools/build-single.ps1` | Bygger testfilen |
+| `tools/update-rates.ps1` | Hämtar ECB-kurser (Frankfurter) till `store.js` – körs automatiskt före varje commit |
 | `CLAUDE.md` | Regler för utveckling |
 
 Publiceras till GitHub Pages från `main`.

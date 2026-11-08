@@ -18,8 +18,9 @@ const MAX_PEOPLE = 10;
 const MAX_ACCOUNTS = 20;
 const MAX_BALANCES = 600;
 const EVERY = [1, 2, 3, 12];
-// Currencies for savings accounts (v0.8.0). Rates = öre per 1 unit. Built-in defaults are Riksbanken's mid rates
-// on RATES_DATE, typed in by hand – the app never fetches rates. The user can change them in Inställningar.
+// Currencies for savings accounts (v0.8.0). Rates = öre per 1 unit. Built-in defaults are ECB reference rates
+// on RATES_DATE, written here by tools/update-rates.ps1 (run by hand) – the app itself never fetches rates.
+// The user can change them in Inställningar.
 const CURRENCIES = ['SEK', 'USD', 'EUR', 'GBP', 'NOK', 'DKK'];
 const DEFAULT_RATES = { USD: 988, EUR: 1103, GBP: 1322, NOK: 105, DKK: 148 };
 const RATES_DATE = '2026-11-06';

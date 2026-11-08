@@ -53,7 +53,7 @@ const toSek = (v, cur) => (cur === 'SEK' ? v : Math.round((v * data.settings.rat
 const dayFmt = new Intl.DateTimeFormat('sv-SE', { day: 'numeric', month: 'short', year: 'numeric' });
 const dayLabel = (d) => { const [y, m, dd] = d.split('-').map(Number); return dayFmt.format(new Date(y, m - 1, dd)).replace('.', ''); };
 const ratesNote = () => (data.settings.ratesOwn ? `Egna kurser från ${dayLabel(data.settings.ratesDate)}`
-  : `Riksbankens mittkurser ${dayLabel(data.settings.ratesDate)}`);
+  : `ECB:s referenskurser ${dayLabel(data.settings.ratesDate)}`);
 const monthFmt = new Intl.DateTimeFormat('sv-SE', { month: 'long', year: 'numeric' });
 const monthShort = new Intl.DateTimeFormat('sv-SE', { month: 'short' });
 const toDate = (m) => { const [y, mo] = m.split('-').map(Number); return new Date(y, mo - 1, 1); };
