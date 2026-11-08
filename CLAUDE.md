@@ -22,5 +22,5 @@ Dessa regler gäller för all utveckling i repot (för människor och AI-assiste
 ## Arbetsflöde
 - `main` är enda grenen. Committa direkt till `main` (se `../CLAUDE.md` om push).
 - Höj `self.APP_VERSION` i `version.js` vid varje release (styr även service workerns cache) (semver) och skriv versionen i commit-meddelandet, t.ex. `v0.2.0: Add ...`.
-- Kör subagenten `granskning` (arbetsytans `../.claude/agents/granskning.md`, gemensam för alla projekt; undantag för det här projektet står i dess tabell) före push när `index.html`, `app.js`, `store.js`, `sw.js` eller datakällor ändras. Allt nätverk ska gå över `https://` och CSP:n i `index.html` ska hållas så snäv som möjligt.
+- Säkerhet: följ rutinen i `../CLAUDE.md` (avsnittet Säkerhet). `../tools/check.ps1` säger om agenten `granskning` behövs. Inga nätverksanrop; CSP:n i `index.html` hålls så snäv som möjligt.
 - Testa i en mobil viewport innan push.
