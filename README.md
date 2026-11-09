@@ -38,15 +38,20 @@ De flesta budgetappar vill att du loggar varje köp. Budget buddy gör tvärtom:
 | 📈 **Översikt** | Kommande 12 månader och saldot efter varje månad. |
 | 📊 **Statistik** | Nyckeltal, sparkvot, kostnader per kategori och in/ut de senaste 12 månaderna. |
 | 🐷 **Sparande** | Kategorin Sparande visas separat: "varav sparande" och hur mycket du sparat. |
+| 🏦 **Sparkonton** | Fyll i saldot på dina sparkonton varje månad och se förändringen – även i utländsk valuta, omräknat till kronor. |
 | 👥 **Personer** | Valfritt: vem en post hör till, eller Gemensamt, med en tabell per person. |
 | ↩️ **Ångra** | Borttagna poster kan ångras i några sekunder. |
+| 💾 **Backup** | Spara all data som en fil och läs in den igen – på samma eller en annan enhet. |
+| ❓ **Hjälp** | Manual med bilder direkt i appen. |
 | 📴 **Offline** | Fungerar utan nät efter första besöket. |
 | 🌗 **Tema** | Ljust och mörkt, följer telefonens inställning. |
 
 ## Integritet 🔒
 
 - **Inget konto, inga cookies.** Allt sparas bara i din webbläsare (`localStorage`).
-- **Inget utifrån.** Ingen analys, inga annonser, inga typsnitt eller skript utifrån – spärras även tekniskt med en Content Security Policy.
+- **Inget utifrån.** Ingen analys, inga annonser, inga typsnitt eller skript utifrån – spärras även tekniskt med en Content Security Policy. Även valutakurserna är inbyggda i appen; den hämtar aldrig något.
+
+> Rensar du webbplatsdata försvinner allt. Spara därför en backup-fil då och då (Inställningar → Data). Filen är okrypterad, så dela den bara med den du litar på.
 
 ## Installera på mobilen
 
@@ -72,12 +77,15 @@ Ren HTML, CSS och JavaScript – inga ramverk, inga beroenden, inget byggsteg f�
 |---|---|
 | `index.html` | Appens markup |
 | `styles.css`, `app.js` | Stil och logik |
-| `store.js` | Lagring i `localStorage` och validering av sparad data |
+| `store.js` | Lagring i `localStorage`, validering av sparad data och export/import |
+| `backup.js` | Spara och läsa backup-fil (gemensam för alla appar, original i arbetsytans mall) |
 | `version.js` | Versionsnummer (enda källan) |
 | `sw.js`, `manifest.webmanifest`, `icons/` | Installation som app (PWA) och offline |
 | `docs/SPEC.md` | Specifikation av funktioner och beteende |
+| `docs/MANUAL.md` | Manualen (samma text som Hjälp i appen) |
 | `docs/presentation.html` | Fristående mobilpresentation av appen |
 | `tools/build-single.ps1` | Bygger testfilen |
+| `tools/tests/` | Enhets- och flödestester (körs i headless Edge) |
 | `tools/update-rates.ps1` | Hämtar ECB-kurser (Frankfurter) till `store.js` – körs automatiskt före varje commit |
 | `CLAUDE.md` | Regler för utveckling |
 
