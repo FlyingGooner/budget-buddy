@@ -211,6 +211,17 @@ Material Design 3 enligt `../STIL.md`. Nyckelfärg blå `#2a6fb0`. Bottenmeny < 
 - "Kvar" stort i kortet överst: grön ton vid överskott, `--error` vid underskott.
 - Markeringar för återkommande (↻), justerad (✎) och avvikelse (★), så att man ser varför en månad avviker.
 
+### Planerat: stilrenare som diet (köas, start efter token-reset onsdag 2026-11-11)
+Mål: samma minimalistiska känsla som follow-diet-tracker – mindre synligt på en gång, inmatning bara när den behövs. CSS-grunden är redan densamma; skillnaden är innehåll och struktur. Allt i en omgång, en release. Uppskattat ≈ 95–135k tokens totalt.
+1. **Poster: dölj formulären** bakom "+ Ny inkomst" / "+ Ny kostnad" (fälten fälls ut eller öppnas i dialog). `index.html`, `views/items.js`, CSS, test. ~25–35k.
+2. **Ta bort de flesta grå hjälptexterna** i korten; förklaringen finns i Hjälp/`MANUAL.md`. ~8–12k.
+3. **Ta bort h1 på flikar** där fliknamnet säger samma sak (Översikt, Poster, Inställningar); kontrollera datorlayouten. ~5–8k.
+4. **Dialoger: sällan använda fält bakom "Fler val"** (Person, Till månad, Återställ, Hoppa över). `views/month.js`, `views/items.js`, test. ~25–40k.
+5. **Inställningar: slå ihop Personer + inkomst-/kostnadskategorier** till ett kort. `views/settings.js`, test. ~20–30k.
+6. Release + publicering. ~10k.
+
+Billig start om tokens tryter: 2 + 3 först (~25k med release).
+
 ## Acceptanskriterier
 Bockade punkter täcks av automatiska tester (`tools/test.ps1`). Obockade kräver en människa (layout, tema, installation, offline) eller saknar test än.
 
@@ -224,7 +235,7 @@ Bockade punkter täcks av automatiska tester (`tools/test.ps1`). Obockade kräve
 - [ ] Installerbar som PWA på Android och iPhone.
 - [ ] Fungerar offline.
 - [ ] Ljust och mörkt tema.
-- [ ] Layout fungerar på 390 px (mobil), 820 px (iPad stående) och 1280 px (dator).
+- [ ] Layout fungerar på 390 px (mobil). Surfplatta och dator är inte krav (beslut 2026-11-09).
 - [ ] Sparkonto: saldo för två månader visar förändring och summa; nytt saldo samma månad ersätter det gamla; ta bort konto går att ångra.
 - [ ] `granskning` utan anmärkning.
 
