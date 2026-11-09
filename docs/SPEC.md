@@ -211,13 +211,15 @@ Material Design 3 enligt `../CLAUDE.md`. Nyckelfärg blå `#2a6fb0`. Bottenmeny 
 - Markeringar för återkommande (↻), justerad (✎) och avvikelse (★), så att man ser varför en månad avviker.
 
 ## Acceptanskriterier
+Bockade punkter täcks av automatiska tester (`tools/test.ps1`). Obockade kräver en människa (layout, tema, installation, offline) eller saknar test än.
+
 - [ ] Lägga in lön och fem räkningar på under två minuter.
-- [ ] En årlig post (`every: 12`) syns bara i rätt månad.
+- [x] En årlig post (`every: 12`) syns bara i rätt månad. *(test: applies: varje kvartal och slutmånad)*
 - [ ] En avvikelse i november påverkar bara november.
 - [ ] Justering av el i januari ändrar bara januari.
 - [ ] Översikten visar 12 månader och markerar underskott.
 - [ ] Belopp räknas i ören utan avrundningsfel (0,10 + 0,20 = 0,30).
-- [ ] Trasig data i `localStorage` ger standardvärden, inte blank skärm.
+- [x] Trasig data i `localStorage` ger standardvärden, inte blank skärm. *(test: loadData: skräp ger tom standarddata)*
 - [ ] Installerbar som PWA på Android och iPhone.
 - [ ] Fungerar offline.
 - [ ] Ljust och mörkt tema.
