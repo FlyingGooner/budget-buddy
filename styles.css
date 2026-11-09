@@ -1,4 +1,5 @@
-﻿/* Material 3 – shared creator style (see ../CLAUDE.md). Seed colour: #2a6fb0. */
+/* Bara mobil (beslut 2026-11-09): en kolumn, bottenmeny; bredare skärmar visar samma vy centrerad. */
+/* Material 3 – shared creator style (see ../CLAUDE.md). Seed colour: #2a6fb0. */
 :root {
   color-scheme: light dark;
   /* M3 roles (light) */
@@ -67,24 +68,10 @@ dialog::backdrop { background: rgba(0,0,0,.4); }
 #nav button[aria-current="page"] { color: var(--on-surface); font-weight: 700; }
 #nav button[aria-current="page"] .pill { background: var(--primary-container); }
 
-/* ---------- Adaptive layout (M3 window size classes, see ../CLAUDE.md) ---------- */
-/* 600–839: navigation rail (80px) on the left */
-@media (min-width: 600px) {
-  body { padding-bottom: env(safe-area-inset-bottom); padding-left: 80px; }
-  #nav { inset: 0 auto 0 0; width: 80px; flex-direction: column; justify-content: flex-start; gap: 12px; padding: 24px 0; }
-  #nav button { flex: none; }
-}
-/* ≥ 840: two columns where it gives more overview; long lists scroll inside their card */
-@media (min-width: 840px) {
-  main { max-width: 1080px; padding: 8px 24px 24px; }
-  .tab { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 16px 24px; align-items: start; }
-  .tab > h1 { grid-column: 1 / -1; }
-}
 
 /* ================= Budget buddy ================= */
 .small { font-size: .8125rem; }
 .col { display: grid; gap: 12px; align-content: start; min-width: 0; }
-.desk-only { display: none; }
 .spacer { flex: 1; }
 .error { color: var(--error); font-size: .875rem; min-height: 1.2em; margin: 4px 0 0; }
 .pos { color: var(--primary); }
@@ -159,7 +146,6 @@ dialog::backdrop { background: rgba(0,0,0,.4); }
 /* Overview */
 .ov .ov-row { width: 100%; min-height: 48px; display: grid; grid-template-columns: 4.5em 1fr 8.5em; align-items: center; gap: 12px; padding: 4px; border: 0; border-radius: var(--r-md); background: transparent; color: inherit; font: inherit; cursor: pointer; }
 .ov .ov-row:has(> :nth-child(4)) { grid-template-columns: 3.5em minmax(0, 1fr) 7.5em 6.5em; gap: 8px; } /* fits 390 px */
-@media (min-width: 600px) { .ov .ov-row:has(> :nth-child(4)) { grid-template-columns: 4.5em 1fr 8em 8em; gap: 12px; } }
 .ov .ov-row:hover, .ov .ov-row.current { background: var(--surface-container-high); }
 .ov .bar { margin: 0; }
 .ov-m { text-align: left; }
@@ -187,16 +173,6 @@ dialog { width: min(400px, calc(100vw - 32px)); }
 #snack-text { flex: 1; padding: 10px 0; }
 #snackbar .btn.text { color: var(--primary-container); }
 
-@media (min-width: 600px) {
-  #snackbar { bottom: calc(24px + env(safe-area-inset-bottom)); }
-}
-@media (min-width: 840px) {
-  .desk-only { display: grid; }
-  .mobile-only { display: none; }
-
-  .scroll, #month-overview { max-height: calc(100vh - 140px); overflow-y: auto; }
-  #tab-overview > .card { grid-column: 1 / -1; max-width: 760px; }
-}
 
 /* Accessibility: respect reduced motion */
 @media (prefers-reduced-motion: reduce) {
@@ -214,16 +190,6 @@ dialog { width: min(400px, calc(100vw - 32px)); }
 .add-form .error { grid-column: 1 / -1; margin: 0; }
 .empty-row { padding: 12px 0; }
 #tab-items .hint { margin: 0; }
-@media (min-width: 840px) {
-  /* Compact: name, amount, selects and button on one row */
-  #inc-form { grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr) auto; }
-  #inc-form .person-field { grid-column: 1 / 3; }
-  #exp-form { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
-  .add-form .grow { grid-column: auto; }
-  #inc-form .btn { grid-column: auto; margin: 8px 0; }
-  #exp-form .grow { grid-column: 1 / -1; }
-  #tab-items .hint { grid-column: 1 / -1; }
-}
 .add-form .hint-row { grid-column: 1 / -1; margin: -4px 0 4px; order: 9; }
 
 /* Per person (summary card) */

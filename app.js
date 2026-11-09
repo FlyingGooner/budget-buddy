@@ -6,7 +6,6 @@
 const CONFIG = { storageKey: 'bb.data', tabKey: 'bb.tab' };
 const TABS = ['month', 'overview', 'stats', 'items', 'settings'];
 const $ = (id) => document.getElementById(id);
-const desktop = matchMedia('(min-width: 840px)');
 
 let data = loadData(store.get(CONFIG.storageKey));
 let month = currentMonth();

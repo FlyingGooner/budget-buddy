@@ -130,10 +130,9 @@ Två separata kort: **Inkomster** och **Kostnader**, var och en med sin lista oc
 - App: text om att data bara finns på enheten och att man ska spara en backup-fil då och då, plus egen "Installera"-knapp när `beforeinstallprompt` finns.
 - Hjälp (v0.10.0): samma text som `docs/MANUAL.md`, med bilder.
 
-### Layout: mobil, surfplatta, dator
-- **Mobil (< 600 px):** en kolumn, bottenmeny som i follow-diet-tracker (emoji-ikoner, fylld markering, fet etikett): Månad, Översikt, Statistik, Poster, Inst. Svep byter månad (Översikt: år).
-- **Surfplatta (600–839 px, iPad stående):** sidomeny (navigation rail), en kolumn max 640 px centrerad. Pilar och svep byter månad.
-- **Dator (≥ 840 px, även iPad liggande):** Månad och Översikt sida vid sida (månaden till vänster, 12-månadersöversikten till höger; klick i översikten byter månad). Poster: Inkomster till vänster, Kostnader till höger, formuläret kompakt i botten av varje kort. Långa listor skrollar inne i sitt kort. Inmatning kompakt (namn, belopp och knapp på samma rad).
+### Layout (bara mobil, beslut 2026-11-09)
+- En kolumn (test 390 px), bottenmeny som i follow-diet-tracker (emoji-ikoner, fylld markering, fet etikett): Månad, Översikt, Statistik, Poster, Inst. Svep byter månad (Översikt: år).
+- Bredare skärmar visar samma vy centrerad (max 640 px), bottenmenyn kvar. Sidomeny och tvåkolumnsvyer togs bort 2026-11-10.
 
 ## Datamodell
 
@@ -206,7 +205,7 @@ Allt i `localStorage` under nyckeln `bb.data`. Belopp lagras som **heltal i öre
 - Testfil för `file://`: `dist/budget-buddy.html`, byggs med `tools/build-single.ps1`.
 
 ## Design
-Material Design 3 enligt `../STIL.md`. Nyckelfärg blå `#2a6fb0`. Bottenmeny < 600 px, navigation rail 600–839 px, två kolumner ≥ 840 px.
+Material Design 3 enligt `../STIL.md`. Nyckelfärg blå `#2a6fb0`. Bottenmeny, bara mobil (390 px).
 - Belopp med tabellsiffror (`tabular-nums`), högerjusterade, tusentalsavgränsare med mellanslag ("32 000 kr"). Inmatning tillåter både komma och punkt som decimaltecken.
 - "Kvar" stort i kortet överst: grön ton vid överskott, `--error` vid underskott.
 - Markeringar för återkommande (↻), justerad (✎) och avvikelse (★), så att man ser varför en månad avviker.

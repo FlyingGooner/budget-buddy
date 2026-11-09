@@ -92,7 +92,7 @@ function perPerson(rows) {
 
 
 function changeMonth(n) { setMonth(addMonths(month, n)); }
-function setMonth(m) { month = m; renderMonth(); renderOverviewInto($('month-overview'), true); renderStats(); }
+function setMonth(m) { month = m; renderMonth(); renderStats(); }
 $('prev-month').addEventListener('click', () => changeMonth(-1));
 $('next-month').addEventListener('click', () => changeMonth(1));
 $('month-title').addEventListener('click', () => setMonth(currentMonth()));

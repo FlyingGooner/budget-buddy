@@ -83,7 +83,6 @@ addEventListener('offline', updateOnline);
 function render() {
   renderMonth();
   renderOverview();
-  renderOverviewInto($('month-overview'), true);
   renderStats();
   renderItems();
   renderSettings();
