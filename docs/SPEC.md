@@ -188,6 +188,7 @@ Allt i `localStorage` under nyckeln `bb.data`. Belopp lagras som **heltal i öre
 - Ekonomiska uppgifter är känsliga – de lämnar aldrig enheten.
 - CSP: arbetsytans grund-CSP med `connect-src 'none'` och `require-trusted-types-for 'script'`. Inga undantag.
 - `no-referrer`. All inmatning renderas med `textContent`/`el()`, aldrig `innerHTML`.
+- Skript (2026-11-09): `app.js` delades i `app.js`, `views/*.js` och `main.js`, alla egna filer från samma origin via `<script src>`. CSP oförändrad.
 - Inga hemligheter i koden.
 - Sparkonton (v0.7.0) sparas i samma `bb.data` i `localStorage` – ingen ny nyckel, ingen ny lagringsteknik, inget undantag. Kontonamn renderas med `textContent`/`el()`, staplarna med `createElementNS`. Saldona går genom `loadData()` innan de används.
 - Valutakurser (v0.8.0): **appen hämtar aldrig kurser** – de är konstanter i `store.js` eller skrivs in av användaren. Konstanterna uppdateras med `tools/update-rates.ps1` (Frankfurter, `api.frankfurter.dev`, ECB-data), ett utvecklarverktyg på datorn som git-hooken `pre-commit` kör vid varje commit (stoppar aldrig committen; `SKIP_RATES=1` hoppar över). Inga anrop, ingen ny nyckel (samma `bb.data`), inget undantag.

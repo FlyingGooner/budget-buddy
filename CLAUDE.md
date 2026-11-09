@@ -4,7 +4,7 @@ Mobil-först PWA för att planera ekonomin månad för månad. Spec: `docs/SPEC.
 
 ## Projektets regler
 - Data bara i `localStorage`, nycklar `bb.data` och `bb.tab`; cache-prefix `bb-`. Undantag: U5 (export/import som text och fil via `backup.js`). Inga nycklar eller hemligheter, inga anrop (`connect-src 'none'`).
-- Inga beroenden, inget byggsteg; vanliga skript (inga moduler) i ordningen `version.js`, `backup.js`, `store.js`, `app.js`. `CONFIG` överst i `app.js`. Rendering med `textContent`/`el()`, aldrig HTML.
+- Inga beroenden, inget byggsteg; vanliga skript (inga moduler, delar globalt scope) i ordningen `version.js`, `backup.js`, `store.js`, `app.js` (kärna, hjälpfunktioner), en fil per vy i `views/` (läs bara den vy som ändras), sist `main.js` (export/import, render, start). Ny vyfil → `<script>` i `index.html` före `main.js` och i `ASSETS`. Tester: `tools/tests/today.txt` låser "idag". `CONFIG` överst i `app.js`. Rendering med `textContent`/`el()`, aldrig HTML.
 - Belopp som heltal i ören. Inkomster är netto och alltid per månad.
 - Valutakurser är konstanter i `store.js` (`RATES_DATE`), uppdateras av `tools/update-rates.ps1` via git-hooken `pre-commit` (och av `release.ps1`). Appen hämtar aldrig kurser.
 - UI på svenska. Kod och variabelnamn på engelska.
