@@ -217,13 +217,13 @@
           <label class="field"><span>Importera (ersätter all data)</span><textarea id="import-text" rows="4" autocomplete="off" spellcheck="false" placeholder="Klistra in en exporterad text"></textarea></label>
           <div class="actions"><span class="spacer"></span><button type="button" class="btn tonal" id="import-btn">Importera</button></div>
         </details>
+        <div class="actions"><button type="button" class="btn text danger" id="reset">Radera all data</button></div>
       </div>
       <div class="card">
         <h2>App</h2>
         <p class="muted">All data sparas bara i den här webbläsaren och lämnar aldrig enheten av sig själv. Rensas webbplatsdata försvinner allt – spara en backup-fil då och då.</p>
         <div class="actions wrap">
           <button type="button" class="btn filled" id="install" hidden>Installera appen</button>
-          <button type="button" class="btn text danger" id="reset">Rensa all data</button>
         </div>
       </div>
     </div>
@@ -305,11 +305,11 @@
 <!-- Dialog: bekräfta -->
 <dialog id="confirm-dialog" aria-labelledby="cd-title">
   <form method="dialog">
-    <h2 id="cd-title">Rensa all data?</h2>
-    <p class="muted">Alla poster, avvikelser och inställningar tas bort från den här enheten. Det går inte att ångra.</p>
+    <h2 id="cd-title">Radera all data?</h2>
+    <p class="muted">Alla poster, avvikelser och inställningar tas bort från den här enheten. Det går inte att ångra – spara en backup-fil först om du vill kunna få tillbaka den.</p>
     <div class="actions"><span class="spacer"></span>
       <button type="submit" class="btn text" value="cancel">Avbryt</button>
-      <button type="submit" class="btn filled danger-fill" value="ok">Rensa</button>
+      <button type="submit" class="btn filled danger-fill" value="ok" id="cd-ok">Radera</button>
     </div>
   </form>
 </dialog>

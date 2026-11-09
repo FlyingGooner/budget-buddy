@@ -777,11 +777,11 @@ $('imp-ok').addEventListener('click', () => {
 });
 
 $('reset').addEventListener('click', () => $('confirm-dialog').showModal());
-$('confirm-dialog').addEventListener('close', () => {
-  if ($('confirm-dialog').returnValue !== 'ok') return;
+// Runs on the "Radera" click itself (not on the close event), like import.
+$('cd-ok').addEventListener('click', () => {
   data = emptyData();
   save();
-  snackbar('All data är rensad', null, null, 3000);
+  snackbar('All data är raderad', null, null, 3000);
 });
 
 // ---------- Install (beforeinstallprompt) ----------

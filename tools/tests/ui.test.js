@@ -86,3 +86,16 @@ T.test('Hjälp: 9 avsnitt, alla bilder laddas', async () => {
   help.querySelectorAll('details').forEach((d) => { d.open = true; });
   await T.until(() => imgs.every((i) => i.complete && i.naturalWidth > 0), 'en bild laddades inte');
 });
+
+T.test('Radera all data: ligger sist i Data, Avbryt ändrar inget, Radera tömmer', async () => {
+  const btn = $id('reset');
+  T.ok(btn.closest('#data-card'), 'knappen ligger i kortet Data');
+  const before = localStorage.getItem('bb.data');
+  const dlg = $id('confirm-dialog');
+  btn.click(); T.ok(dlg.open, 'bekräftelsedialog');
+  dlg.querySelector('[value="cancel"]').click(); await T.wait();
+  T.ok(!dlg.open, 'Avbryt stängde inte');
+  T.eq(localStorage.getItem('bb.data'), before, 'Avbryt ändrade data');
+  btn.click(); $id('cd-ok').click();
+  await T.until(() => !stored().accounts.length, 'datan raderades inte');
+});
