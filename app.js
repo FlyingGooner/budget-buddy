@@ -730,8 +730,29 @@ $('export-btn').addEventListener('click', () => {
   snackbar('Markerat – kopiera texten och spara den', null, null, 4000);
 });
 let pendingImport = null;
-$('import-btn').addEventListener('click', () => {
-  const r = importText($('import-text').value);
+$('import-btn').addEventListener('click', () => startImport($('import-text').value));
+// Backup file (U5): the file holds exactly the export text; reading it goes through the same checks as pasted text.
+const BACKUP_MSG = {
+  saved: 'Backup-filen sparades',
+  busy: 'Ett sparfönster är redan öppet',
+  fallback: 'Backup-filen laddas ner – syns den inte, använd Visa som text',
+  error: 'Kunde inte spara filen – använd Visa som text',
+};
+$('backup-save').addEventListener('click', async () => {
+  const r = await Backup.save({ slug: 'budget-buddy', today: isoToday(), text: exportText(data, isoToday()) });
+  if (BACKUP_MSG[r]) snackbar(BACKUP_MSG[r], null, null, 4000);
+});
+$('import-file').addEventListener('change', async (e) => {
+  const input = e.target;
+  const file = input.files && input.files[0];
+  input.value = '';   // the same file can be chosen again
+  if (!file) return;
+  const r = await Backup.read(file, MAX_IMPORT_CHARS);
+  if (r.error) { $('import-error').textContent = r.error; return; }
+  startImport(r.text);
+});
+function startImport(text) {
+  const r = importText(text);
   $('import-error').textContent = r.error || '';
   if (r.error) return;
   pendingImport = r.data;
@@ -741,7 +762,7 @@ $('import-btn').addEventListener('click', () => {
   $('imp-sum').textContent = parts.join(', ') + (months.length ? `, ${monthLabel(months[0]).toLowerCase()}–${monthLabel(months[months.length - 1]).toLowerCase()}` : '')
     + (r.exported ? `. Exporterad ${r.exported}.` : '.') + (r.skipped ? ` ${r.skipped} ogiltiga hoppas över.` : '');
   $('import-dialog').showModal();
-});
+}
 // Runs on the "Ersätt" click itself (the form then closes the dialog), so it does not depend on the close event.
 $('imp-ok').addEventListener('click', () => {
   const next = pendingImport;

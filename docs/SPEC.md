@@ -1,4 +1,4 @@
-﻿# Budget buddy – specifikation
+# Budget buddy – specifikation
 
 ## Idé
 En app för att planera sin ekonomi månad för månad. Man lägger in inkomster och återkommande kostnader (räkningar, abonnemang, lån) en gång, och lägger till engångsavvikelser på den månad de inträffar (t.ex. nya däck). Appen visar vad som blir kvar varje månad – bakåt och framåt. Ingen spårning av vardagsköp som mat.
@@ -191,6 +191,7 @@ Allt i `localStorage` under nyckeln `bb.data`. Belopp lagras som **heltal i öre
 - Sparkonton (v0.7.0) sparas i samma `bb.data` i `localStorage` – ingen ny nyckel, ingen ny lagringsteknik, inget undantag. Kontonamn renderas med `textContent`/`el()`, staplarna med `createElementNS`. Saldona går genom `loadData()` innan de används.
 - Valutakurser (v0.8.0): **appen hämtar aldrig kurser** – de är konstanter i `store.js` eller skrivs in av användaren. Konstanterna uppdateras med `tools/update-rates.ps1` (Frankfurter, `api.frankfurter.dev`, ECB-data), ett utvecklarverktyg som körs för hand på datorn. Inga anrop, ingen ny nyckel (samma `bb.data`), inget undantag.
 - **Export/import som text (U5, godkänd 2026-11-08, byggd i v0.9.0).** Gemensam standard i `../CLAUDE.md` (punkt 5). Inställningar → kort **Data**: exportruta (skrivskyddad, "Markera allt") och importruta. Kuvert `{"app":"budget-buddy","format":1,"exported":…,"data":…}`. **Nivå 1, smal JSON:** samma struktur som `bb.data` men utan standardvärden och tomma fält (t.ex. `every: 1`, `person: null`, `end: null`, tomma `adjustments`/`balances`, `currency: "SEK"`, standardkategorier och `rates` när `ratesOwn` är falskt); `type` som `"i"`/`"e"`. Import: max 2 MB → `JSON.parse` → `app`/`format` kontrolleras → koder och standardvärden återställs → `loadData()` → sammanfattning (poster, avvikelser, konton, period, antal ogiltiga) → bekräftelsedialog → ersätter allt → ångra-snackbar. Fel = inget ändras. Renderas med `textContent`/`el()` som i dag. Ersätter "Ingen backup i v1" som enda skydd: exporten är användarens egen backup.
+- **Fil-backup (U5 utökad 2026-11-09, byggd i v0.11.0).** Kortet **Data**: **Spara backup-fil** (`budget-buddy-ÅÅÅÅ-MM-DD.txt`, exakt exporttexten) och **Läs in backup-fil**; text-rutorna ligger kvar under **Visa som text**. Fil-delen är den gemensamma `backup.js` (identisk kopia av `../template/backup.js`, se `../CLAUDE.md` punkt 5): i en artifact sparar värden filen efter att användaren bekräftat (`claude.use("downloads")`), annars vanlig nedladdning via `Blob` (`href` som egenskap, `revokeObjectURL` i `setTimeout`). Import: `file.size` ≤ 8 MB före läsning, strikt UTF-8 (`arrayBuffer()` + `TextDecoder` med `fatal`), BOM bort, namn och MIME ignoreras, `input.value` nollställs – sedan samma `importText()`, sammanfattning, bekräftelse och ångra. Exporten är kompakt JSON; indragna exporter importeras som förut. `cleanName()` tar bort styr- och riktningstecken, och exportdatum visas bara om det är ett datum. Ingen CSP-ändring, `connect-src 'none'`. Varningstexten säger att filen är okrypterad bland hämtade filer och kan synkas till molnet.
 - `docs/presentation.html` har CSS och JS i egna filer, utan `'unsafe-inline'` och utan `style`-attribut.
 - Arbetsytans agent `granskning` bestämmer över säkerheten.
 - **Backup:** rensas webbplatsdata försvinner allt. Exporten (kortet Data, v0.9.0) är användarens egen backup; Inställningar påminner om att exportera då och då.
@@ -224,7 +225,7 @@ Material Design 3 enligt `../CLAUDE.md`. Nyckelfärg blå `#2a6fb0`. Bottenmeny 
 - [ ] `granskning` utan anmärkning.
 
 ## Framtida idéer
-- CSV-export av poster för Excel (bara export). Den tidigare idén om export/import via **fil** (U4, förhandsprövad 2026-11-08) är ersatt av export/import som **text** (U5) – se Integritet och säkerhet.
+- CSV-export av poster för Excel (bara export). Export/import som **fil** finns sedan v0.11.0 (U5) – se Integritet och säkerhet. Lösenordskryptering av filen (`"format": 2`) är en möjlig nästa idé.
 - Sparmål (t.ex. "semester 15 000 kr till juni") som visas i översikten.
 - Diagram per kategori (vart pengarna går).
 

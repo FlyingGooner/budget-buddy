@@ -33,7 +33,43 @@ T.test('export → import via kortet Data, med ångra', async () => {
   $id('snack-action').click();
   await T.until(() => JSON.stringify(stored()) === JSON.stringify(before), 'ångra återställde inte');
 });
-T.test('import med fel text visar fel och ändrar inget', () => {
+T.test('backup-fil: Spara laddar ner budget-buddy-datum.txt (reserv utan värd)', async () => {
+  let saved = null;
+  const realClick = HTMLAnchorElement.prototype.click;
+  HTMLAnchorElement.prototype.click = function () { saved = { href: this.href, name: this.download }; };
+  try { $id('backup-save').click(); await T.until(() => saved, 'ingen nedladdning'); }
+  finally { HTMLAnchorElement.prototype.click = realClick; }
+  T.ok(/^budget-buddy-\d{4}-\d{2}-\d{2}\.txt$/.test(saved.name), 'filnamn ' + saved.name);
+  T.ok(saved.href.startsWith('blob:'), 'blob-länk');
+});
+T.test('backup-fil: läs in fil → bekräftelse → ersätter, med ångra', async () => {
+  $id('export-btn').click();
+  const before = stored();
+  const txt = $id('export-text').value.replace('"Buffert"', '"Buffert fil"');
+  const input = $id('import-file');
+  const dt = new DataTransfer(); dt.items.add(new File([txt], 'vad-som-helst.bin', { type: 'image/png' }));
+  input.files = dt.files;
+  input.dispatchEvent(new Event('change', { bubbles: true }));
+  await T.until(() => $id('import-dialog').open, 'ingen bekräftelsedialog');
+  T.eq(input.value, '', 'filväljaren nollställdes inte');
+  $id('imp-ok').click();
+  await T.until(() => stored().accounts.some((a) => a.name === 'Buffert fil'), 'importen sparades inte');
+  $id('snack-action').click();
+  await T.until(() => JSON.stringify(stored()) === JSON.stringify(before), 'ångra återställde inte');
+});
+T.test('backup-fil: binärfil och fel app avvisas, inget ändras', async () => {
+  const before = localStorage.getItem('bb.data');
+  const input = $id('import-file');
+  for (const [parts, re] of [[[new Uint8Array([0x89, 0x50, 0x4e, 0x47, 0xff])], /teckenkodning/], [['{"app":"follow-diet-tracker","format":1,"data":{}}'], /./]]) {
+    $id('import-error').textContent = '';
+    const dt = new DataTransfer(); dt.items.add(new File(parts, 'x.txt'));
+    input.files = dt.files;
+    input.dispatchEvent(new Event('change', { bubbles: true }));
+    await T.until(() => re.test($id('import-error').textContent), 'fel saknas: ' + re);
+    T.ok(!$id('import-dialog').open, 'dialog öppnades');
+  }
+  T.eq(localStorage.getItem('bb.data'), before);
+});T.test('import med fel text visar fel och ändrar inget', () => {
   const before = localStorage.getItem('bb.data');
   $id('import-text').value = 'inte json';
   $id('import-btn').click();

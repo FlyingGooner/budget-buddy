@@ -97,3 +97,17 @@ T.test('import av konstruerad text: bara giltiga poster, ingen förorening', () 
   T.eq(r.data.accounts[0].currency, 'SEK');
   T.eq(({}).ok, undefined);
 });
+T.test('styr- och riktningstecken tas bort ur namn', () => {
+  const d = loadData({ settings: { people: [{ id: 'p1', name: 'A‮na\u0007' }] }, accounts: [] });
+  T.eq(d.settings.people[0].name, 'Ana');
+});
+T.test('export är kompakt (en rad) och gammal indragen export går att importera', () => {
+  const txt = exportText(emptyData(), '2026-11-09');
+  T.ok(!txt.includes('\n'), 'exporten har radbrytningar');
+  T.eq(importText(JSON.stringify(JSON.parse(txt), null, 1)).data, emptyData());
+});
+T.test('exportdatum visas bara om det är ett datum', () => {
+  const env = (e) => JSON.stringify({ app: 'budget-buddy', format: 1, exported: e, data: {} });
+  T.eq(importText(env('2026-11-09')).exported, '2026-11-09');
+  T.eq(importText(env('2026‮-11-0')).exported, '');
+});

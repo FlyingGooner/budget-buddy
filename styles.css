@@ -249,3 +249,10 @@ dialog { width: min(400px, calc(100vw - 32px)); }
 .help summary { padding: 13px 0; cursor: pointer; font-weight: 500; }
 .help details p { margin: 0 0 8px; font-size: .9375rem; }
 .help img.shot { display: block; width: 100%; max-width: 320px; height: auto; margin: 4px 0 12px; border: 1px solid var(--outline-variant); border-radius: var(--r-md); }
+
+/* Data: backup file (U5) – file buttons first, the text boxes folded under "Visa som text" */
+.btn-file { position: relative; display: inline-flex; align-items: center; justify-content: center; }
+.btn-file input { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; }
+.btn-file:focus-within { outline: 3px solid var(--primary); outline-offset: 2px; }
+.data-text { margin-top: 8px; }
+.data-text > summary { cursor: pointer; min-height: 40px; padding: 8px 0; color: var(--primary); font-weight: 500; }

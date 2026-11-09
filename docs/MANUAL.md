@@ -40,9 +40,10 @@ Samma text finns i appen under **Inställningar → Hjälp**. Ändras den ena: �
 
 ![Kortet Data: export och import](manual/data.png)
 
-- Under **Data**: tryck **Exportera och markera**, kopiera texten och spara den, t.ex. i en anteckning. Gör det då och då.
-- För att läsa tillbaka: klistra in texten under **Importera**, tryck Importera, kontrollera sammanfattningen och tryck **Ersätt**. All nuvarande data ersätts – **Ångra** finns direkt efteråt.
-- Texten innehåller all din ekonomidata. Klistra bara in den där du litar på mottagaren.
+- Under **Data**: tryck **Spara backup-fil**. Filen heter t.ex. budget-buddy-2026-11-09.txt och hamnar bland hämtade filer (i Claude-appen bekräftar du först). Gör det då och då.
+- För att läsa tillbaka: tryck **Läs in backup-fil** och välj filen, kontrollera sammanfattningen och tryck **Ersätt**. All nuvarande data ersätts – **Ångra** finns direkt efteråt.
+- Går det inte att spara eller välja filen: öppna **Visa som text**. Där finns samma innehåll att kopiera och klistra in.
+- Filen innehåller all din ekonomidata och är okrypterad. Dela den bara med den du litar på och radera gamla filer.
 
 ## Installera och offline
 - **Android (Chrome):** menyn ⋮ → Installera app. **iPhone (Safari):** Dela → Lägg till på hemskärmen.
@@ -50,4 +51,4 @@ Samma text finns i appen under **Inställningar → Hjälp**. Ändras den ena: �
 
 ## Integritet
 - Appen gör inga anrop – ingen server, ingen bankkoppling, ingen analys, inget konto. All data finns bara i den här webbläsaren.
-- Rensar du webbplatsdata försvinner allt. Därför: exportera som backup.
+- Rensar du webbplatsdata försvinner allt. Därför: spara en backup-fil då och då.

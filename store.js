@@ -22,8 +22,8 @@ const EVERY = [1, 2, 3, 12];
 // on RATES_DATE, written here by tools/update-rates.ps1 (run by hand) – the app itself never fetches rates.
 // The user can change them in Inställningar.
 const CURRENCIES = ['SEK', 'USD', 'EUR', 'GBP', 'NOK', 'DKK'];
-const DEFAULT_RATES = { USD: 988, EUR: 1103, GBP: 1322, NOK: 105, DKK: 148 };
-const RATES_DATE = '2026-11-06';
+const DEFAULT_RATES = { USD: 982, EUR: 1100, GBP: 1318, NOK: 104, DKK: 147 };
+const RATES_DATE = '2026-11-09';
 const MAX_RATE = 100000; // 1 000 kr per unit
 const DATE_RE = /^(19|20)\d{2}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])$/;
 const TYPES = ['income', 'expense'];
@@ -35,7 +35,9 @@ const ID_RE = /^[A-Za-z0-9_-]{1,40}$/;
 const isMonth = (v) => typeof v === 'string' && MONTH_RE.test(v);
 const isId = (v) => typeof v === 'string' && ID_RE.test(v) && v !== '__proto__';
 const isAmount = (v) => Number.isInteger(v) && v >= 0 && v <= MAX_AMOUNT;
-const cleanName = (v, max = 60) => (typeof v === 'string' ? v.trim().slice(0, max) : '');
+// Control and text-direction characters are dropped from names (misleading display, U5).
+const CTRL_RE = /[\u0000-\u0009\u000B-\u001F\u007F-\u009F\u061C\u200E\u200F\u2028\u2029\u202A-\u202E\u2066-\u2069]/g;
+const cleanName = (v, max = 60) => (typeof v === 'string' ? v.replace(CTRL_RE, '').trim().slice(0, max) : '');
 
 // Categories are typed: income categories for income, expense categories for costs.
 // 'other' (expense) and 'income-other' (income) always exist – fallbacks when a category is missing.
@@ -231,7 +233,7 @@ function unpackData(p) {
 }
 
 function exportText(d, today) {
-  return JSON.stringify({ app: EXPORT_APP, format: EXPORT_FORMAT, exported: today, data: packData(d) }, null, 1);
+  return JSON.stringify({ app: EXPORT_APP, format: EXPORT_FORMAT, exported: today, data: packData(d) });   // compact: the file and the text box hold the same text
 }
 
 // Text → { data, counts, skipped } or { error }. Nothing is saved here; the caller confirms first.
@@ -248,7 +250,7 @@ function importText(text) {
   const n = (k) => data[k].length;
   const inCount = raw.recurring.length + raw.oneOffs.length + raw.accounts.length;
   return { data, counts: { recurring: n('recurring'), oneOffs: n('oneOffs'), accounts: n('accounts') },
-    skipped: Math.max(0, inCount - n('recurring') - n('oneOffs') - n('accounts')), exported: typeof env.exported === 'string' ? env.exported.slice(0, 10) : '' };
+    skipped: Math.max(0, inCount - n('recurring') - n('oneOffs') - n('accounts')), exported: typeof env.exported === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(env.exported) ? env.exported : '' };
 }
 
 // ---------- Month maths ----------

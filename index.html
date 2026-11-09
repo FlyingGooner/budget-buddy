@@ -142,15 +142,16 @@
           <p>Appen har ungefärliga kurser från ECB inbyggda (datumet står i kortet). Du kan skriva in egna kurser och trycka Spara; Använd appens kurser återställer.</p></details>
         <details><summary>Backup och flytt</summary>
           <img class="shot" src="docs/manual/data.png" alt="Kortet Data: export och import" width="390" loading="lazy">
-          <p>Under Data: tryck Exportera och markera, kopiera texten och spara den, t.ex. i en anteckning. Gör det då och då.</p>
-          <p>För att läsa tillbaka: klistra in texten under Importera, tryck Importera, kontrollera sammanfattningen och tryck Ersätt. All nuvarande data ersätts – Ångra finns direkt efteråt.</p>
-          <p>Texten innehåller all din ekonomidata. Klistra bara in den där du litar på mottagaren.</p></details>
+          <p>Under Data: tryck Spara backup-fil. Filen heter t.ex. budget-buddy-2026-11-09.txt och hamnar bland hämtade filer (i Claude-appen bekräftar du först). Gör det då och då.</p>
+          <p>För att läsa tillbaka: tryck Läs in backup-fil och välj filen, kontrollera sammanfattningen och tryck Ersätt. All nuvarande data ersätts – Ångra finns direkt efteråt.</p>
+          <p>Går det inte att spara eller välja filen: öppna Visa som text. Där finns samma innehåll att kopiera och klistra in.</p>
+          <p>Filen innehåller all din ekonomidata och är okrypterad. Dela den bara med den du litar på och radera gamla filer.</p></details>
         <details><summary>Installera och offline</summary>
           <p>Android (Chrome): menyn ⋮ → Installera app. iPhone (Safari): Dela → Lägg till på hemskärmen.</p>
           <p>Installerad fungerar appen helt utan nät. Nya versioner hämtas automatiskt.</p></details>
         <details><summary>Integritet</summary>
           <p>Appen gör inga anrop – ingen server, ingen bankkoppling, ingen analys, inget konto. All data finns bara i den här webbläsaren.</p>
-          <p>Rensar du webbplatsdata försvinner allt. Därför: exportera som backup.</p></details>
+          <p>Rensar du webbplatsdata försvinner allt. Därför: spara en backup-fil då och då.</p></details>
       </div>
       <div class="card">
         <h2>Startsaldo</h2>
@@ -203,16 +204,23 @@
       </div>
       <div class="card" id="data-card">
         <h2>Data</h2>
-        <p class="muted">Backup och flytt till en annan enhet: exportera, kopiera texten och spara den där du vill. Texten innehåller all din data – klistra bara in den där du litar på mottagaren.</p>
-        <label class="field"><span>Export</span><textarea id="export-text" rows="5" readonly placeholder="Tryck Exportera"></textarea></label>
-        <div class="actions"><span class="spacer"></span><button type="button" class="btn tonal" id="export-btn">Exportera och markera</button></div>
-        <label class="field"><span>Importera (ersätter all data)</span><textarea id="import-text" rows="4" autocomplete="off" spellcheck="false" placeholder="Klistra in en exporterad text"></textarea></label>
+        <p class="muted">Backup-filen innehåller all din ekonomidata och ligger okrypterad bland hämtade filer, där den kan synkas till molnet. Dela den bara med den du litar på och radera gamla filer. Läs in filen på en annan enhet för att flytta din data.</p>
+        <div class="actions wrap">
+          <button type="button" class="btn filled" id="backup-save">Spara backup-fil</button>
+          <label class="btn tonal btn-file">Läs in backup-fil<input type="file" id="import-file" accept=".txt,.json"></label>
+        </div>
         <p class="error" id="import-error" role="alert"></p>
-        <div class="actions"><span class="spacer"></span><button type="button" class="btn tonal" id="import-btn">Importera</button></div>
+        <details class="data-text">
+          <summary class="data-text-title">Visa som text</summary>
+          <label class="field"><span>Export</span><textarea id="export-text" rows="5" readonly placeholder="Tryck Exportera"></textarea></label>
+          <div class="actions"><span class="spacer"></span><button type="button" class="btn tonal" id="export-btn">Exportera och markera</button></div>
+          <label class="field"><span>Importera (ersätter all data)</span><textarea id="import-text" rows="4" autocomplete="off" spellcheck="false" placeholder="Klistra in en exporterad text"></textarea></label>
+          <div class="actions"><span class="spacer"></span><button type="button" class="btn tonal" id="import-btn">Importera</button></div>
+        </details>
       </div>
       <div class="card">
         <h2>App</h2>
-        <p class="muted">All data sparas bara i den här webbläsaren och lämnar aldrig enheten av sig själv. Rensas webbplatsdata försvinner allt – exportera då och då som backup.</p>
+        <p class="muted">All data sparas bara i den här webbläsaren och lämnar aldrig enheten av sig själv. Rensas webbplatsdata försvinner allt – spara en backup-fil då och då.</p>
         <div class="actions wrap">
           <button type="button" class="btn filled" id="install" hidden>Installera appen</button>
           <button type="button" class="btn text danger" id="reset">Rensa all data</button>
@@ -321,6 +329,7 @@
 <div id="snackbar" role="status" aria-live="polite" hidden><span id="snack-text"></span><button type="button" class="btn text" id="snack-action"></button></div>
 
 <script src="version.js"></script>
+  <script src="backup.js"></script>
 <script src="store.js"></script>
 <script src="app.js"></script>
 </body>
