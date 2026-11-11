@@ -8,7 +8,7 @@
 
 ### [▶ Öppna appen](https://flyinggooner.github.io/Budget-buddy/)
 
-[📱 Presentation av appen](https://flyinggooner.github.io/Budget-buddy/docs/presentation.html)
+[📱 Presentation av appen](https://flyinggooner.github.io/Budget-buddy/docs/presentation.html) · [🛡️ Små appar, hög nivå](https://flyinggooner.github.io/Budget-buddy/docs/standard.html)
 
 </div>
 
@@ -113,6 +113,7 @@ Ren HTML, CSS och JavaScript – inga ramverk, inga beroenden, inget byggsteg f�
 | `docs/SPEC.md` | Specifikation av funktioner och beteende |
 | `docs/MANUAL.md` | Manualen (samma text som Hjälp i appen) |
 | `docs/presentation.html` | Fristående mobilpresentation av appen |
+| `docs/standard.html` | Små appar, hög nivå – det alla appar har gemensamt (synkas från mallen) |
 | `tools/build-single.ps1` | Bygger testfilen |
 | `tools/tests/` | Enhets- och flödestester (körs i headless Edge) |
 | `tools/update-rates.ps1` | Hämtar ECB-kurser (Frankfurter) till `store.js` – körs automatiskt före varje commit |
