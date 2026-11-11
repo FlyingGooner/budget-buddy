@@ -42,8 +42,8 @@ Samma text finns i appen under **Inställningar → Hjälp**. Ändras den ena: �
 
 - Under **Data**: tryck **Spara backup-fil**. Filen heter t.ex. budget-buddy-2026-11-09.txt och hamnar bland hämtade filer (i Claude-appen bekräftar du först). Gör det då och då.
 - För att läsa tillbaka: tryck **Läs in backup-fil** och välj filen, kontrollera sammanfattningen och tryck **Ersätt**. All nuvarande data ersätts – **Ångra** finns direkt efteråt.
-- Går det inte att spara eller välja filen: öppna **Visa som text**. Där finns samma innehåll att kopiera och klistra in.
-- Filen innehåller all din ekonomidata. Filen krypteras med ett lösenord som du väljer (går att välja bort). Glömmer du lösenordet går filen inte att öppna. Textexporten under Visa som text är alltid okrypterad. Radera gamla filer.
+- Går det inte att välja filen: öppna **Klistra in text** och klistra in filens innehåll.
+- Filen innehåller all din ekonomidata och krypteras alltid med ett lösenord som du väljer. Bocka i **Visa lösenord** om du vill se vad du skriver. Glömmer du lösenordet går filen inte att öppna. Radera gamla filer.
 
 ## Installera och offline
 - **Android (Chrome):** menyn ⋮ → Installera app. **iPhone (Safari):** Dela → Lägg till på hemskärmen.

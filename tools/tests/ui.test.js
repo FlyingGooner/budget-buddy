@@ -19,10 +19,9 @@ T.test('nytt sparkonto via formuläret öppnar saldodialogen', async () => {
   T.ok(a, 'kontot sparades');
   T.eq(Object.values(a.balances)[0], 125050);
 });
-T.test('export → import via kortet Data, med ångra', async () => {
-  $id('export-btn').click();
-  const txt = $id('export-text').value;
-  T.ok(txt.startsWith('{') && !Backup.isEncrypted(txt), 'textexporten är okrypterad');
+T.test('ingen okrypterad export, inklistrad text importeras, med ångra', async () => {
+  T.ok(!$id('export-text') && !$id('export-btn'), 'textexporten finns kvar');
+  const txt = exportText(data, isoToday());   // an old unencrypted backup
   const before = stored();
   $id('import-text').value = txt.replace('"Buffert"', '"Buffert 2"');
   $id('import-btn').click();
@@ -57,13 +56,16 @@ const closeImport = async () => { $id('import-dialog').querySelector('button[val
 T.test('backup-fil: krypterad som standard, budget-buddy-datum.txt', async () => {
   const saved = await catchDownload(async () => {
     $id('backup-save').click();
-    T.ok($id('pw-dialog').open && $id('pw-enc').checked, 'lösenordsdialog, förbockad');
+    T.ok($id('pw-dialog').open && !$id('pw-enc') && /krypterad/.test($id('pw-ok').textContent), 'lösenordsdialog utan val att spara okrypterat');
+    $id('pw-show').click();
+    T.eq([$id('pw-1').type, $id('pw-2').type], ['text', 'text'], 'Visa lösenord');
     $id('pw-1').value = PW; $id('pw-2').value = PW; $id('pw-ok').click();
   });
   T.ok(/^budget-buddy-\d{4}-\d{2}-\d{2}\.txt$/.test(saved.name), 'filnamn ' + saved.name);
   T.ok(saved.href.startsWith('blob:'), 'blob-länk');
   T.ok(saved.text && Backup.isEncrypted(saved.text) && !saved.text.includes('Buffert'), 'filen är krypterad');
   T.eq([$id('pw-1').value, $id('pw-2').value], ['', ''], 'lösenordsfälten töms');
+  T.ok($id('pw-1').type === 'password' && !$id('pw-show').checked, 'dolt igen efter stängning');
   encFile = saved.text;
 });
 T.test('backup-fil: svagt eller olika lösenord sparar inget, Avbryt sparar inget', async () => {
@@ -78,22 +80,13 @@ T.test('backup-fil: svagt eller olika lösenord sparar inget, Avbryt sparar inge
   try { $id('pw-cancel').click(); await T.wait(50); } finally { HTMLAnchorElement.prototype.click = realClick; }
   T.ok(!$id('pw-dialog').open && !clicked, 'avbrutet utan fil');
 });
-T.test('backup-fil: avbockad ger okrypterad fil efter varning', async () => {
-  const saved = await catchDownload(async () => {
-    $id('backup-save').click();
-    $id('pw-enc').checked = false; $id('pw-enc').dispatchEvent(new Event('change'));
-    T.ok(/oskyddad/.test($id('pw-warn').textContent), 'varning');
-    $id('pw-ok').click();
-  });
-  T.ok(saved.text && !Backup.isEncrypted(saved.text) && saved.text.includes('"app":"budget-buddy"'), 'okrypterad exporttext');
-});
 T.test('backup-fil: krypterad fil → lösenord → bekräftelse → ersätter, med ångra', async () => {
   T.ok(encFile, 'krypterad fil från tidigare test');
   const before = stored();
   const input = pickFile([encFile], 'vad-som-helst.bin', 'image/png');
   await T.until(() => $id('pw-dialog').open, 'ingen lösenordsdialog');
   T.eq(input.value, '', 'filväljaren nollställdes inte');
-  T.ok($id('pw-2-row').hidden && $id('pw-enc-row').hidden, 'bara ett fält vid import');
+  T.ok($id('pw-2-row').hidden && !$id('pw-show-row').hidden, 'bara ett fält vid import, Visa lösenord finns');
   $id('pw-1').value = PW; $id('pw-ok').click();
   await T.real(T.until(() => $id('import-dialog').open, 'ingen bekräftelsedialog'));
   $id('imp-ok').click();
@@ -125,8 +118,7 @@ T.test('import: klistrad krypterad text frågar efter lösenord', async () => {
   $id('import-text').value = '';
 });
 T.test('backup-fil: okrypterad gammal fil läses in som förut', async () => {
-  $id('export-btn').click();
-  pickFile([$id('export-text').value]);
+  pickFile([exportText(data, isoToday())]);
   await T.until(() => $id('import-dialog').open, 'ingen bekräftelsedialog');
   T.ok(!$id('pw-dialog').open, 'lösenord krävdes för okrypterad fil');
   await closeImport();

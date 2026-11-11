@@ -141,8 +141,8 @@
           <img class="shot" src="docs/manual/data.png" alt="Kortet Data: export och import" width="390" loading="lazy">
           <p>Under Data: tryck Spara backup-fil. Filen heter t.ex. budget-buddy-2026-11-09.txt och hamnar bland hämtade filer (i Claude-appen bekräftar du först). Gör det då och då.</p>
           <p>För att läsa tillbaka: tryck Läs in backup-fil och välj filen, kontrollera sammanfattningen och tryck Ersätt. All nuvarande data ersätts – Ångra finns direkt efteråt.</p>
-          <p>Går det inte att spara eller välja filen: öppna Visa som text. Där finns samma innehåll att kopiera och klistra in.</p>
-          <p>Filen innehåller all din ekonomidata. Filen krypteras med ett lösenord som du väljer (går att välja bort). Glömmer du lösenordet går filen inte att öppna. Textexporten under Visa som text är alltid okrypterad. Radera gamla filer.</p></details>
+          <p>Går det inte att välja filen: öppna Klistra in text och klistra in filens innehåll.</p>
+          <p>Filen innehåller all din ekonomidata och krypteras alltid med ett lösenord som du väljer. Bocka i Visa lösenord om du vill se vad du skriver. Glömmer du lösenordet går filen inte att öppna. Radera gamla filer.</p></details>
         <details><summary>Installera och offline</summary>
           <p>Android (Chrome): menyn ⋮ → Installera app. iPhone (Safari): Dela → Lägg till på hemskärmen.</p>
           <p>Installerad fungerar appen helt utan nät. Nya versioner hämtas automatiskt.</p></details>
@@ -201,17 +201,15 @@
       </div>
       <div class="card" id="data-card">
         <h2>Data</h2>
-        <p class="muted">Backup-filen innehåller all din ekonomidata och krypteras med ett lösenord du väljer. Glömmer du det går filen inte att öppna. Väljer du bort lösenordet ligger filen oskyddad bland hämtade filer, där den kan synkas till molnet. Radera gamla filer. Läs in filen på en annan enhet för att flytta din data.</p>
+        <p class="muted">Backup-filen innehåller all din ekonomidata och krypteras alltid med ett lösenord du väljer. Glömmer du det går filen inte att öppna. Radera gamla filer. Läs in filen på en annan enhet för att flytta din data.</p>
         <div class="actions wrap">
           <button type="button" class="btn filled" id="backup-save">Spara backup-fil</button>
           <label class="btn tonal btn-file">Läs in backup-fil<input type="file" id="import-file" accept=".txt,.json"></label>
         </div>
         <p class="error" id="import-error" role="alert"></p>
         <details class="data-text">
-          <summary class="data-text-title">Visa som text</summary>
-          <label class="field"><span>Export</span><textarea id="export-text" rows="5" readonly placeholder="Tryck Exportera"></textarea></label>
-          <div class="actions"><span class="spacer"></span><button type="button" class="btn tonal" id="export-btn">Exportera och markera</button></div>
-          <label class="field"><span>Importera (ersätter all data)</span><textarea id="import-text" rows="4" autocomplete="off" spellcheck="false" placeholder="Klistra in en exporterad text"></textarea></label>
+          <summary class="data-text-title">Klistra in text</summary>
+          <label class="field"><span>Importera (ersätter all data)</span><textarea id="import-text" rows="4" autocomplete="off" spellcheck="false" placeholder="Klistra in innehållet i en backup-fil"></textarea></label>
           <div class="actions"><span class="spacer"></span><button type="button" class="btn tonal" id="import-btn">Importera</button></div>
         </details>
         <div class="actions"><button type="button" class="btn text danger" id="reset">Radera all data</button></div>
@@ -315,9 +313,9 @@
   <form method="dialog" novalidate>
     <h2 id="pw-title">Spara backup-fil</h2>
     <p class="muted" id="pw-text"></p>
-    <label class="check" id="pw-enc-row"><input type="checkbox" id="pw-enc" checked> Kryptera med lösenord</label>
-    <label class="field" id="pw-1-row"><span>Lösenord</span><input type="password" id="pw-1" maxlength="200" autocomplete="new-password"></label>
-    <label class="field" id="pw-2-row"><span>Upprepa lösenord</span><input type="password" id="pw-2" maxlength="200" autocomplete="new-password"></label>
+    <label class="field" id="pw-1-row"><span>Lösenord</span><input type="password" id="pw-1" maxlength="200" autocomplete="new-password" autocapitalize="none" autocorrect="off" spellcheck="false"></label>
+    <label class="field" id="pw-2-row"><span>Upprepa lösenord</span><input type="password" id="pw-2" maxlength="200" autocomplete="new-password" autocapitalize="none" autocorrect="off" spellcheck="false"></label>
+    <label class="check" id="pw-show-row"><input type="checkbox" id="pw-show" autocomplete="off"> Visa lösenord</label>
     <p class="muted small" id="pw-hint">Minst 8 tecken med stor och liten bokstav, siffra och specialtecken. Välj inte ett vanligt ord + årtal.</p>
     <p class="muted" id="pw-warn"></p>
     <p class="error" id="pw-error" role="alert"></p>

@@ -1,12 +1,6 @@
 // Budget buddy – Export/import, installation, render och start – laddas sist. Vanligt skript (delar globalt scope med app.js), laddas i ordningen i index.html.
 // ---------- Export/import as text (U5) – nothing is saved before the user confirms ----------
 const isoToday = () => { const t = new Date(); return `${t.getFullYear()}-${String(t.getMonth() + 1).padStart(2, '0')}-${String(t.getDate()).padStart(2, '0')}`; };
-$('export-btn').addEventListener('click', () => {
-  $('export-text').value = exportText(data, isoToday());
-  $('export-text').focus();
-  $('export-text').select();
-  snackbar('Markerat – kopiera texten och spara den', null, null, 4000);
-});
 let pendingImport = null;
 $('import-btn').addEventListener('click', () => openImport($('import-text').value));
 // Encrypted backup (U5, 2026-11-11): an envelope asks for the password, then the same checks as plain text.
@@ -20,8 +14,9 @@ async function openImport(text) {
 const BACKUP_MSG = {
   saved: 'Backup-filen sparades',
   busy: 'Ett sparfönster är redan öppet',
-  fallback: 'Backup-filen laddas ner – syns den inte, använd Visa som text',
-  error: 'Kunde inte spara filen – använd Visa som text',
+  fallback: 'Backup-filen laddas ner',
+  error: 'Kunde inte spara filen',
+  nocrypto: 'Den här webbläsaren kan inte kryptera – ingen fil sparades',
 };
 $('backup-save').addEventListener('click', async () => {
   const r = await Backup.saveWithPassword({ slug: 'budget-buddy', today: isoToday(), text: exportText(data, isoToday()) });
