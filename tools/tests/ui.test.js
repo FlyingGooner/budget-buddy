@@ -22,58 +22,131 @@ T.test('nytt sparkonto via formuläret öppnar saldodialogen', async () => {
 T.test('export → import via kortet Data, med ångra', async () => {
   $id('export-btn').click();
   const txt = $id('export-text').value;
-  T.ok(txt.startsWith('{'), 'exporttext');
+  T.ok(txt.startsWith('{') && !Backup.isEncrypted(txt), 'textexporten är okrypterad');
   const before = stored();
   $id('import-text').value = txt.replace('"Buffert"', '"Buffert 2"');
   $id('import-btn').click();
-  T.ok($id('import-dialog').open, 'bekräftelsedialog');
+  await T.until(() => $id('import-dialog').open, 'bekräftelsedialog');
   T.ok($id('imp-sum').textContent.includes('sparkonton'), 'sammanfattning');
   $id('imp-ok').click();
   await T.until(() => stored().accounts.some((a) => a.name === 'Buffert 2'), 'importen sparades inte');
   $id('snack-action').click();
   await T.until(() => JSON.stringify(stored()) === JSON.stringify(before), 'ångra återställde inte');
 });
-T.test('backup-fil: Spara laddar ner budget-buddy-datum.txt (reserv utan värd)', async () => {
-  let saved = null;
-  const realClick = HTMLAnchorElement.prototype.click;
+// Backup file with password (U5, 2026-11-11). Downloads are caught at <a download> (no host in the test file).
+const PW = 'Bollen2026!';
+const catchDownload = async (fn) => {
+  let saved = null, blob = null;
+  const realClick = HTMLAnchorElement.prototype.click, realUrl = URL.createObjectURL;
   HTMLAnchorElement.prototype.click = function () { saved = { href: this.href, name: this.download }; };
-  try { $id('backup-save').click(); await T.until(() => saved, 'ingen nedladdning'); }
-  finally { HTMLAnchorElement.prototype.click = realClick; }
-  T.ok(/^budget-buddy-\d{4}-\d{2}-\d{2}\.txt$/.test(saved.name), 'filnamn ' + saved.name);
-  T.ok(saved.href.startsWith('blob:'), 'blob-länk');
-});
-T.test('backup-fil: läs in fil → bekräftelse → ersätter, med ångra', async () => {
-  $id('export-btn').click();
-  const before = stored();
-  const txt = $id('export-text').value.replace('"Buffert"', '"Buffert fil"');
+  URL.createObjectURL = (b) => { blob = b; return realUrl.call(URL, b); };   // read the Blob itself: fetch(blob:) is blocked by connect-src
+  try { await fn(); await T.real(T.until(() => saved, 'ingen nedladdning')); }
+  finally { HTMLAnchorElement.prototype.click = realClick; URL.createObjectURL = realUrl; }
+  saved.text = blob ? await blob.text() : null;
+  return saved;
+};
+const pickFile = (parts, name = 'x.txt', type = 'text/plain') => {
   const input = $id('import-file');
-  const dt = new DataTransfer(); dt.items.add(new File([txt], 'vad-som-helst.bin', { type: 'image/png' }));
+  const dt = new DataTransfer(); dt.items.add(new File(parts, name, { type }));
   input.files = dt.files;
   input.dispatchEvent(new Event('change', { bubbles: true }));
-  await T.until(() => $id('import-dialog').open, 'ingen bekräftelsedialog');
+  return input;
+};
+let encFile = null;
+const closeImport = async () => { $id('import-dialog').querySelector('button[value="cancel"]').click(); await T.until(() => !$id('import-dialog').open, 'importdialogen stängdes inte'); await T.wait(50); };
+T.test('backup-fil: krypterad som standard, budget-buddy-datum.txt', async () => {
+  const saved = await catchDownload(async () => {
+    $id('backup-save').click();
+    T.ok($id('pw-dialog').open && $id('pw-enc').checked, 'lösenordsdialog, förbockad');
+    $id('pw-1').value = PW; $id('pw-2').value = PW; $id('pw-ok').click();
+  });
+  T.ok(/^budget-buddy-\d{4}-\d{2}-\d{2}\.txt$/.test(saved.name), 'filnamn ' + saved.name);
+  T.ok(saved.href.startsWith('blob:'), 'blob-länk');
+  T.ok(saved.text && Backup.isEncrypted(saved.text) && !saved.text.includes('Buffert'), 'filen är krypterad');
+  T.eq([$id('pw-1').value, $id('pw-2').value], ['', ''], 'lösenordsfälten töms');
+  encFile = saved.text;
+});
+T.test('backup-fil: svagt eller olika lösenord sparar inget, Avbryt sparar inget', async () => {
+  $id('backup-save').click();
+  for (const [a, b] of [['bollen2026!', 'bollen2026!'], [PW, PW + 'x']]) {
+    $id('pw-1').value = a; $id('pw-2').value = b; $id('pw-ok').click();
+    T.ok($id('pw-dialog').open && $id('pw-error').textContent, 'fel visas, dialogen öppen');
+  }
+  let clicked = false;
+  const realClick = HTMLAnchorElement.prototype.click;
+  HTMLAnchorElement.prototype.click = function () { clicked = true; };
+  try { $id('pw-cancel').click(); await T.wait(50); } finally { HTMLAnchorElement.prototype.click = realClick; }
+  T.ok(!$id('pw-dialog').open && !clicked, 'avbrutet utan fil');
+});
+T.test('backup-fil: avbockad ger okrypterad fil efter varning', async () => {
+  const saved = await catchDownload(async () => {
+    $id('backup-save').click();
+    $id('pw-enc').checked = false; $id('pw-enc').dispatchEvent(new Event('change'));
+    T.ok(/oskyddad/.test($id('pw-warn').textContent), 'varning');
+    $id('pw-ok').click();
+  });
+  T.ok(saved.text && !Backup.isEncrypted(saved.text) && saved.text.includes('"app":"budget-buddy"'), 'okrypterad exporttext');
+});
+T.test('backup-fil: krypterad fil → lösenord → bekräftelse → ersätter, med ångra', async () => {
+  T.ok(encFile, 'krypterad fil från tidigare test');
+  const before = stored();
+  const input = pickFile([encFile], 'vad-som-helst.bin', 'image/png');
+  await T.until(() => $id('pw-dialog').open, 'ingen lösenordsdialog');
   T.eq(input.value, '', 'filväljaren nollställdes inte');
+  T.ok($id('pw-2-row').hidden && $id('pw-enc-row').hidden, 'bara ett fält vid import');
+  $id('pw-1').value = PW; $id('pw-ok').click();
+  await T.real(T.until(() => $id('import-dialog').open, 'ingen bekräftelsedialog'));
   $id('imp-ok').click();
-  await T.until(() => stored().accounts.some((a) => a.name === 'Buffert fil'), 'importen sparades inte');
-  $id('snack-action').click();
-  await T.until(() => JSON.stringify(stored()) === JSON.stringify(before), 'ångra återställde inte');
+  await T.until(() => JSON.stringify(stored()) === JSON.stringify(before), 'importen ändrade datan');
+  T.ok(document.querySelector('#snackbar:not([hidden])'), 'ångra-snackbar');
+});
+T.test('backup-fil: fel lösenord ändrar inget, Avbryt ändrar inget', async () => {
+  const before = localStorage.getItem('bb.data');
+  $id('import-error').textContent = '';
+  pickFile([encFile]);
+  await T.until(() => $id('pw-dialog').open, 'ingen lösenordsdialog');
+  $id('pw-1').value = 'Fel2026!x'; $id('pw-ok').click();
+  await T.real(T.until(() => /Fel lösenord eller skadad fil/.test($id('import-error').textContent), 'felmeddelande saknas'));
+  T.ok(!$id('import-dialog').open, 'dialog öppnades');
+  pickFile([encFile]);
+  await T.until(() => $id('pw-dialog').open, 'ingen lösenordsdialog');
+  $id('pw-cancel').click();
+  await T.wait(50);
+  T.ok(!$id('import-dialog').open, 'dialog öppnades efter Avbryt');
+  T.eq(localStorage.getItem('bb.data'), before);
+});
+T.test('import: klistrad krypterad text frågar efter lösenord', async () => {
+  $id('import-text').value = encFile;
+  $id('import-btn').click();
+  await T.until(() => $id('pw-dialog').open, 'ingen lösenordsdialog');
+  $id('pw-1').value = PW; $id('pw-ok').click();
+  await T.real(T.until(() => $id('import-dialog').open, 'ingen bekräftelsedialog'));
+  await closeImport();
+  $id('import-text').value = '';
+});
+T.test('backup-fil: okrypterad gammal fil läses in som förut', async () => {
+  $id('export-btn').click();
+  pickFile([$id('export-text').value]);
+  await T.until(() => $id('import-dialog').open, 'ingen bekräftelsedialog');
+  T.ok(!$id('pw-dialog').open, 'lösenord krävdes för okrypterad fil');
+  await closeImport();
 });
 T.test('backup-fil: binärfil och fel app avvisas, inget ändras', async () => {
   const before = localStorage.getItem('bb.data');
-  const input = $id('import-file');
   for (const [parts, re] of [[[new Uint8Array([0x89, 0x50, 0x4e, 0x47, 0xff])], /teckenkodning/], [['{"app":"follow-diet-tracker","format":1,"data":{}}'], /./]]) {
     $id('import-error').textContent = '';
-    const dt = new DataTransfer(); dt.items.add(new File(parts, 'x.txt'));
-    input.files = dt.files;
-    input.dispatchEvent(new Event('change', { bubbles: true }));
-    await T.until(() => re.test($id('import-error').textContent), 'fel saknas: ' + re);
-    T.ok(!$id('import-dialog').open, 'dialog öppnades');
+    pickFile(parts);
+    await T.until(() => re.test($id('import-error').textContent), 'fel saknas: ' + re).catch((e) => { throw new Error(e.message + ' text=' + $id('import-error').textContent + ' dlg=' + [...document.querySelectorAll('dialog[open]')].map((d) => d.id)); });
+    T.ok(!$id('import-dialog').open, 'dialog öppnades ' + re + ' text=' + $id('import-error').textContent + ' sum=' + $id('imp-sum').textContent);
   }
   T.eq(localStorage.getItem('bb.data'), before);
-});T.test('import med fel text visar fel och ändrar inget', () => {
+});
+T.test('import med fel text visar fel och ändrar inget', async () => {
   const before = localStorage.getItem('bb.data');
+  $id('import-error').textContent = '';
   $id('import-text').value = 'inte json';
   $id('import-btn').click();
-  T.ok($id('import-error').textContent.length > 0, 'felmeddelande');
+  await T.until(() => $id('import-error').textContent.length > 0, 'felmeddelande');
   T.ok(!$id('import-dialog').open, 'ingen dialog');
   T.eq(localStorage.getItem('bb.data'), before);
 });
