@@ -64,6 +64,24 @@ De flesta budgetappar vill att du loggar varje köp. Budget buddy gör tvärtom:
 
 > **Ärligt om gränserna:** datan i telefonen skyddas av telefonens eget lås, inte av en egen kryptering – lås telefonen. Ett glömt lösenord går inte att återställa, och ett svagt lösenord kan gissas, så välj ett långt. Rensar du webbplatsdata försvinner allt, så spara en backup-fil då och då (Inställningar → Data).
 
+### Säkerhetstestad ✅
+
+Automatiska tester körs före varje ny version och varje uppladdning. Underkänt test = ingen release.
+
+**Säkerhetskontroll**
+- [x] **Bara appens egen kod körs** – webbläsaren blockerar allt annat.
+- [x] **Inget lämnar telefonen** – appen pratar aldrig med någon server; även valutakurserna är inbyggda.
+- [x] **Din data stannar hos dig** – sparas bara i telefonen; appen rör bara sina egna uppgifter.
+- [x] **Fungerar utan nät** – med bara appens egna filer.
+- [x] **Låst backup** – bara ditt lösenord öppnar filen. Lösenordet sparas aldrig.
+
+**Funktionstester**
+- [x] **Trasiga filer stoppas** – en backup från fel app, eller som någon ändrat i, läses inte in.
+- [x] **Inget innehåll kan bli kod** – allt visas som vanlig text.
+- [x] **Backup tur och retur** – ger identisk data; Radera tömmer bara appens egna data.
+- [x] **Rätt summor** – allt räknas i hela ören.
+
+
 ## Installera på mobilen
 
 **Android (Chrome)**
