@@ -1,4 +1,4 @@
-﻿<!doctype html>
+<!doctype html>
 <html lang="sv">
 <head>
 <meta charset="utf-8">
@@ -17,7 +17,7 @@
 <main class="deck" id="deck">
 
   <section class="band"><div class="slide">
-    <div class="hero-top"><img class="icon" src="../icons/icon-192.png" alt=""><span class="ver">v0.3.1</span></div>
+    <div class="hero-top"><img class="icon" src="../icons/icon-192.png" alt=""><span class="ver">v0.12.0</span></div>
     <span class="eyebrow">Din månadsbudget</span>
     <h1>Budget buddy</h1>
     <p class="lead">Planera ekonomin månad för månad – inkomster, räkningar och det oväntade.</p>
@@ -37,6 +37,7 @@
       <div class="feat"><div class="k" aria-hidden="true">↻</div><div><h3>Fasta poster</h3><p>Lön och räkningar en gång – varje månad, kvartal eller år.</p></div></div>
       <div class="feat"><div class="k" aria-hidden="true">±</div><div><h3>Avvikelser</h3><p>Det oväntade läggs på den månad det hör till.</p></div></div>
       <div class="feat"><div class="k" aria-hidden="true">↗</div><div><h3>12 månader framåt</h3><p>Saldot efter varje månad, så du ser om det går ihop.</p></div></div>
+      <div class="feat"><div class="k" aria-hidden="true">⚿</div><div><h3>Krypterad backup</h3><p>Spara allt som en fil som bara ditt lösenord öppnar.</p></div></div>
       <div class="feat"><div class="k" aria-hidden="true">⇩</div><div><h3>Offline</h3><p>Fungerar utan nät efter första besöket.</p></div></div>
       <div class="feat"><div class="k" aria-hidden="true">◐</div><div><h3>Ljust och mörkt</h3><p>Följer telefonens inställning.</p></div></div>
     </div>
@@ -53,9 +54,20 @@
     </div>
   </div></section>
 
+  <section><div class="slide">
+    <span class="eyebrow">Din data</span>
+    <h2>Skyddad på riktigt</h2>
+    <p class="lead">Vanliga budgetappar sparar datan på företagets servrar bakom ett konto. Här finns den bara i din telefon – och i backup-filer som bara ditt lösenord öppnar.</p>
+    <div class="facts">
+      <div class="fact"><b>AES-256</b><span>krypterar varje backup-fil med ditt lösenord.</span></div>
+      <div class="fact"><b>600 000</b><span>PBKDF2-varv – OWASP:s rekommendation.</span></div>
+      <div class="fact"><b>0</b><span>servrar som har din data.</span></div>
+      <div class="fact"><b>0</b><span>konton som kan läcka.</span></div>
+    </div>
+  </div></section>
+
   <section class="band"><div class="slide">
-    <span class="eyebrow">Kom igång</span>
-    <h2>Installera på 30 sekunder</h2>
+    <span class="eyebrow">Kom igång</span>    <h2>Installera på 30 sekunder</h2>
     <ol class="steps">
       <li><span>Öppna adressen i Chrome på mobilen:<br><span class="url">flyinggooner.github.io/Budget-buddy</span></span></li>
       <li><span>Tryck på ⋮ och välj <b>Installera app</b>. På iPhone: Dela → <b>Lägg till på hemskärmen</b>.</span></li>

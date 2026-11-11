@@ -1,4 +1,4 @@
-﻿<div align="center">
+<div align="center">
 
 <img src="icons/icon-192.png" width="88" alt="Budget buddy-ikon">
 
@@ -41,17 +41,28 @@ De flesta budgetappar vill att du loggar varje köp. Budget buddy gör tvärtom:
 | 🏦 **Sparkonton** | Fyll i saldot på dina sparkonton varje månad och se förändringen – även i utländsk valuta, omräknat till kronor. |
 | 👥 **Personer** | Valfritt: vem en post hör till, eller Gemensamt, med en tabell per person. |
 | ↩️ **Ångra** | Borttagna poster kan ångras i några sekunder. |
-| 💾 **Backup** | Spara all data som en fil och läs in den igen – på samma eller en annan enhet. |
+| 💾 **Backup** | Spara all data som en lösenordskrypterad fil och läs in den igen – på samma eller en annan enhet. |
 | ❓ **Hjälp** | Manual med bilder direkt i appen. |
 | 📴 **Offline** | Fungerar utan nät efter första besöket. |
 | 🌗 **Tema** | Ljust och mörkt, följer telefonens inställning. |
 
-## Integritet 🔒
+## Integritet och säkerhet 🔒
 
 - **Inget konto, inga cookies.** Allt sparas bara i din webbläsare (`localStorage`).
 - **Inget utifrån.** Ingen analys, inga annonser, inga typsnitt eller skript utifrån – spärras även tekniskt med en Content Security Policy. Även valutakurserna är inbyggda i appen; den hämtar aldrig något.
+- **Krypterad backup.** Backup-filen krypteras alltid med ett lösenord du väljer: AES-GCM 256 bitar, och nyckeln tas fram med PBKDF2-SHA256 och 600 000 iterationer – den nivå OWASP rekommenderar och samma som förvalet i lösenordshanteraren Bitwarden. Nytt salt och ny IV varje gång, och en fil som ändrats går inte att läsa in. Bara webbläsarens inbyggda krypto används, inga bibliotek utifrån.
 
-> Rensar du webbplatsdata försvinner allt. Spara därför en backup-fil då och då (Inställningar → Data). Filen är okrypterad, så dela den bara med den du litar på.
+### Jämfört med vanliga budgetappar
+
+| | Den här appen | Vanliga budgetappar |
+|---|---|---|
+| Konto | Inget | Krävs, ofta med e-post |
+| Var datan finns | Bara i din telefon | På företagets servrar |
+| Analys, annonser, spårare | Inga – spärrat tekniskt | Vanligt |
+| Backup | Krypterad fil som bara ditt lösenord öppnar | I företagets moln |
+| Om tjänsten läggs ner | Appen och datan finns kvar | Datan kan försvinna |
+
+> **Ärligt om gränserna:** datan i telefonen skyddas av telefonens eget lås, inte av en egen kryptering – lås telefonen. Ett glömt lösenord går inte att återställa, och ett svagt lösenord kan gissas, så välj ett långt. Rensar du webbplatsdata försvinner allt, så spara en backup-fil då och då (Inställningar → Data).
 
 ## Installera på mobilen
 
