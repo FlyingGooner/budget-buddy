@@ -142,7 +142,7 @@
           <p>Under Data: tryck Spara backup-fil. Filen heter t.ex. budget-buddy-2026-11-09.txt och hamnar bland hämtade filer (i Claude-appen bekräftar du först). Gör det då och då.</p>
           <p>För att läsa tillbaka: tryck Läs in backup-fil och välj filen, kontrollera sammanfattningen och tryck Ersätt. All nuvarande data ersätts – Ångra finns direkt efteråt.</p>
           <p>Går det inte att välja filen: öppna Klistra in text och klistra in filens innehåll.</p>
-          <p>Filen innehåller all din ekonomidata och krypteras alltid med ett lösenord som du väljer. Bocka i Visa lösenord om du vill se vad du skriver. Glömmer du lösenordet går filen inte att öppna. Radera gamla filer.</p></details>
+          <p>Filen innehåller all din ekonomidata och krypteras alltid med ett lösenord som du väljer. Bocka i Visa lösenord om du vill se vad du skriver. Skapa slumpmässigt lösenord fyller i ett starkt lösenord som du kan kopiera – spara det i en lösenordshanterare. Glömmer du lösenordet går filen inte att öppna. Radera gamla filer.</p></details>
         <details><summary>Installera och offline</summary>
           <p>Android (Chrome): menyn ⋮ → Installera app. iPhone (Safari): Dela → Lägg till på hemskärmen.</p>
           <p>Installerad fungerar appen helt utan nät. Nya versioner hämtas automatiskt.</p></details>
@@ -313,9 +313,13 @@
   <form method="dialog" novalidate>
     <h2 id="pw-title">Spara backup-fil</h2>
     <p class="muted" id="pw-text"></p>
-    <label class="field" id="pw-1-row"><span>Lösenord</span><input type="password" id="pw-1" maxlength="200" autocomplete="new-password" autocapitalize="none" autocorrect="off" spellcheck="false"></label>
-    <label class="field" id="pw-2-row"><span>Upprepa lösenord</span><input type="password" id="pw-2" maxlength="200" autocomplete="new-password" autocapitalize="none" autocorrect="off" spellcheck="false"></label>
+    <input type="text" id="pw-user" name="username" autocomplete="username" value="Budget buddy backup" readonly tabindex="-1" aria-hidden="true" class="sr-only">
+    <label class="field" id="pw-1-row"><span>Lösenord</span><input type="password" id="pw-1" name="password" maxlength="200" autocomplete="new-password" autocapitalize="none" autocorrect="off" spellcheck="false"></label>
+    <label class="field" id="pw-2-row"><span>Upprepa lösenord</span><input type="password" id="pw-2" name="confirm-password" maxlength="200" autocomplete="new-password" autocapitalize="none" autocorrect="off" spellcheck="false"></label>
     <label class="check" id="pw-show-row"><input type="checkbox" id="pw-show" autocomplete="off"> Visa lösenord</label>
+    <div class="pw-preview-row"><p class="pw-preview" id="pw-preview" aria-hidden="true" hidden></p><button type="button" class="btn text" id="pw-copy" hidden>Kopiera</button></div>
+    <button type="button" class="btn text" id="pw-gen">Skapa slumpmässigt lösenord</button>
+    <p class="muted small" id="pw-note" role="status"></p>
     <p class="muted small" id="pw-hint">Minst 8 tecken med stor och liten bokstav, siffra och specialtecken. Välj inte ett vanligt ord + årtal.</p>
     <p class="muted" id="pw-warn"></p>
     <p class="error" id="pw-error" role="alert"></p>

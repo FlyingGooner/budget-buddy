@@ -223,3 +223,10 @@ dialog { width: min(400px, calc(100vw - 32px)); }
 .data-text { margin-top: 8px; }
 .data-text > summary { cursor: pointer; min-height: 40px; padding: 8px 0; color: var(--primary); font-weight: 500; }.check { display: flex; align-items: center; gap: 12px; min-height: 48px; margin: 4px 0; font-size: 1rem; color: var(--on-surface); cursor: pointer; }
 .check input { width: 20px; height: 20px; margin: 0; accent-color: var(--primary); }
+
+/* Lösenordsgenerator (som simple-nutrition) */
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+.pw-preview-row { display: flex; align-items: center; gap: 8px; }
+.pw-preview { flex: 1; margin: 0; font-family: ui-monospace, Consolas, monospace; font-variant-numeric: slashed-zero; font-size: 1.05rem; letter-spacing: .04em; overflow-wrap: anywhere; }
+.pw-digit { color: var(--primary); font-weight: 700; }
+.pw-special { color: var(--error); font-weight: 700; }
