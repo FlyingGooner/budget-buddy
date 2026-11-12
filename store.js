@@ -22,8 +22,8 @@ const EVERY = [1, 2, 3, 12];
 // on RATES_DATE, written here by tools/update-rates.ps1 (run by hand) – the app itself never fetches rates.
 // The user can change them in Inställningar.
 const CURRENCIES = ['SEK', 'USD', 'EUR', 'GBP', 'NOK', 'DKK'];
-const DEFAULT_RATES = { USD: 993, EUR: 1105, GBP: 1322, NOK: 104, DKK: 148 };
-const RATES_DATE = '2026-11-11';
+const DEFAULT_RATES = { USD: 998, EUR: 1106, GBP: 1323, NOK: 105, DKK: 148 };
+const RATES_DATE = '2026-11-12';
 const MAX_RATE = 100000; // 1 000 kr per unit
 const DATE_RE = /^(19|20)\d{2}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])$/;
 const TYPES = ['income', 'expense'];

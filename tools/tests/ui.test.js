@@ -99,8 +99,10 @@ T.test('backup-fil: fel lösenord ändrar inget, Avbryt ändrar inget', async ()
   pickFile([encFile]);
   await T.until(() => $id('pw-dialog').open, 'ingen lösenordsdialog');
   $id('pw-1').value = 'Fel2026!x'; $id('pw-ok').click();
-  await T.real(T.until(() => /Fel lösenord eller skadad fil/.test($id('import-error').textContent), 'felmeddelande saknas'));
-  T.ok(!$id('import-dialog').open, 'dialog öppnades');
+  await T.real(T.until(() => /Fel lösenord eller skadad fil/.test($id('pw-error').textContent), 'felmeddelande saknas i dialogen'));
+  T.ok($id('pw-dialog').open && !$id('import-dialog').open, 'dialogen står kvar för nytt försök');
+  $id('pw-cancel').click();
+  await T.wait(50);
   pickFile([encFile]);
   await T.until(() => $id('pw-dialog').open, 'ingen lösenordsdialog');
   $id('pw-cancel').click();
