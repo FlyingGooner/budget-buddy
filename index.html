@@ -142,7 +142,8 @@
           <p>Under Data: tryck Spara backup-fil. Filen heter t.ex. budget-buddy-2026-11-09.txt och hamnar bland hämtade filer (i Claude-appen bekräftar du först). Gör det då och då.</p>
           <p>För att läsa tillbaka: tryck Läs in backup-fil och välj filen, kontrollera sammanfattningen och tryck Ersätt. All nuvarande data ersätts – Ångra finns direkt efteråt.</p>
           <p>Går det inte att välja filen: öppna Klistra in text och klistra in filens innehåll.</p>
-          <p>Filen innehåller all din ekonomidata och krypteras alltid med ett lösenord som du väljer. Bocka i Visa lösenord om du vill se vad du skriver. Skapa slumpmässigt lösenord fyller i ett starkt lösenord som du kan kopiera – spara det i en lösenordshanterare. Glömmer du lösenordet går filen inte att öppna. Radera gamla filer.</p></details>
+          <p>Filen innehåller all din ekonomidata och krypteras alltid med ett lösenord som du väljer. Bocka i Visa lösenord om du vill se vad du skriver. Skapa slumpmässigt lösenord fyller i ett starkt lösenord som du kan kopiera – spara det i en lösenordshanterare. Glömmer du lösenordet går filen inte att öppna. Radera gamla filer.</p>
+          <p>Backup-lösenordet sparas på enheten första gången du skriver det (när du sparar eller läser in en backup). Sedan sparas backup med ett tryck, utan fråga. Lösenordet ligger bara på den här enheten, aldrig i backup-filen, och filen är lika krypterad som förut. Under Inställningar → Data kan du Visa och Byta lösenordet, eller bocka ur Kom ihåg backup-lösenordet – då glöms det och appen frågar varje gång. Behåll lösenordet i din lösenordshanterare – utan det går backupen inte att öppna på en ny telefon.</p></details>
         <details><summary>Bakåt</summary><p>Telefonens bakåtknapp går tillbaka genom flikarna du besökt. Appen stängs först i fliken du började i. Öppna dialoger stängs först.</p></details>
         <details><summary>Installera och offline</summary>
           <p>Android (Chrome): menyn ⋮ → Installera app. iPhone (Safari): Dela → Lägg till på hemskärmen.</p>
@@ -207,6 +208,7 @@
           <button type="button" class="btn filled" id="backup-save">Spara backup-fil</button>
           <label class="btn tonal btn-file">Läs in backup-fil<input type="file" id="import-file" accept=".txt,.json"></label>
         </div>
+        <div class="pwd-box" id="pwd-box"></div>
         <p class="error" id="import-error" role="alert"></p>
         <details class="data-text">
           <summary class="data-text-title">Klistra in text</summary>

@@ -4,8 +4,81 @@ const isoToday = () => { const t = new Date(); return `${t.getFullYear()}-${Stri
 let pendingImport = null;
 $('import-btn').addEventListener('click', () => openImport($('import-text').value));
 // Encrypted backup (U5, 2026-11-11): an envelope asks for the password, then the same checks as plain text.
+// ---------- Remembered backup password (U5) ----------
+// On by default: the password typed in the backup dialog (save or read) is kept under bb.pwd, so the next backup is one
+// tap. Only on this device – never in the app data, so never inside a backup file; the file is as encrypted as before.
+// Unticked (bb.pwdoff = 1): forgotten, and the app asks every time. Radera all data removes both keys.
+const PWD_KEY = 'bb.pwd', OFF_KEY = 'bb.pwdoff';
+let showPwd = false, pwdBusy = false;
+function savedPassword() { try { const p = localStorage.getItem(PWD_KEY); return p && !Backup.checkPassword(p) ? p : ''; } catch { return ''; } }
+function rememberOn() { try { return localStorage.getItem(OFF_KEY) !== '1'; } catch { return false; } }
+function setRemember(on) {
+  showPwd = false;
+  try { if (on) localStorage.removeItem(OFF_KEY); else { localStorage.setItem(OFF_KEY, '1'); localStorage.removeItem(PWD_KEY); } } catch { /* blocked */ }
+  renderPwd();
+}
+function keep(pwd) {
+  if (!rememberOn() || Backup.checkPassword(pwd)) return;
+  try { localStorage.setItem(PWD_KEY, pwd); } catch { /* no room: asks next time */ }
+}
+function forgetPassword() { showPwd = false; try { localStorage.removeItem(PWD_KEY); localStorage.removeItem(OFF_KEY); } catch { /* blocked */ } renderPwd(); }
+async function rememberPassword() {
+  const a = await Backup.askPassword('export'); if (!a) return;
+  try { localStorage.setItem(PWD_KEY, a.pwd); } catch { snackbar('Kunde inte spara lösenordet', null, null, 3000); return; }
+  renderPwd(); snackbar('Lösenordet sparas på den här enheten. Ha det kvar i din lösenordshanterare också.', null, null, 6000);
+}
+// Returns the Backup.save result ('saved', 'fallback', 'cancelled', …); null on a double tap.
+async function saveBackupFile(slug, today, getText) {
+  const pwd = savedPassword();
+  if (!pwd && !rememberOn()) return Backup.saveWithPassword({ slug, today, text: getText() });
+  if (pwdBusy) return null;
+  pwdBusy = true;
+  try {
+    if (pwd) {   // one tap: encrypt with the remembered password, no dialog
+      snackbar('Krypterar backup…', null, null, 2000);
+      return await Backup.save({ slug, today, text: await Backup.encrypt(getText(), pwd, slug) });
+    }
+    // First time: the usual dialog, then the password is kept.
+    const a = await Backup.askPassword('export', async (p) => ({ env: await Backup.encrypt(getText(), p, slug) }));
+    if (!a) return 'cancelled';
+    keep(a.pwd); renderPwd();
+    const r = await Backup.save({ slug, today, text: a.value.env });
+    if (r === 'saved' || r === 'fallback') { snackbar('Backup sparad. Lösenordet är sparat på enheten – nästa gång räcker ett tryck.', null, null, 5000); return 'first'; }
+    return r;
+  } catch { return 'error'; } finally { pwdBusy = false; }
+}
+// The remembered password first; another password → the usual question. Returns { text } | { error } | { cancelled }.
+async function openBackupText(text, slug) {
+  const pwd = savedPassword();
+  if (pwd && Backup.isEncrypted(text)) {
+    let t; try { t = await Backup.decrypt(text, pwd, slug, MAX_IMPORT_CHARS); } catch { t = null; }
+    if (t && typeof t.text === 'string') return t;
+  }
+  if (rememberOn() && Backup.isEncrypted(text)) {   // ask, and keep the password that opened the file (a new phone)
+    const a = await Backup.askPassword('import', (p) => Backup.decrypt(text, p, slug, MAX_IMPORT_CHARS));
+    if (!a) return { cancelled: true };
+    if (a.value?.error) return { error: a.value.error };
+    keep(a.pwd); renderPwd(); return { text: a.value.text };
+  }
+  return Backup.openText(text, slug, MAX_IMPORT_CHARS);
+}
+function renderPwd() {
+  const box = $('pwd-box'); if (!box) return;
+  const p = savedPassword(), on = rememberOn();
+  const cb = el('input', { type: 'checkbox', checked: on, on: { change: (e) => setRemember(e.target.checked) } });
+  fill(box,
+    el('label', { class: 'check' }, cb, el('span', { text: 'Kom ihåg backup-lösenordet på den här enheten' })),
+    !on ? el('p', { class: 'muted small', text: 'Appen frågar efter lösenordet varje gång.' })
+      : !p ? el('p', { class: 'muted small', text: 'Lösenordet du skriver vid nästa backup sparas – sedan räcker ett tryck. Filen är lika skyddad som förut.' })
+      : [el('p', { class: 'small', text: '🔑 Sparat – backup sparas med ett tryck.' }),
+        showPwd ? el('p', { class: 'pwd-show', text: p }) : null,
+        el('div', { class: 'actions' },
+          el('button', { type: 'button', class: 'btn text', on: { click: () => { showPwd = !showPwd; renderPwd(); } } }, showPwd ? 'Dölj' : 'Visa'),
+          el('button', { type: 'button', class: 'btn text', on: { click: rememberPassword } }, 'Byt')),
+        el('p', { class: 'muted small', text: 'Ha lösenordet kvar i din lösenordshanterare: utan det går backupen inte att öppna på en ny telefon.' })]);
+}
 async function openImport(text) {
-  const r = await Backup.openText(text, 'budget-buddy', MAX_IMPORT_CHARS);
+  const r = await openBackupText(text, 'budget-buddy');
   if (r.cancelled) return;
   if (r.error) { $('import-error').textContent = r.error; return; }
   startImport(r.text);
@@ -19,8 +92,8 @@ const BACKUP_MSG = {
   nocrypto: 'Den här webbläsaren kan inte kryptera – ingen fil sparades',
 };
 $('backup-save').addEventListener('click', async () => {
-  const r = await Backup.saveWithPassword({ slug: 'budget-buddy', today: isoToday(), text: exportText(data, isoToday()) });
-  if (BACKUP_MSG[r]) snackbar(BACKUP_MSG[r], null, null, 4000);
+  const r = await saveBackupFile('budget-buddy', isoToday(), () => exportText(data, isoToday()));
+  if (r !== 'first' && BACKUP_MSG[r]) snackbar(BACKUP_MSG[r], null, null, 4000);
 });
 $('import-file').addEventListener('change', async (e) => {
   const input = e.target;
@@ -60,9 +133,14 @@ $('reset').addEventListener('click', () => $('confirm-dialog').showModal());
 // Runs on the "Radera" click itself (not on the close event), like import.
 $('cd-ok').addEventListener('click', () => {
   data = emptyData();
+  forgetPassword();
   save();
   snackbar('All data är raderad', null, null, 3000);
 });
+
+// Lösenordet ligger aldrig framme efter flikbyte.
+$('nav').addEventListener('click', () => { if (showPwd) { showPwd = false; renderPwd(); } });
+addEventListener('popstate', () => { if (showPwd) { showPwd = false; renderPwd(); } });
 
 // ---------- Install (beforeinstallprompt) ----------
 let installEvent = null;
@@ -88,6 +166,7 @@ function render() {
   renderStats();
   renderItems();
   renderSettings();
+  renderPwd();
 }
 
 

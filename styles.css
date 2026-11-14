@@ -230,3 +230,5 @@ dialog { width: min(400px, calc(100vw - 32px)); }
 .pw-preview { flex: 1; margin: 0; font-family: ui-monospace, Consolas, monospace; font-variant-numeric: slashed-zero; font-size: 1.05rem; letter-spacing: .04em; overflow-wrap: anywhere; }
 .pw-digit { color: var(--primary); font-weight: 700; }
 .pw-special { color: var(--error); font-weight: 700; }
+.pwd-box { margin-top: 8px; }
+.pwd-show { margin: 4px 0; padding: 8px 12px; border-radius: var(--r-md); background: var(--surface-container-high); font-family: ui-monospace, monospace; font-size: 1rem; letter-spacing: .04em; overflow-wrap: anywhere; -webkit-user-select: text; user-select: text; }

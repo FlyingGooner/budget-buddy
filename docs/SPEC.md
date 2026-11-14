@@ -169,6 +169,8 @@ Allt i `localStorage` under nyckeln `bb.data`. Belopp lagras som **heltal i öre
 |---|---|
 | `bb.data` | Hela datan ovan |
 | `bb.tab` | Senast öppnade flik |
+| `bb.pwd` | Sparat backup-lösenord (sparas första gången det skrivs). Bara på enheten, aldrig i `bb.data` eller backup-filen |
+| `bb.pwdoff` | `1` när Kom ihåg backup-lösenordet är urbockad (då finns ingen `bb.pwd`). Radera all data tar bort båda |
 
 - `every`: 1 = varje månad, 2 = varannan, 3 = kvartal, 12 = år. Inkomster har alltid `every: 1` (`store.js` tvingar det). En post gäller månad `m` om `start ≤ m ≤ end` och antalet månader sedan `start` är jämnt delbart med `every`.
 - `adjustments[månad][postId]` ersätter beloppet den månaden. `0` = posten utgår den månaden.
