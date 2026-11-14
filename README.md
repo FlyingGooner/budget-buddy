@@ -44,6 +44,7 @@ De flesta budgetappar vill att du loggar varje köp. Budget buddy gör tvärtom:
 | 💾 **Backup** | Spara all data som en lösenordskrypterad fil och läs in den igen – på samma eller en annan enhet. |
 | ❓ **Hjälp** | Manual med bilder direkt i appen. |
 | 📴 **Offline** | Fungerar utan nät efter första besöket. |
+| ↩️ **Bakåt** | Telefonens bakåtknapp går tillbaka genom flikarna du besökt. |
 | 🌗 **Tema** | Ljust och mörkt, följer telefonens inställning. |
 
 ## Integritet och säkerhet 🔒

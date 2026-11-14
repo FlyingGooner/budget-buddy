@@ -45,6 +45,9 @@ Samma text finns i appen under **Inställningar → Hjälp**. Ändras den ena: �
 - Går det inte att välja filen: öppna **Klistra in text** och klistra in filens innehåll.
 - Filen innehåller all din ekonomidata och krypteras alltid med ett lösenord som du väljer. Bocka i **Visa lösenord** om du vill se vad du skriver. **Skapa slumpmässigt lösenord** fyller i ett starkt lösenord som du kan kopiera – spara det i en lösenordshanterare. Glömmer du lösenordet går filen inte att öppna. Radera gamla filer.
 
+## Bakåt
+- Telefonens bakåtknapp går tillbaka genom flikarna du besökt. Appen stängs först i fliken du började i. Öppna dialoger stängs först.
+
 ## Installera och offline
 - **Android (Chrome):** menyn ⋮ → Installera app. **iPhone (Safari):** Dela → Lägg till på hemskärmen.
 - Installerad fungerar appen helt utan nät. Nya versioner hämtas automatiskt.
