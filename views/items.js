@@ -184,9 +184,12 @@ tabItems.addEventListener('pointerdown', (e) => {
   const b = e.target.closest('#inc-list .row-main, #exp-list .row-main');
   if (!b || sel || e.button > 0) return;
   pressAt = { x: e.clientX, y: e.clientY };
-  pressTimer = setTimeout(() => { pressAt = null; pressFired = true; startSel(b.dataset.id); }, CONFIG.longPressMs);
+  pressTimer = setTimeout(() => { pressAt = null; pressFired = true; getSelection()?.removeAllRanges(); startSel(b.dataset.id); }, CONFIG.longPressMs);
 });
 tabItems.addEventListener('pointermove', (e) => { if (pressAt && Math.hypot(e.clientX - pressAt.x, e.clientY - pressAt.y) > 10) endPress(); });
 for (const t of ['pointerup', 'pointercancel', 'scroll']) addEventListener(t, endPress, { passive: true, capture: true });
 tabItems.addEventListener('click', (e) => { if (pressFired) { pressFired = false; e.stopPropagation(); e.preventDefault(); } }, true);
 tabItems.addEventListener('contextmenu', (e) => { if (e.target.closest('.row-main')) e.preventDefault(); });
+
+// Android starts its own text selection on a long press (on the text next to the row too): clear it while marking.
+document.addEventListener('selectionchange', () => { if ((pressAt || sel) && !document.activeElement?.matches?.('input, textarea')) getSelection()?.removeAllRanges(); });

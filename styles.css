@@ -253,3 +253,4 @@ dialog { width: min(400px, calc(100vw - 32px)); }
 .row.marked .row-main { background: var(--primary-container); color: var(--on-primary-container); }
 .row.marked .sel-box { background: var(--primary); border-color: var(--primary); color: var(--on-primary); }
 .row.marked.ended { opacity: 1; }
+#inc-list, #exp-list, .sel-bar { -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
