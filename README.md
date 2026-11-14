@@ -6,9 +6,9 @@
 
 **Planera ekonomin månad för månad – inkomster, räkningar och det oväntade.**
 
-### [▶ Öppna appen](https://flyinggooner.github.io/Budget-buddy/)
+### [▶ Öppna appen](https://flyinggooner.github.io/budget-buddy/)
 
-[📱 Presentation av appen](https://flyinggooner.github.io/Budget-buddy/docs/presentation.html) · [🛡️ Små appar, hög nivå](https://flyinggooner.github.io/Budget-buddy/docs/standard.html)
+[📱 Presentation av appen](https://flyinggooner.github.io/budget-buddy/docs/presentation.html) · [🛡️ Små appar, hög nivå](https://flyinggooner.github.io/budget-buddy/docs/standard.html)
 
 </div>
 
@@ -86,11 +86,11 @@ Automatiska tester körs före varje ny version och varje uppladdning. Underkän
 ## Installera på mobilen
 
 **Android (Chrome)**
-1. Öppna [appen](https://flyinggooner.github.io/Budget-buddy/) i Chrome.
+1. Öppna [appen](https://flyinggooner.github.io/budget-buddy/) i Chrome.
 2. Tryck på menyn **⋮** → **Installera app** (eller *Lägg till på startskärmen*).
 
 **iPhone (Safari)**
-1. Öppna [appen](https://flyinggooner.github.io/Budget-buddy/) i Safari.
+1. Öppna [appen](https://flyinggooner.github.io/budget-buddy/) i Safari.
 2. Tryck på **Dela** → **Lägg till på hemskärmen**.
 
 Versionsnumret syns uppe till höger i appen. Nya versioner hämtas automatiskt.
