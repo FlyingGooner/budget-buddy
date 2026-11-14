@@ -18,8 +18,9 @@ function setRemember(on) {
   renderPwd();
 }
 function keep(pwd) {
-  if (!rememberOn() || Backup.checkPassword(pwd)) return;
+  if (!rememberOn() || Backup.checkPassword(pwd) || savedPassword()) return;   // a password from another file never replaces the saved one
   try { localStorage.setItem(PWD_KEY, pwd); } catch { /* no room: asks next time */ }
+  closeWelcome();
 }
 function forgetPassword() { showPwd = false; try { localStorage.removeItem(PWD_KEY); localStorage.removeItem(OFF_KEY); } catch { /* blocked */ } renderPwd(); }
 async function rememberPassword() {
@@ -52,16 +53,61 @@ async function openBackupText(text, slug) {
   const pwd = savedPassword();
   if (pwd && Backup.isEncrypted(text)) {
     let t; try { t = await Backup.decrypt(text, pwd, slug, MAX_IMPORT_CHARS); } catch { t = null; }
-    if (t && typeof t.text === 'string') return t;
+    if (t && typeof t.text === 'string') return { text: t.text, unlocked: true };
   }
   if (rememberOn() && Backup.isEncrypted(text)) {   // ask, and keep the password that opened the file (a new phone)
-    const a = await Backup.askPassword('import', (p) => Backup.decrypt(text, p, slug, MAX_IMPORT_CHARS));
+    const wait = Backup.askPassword('import', (p) => Backup.decrypt(text, p, slug, MAX_IMPORT_CHARS));
+    if (pwd) noteWrongSaved();
+    const a = await wait;
     if (!a) return { cancelled: true };
     if (a.value?.error) return { error: a.value.error };
     keep(a.pwd); renderPwd(); return { text: a.value.text };
   }
   return Backup.openText(text, slug, MAX_IMPORT_CHARS);
 }
+/* ---------- Välkommen: välj lösenord först (2026-11-14) ----------
+   Tom app utan sparat lösenord: en ruta som inte går att stänga förrän ett lösenord är valt eller en backup är inläst,
+   som att registrera sig. Lösenordet är bara nyckeln till backup-filerna – det sparas på enheten (bb.pwd), aldrig i
+   datan eller i filen. Bockar man ur Kom ihåg visas rutan inte (man har valt att få frågan varje gång). */
+let welcomeDlg = null;
+const needsWelcome = () => !(data.recurring.length || data.oneOffs.length || data.accounts.length) && !savedPassword() && rememberOn();
+function closeWelcome() { if (welcomeDlg?.open && !needsWelcome()) welcomeDlg.close(); }
+function welcomeCheck() {
+  if (!needsWelcome() || welcomeDlg?.open || document.querySelector('dialog[open]') || typeof HTMLDialogElement !== 'function') return;
+  if (!welcomeDlg) {
+    const err = el('p', { class: 'error', role: 'alert' });
+    const file = el('input', { type: 'file', accept: '.txt,.json' });
+    file.addEventListener('change', async () => {
+      const f = file.files && file.files[0]; if (!f) return;
+      let r; try { r = await Backup.read(f, MAX_IMPORT_CHARS); } catch { r = { error: 'Kunde inte läsa filen.' }; }
+      file.value = '';
+      err.textContent = r.error || '';
+      if (!r.error) openImport(r.text);
+    });
+    const pick = el('button', { type: 'button', class: 'btn filled', text: 'Välj lösenord' });
+    pick.addEventListener('click', choosePassword);
+    welcomeDlg = el('dialog', { class: 'welcome', 'aria-labelledby': 'wl-title' },
+      el('h2', { id: 'wl-title', text: 'Välkommen!' }),
+      el('p', { text: 'Välj ett lösenord för att komma igång och skriv ner det på en säker plats, till exempel i din lösenordshanterare. Dina backup-filer skyddas med lösenordet, och det behövs för att läsa in en backup.' }),
+      el('p', { class: 'muted small', text: 'Vi samlar ingen data. Allt stannar på din enhet – lösenordet är bara en nyckel som skyddar dina backuper.' }),
+      el('div', { class: 'welcome-actions' }, pick, el('label', { class: 'btn tonal btn-file' }, 'Jag har en backup-fil att importera', file)),
+      err);
+    welcomeDlg.addEventListener('cancel', (e) => e.preventDefault());   // inte Esc/Bakåt: ett lösenord först
+    document.body.append(welcomeDlg);
+  }
+  welcomeDlg.showModal();
+}
+async function choosePassword() {
+  const wait = Backup.askPassword('export');   // sets the dialog texts synchronously; ours replace them
+  const set = (id, t) => { const n = document.getElementById(id); if (n) n.textContent = t; };
+  set('pw-title', 'Välj lösenord'); set('pw-text', 'Lösenordet krypterar dina backup-filer och sparas på den här enheten.'); set('pw-ok', 'Spara lösenord');
+  const a = await wait; if (!a) return;
+  keep(a.pwd); renderPwd();
+  snackbar('Lösenordet är sparat. Backup sparas med ett tryck.', null, null, 4000);
+}
+// Point 2: the user is told when the remembered password opened the file, and when it did not fit.
+function noteUnlocked() { const s = document.getElementById('imp-sum'); if (s && document.getElementById('import-dialog')?.open) s.textContent += ' Backupen låstes upp med det sparade lösenordet.'; }
+function noteWrongSaved() { const n = document.getElementById('pw-text'); if (n) n.textContent = 'Det sparade lösenordet passade inte till den här filen. Skriv lösenordet du valde när du sparade den.'; }
 function renderPwd() {
   const box = $('pwd-box'); if (!box) return;
   const p = savedPassword(), on = rememberOn();
@@ -82,6 +128,7 @@ async function openImport(text) {
   if (r.cancelled) return;
   if (r.error) { $('import-error').textContent = r.error; return; }
   startImport(r.text);
+  if (r.unlocked) noteUnlocked();
 }
 // Backup file (U5): the file holds exactly the export text; reading it goes through the same checks as pasted text.
 const BACKUP_MSG = {
@@ -126,6 +173,7 @@ $('imp-ok').addEventListener('click', () => {
   data = next;
   $('import-text').value = '';
   render();
+  closeWelcome();
   snackbar('Data importerad', 'Ångra', () => { data = before; save(); });
 });
 
@@ -136,6 +184,7 @@ $('cd-ok').addEventListener('click', () => {
   forgetPassword();
   save();
   snackbar('All data är raderad', null, null, 3000);
+  setTimeout(welcomeCheck, 0);
 });
 
 // Lösenordet ligger aldrig framme efter flikbyte.
@@ -176,6 +225,7 @@ const savedTab = store.get(CONFIG.tabKey);
 showTab(TABS.includes(location.hash.slice(1)) ? location.hash.slice(1) : TABS.includes(savedTab) ? savedTab : 'month', false);
 updateOnline();
 render();
+welcomeCheck();
 
 // Service worker + update snackbar ("Ny version finns – Ladda om")
 if ('serviceWorker' in navigator && location.protocol === 'https:') {
