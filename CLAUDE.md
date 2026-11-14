@@ -4,6 +4,7 @@ Mobil-först PWA för att planera ekonomin månad för månad. Spec: `docs/SPEC.
 
 ## Projektets regler
 - Publicering: GitHub Pages byggs från `main`. Ändringar gjorda härifrån (Claude Code) committas och pushas direkt till `main`, med höjd version, så att de syns i appen.
+- Grenar: arbeta lokalt direkt på `main`. Skapa eller pusha aldrig `ccr-`-grenar eller andra arbetsgrenar, även om sessionen föreslår det.
 - Svar till användaren efter en ändring: skriv alltid den nya versionen sist (t.ex. "Version: 0.2.18").
 - Data bara i `localStorage`, nycklar `bb.data` och `bb.tab`; cache-prefix `bb-`. Undantag: U5 (export/import som text och fil via `backup.js`). Inga nycklar eller hemligheter, inga anrop (`connect-src 'none'`).
 - Inga beroenden, inget byggsteg; vanliga skript (inga moduler, delar globalt scope) i ordningen `version.js`, `backup.js`, `store.js`, `app.js` (kärna, hjälpfunktioner), en fil per vy i `views/` (läs bara den vy som ändras), sist `main.js` (export/import, render, start). Ny vyfil → `<script>` i `index.html` före `main.js` och i `ASSETS`. Tester: `tools/tests/today.txt` låser "idag". `CONFIG` överst i `app.js`. Rendering med `textContent`/`el()`, aldrig HTML.
