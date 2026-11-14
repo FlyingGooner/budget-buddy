@@ -110,7 +110,13 @@ function withUndo(label, change) {
 }
 
 // ---------- Navigation ----------
-function showTab(name) {
+// Bakåt (som fns v0.16.8 och sn v0.14): flikbyte = pushState, popstate visar fliken ur hashen. Första fliken vid start
+// ersätter steget (replaceState), så appen stängs när man backar förbi den.
+function showTab(name, push = true) {
+  if (!TABS.includes(name)) name = 'month';
+  if (location.hash.slice(1) !== name) {
+    if (push) history.pushState({ tab: 1 }, '', '#' + name); else history.replaceState(history.state, '', '#' + name);
+  }
   document.querySelectorAll('.tab').forEach((t) => { t.hidden = t.id !== `tab-${name}`; });
   document.querySelectorAll('#nav button').forEach((b) => {
     if (b.dataset.tab === name) b.setAttribute('aria-current', 'page'); else b.removeAttribute('aria-current');
@@ -121,3 +127,4 @@ $('nav').addEventListener('click', (e) => {
   const b = e.target.closest('button[data-tab]');
   if (b) showTab(b.dataset.tab);
 });
+addEventListener('popstate', () => showTab(location.hash.slice(1), false));

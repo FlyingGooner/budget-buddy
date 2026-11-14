@@ -180,3 +180,13 @@ T.test('Lösenordsgenerator: fyller båda fälten, Kopiera bara för genererat l
   T.eq(await done, null);
   T.eq([$id('pw-1').value, $id('pw-preview').children.length], ['', 0], 'fält och förhandsvisning töms');
 });
+T.test('bakåt går tillbaka genom besökta flikar (v0.13)', async () => {
+  const nav = (t) => document.querySelector(`#nav button[data-tab="${t}"]`).click();
+  const shown = () => document.querySelector('.tab:not([hidden])')?.id;
+  nav('month'); nav('overview'); nav('stats');
+  T.eq([shown(), location.hash], ['tab-stats', '#stats']);
+  history.back();
+  await T.until(() => shown() === 'tab-overview', 'bakåt visar Översikt');
+  history.back();
+  await T.until(() => shown() === 'tab-month', 'bakåt igen visar Månad');
+});

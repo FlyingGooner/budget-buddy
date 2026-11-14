@@ -94,7 +94,7 @@ function render() {
 // ---------- Start ----------
 $('version').textContent = 'v' + self.APP_VERSION;
 const savedTab = store.get(CONFIG.tabKey);
-showTab(TABS.includes(savedTab) ? savedTab : 'month');
+showTab(TABS.includes(location.hash.slice(1)) ? location.hash.slice(1) : TABS.includes(savedTab) ? savedTab : 'month', false);
 updateOnline();
 render();
 
