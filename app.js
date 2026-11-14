@@ -114,6 +114,8 @@ function withUndo(label, change) {
 // ersätter steget (replaceState), så appen stängs när man backar förbi den.
 function showTab(name, push = true) {
   if (!TABS.includes(name)) name = 'month';
+  // Leaving Inställningar folds its sections again (as in the other apps).
+  if (!$('tab-settings').hidden && name !== 'settings') for (const d of $('tab-settings').querySelectorAll('details[open]')) d.open = false;
   if (location.hash.slice(1) !== name) {
     if (push) history.pushState({ tab: 1 }, '', '#' + name); else history.replaceState(history.state, '', '#' + name);
   }
