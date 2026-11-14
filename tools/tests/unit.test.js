@@ -152,3 +152,15 @@ T.test('papperskorg: följer inte med i exporten', () => {
   const d = loadData(rich()); trashItems(d, 'one', ['o1'], '2026-11-14');
   T.eq(importText(exportText(d, '2026-11-14')).data.trash, []);
 });
+
+T.test('sortering: poster, riktning och validering', () => {
+  T.eq(loadData({ settings: { sort: 'n+' } }).settings.sort, 'n+');
+  T.eq(loadData({ settings: { sort: 'z+' } }).settings.sort, 'a-');
+  const d = loadData(rich()), name = (id) => catName2(d, id);
+  function catName2(dd, id) { return dd.settings.categories.find((c) => c.id === id).name; }
+  T.eq(sortItems(d.recurring, 'a-', name).map((r) => r.id), ['r1', 'r3', 'r2']);
+  T.eq(sortItems(d.recurring, 'n+', name).map((r) => r.id), ['r2', 'r1', 'r3']);
+  T.eq(sortItems(d.recurring, 's+', name).map((r) => r.id), ['r1', 'r3', 'r2']);
+  T.eq(nextSort('a-', 'a'), 'a+'); T.eq(nextSort('a-', 'n'), 'n+'); T.eq(nextSort('n+', 'a'), 'a-');
+  T.eq(importText(exportText(loadData({ ...rich(), settings: { ...rich().settings, sort: 'n+' } }), '2026-11-14')).data.settings.sort, 'a-', 'inte i exporten');
+});

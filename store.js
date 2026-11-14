@@ -69,7 +69,7 @@ function emptyData() {
   return {
     version: 1,
     settings: { categories: DEFAULT_CATEGORIES.map((c) => ({ ...c })), people: [], startBalance: 0, startMonth: null, catsV: CATS_V,
-      rates: { ...DEFAULT_RATES }, ratesDate: RATES_DATE, ratesOwn: false },
+      rates: { ...DEFAULT_RATES }, ratesDate: RATES_DATE, ratesOwn: false, sort: 'a-' },
     recurring: [],
     oneOffs: [],
     adjustments: {},
@@ -109,6 +109,7 @@ function loadData(d) {
   const cat = (v, type) => (catType.get(v) === type ? v : FALLBACK_CAT[type]);
   if (Number.isInteger(s.startBalance) && Math.abs(s.startBalance) <= MAX_AMOUNT) out.settings.startBalance = s.startBalance;
   if (isMonth(s.startMonth)) out.settings.startMonth = s.startMonth;
+  if (isSort(s.sort)) out.settings.sort = s.sort;
   // Exchange rates: only own (user-saved) rates are kept; otherwise the built-in ones apply (newer after an update).
   if (s.ratesOwn === true && isObj(s.rates) && typeof s.ratesDate === 'string' && DATE_RE.test(s.ratesDate)) {
     for (const c of Object.keys(DEFAULT_RATES)) {
@@ -199,6 +200,21 @@ function loadData(d) {
   }
   // v0.6.0: "paid" (bocka av betalt) removed – old d.paid is dropped here and disappears on the next save.
   return out;
+}
+
+// ---------- Sortering (Poster) ----------
+// settings.sort = kolumn + riktning ("a-" = belopp fallande). A new column starts in its natural direction
+// (SORT_ASC: A–Ö and earliest first); the same column again flips it. A UI choice: not in the export.
+const SORTS = { a: 'Belopp', n: 'Namn', c: 'Kategori', s: 'Start' };
+const SORT_ASC = ['n', 'c', 's'];
+const isSort = (v) => typeof v === 'string' && v.length === 2 && Object.hasOwn(SORTS, v[0]) && '+-'.includes(v[1]);
+const nextSort = (cur, k) => k + (cur[0] === k ? (cur[1] === '+' ? '-' : '+') : SORT_ASC.includes(k) ? '+' : '-');
+// A sorted copy of recurring items. catName gives a category's name. Ties: name A–Ö.
+function sortItems(items, spec, catName) {
+  const k = spec[0], dir = spec[1] === '+' ? 1 : -1, sv = (a, b) => a.localeCompare(b, 'sv');
+  const cmp = { a: (x, y) => x.amount - y.amount, n: (x, y) => sv(x.name, y.name), c: (x, y) => sv(catName(x.category), catName(y.category)),
+    s: (x, y) => (x.start < y.start ? -1 : x.start > y.start ? 1 : 0) }[k];
+  return [...items].sort((x, y) => dir * cmp(x, y) || sv(x.name, y.name));
 }
 
 // ---------- Papperskorg ----------

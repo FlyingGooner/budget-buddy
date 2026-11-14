@@ -25,11 +25,12 @@ function renderItems() {
   if (sel) for (const id of sel) if (!data.recurring.some((r) => r.id === id)) sel.delete(id);
   if (sel && !sel.size) { sel = null; layerClosed('sel'); }
   renderSelBar();
+  renderSortBar();
   for (const [type, list, sum, empty] of [
     ['income', 'inc-list', 'inc-sum', 'Inga inkomster än – lägg till din nettolön (efter skatt) nedan.'],
     ['expense', 'exp-list', 'exp-sum', 'Inga kostnader än – lägg till hyra, el och andra räkningar nedan.'],
   ]) {
-    const items = data.recurring.filter((r) => r.type === type).sort((a, b) => b.amount - a.amount || a.name.localeCompare(b.name, 'sv'));
+    const items = sortItems(data.recurring.filter((r) => r.type === type), data.settings.sort, catName);
     const monthly = items.filter((r) => r.every === 1 && (!r.end || r.end >= now)).reduce((s, r) => s + r.amount, 0);
     $(sum).textContent = items.length ? `${kr(monthly)}/mån` : '';
     fill($(list), items.length ? items.map((r) => itemRow(r, now)) : el('li', { class: 'muted empty-row', text: empty }));
@@ -116,6 +117,20 @@ $('id-form').addEventListener('submit', (e) => {
   save();
   snackbar('Posten är sparad', null, null, 3000);
 });
+
+// ---------- Sortera: ↕ visar kolumnerna; tryck på en kolumn, samma igen vänder ordningen. Gäller båda listorna. ----------
+let sortOpen = false;
+function renderSortBar() {
+  const cur = data.settings.sort, arrow = cur[1] === '+' ? '↑' : '↓', dir = cur[1] === '+' ? 'stigande' : 'fallande';
+  const chip = el('button', { type: 'button', class: 'chip sort-chip' + (sortOpen ? ' on' : ''), 'aria-expanded': String(sortOpen),
+    'aria-label': `Sortering: ${SORTS[cur[0]]}, ${dir}. Tryck för att välja`, text: `↕ ${SORTS[cur[0]]} ${arrow}`, on: { click: () => { sortOpen = !sortOpen; renderSortBar(); } } });
+  const row = sortOpen ? el('div', { class: 'chips sort-cols', role: 'group', 'aria-label': 'Sortera på' }, Object.entries(SORTS).map(([k, l]) => el('button', {
+    type: 'button', class: 'chip' + (k === cur[0] ? ' on' : ''), 'aria-pressed': String(k === cur[0]),
+    'aria-label': k === cur[0] ? `${l}, ${dir} – tryck för att vända` : `Sortera på ${l}`, text: k === cur[0] ? `${l} ${arrow}` : l,
+    on: { click: () => { data.settings.sort = nextSort(cur, k); save(); } } }))) : null;
+  $('sort-bar').hidden = !!sel || !data.recurring.length;
+  fill($('sort-bar'), el('div', { class: 'sort-top' }, chip), row);
+}
 
 // ---------- Markera flera (håll in en post): Avsluta eller Ta bort på en gång ----------
 // sel = Set of marked ids, or null. The mode is a layer (nav.js): Bakåt ends it; ✕ and actions go back one step.

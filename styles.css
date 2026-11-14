@@ -54,6 +54,10 @@ h1 { margin: 8px 0 4px; font-size: 22px; font-weight: 400; }
 .btn.text { background: transparent; color: var(--primary); }
 
 /* Chips: 8px */
+#sort-bar { margin: 0 0 8px; }
+.sort-top { display: flex; justify-content: flex-end; }
+.sort-cols { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; justify-content: flex-end; }
+.chip.on { background: var(--primary-container); border-color: transparent; color: var(--on-primary-container); }
 .chip { display: inline-flex; align-items: center; min-height: 32px; padding: 0 12px; border-radius: var(--r-sm); border: 1px solid var(--outline-variant); background: transparent; color: var(--on-surface-variant); font: 500 14px/1 var(--font); }
 
 /* Dialog: 28px */
