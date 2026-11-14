@@ -161,6 +161,10 @@ Allt i `localStorage` under nyckeln `bb.data`. Belopp lagras som **heltal i öre
   "adjustments": { "2027-01": { "r3": 210000 } },
   "accounts": [
     { "id": "a1", "name": "Buffert", "balances": { "2026-10": 4000000, "2026-11": 4500000 } }
+  ],
+  "trash": [
+    { "d": "2026-11-14", "rec": { "id": "r3", "name": "Gym", "type": "expense", "amount": 39900, "category": "subs", "person": null, "every": 1, "start": "2026-01", "end": null },
+      "adj": { "2027-01": 210000 } }
   ]
 }
 ```
@@ -178,6 +182,7 @@ Allt i `localStorage` under nyckeln `bb.data`. Belopp lagras som **heltal i öre
 - `person`: id i `settings.people` eller `null` (= Gemensamt). Borttagen person: posterna blir gemensamma.
 - `accounts` (v0.7.0): sparkonton, max 20. `balances[månad]` = saldo i ören (heltal 0–100 000 000 kr), ett per månad, max 600 per konto. Valideras i `store.js` som övrig data (giltigt id, namn ≤ 30 tecken, giltiga månader); äldre data utan `accounts` får en tom lista.
 - `accounts[].currency` (v0.8.0): en av `CURRENCIES`, annars `SEK`; saldon i valutans minsta enhet (cent/öre). `settings.rates` (öre per enhet, heltal 1–100 000), `settings.ratesDate` (`ÅÅÅÅ-MM-DD`), `settings.ratesOwn` (bool). Egna kurser behålls bara om `ratesOwn` är `true` och allt validerar; annars gäller appens inbyggda kurser (som blir nyare vid uppdatering).
+- `trash` (v0.12.16): papperskorg, max 200. Varje post har `d` (borttagen datum) och en av `rec` (återkommande post, med `adj` = dess avvikelser per månad), `one` (engångspost) eller `acc` (sparkonto). Valideras som levande data. Raderas för gott efter 30 dagar (vid start och när appen visas igen). Följer inte med i exporten; en import tömmer den.
 - All sparad data valideras i `store.js` innan den används (typer, belopp heltal inom rimligt intervall, giltiga månader, kända id:n). Trasig data ger standardvärden, aldrig blank skärm.
 - Vid ny `version` körs en migreringsfunktion.
 

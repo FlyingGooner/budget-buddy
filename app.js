@@ -129,4 +129,22 @@ $('nav').addEventListener('click', (e) => {
   const b = e.target.closest('button[data-tab]');
   if (b) showTab(b.dataset.tab);
 });
-addEventListener('popstate', () => showTab(location.hash.slice(1), false));
+// Lager (nav.js): varje öppen ruta och markeringsläget är ett steg. Bakåt stänger det översta; Spara/Avbryt/✕ går
+// tillbaka ett steg själva. Välkomstrutan är inget lager – den går inte att stänga utan lösenord.
+const nav = Nav.create(), layerClose = {};
+function layerOpened(id, close) { layerClose[id] = close; if (Nav.opened(nav, id)) history.pushState({ tab: 1, layer: 1 }, '', location.hash); }
+function layerClosed(id) { if (Nav.closed(nav, id) && nav.back === 1) queueMicrotask(() => { const k = Nav.flush(nav); if (k) history.go(-k); }); }
+new MutationObserver((list) => {
+  for (const m of list) {
+    const d = m.target;
+    if (d.tagName !== 'DIALOG' || !d.id || d.classList.contains('welcome')) continue;
+    if (d.open) layerOpened(d.id, () => d.close()); else layerClosed(d.id);
+  }
+}).observe(document.body, { subtree: true, attributes: true, attributeFilter: ['open'] });
+addEventListener('popstate', () => {
+  const l = Nav.popped(nav);
+  if (l === 'ignore') return;
+  if (l) { layerClose[l]?.(); return; }
+  showTab(location.hash.slice(1), false);
+});
+$('nav').addEventListener('click', () => Nav.reset(nav), true);

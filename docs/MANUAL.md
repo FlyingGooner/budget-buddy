@@ -1,6 +1,6 @@
 # Budget buddy – så använder du appen
 
-Samma text finns i appen under **Inställningar → Hjälp**. Ändras den ena: ändra den andra (kortet `help` i `index.html`).
+Samma text finns i appen under **Inställningar → Hjälp**. Skriv bara här: Hjälp i `index.html` byggs från den här filen med `tools/build-help.ps1`.
 
 ## Kom igång
 
@@ -8,11 +8,11 @@ Samma text finns i appen under **Inställningar → Hjälp**. Ändras den ena: �
 
 - Gå till **Poster** och lägg in dina inkomster (efter skatt) och fasta kostnader. Ange hur ofta en kostnad kommer – varje månad, varannan, kvartal eller en gång om året – och från vilken månad.
 - Allt läggs in en gång. Sedan räknar appen ut varje månad åt dig.
-- **Markera flera poster:** håll fingret på en post tills den blir markerad och tryck på fler. **Avsluta** sätter en sista månad på alla markerade (historiken bakåt finns kvar), **Ta bort** tar bort dem. Ångra finns direkt efteråt. ✕ eller Bakåt avslutar.
+- **Markera flera poster:** håll fingret på en post tills den blir markerad och tryck på fler. **Avsluta** sätter en sista månad på alla markerade (historiken bakåt finns kvar), **Ta bort** lägger dem i papperskorgen. Ångra finns direkt efteråt. ✕ eller Bakåt avslutar.
 
 ## Månad
 
-![Månad](manual/manad.png)
+![Månad: kvar, sparande och per person](manual/manad.png)
 
 - Visar vad som är kvar efter månadens kostnader, och hur mycket av det som är sparande.
 - Byt månad med **◀ ▶** eller svep åt vänster/höger. Tryck på en rad för att ändra beloppet bara den här månaden. **+ Avvikelse** lägger till en engångspost, t.ex. nya däck eller en tandläkarräkning.
@@ -34,6 +34,9 @@ Samma text finns i appen under **Inställningar → Hjälp**. Ändras den ena: �
 ## Personer och kategorier
 - Valfritt: lägg till personerna i hushållet, så kan varje post höra till en person eller vara gemensam. Kategorierna kan byta namn, läggas till och tas bort.
 
+## Papperskorg
+- Poster, avvikelser och sparkonton som du tar bort hamnar i **Papperskorg** under Inställningar. Där ligger de i 30 dagar och kan tas tillbaka med **Återställ**, med sina ändrade belopp per månad. Sedan raderas de för gott. **Töm papperskorgen** raderar allt på en gång (Ångra finns direkt efteråt).
+
 ## Valutakurser
 - Appen har ungefärliga kurser från ECB inbyggda (datumet står i kortet). Du kan skriva in egna kurser och trycka Spara; **Använd appens kurser** återställer.
 
@@ -49,7 +52,7 @@ Samma text finns i appen under **Inställningar → Hjälp**. Ändras den ena: �
 - Appen är låst tills du har valt ett lösenord för dina backup-filer – första gången, efter Radera all data och så länge inget lösenord är sparat. Har du en backup-fil kan du läsa in den i stället; lösenordet som öppnar den sparas. Appen samlar ingen data – lösenordet är bara en nyckel som skyddar dina backuper. Läser du in en backup som det sparade lösenordet låser upp står det i sammanfattningen; passar det inte frågar appen efter lösenordet för den filen.
 
 ## Bakåt
-- Telefonens bakåtknapp går tillbaka genom flikarna du besökt. Appen stängs först i fliken du började i. Öppna dialoger stängs först.
+- Telefonens bakåtknapp stänger först den ruta som är öppen, sedan markeringsläget. Därefter går den tillbaka genom flikarna du besökt. Appen stängs först i fliken du började i.
 
 ## Installera och offline
 - **Android (Chrome):** menyn ⋮ → Installera app. **iPhone (Safari):** Dela → Lägg till på hemskärmen.

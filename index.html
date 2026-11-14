@@ -114,30 +114,39 @@
   <section class="tab" id="tab-settings" hidden>
     <h1>Inställningar</h1>
     <div class="col">
-      <!-- In-app manual. Same text as docs/MANUAL.md – change both together. -->
+      <!-- help:start – byggs från docs/MANUAL.md med tools/build-help.ps1, ändra inte här -->
       <div class="card help">
         <h2>Hjälp</h2>
         <details><summary>Kom igång</summary>
           <img class="shot" src="docs/manual/poster.png" alt="Poster: inkomster och kostnader" width="390" loading="lazy">
           <p>Gå till Poster och lägg in dina inkomster (efter skatt) och fasta kostnader. Ange hur ofta en kostnad kommer – varje månad, varannan, kvartal eller en gång om året – och från vilken månad.</p>
           <p>Allt läggs in en gång. Sedan räknar appen ut varje månad åt dig.</p>
-          <p>Markera flera poster: håll fingret på en post tills den blir markerad och tryck på fler. Avsluta sätter en sista månad på alla markerade (historiken bakåt finns kvar), Ta bort tar bort dem. Ångra finns direkt efteråt. ✕ eller Bakåt avslutar.</p></details>
+          <p>Markera flera poster: håll fingret på en post tills den blir markerad och tryck på fler. Avsluta sätter en sista månad på alla markerade (historiken bakåt finns kvar), Ta bort lägger dem i papperskorgen. Ångra finns direkt efteråt. ✕ eller Bakåt avslutar.</p>
+        </details>
         <details><summary>Månad</summary>
           <img class="shot" src="docs/manual/manad.png" alt="Månad: kvar, sparande och per person" width="390" loading="lazy">
           <p>Visar vad som är kvar efter månadens kostnader, och hur mycket av det som är sparande.</p>
-          <p>Byt månad med ◀ ▶ eller svep åt vänster/höger. Tryck på en rad för att ändra beloppet bara den här månaden. + Avvikelse lägger till en engångspost, t.ex. nya däck eller en tandläkarräkning.</p></details>
+          <p>Byt månad med ◀ ▶ eller svep åt vänster/höger. Tryck på en rad för att ändra beloppet bara den här månaden. + Avvikelse lägger till en engångspost, t.ex. nya däck eller en tandläkarräkning.</p>
+        </details>
         <details><summary>Översikt</summary>
           <img class="shot" src="docs/manual/oversikt.png" alt="Översikt: kommande 12 månader" width="390" loading="lazy">
           <p>De kommande 12 månaderna på en gång. Månader med underskott markeras.</p>
-          <p>Fyll i ett Startsaldo nedan för att se det löpande saldot efter varje månad.</p></details>
+          <p>Fyll i ett Startsaldo under Inställningar för att se det löpande saldot efter varje månad.</p>
+        </details>
         <details><summary>Statistik och sparande</summary>
           <img class="shot" src="docs/manual/sparkonton.png" alt="Sparkonton med valuta" width="390" loading="lazy">
           <p>Nyckeltal, sparkvot, kostnader per kategori och in/ut de senaste 12 månaderna. Kostnader i kategorin Sparande visas som sparande.</p>
-          <p>Sparkonton (längst ner i Statistik): lägg till ett konto och fyll i vad som står på det varje månad. Kontot kan ha en annan valuta (t.ex. USD); då räknas summan om till kronor med kurserna under Valutakurser.</p></details>
+          <p>Sparkonton (längst ner i Statistik): lägg till ett konto och fyll i vad som står på det varje månad. Kontot kan ha en annan valuta (t.ex. USD); då räknas summan om till kronor med kurserna under Valutakurser.</p>
+        </details>
         <details><summary>Personer och kategorier</summary>
-          <p>Valfritt: lägg till personerna i hushållet, så kan varje post höra till en person eller vara gemensam. Kategorierna kan byta namn, läggas till och tas bort.</p></details>
+          <p>Valfritt: lägg till personerna i hushållet, så kan varje post höra till en person eller vara gemensam. Kategorierna kan byta namn, läggas till och tas bort.</p>
+        </details>
+        <details><summary>Papperskorg</summary>
+          <p>Poster, avvikelser och sparkonton som du tar bort hamnar i Papperskorg under Inställningar. Där ligger de i 30 dagar och kan tas tillbaka med Återställ, med sina ändrade belopp per månad. Sedan raderas de för gott. Töm papperskorgen raderar allt på en gång (Ångra finns direkt efteråt).</p>
+        </details>
         <details><summary>Valutakurser</summary>
-          <p>Appen har ungefärliga kurser från ECB inbyggda (datumet står i kortet). Du kan skriva in egna kurser och trycka Spara; Använd appens kurser återställer.</p></details>
+          <p>Appen har ungefärliga kurser från ECB inbyggda (datumet står i kortet). Du kan skriva in egna kurser och trycka Spara; Använd appens kurser återställer.</p>
+        </details>
         <details><summary>Backup och flytt</summary>
           <img class="shot" src="docs/manual/data.png" alt="Kortet Data: export och import" width="390" loading="lazy">
           <p>Under Data: tryck Spara backup-fil. Filen heter t.ex. budget-buddy-2026-11-09.txt och hamnar bland hämtade filer (i Claude-appen bekräftar du först). Gör det då och då.</p>
@@ -145,15 +154,21 @@
           <p>Går det inte att välja filen: öppna Klistra in text och klistra in filens innehåll.</p>
           <p>Filen innehåller all din ekonomidata och krypteras alltid med ett lösenord som du väljer. Bocka i Visa lösenord om du vill se vad du skriver. Skapa slumpmässigt lösenord fyller i ett starkt lösenord som du kan kopiera – spara det i en lösenordshanterare. Glömmer du lösenordet går filen inte att öppna. Radera gamla filer.</p>
           <p>Backup-lösenordet sparas på enheten första gången du skriver det (när du sparar eller läser in en backup). Sedan sparas backup med ett tryck, utan fråga. Lösenordet ligger bara på den här enheten, aldrig i backup-filen, och filen är lika krypterad som förut. Bockar du i Visa lösenord räcker det att skriva lösenordet en gång. Under Inställningar → Data kan du Visa och Byta lösenordet, eller bocka ur Kom ihåg backup-lösenordet – då glöms det och appen frågar varje gång. Använd ett nytt lösenord som du inte har någon annanstans: det sparas oskyddat på den här enheten. Tryck Skapa slumpmässigt lösenord och spara det i din lösenordshanterare. Behåll lösenordet i din lösenordshanterare – utan det går backupen inte att öppna på en ny telefon.</p>
-          <p>Appen är låst tills du har valt ett lösenord för dina backup-filer – första gången, efter Radera all data och så länge inget lösenord är sparat. Har du en backup-fil kan du läsa in den i stället; lösenordet som öppnar den sparas. Appen samlar ingen data – lösenordet är bara en nyckel som skyddar dina backuper. Läser du in en backup som det sparade lösenordet låser upp står det i sammanfattningen; passar det inte frågar appen efter lösenordet för den filen.</p></details>
-        <details><summary>Bakåt</summary><p>Telefonens bakåtknapp går tillbaka genom flikarna du besökt. Appen stängs först i fliken du började i. Öppna dialoger stängs först.</p></details>
+          <p>Appen är låst tills du har valt ett lösenord för dina backup-filer – första gången, efter Radera all data och så länge inget lösenord är sparat. Har du en backup-fil kan du läsa in den i stället; lösenordet som öppnar den sparas. Appen samlar ingen data – lösenordet är bara en nyckel som skyddar dina backuper. Läser du in en backup som det sparade lösenordet låser upp står det i sammanfattningen; passar det inte frågar appen efter lösenordet för den filen.</p>
+        </details>
+        <details><summary>Bakåt</summary>
+          <p>Telefonens bakåtknapp stänger först den ruta som är öppen, sedan markeringsläget. Därefter går den tillbaka genom flikarna du besökt. Appen stängs först i fliken du började i.</p>
+        </details>
         <details><summary>Installera och offline</summary>
           <p>Android (Chrome): menyn ⋮ → Installera app. iPhone (Safari): Dela → Lägg till på hemskärmen.</p>
-          <p>Installerad fungerar appen helt utan nät. Nya versioner hämtas automatiskt.</p></details>
+          <p>Installerad fungerar appen helt utan nät. Nya versioner hämtas automatiskt.</p>
+        </details>
         <details><summary>Integritet</summary>
           <p>Appen gör inga anrop – ingen server, ingen bankkoppling, ingen analys, inget konto. All data finns bara i den här webbläsaren.</p>
-          <p>Rensar du webbplatsdata försvinner allt. Därför: spara en backup-fil då och då.</p></details>
+          <p>Rensar du webbplatsdata försvinner allt. Därför: spara en backup-fil då och då.</p>
+        </details>
       </div>
+      <!-- help:end -->
       <div class="card">
         <h2>Startsaldo</h2>
         <p class="muted">Valfritt. Visar löpande saldo i översikten från vald månad.</p>
@@ -202,6 +217,12 @@
           <label class="field"><span>1 DKK = kr</span><input id="rate-DKK" inputmode="decimal" autocomplete="off"></label>
         </div>
         <div class="actions"><button type="button" class="btn text" id="rates-reset" hidden>Använd appens kurser</button><span class="spacer"></span><button type="button" class="btn tonal" id="rates-save">Spara</button></div>
+      </div>
+      <div class="card" id="trash-card">
+        <h2>Papperskorg</h2>
+        <p class="muted">Poster, avvikelser och sparkonton du tar bort ligger här i 30 dagar. Sedan raderas de för gott.</p>
+        <ul class="list" id="trash-list"></ul>
+        <div class="actions"><span class="spacer"></span><button type="button" class="btn text danger" id="trash-empty" hidden>Töm papperskorgen</button></div>
       </div>
       <div class="card" id="data-card">
         <h2>Data</h2>
@@ -366,6 +387,7 @@
 
 <script src="version.js"></script>
   <script src="backup.js"></script>
+<script src="nav.js"></script>
 <script src="store.js"></script>
 <script src="app.js"></script>
 <script src="views/month.js"></script>

@@ -23,7 +23,7 @@ function itemRow(r, now) {
 function renderItems() {
   const now = currentMonth();
   if (sel) for (const id of sel) if (!data.recurring.some((r) => r.id === id)) sel.delete(id);
-  if (sel && !sel.size) sel = null;
+  if (sel && !sel.size) { sel = null; layerClosed('sel'); }
   renderSelBar();
   for (const [type, list, sum, empty] of [
     ['income', 'inc-list', 'inc-sum', 'Inga inkomster än – lägg till din nettolön (efter skatt) nedan.'],
@@ -96,7 +96,7 @@ $('f-delete').addEventListener('click', () => {
   const r = data.recurring.find((x) => x.id === editingId);
   $('item-dialog').close();
   if (!r) return;
-  withUndo(`${r.name} togs bort`, () => { data.recurring = data.recurring.filter((x) => x.id !== r.id); data = loadData(data); });
+  withUndo(`${r.name} ligger i papperskorgen`, () => trashItems(data, 'rec', [r.id], isoToday()));
 });
 $('id-form').addEventListener('submit', (e) => {
   e.preventDefault();
@@ -118,24 +118,23 @@ $('id-form').addEventListener('submit', (e) => {
 });
 
 // ---------- Markera flera (håll in en post): Avsluta eller Ta bort på en gång ----------
-// sel = Set of marked ids, or null. The mode is one history step: Bakåt ends it; ✕ and actions go back with history.back().
-let sel = null, selStep = false, pressTimer = 0, pressAt = null, pressFired = false;
+// sel = Set of marked ids, or null. The mode is a layer (nav.js): Bakåt ends it; ✕ and actions go back one step.
+let sel = null, pressTimer = 0, pressAt = null, pressFired = false;
 function startSel(id) {
   sel = new Set([id]); navigator.vibrate?.(20);
-  if (!selStep) { history.pushState({ tab: 1, sel: 1 }, '', location.hash); selStep = true; }
+  layerOpened('sel', () => { sel = null; renderItems(); });
   renderItems();
 }
 function endSel() {
   if (!sel) return;
   sel = null; renderItems();
-  if (selStep) { selStep = false; history.back(); }
+  layerClosed('sel');
 }
 function toggleSel(id) {
   if (sel.has(id)) sel.delete(id); else sel.add(id);
   if (!sel.size) endSel(); else renderItems();
 }
-addEventListener('popstate', () => { if (selStep) { selStep = false; sel = null; renderItems(); } });
-$('nav').addEventListener('click', () => { if (sel) { sel = null; selStep = false; renderItems(); } });
+$('nav').addEventListener('click', () => { if (sel) { sel = null; renderItems(); } });
 function renderSelBar() {
   let bar = $('sel-bar');
   if (!sel) { bar?.remove(); return; }
@@ -152,9 +151,7 @@ function renderSelBar() {
 function removeSelected() {
   const list = data.recurring.filter((r) => sel.has(r.id)), n = list.length;
   endSel();
-  withUndo(n === 1 ? `${list[0].name} togs bort` : `${n} poster togs bort`, () => {
-    data.recurring = data.recurring.filter((r) => !list.includes(r)); data = loadData(data);
-  });
+  withUndo(`${n === 1 ? list[0].name : `${n} poster`} ligger i papperskorgen`, () => trashItems(data, 'rec', list.map((r) => r.id), isoToday()));
 }
 function openEndDialog() {
   const n = sel.size;

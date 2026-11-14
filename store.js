@@ -17,6 +17,8 @@ const MAX_ONEOFFS = 5000;
 const MAX_PEOPLE = 10;
 const MAX_ACCOUNTS = 20;
 const MAX_BALANCES = 600;
+const MAX_TRASH = 200;
+const TRASH_DAYS = 30; // Papperskorg: removed items are kept this many days, then deleted for good
 const EVERY = [1, 2, 3, 12];
 // Currencies for savings accounts (v0.8.0). Rates = öre per 1 unit. Built-in defaults are ECB reference rates
 // on RATES_DATE, written here by tools/update-rates.ps1 (run by hand) – the app itself never fetches rates.
@@ -72,6 +74,7 @@ function emptyData() {
     oneOffs: [],
     adjustments: {},
     accounts: [],
+    trash: [],
   };
 }
 
@@ -179,8 +182,62 @@ function loadData(d) {
       out.accounts.push({ id: a.id, name, currency, balances });
     }
   }
+  // Papperskorg (v0.13): [{ d: removed date, rec | one | acc: the item, adj?: { month: amount } for rec }]. Each entry is
+  // validated like live data (same settings), so a restored item is always valid. Not in the export.
+  if (Array.isArray(d.trash)) {
+    for (const t of d.trash.slice(-MAX_TRASH)) {
+      if (!isObj(t) || typeof t.d !== 'string' || !DATE_RE.test(t.d)) continue;
+      const adj = {};
+      if (isObj(t.rec) && isObj(t.adj)) for (const [m, a] of Object.entries(t.adj)) if (isMonth(m)) adj[m] = { [t.rec.id]: a };
+      const sub = loadData({ settings: d.settings, recurring: isObj(t.rec) ? [t.rec] : [], oneOffs: isObj(t.one) ? [t.one] : [],
+        accounts: isObj(t.acc) ? [t.acc] : [], adjustments: adj });
+      const e = sub.recurring[0] ? { d: t.d, rec: sub.recurring[0] } : sub.oneOffs[0] ? { d: t.d, one: sub.oneOffs[0] } : sub.accounts[0] ? { d: t.d, acc: sub.accounts[0] } : null;
+      if (!e) continue;
+      if (e.rec) { const a = {}; for (const [m, map] of Object.entries(sub.adjustments)) a[m] = map[e.rec.id]; if (Object.keys(a).length) e.adj = a; }
+      out.trash.push(e);
+    }
+  }
   // v0.6.0: "paid" (bocka av betalt) removed – old d.paid is dropped here and disappears on the next save.
   return out;
+}
+
+// ---------- Papperskorg ----------
+// Moves items to the trash (recurring with their month adjustments). kind: 'rec' | 'one' | 'acc'. Mutates d.
+function trashItems(d, kind, ids, today) {
+  const set = new Set(ids), key = { rec: 'recurring', one: 'oneOffs', acc: 'accounts' }[kind];
+  for (const x of d[key].filter((x) => set.has(x.id))) {
+    const e = { d: today, [kind]: x };
+    if (kind === 'rec') {
+      const adj = {};
+      for (const [m, map] of Object.entries(d.adjustments)) if (Object.hasOwn(map, x.id)) { adj[m] = map[x.id]; delete map[x.id]; if (!Object.keys(map).length) delete d.adjustments[m]; }
+      if (Object.keys(adj).length) e.adj = adj;
+    }
+    d.trash.push(e);
+  }
+  d[key] = d[key].filter((x) => !set.has(x.id));
+  if (d.trash.length > MAX_TRASH) d.trash.splice(0, d.trash.length - MAX_TRASH);
+}
+// Puts trash entry i back. Returns the item, or { error } when a limit is reached. A taken id gets a new one.
+function restoreItem(d, i) {
+  const e = d.trash[i]; if (!e) return { error: 'Finns inte längre.' };
+  const kind = e.rec ? 'rec' : e.one ? 'one' : 'acc', key = { rec: 'recurring', one: 'oneOffs', acc: 'accounts' }[kind];
+  const max = { rec: MAX_RECURRING, one: MAX_ONEOFFS, acc: MAX_ACCOUNTS }[kind];
+  if (d[key].length >= max) return { error: `Max ${max} – ta bort något först.` };
+  const x = { ...e[kind] };
+  const taken = new Set([...d.recurring, ...d.oneOffs, ...d.accounts].map((y) => y.id));
+  if (taken.has(x.id)) x.id = (kind === 'acc' ? 'a' : '') + newId().slice(-10);
+  d[key].push(x);
+  if (e.adj) for (const [m, a] of Object.entries(e.adj)) (d.adjustments[m] ||= {})[x.id] = a;
+  d.trash.splice(i, 1);
+  return x;
+}
+// Deletes entries older than TRASH_DAYS. Returns how many.
+function purgeTrash(d, today) {
+  const t = new Date(today + 'T00:00:00'); t.setDate(t.getDate() - TRASH_DAYS);
+  const limit = `${t.getFullYear()}-${String(t.getMonth() + 1).padStart(2, '0')}-${String(t.getDate()).padStart(2, '0')}`;
+  const n = d.trash.length;
+  d.trash = d.trash.filter((e) => e.d > limit);
+  return n - d.trash.length;
 }
 
 // ---------- Export/import as text (U5, shared standard: format level 1 = slim JSON in an envelope) ----------

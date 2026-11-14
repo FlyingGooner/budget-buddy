@@ -111,3 +111,44 @@ T.test('exportdatum visas bara om det är ett datum', () => {
   T.eq(importText(env('2026-11-09')).exported, '2026-11-09');
   T.eq(importText(env('2026‮-11-0')).exported, '');
 });
+
+// ---- Papperskorg ----
+T.test('papperskorg: post med avvikelser tas bort och återställs med dem', () => {
+  const d = loadData(rich());
+  trashItems(d, 'rec', ['r2'], '2026-11-14');
+  T.eq(d.recurring.map((r) => r.id), ['r1', 'r3']);
+  T.eq(d.adjustments, {});
+  T.eq(d.trash.length, 1); T.eq(d.trash[0].adj, { '2026-11': 250000 });
+  const back = loadData(JSON.parse(JSON.stringify(d)));
+  T.eq(back.trash, d.trash, 'papperskorgen sparas och läses in igen');
+  const r = restoreItem(back, 0);
+  T.eq(r.id, 'r2'); T.eq(back.trash, []); T.eq(back.adjustments, { '2026-11': { r2: 250000 } });
+});
+T.test('papperskorg: engångspost och sparkonto', () => {
+  const d = loadData(rich());
+  trashItems(d, 'one', ['o1'], '2026-11-14'); trashItems(d, 'acc', ['a1'], '2026-11-14');
+  T.eq(d.oneOffs, []); T.eq(d.accounts.map((a) => a.id), ['a2']);
+  T.eq(restoreItem(d, 1).id, 'a1'); T.eq(restoreItem(d, 0).id, 'o1'); T.eq(d.trash, []);
+});
+T.test('papperskorg: upptaget id får ett nytt, fullt ger fel', () => {
+  const d = loadData(rich());
+  trashItems(d, 'rec', ['r1'], '2026-11-14');
+  d.recurring.push({ ...d.trash[0].rec });
+  const r = restoreItem(d, 0);
+  T.ok(r.id !== 'r1'); T.eq(d.recurring.filter((x) => x.name === 'Lön').length, 2);
+  const f = loadData(rich());
+  trashItems(f, 'acc', ['a1'], '2026-11-14');
+  for (let i = 0; f.accounts.length < MAX_ACCOUNTS; i++) f.accounts.push({ id: 'x' + i, name: 'x', currency: 'SEK', balances: {} });
+  T.ok(restoreItem(f, 0).error); T.eq(f.trash.length, 1);
+});
+T.test('papperskorg: rensas efter 30 dagar, skräp släpps', () => {
+  const d = loadData(rich());
+  trashItems(d, 'one', ['o1'], '2026-10-14'); trashItems(d, 'acc', ['a1'], '2026-10-16');
+  T.eq(purgeTrash(d, '2026-11-14'), 1); T.eq(d.trash.length, 1);
+  const bad = loadData({ ...rich(), trash: [null, { d: 'x', one: {} }, { d: '2026-11-01', rec: { id: 'bad id!' } }, { d: '2026-11-01' }] });
+  T.eq(bad.trash, []);
+});
+T.test('papperskorg: följer inte med i exporten', () => {
+  const d = loadData(rich()); trashItems(d, 'one', ['o1'], '2026-11-14');
+  T.eq(importText(exportText(d, '2026-11-14')).data.trash, []);
+});

@@ -192,5 +192,5 @@ $('rd-skip').addEventListener('click', () => {
 $('rd-delete').addEventListener('click', () => {
   const r = dialogRow;
   $('row-dialog').close();
-  withUndo(`${r.name} togs bort`, () => { data.oneOffs = data.oneOffs.filter((o) => o.id !== r.id); data = loadData(data); });
+  withUndo(`${r.name} ligger i papperskorgen`, () => trashItems(data, 'one', [r.id], isoToday()));
 });

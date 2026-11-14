@@ -41,7 +41,31 @@ function renderSettings() {
   for (const c of Object.keys(DEFAULT_RATES)) $('rate-' + c).value = nf2.format(data.settings.rates[c] / 100);
   $('rates-note').textContent = ratesNote() + '.';
   $('rates-reset').hidden = !data.settings.ratesOwn;
+  renderTrash();
 }
+// Papperskorg: newest first. Återställ puts the item back (with its month adjustments); Töm has Ångra.
+function renderTrash() {
+  const list = data.trash.map((e, i) => [e, i]).reverse();
+  $('trash-empty').hidden = !list.length;
+  fill($('trash-list'), list.length ? list.map(([e, i]) => {
+    const x = e.rec || e.one || e.acc;
+    const what = e.rec ? (e.rec.type === 'income' ? 'Inkomst' : 'Kostnad') : e.one ? `Avvikelse ${monthShortLabel(e.one.month).toLowerCase()} ${e.one.month.slice(0, 4)}` : 'Sparkonto';
+    return el('li', { class: 'row' },
+      el('span', { class: 'row-name' }, el('span', { text: x.name }), el('span', { class: 'row-sub', text: `${what} · borttagen ${dayLabel(e.d)}` })),
+      el('button', { type: 'button', class: 'btn text', 'aria-label': `Återställ ${x.name}`, text: 'Återställ', on: { click: () => restoreTrash(i) } }));
+  }) : el('li', { class: 'muted empty-row', text: 'Papperskorgen är tom.' }));
+}
+function restoreTrash(i) {
+  const r = restoreItem(data, i);
+  if (r.error) { snackbar(r.error, null, null, 4000); return; }
+  data = loadData(data);
+  save();
+  snackbar(`${r.name} är återställd`, null, null, 3000);
+}
+$('trash-empty').addEventListener('click', () => {
+  const n = data.trash.length;
+  withUndo(`${n === 1 ? '1 sak' : `${n} saker`} raderades för gott`, () => { data.trash = []; });
+});
 // Exchange rates: typed in by the user (kr per 1 unit) – the app never fetches rates.
 $('rates-save').addEventListener('click', () => {
   const rates = {};

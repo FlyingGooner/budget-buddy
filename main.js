@@ -242,11 +242,31 @@ function render() {
 }
 
 
+// ---------- Visas igen (som de andra apparna) ----------
+// Ny månad sedan sist: Månad och Översikt följer med om de visade den gamla "nu"-månaden. Papperskorgen rensas.
+// Tryck på ett filfält öppnar filväljaren, som döljer appen en stund: då ritas inget om (Android kan annars byta ut fältet).
+let shownMonth = currentMonth(), filePick = false;
+document.addEventListener('click', (e) => { if (e.target.matches?.('input[type=file]')) filePick = true; }, true);
+function purge() { if (purgeTrash(data, isoToday())) store.set(CONFIG.storageKey, data); }
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState !== 'visible') return;
+  if (filePick) { filePick = false; return; }
+  const now = currentMonth();
+  if (now !== shownMonth) {
+    if (month === shownMonth) month = now;
+    if (overviewStart === shownMonth) overviewStart = now;
+    shownMonth = now;
+  }
+  purge();
+  if (!document.activeElement?.matches?.('input, textarea, select') && !document.querySelector('dialog[open]')) render();
+});
+
 // ---------- Start ----------
 $('version').textContent = 'v' + self.APP_VERSION;
 const savedTab = store.get(CONFIG.tabKey);
 showTab(TABS.includes(location.hash.slice(1)) ? location.hash.slice(1) : TABS.includes(savedTab) ? savedTab : 'month', false);
 updateOnline();
+purge();
 render();
 welcomeCheck();
 

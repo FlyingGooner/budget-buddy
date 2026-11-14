@@ -73,7 +73,7 @@ $('ad-form').addEventListener('submit', (e) => {
 $('ad-delete').addEventListener('click', () => {
   const a = dialogAcc;
   $('acc-dialog').close();
-  withUndo(`${a.name} togs bort`, () => { data.accounts = data.accounts.filter((x) => x.id !== a.id); });
+  withUndo(`${a.name} ligger i papperskorgen`, () => trashItems(data, 'acc', [a.id], isoToday()));
 });
 $('acc-form').addEventListener('submit', (e) => {
   e.preventDefault();
