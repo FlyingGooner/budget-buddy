@@ -3,7 +3,7 @@
 // Rendering: DOM + textContent only (CSP has Trusted Types) – never innerHTML.
 'use strict';
 
-const CONFIG = { storageKey: 'bb.data', tabKey: 'bb.tab' };
+const CONFIG = { storageKey: 'bb.data', tabKey: 'bb.tab', longPressMs: 450 };
 const TABS = ['month', 'overview', 'stats', 'items', 'settings'];
 const $ = (id) => document.getElementById(id);
 

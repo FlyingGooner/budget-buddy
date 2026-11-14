@@ -107,7 +107,7 @@
         <p class="error" role="alert"></p>
       </form>
     </div>
-    <p class="muted small hint">Nya poster gäller från och med den månad du tittar på. Tryck på en post för att ändra belopp, period eller ta bort den.</p>
+    <p class="muted small hint">Nya poster gäller från och med den månad du tittar på. Tryck på en post för att ändra belopp, period eller ta bort den. Håll in för att markera flera.</p>
   </section>
 
   <!-- Inställningar -->
@@ -120,7 +120,8 @@
         <details><summary>Kom igång</summary>
           <img class="shot" src="docs/manual/poster.png" alt="Poster: inkomster och kostnader" width="390" loading="lazy">
           <p>Gå till Poster och lägg in dina inkomster (efter skatt) och fasta kostnader. Ange hur ofta en kostnad kommer – varje månad, varannan, kvartal eller en gång om året – och från vilken månad.</p>
-          <p>Allt läggs in en gång. Sedan räknar appen ut varje månad åt dig.</p></details>
+          <p>Allt läggs in en gång. Sedan räknar appen ut varje månad åt dig.</p>
+          <p>Markera flera poster: håll fingret på en post tills den blir markerad och tryck på fler. Avsluta sätter en sista månad på alla markerade (historiken bakåt finns kvar), Ta bort tar bort dem. Ångra finns direkt efteråt. ✕ eller Bakåt avslutar.</p></details>
         <details><summary>Månad</summary>
           <img class="shot" src="docs/manual/manad.png" alt="Månad: kvar, sparande och per person" width="390" loading="lazy">
           <p>Visar vad som är kvar efter månadens kostnader, och hur mycket av det som är sparande.</p>
@@ -278,6 +279,21 @@
       <span class="spacer"></span>
       <button type="button" class="btn text" id="f-cancel">Avbryt</button>
       <button type="submit" class="btn filled">Spara</button>
+    </div>
+  </form>
+</dialog>
+
+<!-- Dialog: avsluta flera markerade poster -->
+<dialog id="end-dialog" aria-labelledby="ed-title">
+  <form method="dialog" id="ed-form">
+    <h2 id="ed-title">Avsluta poster</h2>
+    <p class="muted small" id="ed-text"></p>
+    <label class="field"><span>Sista månad</span><input id="ed-month" type="month" min="1900-01" max="2099-12"></label>
+    <p class="error" id="ed-error" role="alert"></p>
+    <div class="actions">
+      <span class="spacer"></span>
+      <button type="button" class="btn text" id="ed-cancel">Avbryt</button>
+      <button type="submit" class="btn filled">Avsluta</button>
     </div>
   </form>
 </dialog>

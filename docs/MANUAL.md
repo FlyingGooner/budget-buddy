@@ -8,6 +8,7 @@ Samma text finns i appen under **Inställningar → Hjälp**. Ändras den ena: �
 
 - Gå till **Poster** och lägg in dina inkomster (efter skatt) och fasta kostnader. Ange hur ofta en kostnad kommer – varje månad, varannan, kvartal eller en gång om året – och från vilken månad.
 - Allt läggs in en gång. Sedan räknar appen ut varje månad åt dig.
+- **Markera flera poster:** håll fingret på en post tills den blir markerad och tryck på fler. **Avsluta** sätter en sista månad på alla markerade (historiken bakåt finns kvar), **Ta bort** tar bort dem. Ångra finns direkt efteråt. ✕ eller Bakåt avslutar.
 
 ## Månad
 
