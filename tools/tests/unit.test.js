@@ -164,3 +164,15 @@ T.test('sortering: poster, riktning och validering', () => {
   T.eq(nextSort('a-', 'a'), 'a+'); T.eq(nextSort('a-', 'n'), 'n+'); T.eq(nextSort('n+', 'a'), 'a-');
   T.eq(importText(exportText(loadData({ ...rich(), settings: { ...rich().settings, sort: 'n+' } }), '2026-11-14')).data.settings.sort, 'a-', 'inte i exporten');
 });
+T.test('hemvaluta: changeHome räknar om budgetbelopp, inte sparkonton; följer med i exporten', () => {
+  const d = loadData(rich());
+  T.eq(d.settings.home, 'SEK');
+  const e = changeHome(d, 'EUR');
+  T.eq(e.settings.home, 'EUR');
+  T.eq(e.settings.startBalance, Math.round(1500000 * 100 / 1100));
+  d.recurring.forEach((r, i) => T.eq(e.recurring[i].amount, Math.round(r.amount * 100 / 1100)));
+  T.eq(JSON.stringify(e.accounts), JSON.stringify(d.accounts), 'sparkonton oförändrade');
+  T.eq(changeHome(e, 'SEK').settings.home, 'SEK');
+  T.eq(importText(exportText(e, '2026-11-15')).data.settings.home, 'EUR');
+  T.eq(loadData({ settings: { home: 'XYZ' } }).settings.home, 'SEK', 'okänd valuta → SEK');
+});

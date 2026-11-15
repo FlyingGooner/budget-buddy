@@ -4,9 +4,9 @@ let dialogAcc = null;
 function renderAccounts() {
   const accs = data.accounts;
   const total = (m) => accs.reduce((s, a) => s + toSek(balanceAt(a, m)?.amount || 0, a.currency), 0);
-  const foreign = accs.some((a) => a.currency !== 'SEK');
+  const foreign = accs.some((a) => a.currency !== home());
   $('acc-total').textContent = accs.length ? (foreign ? '≈ ' : '') + kr(total(month)) : '';
-  $('acc-rates').textContent = foreign ? `Omräknat till kronor: ${ratesNote()}. Kurserna ändras under Inställningar.` : '';
+  $('acc-rates').textContent = foreign ? `Omräknat till ${CUR_NAMES[home()]}: ${ratesNote()}. Kurserna ändras under Inställningar.` : '';
   fill($('acc-list'), accs.length ? accs.map((a) => {
     const cur = balanceAt(a, month), prev = prevBalance(a, month);
     const diff = cur && prev ? cur.amount - prev.amount : null;
@@ -16,7 +16,7 @@ function renderAccounts() {
       'aria-label': `${a.name}, ${cur ? money(cur.amount, a.currency) : 'inget saldo'}. Fyll i saldo`, on: { click: () => openAccDialog(a) } },
     el('span', { class: 'row-name' }, el('span', { text: a.name }), el('span', { class: 'row-sub', text: sub })),
     el('span', { class: 'acc-amt amount' }, el('span', { text: cur ? money(cur.amount, a.currency) : '–' }),
-      cur && a.currency !== 'SEK' ? el('span', { class: 'row-sub', text: '≈ ' + kr(toSek(cur.amount, a.currency)) }) : null,
+      cur && a.currency !== home() ? el('span', { class: 'row-sub', text: '≈ ' + kr(toSek(cur.amount, a.currency)) }) : null,
       diff != null ? el('span', { class: 'row-sub ' + (diff < 0 ? 'neg' : 'pos'), text: money(diff, a.currency, true) }) : null)));
   }) : el('li', { class: 'muted empty-row', text: 'Inga sparkonton än – lägg till det första nedan.' }));
 
@@ -38,7 +38,7 @@ function renderAccounts() {
   });
   fill($('acc-chart'), svg('svg', { class: 'chart', viewBox: `0 0 ${W} ${H}`, role: 'img',
     'aria-label': `Totalt sparsaldo per månad, ${monthLabel(ms[0])} till ${monthLabel(month)}` }, kids),
-  el('div', { class: 'legend' }, el('span', { class: 'lg lg-in' }), 'Totalt sparsaldo', el('span', { class: 'muted', text: '(tusental kr)' })));
+  el('div', { class: 'legend' }, el('span', { class: 'lg lg-in' }), 'Totalt sparsaldo', el('span', { class: 'muted', text: `(tusental ${unit()})` })));
 }
 
 function openAccDialog(a) {
@@ -55,9 +55,9 @@ function openAccDialog(a) {
 }
 function setAccCurrencyLabel() {
   const c = $('ad-currency').value;
-  $('ad-amount-label').textContent = c === 'SEK' ? 'Saldo (kr)' : `Saldo (${c})`;
+  $('ad-amount-label').textContent = `Saldo (${unit(c)})`;
 }
-$('ad-currency').replaceChildren(...CURRENCIES.map((c) => el('option', { value: c, text: c === 'SEK' ? 'Kronor (SEK)' : c })));
+$('ad-currency').replaceChildren(...CURRENCIES.map((c) => el('option', { value: c, text: CUR_NAMES[c] })));
 $('ad-currency').addEventListener('change', setAccCurrencyLabel);
 $('ad-cancel').addEventListener('click', () => $('acc-dialog').close());
 $('ad-form').addEventListener('submit', (e) => {
@@ -80,7 +80,7 @@ $('acc-form').addEventListener('submit', (e) => {
   const n = cleanName($('acc-name').value, 30);
   if (!n) return;
   if (data.accounts.length >= MAX_ACCOUNTS) { snackbar(`Max ${MAX_ACCOUNTS} sparkonton.`, null, null, 3000); return; }
-  const a = { id: 'a' + newId().slice(-10), name: n, balances: {} };
+  const a = { id: 'a' + newId().slice(-10), name: n, currency: home(), balances: {} };   // nytt konto i hemvalutan
   data.accounts.push(a);
   data = loadData(data);
   $('acc-name').value = '';

@@ -87,7 +87,7 @@
       <ul class="list" id="inc-list"></ul>
       <form class="add-form" id="inc-form" data-type="income" novalidate>
         <label class="field"><span>Ny inkomst (per månad)</span><select name="category"></select></label>
-        <label class="field amt"><span>Efter skatt (kr)</span><input name="amount" inputmode="decimal" autocomplete="off"></label>
+        <label class="field amt"><span>Efter skatt (<span class="cur-unit">kr</span>)</span><input name="amount" inputmode="decimal" autocomplete="off"></label>
         <label class="field person-field grow"><span>Person (valfritt)</span><select name="person"></select></label>
         <p class="muted small hint-row">Fyll i nettobelopp per månad – det som kommer in på kontot efter skatt. Engångsinkomster (bonus, skatteåterbäring) läggs som avvikelse i Månad.</p>
         <button type="submit" class="btn filled">Lägg till</button>
@@ -100,7 +100,7 @@
       <ul class="list" id="exp-list"></ul>
       <form class="add-form" id="exp-form" data-type="expense" novalidate>
         <label class="field grow"><span>Ny kostnad</span><input name="name" maxlength="60" placeholder="t.ex. Hyra" autocomplete="off"></label>
-        <label class="field amt"><span>Belopp (kr)</span><input name="amount" inputmode="decimal" autocomplete="off"></label>
+        <label class="field amt"><span>Belopp (<span class="cur-unit">kr</span>)</span><input name="amount" inputmode="decimal" autocomplete="off"></label>
         <label class="field"><span>Kategori</span><select name="category"></select></label>
         <label class="field"><span>Hur ofta</span><select name="every"></select></label>
         <label class="field person-field"><span>Person (valfritt)</span><select name="person"></select></label>
@@ -116,7 +116,7 @@
     <h1>Inställningar</h1>
     <div class="col">
       <!-- help:start – byggs från docs/MANUAL.md med tools/build-help.ps1, ändra inte här -->
-      <div class="card help">
+      <div class="card help" lang="sv" data-no-tr>
         <h2>Hjälp</h2>
         <details><summary>Kom igång</summary>
           <img class="shot" src="docs/manual/poster.png" alt="Poster: inkomster och kostnader" width="390" loading="lazy">
@@ -138,7 +138,7 @@
         <details><summary>Statistik och sparande</summary>
           <img class="shot" src="docs/manual/sparkonton.png" alt="Sparkonton med valuta" width="390" loading="lazy">
           <p>Nyckeltal, sparkvot, kostnader per kategori och in/ut de senaste 12 månaderna. Kostnader i kategorin Sparande visas som sparande.</p>
-          <p>Sparkonton (längst ner i Statistik): lägg till ett konto och fyll i vad som står på det varje månad. Kontot kan ha en annan valuta (t.ex. USD); då räknas summan om till kronor med kurserna under Valutakurser.</p>
+          <p>Sparkonton (längst ner i Statistik): lägg till ett konto och fyll i vad som står på det varje månad. Kontot kan ha en annan valuta (t.ex. USD); då räknas summan om till din valuta med kurserna under Valutakurser.</p>
         </details>
         <details><summary>Personer och kategorier</summary>
           <p>Valfritt: lägg till personerna i hushållet, så kan varje post höra till en person eller vara gemensam. Kategorierna kan byta namn, läggas till och tas bort.</p>
@@ -146,8 +146,13 @@
         <details><summary>Papperskorg</summary>
           <p>Poster, avvikelser och sparkonton som du tar bort hamnar i Papperskorg under Inställningar. Där ligger de i 30 dagar och kan tas tillbaka med Återställ, med sina ändrade belopp per månad. Sedan raderas de för gott. Töm papperskorgen raderar allt på en gång (Ångra finns direkt efteråt).</p>
         </details>
+        <details><summary>Språk och valuta</summary>
+          <p>Första gången väljer du språk (Svenska eller English) och valuta (kronor, euro, dollar, pund, norska eller danska kronor) i välkomstrutan. Byt senare under Inställningar → Språk och valuta.</p>
+          <p>Byter du valuta när du redan har data räknas alla belopp (inkomster, kostnader, avvikelser, startsaldo och papperskorgen) om med valutakurserna. Ångra finns direkt efteråt. Sparkonton behåller sin egen valuta.</p>
+          <p>Tal skrivs alltid likadant (1 250,50), oavsett språk.</p>
+        </details>
         <details><summary>Valutakurser</summary>
-          <p>Appen har ungefärliga kurser från ECB inbyggda (datumet står i kortet). Du kan skriva in egna kurser och trycka Spara; Använd appens kurser återställer.</p>
+          <p>Appen har ungefärliga kurser från ECB inbyggda (datumet står i kortet). De uppdateras när appen uppdateras – appen hämtar aldrig kurser själv. Du kan skriva in egna kurser och trycka Spara; Använd appens kurser återställer. Kurserna är i kronor per enhet, oavsett vilken valuta du har.</p>
         </details>
         <details><summary>Backup och flytt</summary>
           <img class="shot" src="docs/manual/data.png" alt="Kortet Data: export och import" width="390" loading="lazy">
@@ -156,7 +161,7 @@
           <p>Går det inte att välja filen: öppna Klistra in text och klistra in filens innehåll.</p>
           <p>Filen innehåller all din ekonomidata och krypteras alltid med ett lösenord som du väljer. Bocka i Visa lösenord om du vill se vad du skriver. Skapa slumpmässigt lösenord fyller i ett starkt lösenord som du kan kopiera – spara det i en lösenordshanterare. Glömmer du lösenordet går filen inte att öppna. Radera gamla filer.</p>
           <p>Backup-lösenordet sparas på enheten första gången du skriver det (när du sparar eller läser in en backup). Sedan sparas backup med ett tryck, utan fråga. Lösenordet ligger bara på den här enheten, aldrig i backup-filen, och filen är lika krypterad som förut. Bockar du i Visa lösenord räcker det att skriva lösenordet en gång. Under Inställningar → Data kan du Visa och Byta lösenordet, eller bocka ur Kom ihåg backup-lösenordet – då glöms det och appen frågar varje gång. Använd ett nytt lösenord som du inte har någon annanstans: det sparas oskyddat på den här enheten. Tryck Skapa slumpmässigt lösenord och spara det i din lösenordshanterare. Behåll lösenordet i din lösenordshanterare – utan det går backupen inte att öppna på en ny telefon.</p>
-          <p>Appen är låst tills du har valt ett lösenord för dina backup-filer – första gången, efter Radera all data och så länge inget lösenord är sparat. Har du en backup-fil kan du läsa in den i stället; lösenordet som öppnar den sparas. Appen samlar ingen data – lösenordet är bara en nyckel som skyddar dina backuper. Läser du in en backup som det sparade lösenordet låser upp står det i sammanfattningen; passar det inte frågar appen efter lösenordet för den filen.</p>
+          <p>Appen är låst tills du har valt språk och ett lösenord för dina backup-filer – första gången, efter Radera all data och så länge inget lösenord är sparat. Har du en backup-fil kan du läsa in den i stället; lösenordet som öppnar den sparas. Appen samlar ingen data – lösenordet är bara en nyckel som skyddar dina backuper. Läser du in en backup som det sparade lösenordet låser upp står det i sammanfattningen; passar det inte frågar appen efter lösenordet för den filen.</p>
         </details>
         <details><summary>Bakåt</summary>
           <p>Telefonens bakåtknapp stänger först den ruta som är öppen, sedan markeringsläget. Därefter går den tillbaka genom flikarna du besökt. Appen stängs först i fliken du började i.</p>
@@ -171,11 +176,72 @@
         </details>
       </div>
       <!-- help:end -->
+      <!-- help-en:start – byggs från docs/MANUAL.en.md med tools/build-help.ps1, ändra inte här -->
+      <div class="card help" lang="en" data-no-tr>
+        <h2>Help</h2>
+        <details><summary>Get started</summary>
+          <img class="shot" src="docs/manual/poster.png" alt="Items: income and expenses" width="390" loading="lazy">
+          <p>Go to Items and add your income (after tax) and fixed expenses. Say how often an expense comes – every month, every other month, quarterly or once a year – and from which month.</p>
+          <p>Everything is entered once. After that the app works out every month for you.</p>
+          <p>Select several items: hold your finger on an item until it is selected and tap more. End sets a last month on all selected (the history is kept), Remove puts them in the trash. Undo is available right afterwards. ✕ or Back ends.</p>
+          <p>Sort items: tap ↕ above Income. The columns Amount, Name, Category and Start then show. Tap a column to sort by it, and the same column again to reverse the order (↑ ascending, ↓ descending). The choice applies to both income and expenses and is saved.</p>
+        </details>
+        <details><summary>Month</summary>
+          <img class="shot" src="docs/manual/manad.png" alt="Month: left, savings and per person" width="390" loading="lazy">
+          <p>Shows what is left after the month's expenses, and how much of it is savings.</p>
+          <p>Change month with ◀ ▶ or swipe left/right. Tap a line to change the amount for this month only. + Deviation adds a one-off item, e.g. new tyres or a dentist's bill.</p>
+        </details>
+        <details><summary>Overview</summary>
+          <img class="shot" src="docs/manual/oversikt.png" alt="Overview: next 12 months" width="390" loading="lazy">
+          <p>The next 12 months at once. Months with a deficit are marked.</p>
+          <p>Fill in a Starting balance under Settings to see the running balance after each month.</p>
+        </details>
+        <details><summary>Statistics and savings</summary>
+          <img class="shot" src="docs/manual/sparkonton.png" alt="Savings accounts with currency" width="390" loading="lazy">
+          <p>Key figures, savings rate, expenses by category and in/out over the last 12 months. Expenses in the category Savings are shown as savings.</p>
+          <p>Savings accounts (at the bottom of Statistics): add an account and fill in what is on it each month. The account can have another currency (e.g. USD); the total is then converted to your currency with the rates under Exchange rates.</p>
+        </details>
+        <details><summary>People and categories</summary>
+          <p>Optional: add the people in the household, so each item can belong to a person or be shared. Categories can be renamed, added and removed.</p>
+        </details>
+        <details><summary>Trash</summary>
+          <p>Items, deviations and savings accounts you delete end up in the Trash under Settings. They stay there for 30 days and can be brought back with Restore, with their changed amounts per month. Then they are deleted for good. Empty the trash deletes everything at once (Undo is available right afterwards).</p>
+        </details>
+        <details><summary>Language and currency</summary>
+          <p>The first time, you choose the language (Svenska or English) and your currency (kronor, euro, dollar, pound, Norwegian or Danish kroner) in the welcome box. Change them later under Settings → Language and currency.</p>
+          <p>If you change currency when you already have data, all amounts (income, expenses, deviations, starting balance and the trash) are converted with the exchange rates. Undo is available right afterwards. Savings accounts keep their own currency.</p>
+          <p>Numbers are always written the same way (1 250,50), whatever the language.</p>
+        </details>
+        <details><summary>Exchange rates</summary>
+          <p>The app has approximate rates from the ECB built in (the date is shown in the card). They are updated when the app is updated – the app never fetches rates itself. You can enter your own rates and tap Save; Use the app's rates resets them. The rates are in Swedish kronor per unit, whatever your currency.</p>
+        </details>
+        <details><summary>Backup and moving</summary>
+          <img class="shot" src="docs/manual/data.png" alt="The Data card: export and import" width="390" loading="lazy">
+          <p>Under Data: tap Save backup file. The file is called e.g. budget-buddy-2026-11-09.txt and ends up among your downloads (in the Claude app you confirm first). Do it now and then.</p>
+          <p>To restore: tap Restore backup file and choose the file, check the summary and tap Replace. All current data is replaced – Undo is available right afterwards.</p>
+          <p>If you cannot choose the file: open Paste text and paste the file's contents.</p>
+          <p>The file contains all your financial data and is always encrypted with a password you choose. Tick Show password to see what you type. Create random password fills in a strong password you can copy – save it in a password manager. If you forget the password the file cannot be opened. Delete old files.</p>
+          <p>The backup password is stored on the device the first time you enter it (when you save or restore a backup). After that a backup takes one tap, without a question. The password is only on this device, never in the backup file, and the file is just as encrypted as before. With Show password ticked you only need to type the password once. Under Settings → Data you can Show and Change the password, or untick Remember the backup password – it is then forgotten and the app asks every time. Use a new password you do not use anywhere else: it is stored unprotected on this device. Tap Create random password and save it in your password manager. Keep the password in your password manager – without it the backup cannot be opened on a new phone.</p>
+          <p>The app is locked until you have chosen a language and a password for your backup files – the first time, after Delete all data and as long as no password is saved. If you have a backup file you can restore it instead; the password that opens it is saved. The app collects no data – the password is just a key that protects your backups. If you restore a backup that the saved password unlocks, the summary says so; if it does not fit, the app asks for the password for that file.</p>
+        </details>
+        <details><summary>Back</summary>
+          <p>The phone's back button first closes the box that is open, then the selection mode. After that it goes back through the tabs you have visited. The app closes only in the tab you started in.</p>
+        </details>
+        <details><summary>Install and offline</summary>
+          <p>Android (Chrome): the ⋮ menu → Install app. iPhone (Safari): Share → Add to Home Screen.</p>
+          <p>Installed, the app works completely offline. New versions are fetched automatically.</p>
+        </details>
+        <details><summary>Privacy</summary>
+          <p>The app makes no requests – no server, no bank connection, no analytics, no account. All data is only in this browser.</p>
+          <p>If you clear site data everything disappears. So: save a backup file now and then.</p>
+        </details>
+      </div>
+      <!-- help-en:end -->
       <div class="card">
         <h2>Startsaldo</h2>
         <p class="muted">Valfritt. Visar löpande saldo i översikten från vald månad.</p>
         <div class="row2">
-          <label class="field"><span>Saldo (kr)</span><input id="s-balance" inputmode="decimal" autocomplete="off"></label>
+          <label class="field"><span>Saldo (<span class="cur-unit">kr</span>)</span><input id="s-balance" inputmode="decimal" autocomplete="off"></label>
           <label class="field"><span>Från månad</span><input id="s-month" type="month" min="1900-01" max="2099-12"></label>
         </div>
         <div class="actions"><span class="spacer"></span><button type="button" class="btn tonal" id="s-save">Spara</button></div>
@@ -207,6 +273,14 @@
       </div>
     </div>
     <div class="col">
+      <div class="card" id="lang-card">
+        <h2>Språk och valuta</h2>
+        <div class="row2">
+          <label class="field"><span>Språk</span><select id="s-lang"></select></label>
+          <label class="field"><span>Valuta</span><select id="s-home"></select></label>
+        </div>
+        <p class="muted small">Byter du valuta räknas alla belopp om med valutakurserna nedan (Ångra finns). Sparkonton behåller sin egen valuta.</p>
+      </div>
       <div class="card">
         <h2>Valutakurser</h2>
         <p class="muted">Ungefärliga kurser för sparkonton i utländsk valuta. Appen hämtar inga kurser – ändra dem själv när du vill.</p>
@@ -266,7 +340,7 @@
       </div>
       <label class="field person-field"><span>Person (valfritt)</span><select id="rd-person"></select></label>
     </div>
-    <label class="field"><span>Belopp (kr)</span><input id="rd-amount" inputmode="decimal" autocomplete="off"></label>
+    <label class="field"><span>Belopp (<span class="cur-unit">kr</span>)</span><input id="rd-amount" inputmode="decimal" autocomplete="off"></label>
     <p class="error" id="rd-error" role="alert"></p>
     <div class="actions wrap">
       <button type="button" class="btn text danger" id="rd-delete">Ta bort</button>
@@ -285,7 +359,7 @@
     <h2 id="id-title">Ändra post</h2>
     <label class="field"><span>Namn</span><input id="f-name" maxlength="60" autocomplete="off"></label>
     <div class="row2">
-      <label class="field"><span>Belopp (kr)</span><input id="f-amount" inputmode="decimal" autocomplete="off"></label>
+      <label class="field"><span>Belopp (<span class="cur-unit">kr</span>)</span><input id="f-amount" inputmode="decimal" autocomplete="off"></label>
       <label class="field" id="f-every-wrap"><span>Hur ofta</span><select id="f-every"></select></label>
     </div>
     <div class="row2">
@@ -387,6 +461,8 @@
 
 <div id="snackbar" role="status" aria-live="polite" hidden><span id="snack-text"></span><button type="button" class="btn text" id="snack-action"></button></div>
 
+<script src="i18n.js"></script>
+<script src="i18n-en.js"></script>
 <script src="version.js"></script>
   <script src="backup.js"></script>
 <script src="nav.js"></script>

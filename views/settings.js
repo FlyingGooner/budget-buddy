@@ -38,6 +38,8 @@ function renderSettings() {
   $('s-balance').value = data.settings.startMonth ? krInput(Math.abs(data.settings.startBalance)) : '';
   if (data.settings.startBalance < 0) $('s-balance').value = '-' + $('s-balance').value;
   $('s-month').value = data.settings.startMonth || '';
+  $('s-lang').value = I18N.lang();
+  $('s-home').value = home();
   for (const c of Object.keys(DEFAULT_RATES)) $('rate-' + c).value = nf2.format(data.settings.rates[c] / 100);
   $('rates-note').textContent = ratesNote() + '.';
   $('rates-reset').hidden = !data.settings.ratesOwn;
@@ -66,6 +68,17 @@ $('trash-empty').addEventListener('click', () => {
   const n = data.trash.length;
   withUndo(`${n === 1 ? '1 sak' : `${n} saker`} raderades för gott`, () => { data.trash = []; });
 });
+// Språk och hemvaluta (2026-11-15). Språk laddar om sidan; valuta räknar om alla belopp (changeHome i store.js), med Ångra.
+$('s-lang').replaceChildren(...Object.entries(I18N.LANGS).map(([v, l]) => el('option', { value: v, text: l, 'data-no-tr': '' })));
+$('s-lang').addEventListener('change', (e) => I18N.setLang(e.target.value));
+$('s-home').replaceChildren(...CURRENCIES.map((c) => el('option', { value: c, text: CUR_NAMES[c] })));
+$('s-home').addEventListener('change', (e) => {
+  const to = e.target.value, from = home();
+  if (to === from) return;
+  withUndo(`Valutan är nu ${CUR_NAMES[to]} – beloppen är omräknade`, () => { data = changeHome(data, to); });
+  render();
+});
+
 // Exchange rates: typed in by the user (kr per 1 unit) – the app never fetches rates.
 $('rates-save').addEventListener('click', () => {
   const rates = {};

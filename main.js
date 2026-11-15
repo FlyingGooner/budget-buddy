@@ -65,41 +65,55 @@ async function openBackupText(text, slug) {
   }
   return Backup.openText(text, slug, MAX_IMPORT_CHARS);
 }
-/* ---------- Välkommen: välj lösenord först (2026-11-14) ----------
+/* ---------- Välkommen: välj språk, valuta och lösenord först (2026-11-14, språk och valuta 2026-11-15) ----------
    Utan sparat lösenord är appen låst bakom en ruta tills ett lösenord är valt (eller en krypterad backup är inläst,
    vars lösenord sparas), som att registrera sig. Lösenordet är bara nyckeln till backup-filerna – det sparas på enheten (bb.pwd), aldrig i
    datan eller i filen. Bockar man ur Kom ihåg visas rutan inte (man har valt att få frågan varje gång). */
-let welcomeDlg = null, importBtn = null;
+let welcomeDlg = null;
 const welcomeHasData = () => data.recurring.length || data.oneOffs.length || data.accounts.length;
-const needsWelcome = () => !savedPassword() && rememberOn();   // låst tills ett lösenord är valt, även med data
+const needsPassword = () => !savedPassword() && rememberOn();   // låst tills ett lösenord är valt, även med data
+const needsWelcome = () => !I18N.chosen() || needsPassword();   // språk (och valuta) först, i samma ruta (2026-11-15)
 function closeWelcome() { if (welcomeDlg?.open && !needsWelcome()) welcomeDlg.close(); }
+// Rutan ritas om när språket byts: språkknappar och valuta överst, lösenordet under (döljs om det redan är valt).
+function fillWelcome() {
+  const err = el('p', { class: 'error', role: 'alert' });
+  const file = el('input', { type: 'file', accept: '.txt,.json' });
+  file.addEventListener('change', async () => {
+    const f = file.files && file.files[0]; if (!f) return;
+    let r; try { r = await Backup.read(f, MAX_IMPORT_CHARS); } catch { r = { error: 'Kunde inte läsa filen.' }; }
+    file.value = '';
+    err.textContent = r.error || '';
+    if (!r.error) { I18N.setLang(I18N.lang(), false); openImport(r.text); }
+  });
+  const cur = I18N.lang();
+  const segs = el('div', { class: 'segs', role: 'group', 'aria-label': 'Språk' },
+    Object.entries(I18N.LANGS).map(([k, name]) => el('button', { type: 'button', class: 'seg' + (k === cur ? ' on' : ''), lang: k, 'aria-pressed': String(k === cur), text: name, 'data-no-tr': '',
+      on: { click: () => { I18N.setLang(k); if (!needsWelcome()) welcomeDlg.close(); else fillWelcome(); } } })));
+  // Valuta: bara innan det finns data (byte senare räknar om beloppen, under Inställningar).
+  const curSel = !welcomeHasData() && el('label', { class: 'field' }, el('span', { text: 'Valuta' }),
+    el('select', { on: { change: (e) => { data.settings.home = e.target.value; save(); } } },
+      CURRENCIES.map((c) => el('option', { value: c, selected: c === home(), text: CUR_NAMES[c] }))));
+  const pick = el('button', { type: 'button', class: 'btn filled', text: 'Välj lösenord', on: { click: () => { I18N.setLang(I18N.lang(), false); choosePassword(); } } });
+  const pw = needsPassword();
+  welcomeDlg.replaceChildren(
+    el('h2', { id: 'wl-title', text: 'Välkommen!' }),
+    segs, curSel,
+    pw && el('p', { text: 'Välj ett lösenord som skyddar dina backup-filer. Spara det i din lösenordshanterare – utan det går en backup inte att läsa in.' }),
+    pw && el('p', { class: 'muted small', text: 'Allt stannar på din enhet. Använd ett nytt lösenord – det sparas här.' }),
+    pw ? el('div', { class: 'welcome-actions' }, pick, !welcomeHasData() && el('label', { class: 'btn tonal btn-file' }, 'Jag har en backup-fil', file))
+      : el('div', { class: 'welcome-actions' }, el('button', { type: 'button', class: 'btn filled', text: 'Fortsätt', on: { click: () => { I18N.setLang(I18N.lang(), false); closeWelcome(); } } })),
+    err);
+}
 function welcomeCheck() {
   if (!needsWelcome() || welcomeDlg?.open || typeof HTMLDialogElement !== 'function') return;
   const other = document.querySelector('dialog[open]');   // t.ex. backup-påminnelsen: fråga när den stängs
   if (other) { other.addEventListener('close', () => setTimeout(welcomeCheck, 0), { once: true }); return; }
   if (!welcomeDlg) {
-    const err = el('p', { class: 'error', role: 'alert' });
-    const file = el('input', { type: 'file', accept: '.txt,.json' });
-    file.addEventListener('change', async () => {
-      const f = file.files && file.files[0]; if (!f) return;
-      let r; try { r = await Backup.read(f, MAX_IMPORT_CHARS); } catch { r = { error: 'Kunde inte läsa filen.' }; }
-      file.value = '';
-      err.textContent = r.error || '';
-      if (!r.error) openImport(r.text);
-    });
-    const pick = el('button', { type: 'button', class: 'btn filled', text: 'Välj lösenord' });
-    pick.addEventListener('click', choosePassword);
-    welcomeDlg = el('dialog', { class: 'welcome', 'aria-labelledby': 'wl-title' },
-      el('h2', { id: 'wl-title', text: 'Välkommen!' }),
-      el('p', { text: 'Välj ett lösenord för att komma igång och skriv ner det på en säker plats, till exempel i din lösenordshanterare. Dina backup-filer skyddas med lösenordet, och det behövs för att läsa in en backup.' }),
-      el('p', { class: 'small', text: 'Använd ett nytt lösenord som du inte har någon annanstans – det sparas på den här enheten. Tryck Skapa slumpmässigt lösenord och spara det i din lösenordshanterare.' }),
-      el('p', { class: 'muted small', text: 'Vi samlar ingen data. Allt stannar på din enhet – lösenordet är bara en nyckel som skyddar dina backuper.' }),
-      el('div', { class: 'welcome-actions' }, pick, importBtn = el('label', { class: 'btn tonal btn-file' }, 'Jag har en backup-fil att importera', file)),
-      err);
-    welcomeDlg.addEventListener('cancel', (e) => e.preventDefault());   // inte Esc/Bakåt: ett lösenord först
+    welcomeDlg = el('dialog', { class: 'welcome', 'aria-labelledby': 'wl-title' });
+    welcomeDlg.addEventListener('cancel', (e) => e.preventDefault());   // inte Esc/Bakåt: språk och lösenord först
     document.body.append(welcomeDlg);
   }
-  importBtn.hidden = !!welcomeHasData();   // har man redan data behövs bara lösenordet
+  fillWelcome();
   welcomeDlg.showModal();
 }
 async function choosePassword() {
@@ -233,6 +247,7 @@ addEventListener('offline', updateOnline);
 
 // ---------- Render all ----------
 function render() {
+  document.querySelectorAll('.cur-unit').forEach((n) => { n.textContent = unit(); });   // hemvalutan i fältens etiketter
   renderMonth();
   renderOverview();
   renderStats();

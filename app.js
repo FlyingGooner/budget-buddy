@@ -37,18 +37,25 @@ const nf2 = new Intl.NumberFormat('sv-SE', { minimumFractionDigits: 2, maximumFr
 function kr(ore, sign = false) {
   const neg = ore < 0, a = Math.abs(ore);
   const s = (a % 100 === 0 ? nf0 : nf2).format(a / 100);
-  return (neg ? '−' : sign && ore > 0 ? '+' : '') + s + ' kr';
+  return (neg ? '−' : sign && ore > 0 ? '+' : '') + s + ' ' + unit();
 }
+// Hemvaluta (2026-11-15): alla belopp utom sparkonton är i data.settings.home. Talen skrivs alltid på svenskt sätt (1 250,50),
+// bara enheten byts, så att inmatning och tolkning (parseKr) fungerar likadant på båda språken.
+const UNITS = { SEK: 'kr', EUR: '€', USD: '$', GBP: '£', NOK: 'NOK', DKK: 'DKK' };
+const home = () => data.settings.home || 'SEK';
+const unit = (c = home()) => UNITS[c] || c;
+const CUR_NAMES = { SEK: 'Kronor (SEK)', EUR: 'Euro (EUR)', USD: 'Dollar (USD)', GBP: 'Pund (GBP)', NOK: 'Norska kronor (NOK)', DKK: 'Danska kronor (DKK)' };
 // Amount in a savings account's currency (minor units). SEK → "1 250 kr", others → "1 250 USD".
 const curFmt = {};
 function money(v, cur, sign = false) {
-  if (cur === 'SEK') return kr(v, sign);
+  if (cur === home()) return kr(v, sign);
+  if (cur === 'SEK') { const a = Math.abs(v); return (v < 0 ? '−' : sign && v > 0 ? '+' : '') + (a % 100 === 0 ? nf0 : nf2).format(a / 100) + ' kr (SEK)'; }
   const neg = v < 0, a = Math.abs(v), d = a % 100 ? 2 : 0;
   const key = cur + d;
   curFmt[key] ||= new Intl.NumberFormat('sv-SE', { style: 'currency', currency: cur, currencyDisplay: 'code', minimumFractionDigits: d, maximumFractionDigits: d });
   return (neg ? '−' : sign && v > 0 ? '+' : '') + curFmt[key].format(a / 100);
 }
-const toSek = (v, cur) => (cur === 'SEK' ? v : Math.round((v * data.settings.rates[cur]) / 100));
+const toSek = (v, cur) => convert(data, v, cur, home());   // namnet kvar: räknar nu om till hemvalutan
 const dayFmt = new Intl.DateTimeFormat('sv-SE', { day: 'numeric', month: 'short', year: 'numeric' });
 const dayLabel = (d) => { const [y, m, dd] = d.split('-').map(Number); return dayFmt.format(new Date(y, m - 1, dd)).replace('.', ''); };
 const ratesNote = () => (data.settings.ratesOwn ? `Egna kurser från ${dayLabel(data.settings.ratesDate)}`

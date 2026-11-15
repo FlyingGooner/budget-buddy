@@ -258,3 +258,11 @@ dialog { width: min(400px, calc(100vw - 32px)); }
 .row.marked .sel-box { background: var(--primary); border-color: var(--primary); color: var(--on-primary); }
 .row.marked.ended { opacity: 1; }
 #inc-list, #exp-list, .sel-bar { -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
+/* Språkval i välkomstrutan (2026-11-15) */
+.segs { display: grid; grid-template-columns: 1fr 1fr; border: 1px solid var(--outline); border-radius: var(--r-md); overflow: hidden; margin: 8px 0 12px; }
+.seg { min-height: 40px; border: 0; background: none; font: inherit; font-weight: 500; color: var(--on-surface); }
+.seg + .seg { border-left: 1px solid var(--outline); }
+.seg.on { background: var(--primary-container); color: var(--on-primary-container); }
+.welcome .field { display: grid; gap: 4px; margin-bottom: 8px; }
+/* Hjälp på valt språk (2026-11-15) */
+html[lang="en"] .help[lang="sv"], html:not([lang="en"]) .help[lang="en"] { display: none; }

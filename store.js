@@ -69,7 +69,7 @@ function emptyData() {
   return {
     version: 1,
     settings: { categories: DEFAULT_CATEGORIES.map((c) => ({ ...c })), people: [], startBalance: 0, startMonth: null, catsV: CATS_V,
-      rates: { ...DEFAULT_RATES }, ratesDate: RATES_DATE, ratesOwn: false, sort: 'a-' },
+      rates: { ...DEFAULT_RATES }, ratesDate: RATES_DATE, ratesOwn: false, sort: 'a-', home: 'SEK' },
     recurring: [],
     oneOffs: [],
     adjustments: {},
@@ -110,6 +110,7 @@ function loadData(d) {
   if (Number.isInteger(s.startBalance) && Math.abs(s.startBalance) <= MAX_AMOUNT) out.settings.startBalance = s.startBalance;
   if (isMonth(s.startMonth)) out.settings.startMonth = s.startMonth;
   if (isSort(s.sort)) out.settings.sort = s.sort;
+  if (CURRENCIES.includes(s.home)) out.settings.home = s.home; // v0.13 (2026-11-15): hemvaluta, alla belopp utom sparkonton är i den
   // Exchange rates: only own (user-saved) rates are kept; otherwise the built-in ones apply (newer after an update).
   if (s.ratesOwn === true && isObj(s.rates) && typeof s.ratesDate === 'string' && DATE_RE.test(s.ratesDate)) {
     for (const c of Object.keys(DEFAULT_RATES)) {
@@ -269,6 +270,7 @@ function packData(d) {
   if (s.people.length) set.people = s.people.map((p) => ({ id: p.id, name: p.name }));
   if (s.startMonth) { set.startBalance = s.startBalance; set.startMonth = s.startMonth; }
   if (s.ratesOwn) { set.rates = { ...s.rates }; set.ratesDate = s.ratesDate; }
+  if (s.home !== 'SEK') set.home = s.home;
   if (Object.keys(set).length) out.settings = set;
   const item = (r) => {
     const o = { id: r.id, name: r.name, type: t(r.type), amount: r.amount, category: r.category };
@@ -290,7 +292,7 @@ function unpackData(p) {
   const type = (v) => (v === 'i' ? 'income' : v === 'e' ? 'expense' : null);
   const list = (v) => (Array.isArray(v) ? v.filter(isObj) : []);
   const s = isObj(p.settings) ? p.settings : {};
-  const settings = { catsV: CATS_V, startBalance: s.startBalance, startMonth: s.startMonth };
+  const settings = { catsV: CATS_V, startBalance: s.startBalance, startMonth: s.startMonth, home: s.home };
   if (Array.isArray(s.categories)) settings.categories = list(s.categories).map((c) => ({ id: c.id, name: c.name, type: type(c.type) }));
   if (Array.isArray(s.people)) settings.people = list(s.people).map((x) => ({ id: x.id, name: x.name }));
   if (isObj(s.rates)) { settings.rates = { ...s.rates }; settings.ratesDate = s.ratesDate; settings.ratesOwn = true; }
@@ -327,6 +329,24 @@ function importText(text) {
 }
 
 // ---------- Month maths ----------
+// Hemvaluta (2026-11-15). Kurser är öre per enhet (SEK = 100). Belopp i hemvalutan; sparkonton har egen valuta.
+const rateOf = (d, c) => (c === 'SEK' ? 100 : d.settings.rates[c]);
+const convert = (d, v, from, to) => (from === to ? v : Math.round((v * rateOf(d, from)) / rateOf(d, to)));
+// Byter hemvaluta och räknar om alla budgetbelopp (poster, avvikelser, justeringar, startsaldo, papperskorg) med kurserna.
+// Belopp som blir för stora begränsas till MAX_AMOUNT. Sparkonton ändras inte. Returnerar ny, validerad data.
+function changeHome(d, to) {
+  if (!CURRENCIES.includes(to) || d.settings.home === to) return d;
+  const from = d.settings.home, c = (v) => Math.max(-MAX_AMOUNT, Math.min(MAX_AMOUNT, convert(d, v, from, to)));
+  const x = JSON.parse(JSON.stringify(d));
+  x.settings.home = to;
+  x.settings.startBalance = c(x.settings.startBalance);
+  for (const r of x.recurring) r.amount = c(r.amount);
+  for (const o of x.oneOffs) o.amount = c(o.amount);
+  for (const m of Object.values(x.adjustments)) for (const k of Object.keys(m)) m[k] = c(m[k]);
+  for (const t of x.trash) { if (t.rec) t.rec.amount = c(t.rec.amount); if (t.one) t.one.amount = c(t.one.amount); if (t.adj) for (const k of Object.keys(t.adj)) t.adj[k] = c(t.adj[k]); }
+  return loadData(x);
+}
+
 function monthIndex(m) { const [y, mo] = m.split('-').map(Number); return y * 12 + (mo - 1); }
 function addMonths(m, n) {
   const i = monthIndex(m) + n;

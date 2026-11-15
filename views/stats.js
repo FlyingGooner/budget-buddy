@@ -60,7 +60,7 @@ function renderStats() {
   });
   fill($('stats-trend'), el('h2', { text: 'In och ut, 12 månader' }),
     used.length ? [svg('svg', { class: 'chart', viewBox: `0 0 ${W} ${H}`, role: 'img', 'aria-label': `Inkomster och kostnader per månad, ${monthLabel(last12[0].m)} till ${monthLabel(month)}` }, kids),
-      el('div', { class: 'legend' }, el('span', { class: 'lg lg-in' }), 'Inkomster', el('span', { class: 'lg lg-out' }), 'Kostnader', el('span', { class: 'muted', text: '(tusental kr)' }))]
+      el('div', { class: 'legend' }, el('span', { class: 'lg lg-in' }), 'Inkomster', el('span', { class: 'lg lg-out' }), 'Kostnader', el('span', { class: 'muted', text: `(tusental ${unit()})` }))]
       : el('p', { class: 'muted', text: 'Inga poster än – lägg till inkomster och kostnader så syns trenden här.' }));
   renderAccounts();
 }
