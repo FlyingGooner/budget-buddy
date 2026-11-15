@@ -1,4 +1,4 @@
-// Budget buddy – ren Bakåt-logik (som nav.js i Stress kontroll): inget DOM, ingen lagring, testas i Node (tools/tests/nav.node.mjs).
+// Budget buddy – ren Bakåt-logik (som nav.js i Stress control): inget DOM, ingen lagring, testas i Node (tools/tests/nav.node.mjs).
 // Vanligt skript. Varje lager (en öppen ruta, markeringsläget) är ett steg i historiken:
 //   opened  – ett lager öppnades: lägg ett steg (pushState).
 //   closed  – ett lager stängdes i appen (Spara, Avbryt, ✕): gå tillbaka ett steg (history.back) och låt bli den popstate som följer.

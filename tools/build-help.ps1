@@ -1,7 +1,7 @@
 ﻿<#
 .SYNOPSIS
   Bygger Hjälp-kortet i index.html (mellan <!-- help:start --> och <!-- help:end -->) från docs/MANUAL.md, så att texten
-  bara skrivs en gång (som i Stress kontroll och simple-nutrition).
+  bara skrivs en gång (som i Stress control och simple-nutrition).
 .DESCRIPTION
   "## Rubrik" -> <details><summary>, "- text" och vanliga rader -> <p>, "![alt](manual/x.png)" -> <img class="shot">.
   **fetstil** tas bort. All text HTML-kodas. Ändrar bara kortet i index.html. Inga nätverksanrop.
