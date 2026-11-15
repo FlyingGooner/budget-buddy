@@ -2,6 +2,7 @@
 // Mönster (regex) för texter med tal eller namn i; $1… översätts i sin tur. Saknas en text visas den svenska.
 I18N.setKey('bb.lang');
 I18N.add({
+  'Dina backup-filer krypteras med ett lösenord som har skapats och sparats på enheten. Du kan se eller byta det under Inställningar → Data.': 'Your backup files are encrypted with a password that has been created and stored on the device. You can view or change it under Settings → Data.',
   'Budget buddy': 'Budget buddy',
   'Månad': 'Month', 'Översikt': 'Overview', 'Statistik': 'Statistics', 'Poster': 'Items', 'Inst.': 'Settings',
   '(engångspost den här månaden)': '(one-off item this month)', 'Nytt sparkonto': 'New savings account', 'Lägg till': 'Add',
@@ -21,7 +22,7 @@ I18N.add({
   'Använd appens kurser': "Use the app's rates", 'Papperskorg': 'Trash',
   'Poster, avvikelser och sparkonton du tar bort ligger här i 30 dagar. Sedan raderas de för gott.': 'Items, deviations and savings accounts you delete stay here for 30 days. Then they are deleted for good.',
   'Töm papperskorgen': 'Empty the trash',
-  'Backup-filen innehåller all din ekonomidata och krypteras alltid med ett lösenord du väljer. Glömmer du det går filen inte att öppna. Radera gamla filer. Läs in filen på en annan enhet för att flytta din data.': 'The backup file contains all your financial data and is always encrypted with a password you choose. If you forget it the file cannot be opened. Delete old files. Restore the file on another device to move your data.',
+  'Backup-filen innehåller all din ekonomidata och krypteras alltid med ett lösenord som appen har skapat åt dig (se eller byt det nedan). Glömmer du det går filen inte att öppna. Radera gamla filer. Läs in filen på en annan enhet för att flytta din data.': 'The backup file contains all your financial data and is always encrypted with a password the app creates and stores for you the first time it starts (Show and Change in Settings). If you forget it the file cannot be opened. Delete old files. Restore the file on another device to move your data.',
   'Importera (ersätter all data)': 'Import (replaces all data)',
   'All data sparas bara i den här webbläsaren och lämnar aldrig enheten av sig själv. Rensas webbplatsdata försvinner allt – spara en backup-fil då och då.': 'All data is stored only in this browser and never leaves the device by itself. If site data is cleared everything disappears – save a backup file now and then.',
   'Inkomst': 'Income', 'Kostnad': 'Expense', 'Återställ': 'Restore', 'Hoppa över': 'Skip', 'Ändra post': 'Edit item', 'Till månad (valfritt)': 'To month (optional)', 'Sista månad': 'Last month',
