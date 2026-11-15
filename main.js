@@ -319,3 +319,17 @@ if ('serviceWorker' in navigator && location.protocol === 'https:') {
     if (hadController) snackbar('Ny version finns', 'Ladda om', () => location.reload(), 0);
   });
 }
+
+// CSV (2026-11-15): en rad per post och månad – från första månaden med data till ett år framåt (högst 20 år). Inte krypterad.
+$('csv-export').addEventListener('click', () => {
+  const tr = Csv.tr, cur = currentMonth();
+  const months = [...data.recurring.map((r) => r.start), ...data.oneOffs.map((o) => o.month), cur].sort();
+  const last = [addMonths(cur, 11), ...data.oneOffs.map((o) => o.month)].sort().pop();
+  const rows = [];
+  for (let m = months[0], i = 0; m <= last && i < 240; m = addMonths(m, 1), i++) {
+    for (const r of rowsForMonth(data, m)) rows.push([m, r.name, tr(r.type === 'income' ? 'Inkomst' : 'Kostnad'), catName(r.category),
+      hasPeople() ? personName(r.person) : '', r.amount / 100, home(), tr(r.kind === 'rec' ? 'Ja' : 'Nej'), r.adjusted ? tr('Ja') : '']);
+  }
+  const text = Csv.build(['Månad', 'Namn', 'Typ', 'Kategori', 'Person', 'Belopp', 'Valuta', 'Återkommande', 'Ändrad denna månad'], rows);
+  snackbar(Csv.download(`budget-buddy-${isoToday()}.csv`, text) ? 'CSV-filen laddas ner' : 'Kunde inte skapa filen', null, null, 3000);
+});
