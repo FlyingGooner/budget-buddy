@@ -266,3 +266,8 @@ dialog { width: min(400px, calc(100vw - 32px)); }
 .welcome .field { display: grid; gap: 4px; margin-bottom: 8px; }
 /* Hjälp på valt språk (2026-11-15) */
 html[lang="en"] .help[lang="sv"], html:not([lang="en"]) .help[lang="en"] { display: none; }
+
+/* Byta kod (2026-11-15): tre knappar staplade, viktigast överst. */
+#newcode-dialog .actions, #newcode-dialog .dlg-actions { display: flex; flex-direction: column-reverse; align-items: stretch; gap: 8px; }
+#newcode-dialog .actions .spacer { display: none; }
+#newcode-dialog .actions button, #newcode-dialog .dlg-actions button { width: 100%; margin: 0; }
