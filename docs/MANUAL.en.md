@@ -11,6 +11,14 @@ The same text is in the app under **Settings → Help** when English is chosen. 
 - **Select several items:** hold your finger on an item until it is selected and tap more. **End** sets a last month on all selected (the history is kept), **Remove** puts them in the trash. Undo is available right afterwards. ✕ or Back ends.
 - **Sort items:** tap **↕** above Income. The columns Amount, Name, Category and Start then show. Tap a column to sort by it, and the same column again to reverse the order (↑ ascending, ↓ descending). The choice applies to both income and expenses and is saved.
 
+## Why your data is safe here
+- This app holds your whole financial life: salary, loans, bills, savings and who in the household pays what. That should not end up with a company, an advertiser or a hacker.
+- **No server to hack.** Most big leaks happen when a company's database with millions of users' data is hacked. There is no such database here: your data is only in your phone. Anyone who wants it has to get into your particular phone.
+- **Nothing to sell.** Many free apps – and paid ones too – make money from your data or share it with partners for ads and analytics. This app has no account, no analytics, no ads and no trackers. The browser also technically blocks every request out, so the data cannot be sent anywhere, not even by mistake.
+- **Locked backup.** The backup file is encrypted with AES-256 and your password. If you put it in the cloud, the cloud service only sees unreadable data.
+- **Open code.** All the code is public on GitHub and can be reviewed by anyone.
+- **Honestly: nothing is 100 % safe.** What remains is your own phone – lock it with a code and keep it updated – a weak backup password, and that the app's code on GitHub Pages is not changed by someone unauthorised. But for this kind of data there is no safer practical way than never letting it leave the phone.
+
 ## Month
 
 ![Month: left, savings and per person](manual/manad.png)

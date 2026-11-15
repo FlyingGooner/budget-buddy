@@ -11,6 +11,14 @@ Samma text finns i appen under **Inställningar → Hjälp**. Skriv bara här: H
 - **Markera flera poster:** håll fingret på en post tills den blir markerad och tryck på fler. **Avsluta** sätter en sista månad på alla markerade (historiken bakåt finns kvar), **Ta bort** lägger dem i papperskorgen. Ångra finns direkt efteråt. ✕ eller Bakåt avslutar.
 - **Sortera poster:** tryck på **↕** ovanför Inkomster. Då visas kolumnerna Belopp, Namn, Kategori och Start. Tryck på en kolumn för att sortera på den, och på samma kolumn igen för att vända ordningen (↑ stigande, ↓ fallande). Valet gäller både inkomster och kostnader och sparas.
 
+## Varför din data är säker här
+- Här finns hela din ekonomi: lön, lån, räkningar, sparande och vem i hushållet som betalar vad. Sådant ska inte hamna hos ett företag, en annonsör eller en hackare.
+- **Ingen server att hacka.** De flesta stora läckor sker när ett företags databas med miljontals användares uppgifter hackas. Här finns ingen sådan databas: din data finns bara i din telefon. Den som vill åt den måste komma åt just din telefon.
+- **Inget att sälja.** Många gratisappar – och även betalappar – tjänar pengar på din data eller delar den med partner för annonser och analys. Den här appen har inget konto, ingen analys, ingen reklam och inga spårare. Webbläsaren spärrar dessutom tekniskt alla anrop ut, så datan kan inte skickas iväg ens av misstag.
+- **Låst backup.** Backup-filen krypteras med AES-256 och ditt lösenord. Lägger du den i molnet ser molntjänsten bara obegriplig data.
+- **Öppen kod.** All kod ligger öppet på GitHub och kan granskas av vem som helst.
+- **Ärligt: inget är 100 % säkert.** Det som återstår är din egen telefon – lås den med kod och håll den uppdaterad – ett svagt backup-lösenord, och att appens kod på GitHub Pages inte ändras av någon obehörig. Men för den här sortens uppgifter finns inget säkrare praktiskt sätt än att de aldrig lämnar telefonen.
+
 ## Månad
 
 ![Månad: kvar, sparande och per person](manual/manad.png)
