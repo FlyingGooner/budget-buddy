@@ -98,7 +98,9 @@ function fillWelcome() {
    
     el('h2', { id: 'wl-title', text: 'Välkommen!' }),
     segs, curSel,
-    savedPassword() && el('p', { class: 'muted small', text: 'Dina backup-filer krypteras med ett lösenord som har skapats och sparats på enheten. Du kan se eller byta det under Inställningar → Data.' }),
+    el('p', { text: 'Är du ny räcker det att välja språk.' }),
+    savedPassword() && el('p', { class: 'muted small', text: 'Din personliga kod (lösenordet till dina backup-filer) har skapats åt dig och finns under Inställningar → Data. Spara den på en säker plats, t.ex. i en lösenordshanterare – utan den går en backup inte att öppna på en ny enhet.' }),
+    !welcomeHasData() && el('p', { class: 'muted small', text: 'Har du använt appen förut, på den här eller en annan enhet? Läs in din backup-fil för att få tillbaka din data.' }),
     el('div', { class: 'welcome-actions' }, ...[el('button', { type: 'button', class: 'btn filled', text: 'Fortsätt', on: { click: () => { I18N.setLang(I18N.lang(), false); closeWelcome(); } } }),
       !welcomeHasData() && el('label', { class: 'btn tonal btn-file' }, 'Jag har en backup-fil', file)].filter(Boolean)),
     err].filter(Boolean));
