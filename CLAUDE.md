@@ -18,3 +18,4 @@ Mobil-först PWA för att planera ekonomin månad för månad. Spec: `docs/SPEC.
 - Bakåt: flikbyte = `pushState`; varje lager (öppen `<dialog>` med id, markeringsläget) är ett steg via `nav.js` (`layerOpened`/`layerClosed` i `app.js`; dialoger fångas automatiskt). Test i `tools/tests/nav.node.mjs`.
 - Papperskorg: borttagna poster, avvikelser och sparkonton → `data.trash` (`trashItems`/`restoreItem`/`purgeTrash` i `store.js`), 30 dagar, inte i exporten.
 - Tester: `tools\test.ps1` (Node: `unit.test.js` via `tools/node-unit.mjs`, och `*.node.mjs`); `ui.test.js` i Edge.
+- HTML-fil (2026-11-15): `budget-buddy.html` = hela appen i en fil (länken Ladda ner (HTML) under Inställningar). Byggs av `tools/build-single.mjs` (Node, samma regler som `build-single.ps1`); GitHub Action `single-html.yml` bygger om den vid push. Bygg om den själv i varje commit: `node tools/build-single.mjs --out budget-buddy.html`.
