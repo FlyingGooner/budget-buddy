@@ -1,123 +1,125 @@
 <div align="center">
 
-<img src="icons/icon-192.png" width="88" alt="Budget buddy-ikon">
+<img src="icons/icon-192.png" width="88" alt="Budget buddy icon">
 
 # Budget buddy
 
-**Planera ekonomin månad för månad – inkomster, räkningar och det oväntade.**
+**Plan your finances month by month – income, bills and the unexpected.**
 
-### [▶ Öppna appen](https://flyinggooner.github.io/budget-buddy/)
+### [▶ Open the app](https://flyinggooner.github.io/budget-buddy/)
 
-[📱 Presentation av appen](https://flyinggooner.github.io/budget-buddy/docs/presentation.html) · [🛡️ Små appar, hög nivå](https://flyinggooner.github.io/budget-buddy/docs/standard.html)
+[📱 Presentation of the app](https://flyinggooner.github.io/budget-buddy/docs/presentation.html) · [🛡️ Small apps, high standard](https://flyinggooner.github.io/budget-buddy/docs/standard.html)
 
 </div>
 
 <p align="center">
-  <img src="docs/screenshots/month.png" width="200" alt="Månad-vyn">
-  <img src="docs/screenshots/overview.png" width="200" alt="Översikt-vyn">
-<img src="docs/screenshots/stats.png" width="200" alt="Statistik-vyn">
-  <img src="docs/screenshots/items.png" width="200" alt="Poster-vyn">
-  <img src="docs/screenshots/month-dark.png" width="200" alt="Månad-vyn i mörkt tema">
+  <img src="docs/screenshots/month.png" width="200" alt="The Month view">
+  <img src="docs/screenshots/overview.png" width="200" alt="The Overview view">
+<img src="docs/screenshots/stats.png" width="200" alt="The Statistics view">
+  <img src="docs/screenshots/items.png" width="200" alt="The Items view">
+  <img src="docs/screenshots/month-dark.png" width="200" alt="The Month view in dark theme">
 </p>
 
-<p align="center"><img src="docs/screenshots/desktop.png" width="820" alt="Månad på dator: månaden och kommande 12 månader sida vid sida"></p>
+<p align="center"><img src="docs/screenshots/desktop.png" width="820" alt="Month on a computer: the month and the next 12 months side by side"></p>
 
-<p align="center"><sub>Skärmbilderna visar påhittad exempeldata.</sub></p>
+<p align="center"><sub>The screenshots show made-up example data.</sub></p>
 
-## Varför?
+## Why?
 
-De flesta budgetappar vill att du loggar varje köp. Budget buddy gör tvärtom: du lägger in inkomster och fasta räkningar en gång, och fyller bara i avvikelserna – nya däck, en tandläkarräkning – på den månad de hör till. Då ser du direkt hur varje månad går ihop, även månader framåt.
+Most budget apps want you to log every purchase. Budget buddy does the opposite: you enter income and fixed bills once, and only fill in the deviations – new tyres, a dentist's bill – in the month they belong to. Then you see right away how each month adds up, even months ahead.
 
-## Funktioner
+## Features
 
 | | |
 |---|---|
-| 📅 **Månad** | Vad som är kvar efter månadens kostnader – och hur mycket du sparar. |
-| 🔁 **Fasta poster** | Lön och räkningar läggs in en gång – varje månad, varannan, kvartal eller år. |
-| ✏️ **Avvikelser** | Nya däck eller en tandläkarräkning läggs på den månad den hör till. Ett belopp kan ändras för bara en månad. |
-| 📈 **Översikt** | Kommande 12 månader och saldot efter varje månad. |
-| 📊 **Statistik** | Nyckeltal, sparkvot, kostnader per kategori och in/ut de senaste 12 månaderna. |
-| 🐷 **Sparande** | Kategorin Sparande visas separat: "varav sparande" och hur mycket du sparat. |
-| 🏦 **Sparkonton** | Fyll i saldot på dina sparkonton varje månad och se förändringen – även i utländsk valuta, omräknat till kronor. |
-| 👥 **Personer** | Valfritt: vem en post hör till, eller Gemensamt, med en tabell per person. |
-| ↩️ **Ångra** | Borttagna poster kan ångras i några sekunder. |
-| 💾 **Backup** | Spara all data som en lösenordskrypterad fil och läs in den igen – på samma eller en annan enhet. |
-| ❓ **Hjälp** | Manual med bilder direkt i appen. |
-| 📴 **Offline** | Fungerar utan nät efter första besöket. |
-| ↩️ **Bakåt** | Telefonens bakåtknapp går tillbaka genom flikarna du besökt. |
-| 🌗 **Tema** | Ljust och mörkt, följer telefonens inställning. |
+| 📅 **Month** | What is left after the month's expenses – and how much you save. |
+| 🔁 **Fixed items** | Salary and bills are entered once – every month, every other month, quarter or year. |
+| ✏️ **Deviations** | New tyres or a dentist's bill go in the month they belong to. An amount can be changed for one month only. |
+| 📈 **Overview** | The next 12 months and the balance after each month. |
+| 📊 **Statistics** | Key figures, savings rate, expenses by category and in/out over the last 12 months. |
+| 🐷 **Savings** | The category Savings is shown separately: "of which savings" and how much you have saved. |
+| 🏦 **Savings accounts** | Fill in the balance of your savings accounts each month and see the change – also in other currencies, converted to your currency. |
+| 💱 **Your currency** | Kronor, euro, dollar, pound, Norwegian or Danish kroner. Changing currency converts all amounts with the built-in rates (with Undo). |
+| 👥 **People** | Optional: who an item belongs to, or Shared, with a table per person. |
+| 🌍 **Language** | English or Swedish, chosen at the first start and changeable in Settings. |
+| ↩️ **Undo** | Deleted items can be undone for a few seconds, and the trash keeps them for 30 days. |
+| 💾 **Backup** | Save all data as a password-encrypted file and restore it – on the same or another device. |
+| ❓ **Help** | Manual with pictures right in the app, in both languages. |
+| 📴 **Offline** | Works without network after the first visit. |
+| ↩️ **Back** | The phone's back button goes back through the tabs you have visited. |
+| 🌗 **Theme** | Light and dark, follows the phone's setting. |
 
-## Integritet och säkerhet 🔒
+## Privacy and security 🔒
 
-- **Inget konto, inga cookies.** Allt sparas bara i din webbläsare (`localStorage`).
-- **Inget utifrån.** Ingen analys, inga annonser, inga typsnitt eller skript utifrån – spärras även tekniskt med en Content Security Policy. Även valutakurserna är inbyggda i appen; den hämtar aldrig något.
-- **Krypterad backup.** Backup-filen krypteras alltid med ett lösenord du väljer: AES-GCM 256 bitar, och nyckeln tas fram med PBKDF2-SHA256 och 600 000 iterationer – den nivå OWASP rekommenderar och samma som förvalet i lösenordshanteraren Bitwarden. Nytt salt och ny IV varje gång, och en fil som ändrats går inte att läsa in. Bara webbläsarens inbyggda krypto används, inga bibliotek utifrån.
+- **No account, no cookies.** Everything is stored only in your browser (`localStorage`).
+- **Nothing from outside.** No analytics, no ads, no fonts or scripts from outside – also blocked technically with a Content Security Policy. Even the exchange rates are built into the app and updated at each release; it never fetches anything.
+- **Encrypted backup.** The backup file is always encrypted with a password you choose: AES-GCM 256 bits, and the key is derived with PBKDF2-SHA256 and 600,000 iterations – the level OWASP recommends and the same as the default in the password manager Bitwarden. A new salt and IV every time, and a file that has been changed cannot be restored. Only the browser's built-in crypto is used, no libraries from outside.
 
-### Jämfört med vanliga budgetappar
+### Compared with typical budget apps
 
-| | Den här appen | Vanliga budgetappar |
+| | This app | Typical budget apps |
 |---|---|---|
-| Konto | Inget | Krävs, ofta med e-post |
-| Var datan finns | Bara i din telefon | På företagets servrar |
-| Analys, annonser, spårare | Inga – spärrat tekniskt | Vanligt |
-| Backup | Krypterad fil som bara ditt lösenord öppnar | I företagets moln |
-| Om tjänsten läggs ner | Appen och datan finns kvar | Datan kan försvinna |
+| Account | None | Required, often with email |
+| Where the data is | Only in your phone | On the company's servers |
+| Analytics, ads, trackers | None – blocked technically | Common |
+| Backup | Encrypted file only your password opens | In the company's cloud |
+| If the service shuts down | The app and the data remain | The data may disappear |
 
-> **Ärligt om gränserna:** datan i telefonen skyddas av telefonens eget lås, inte av en egen kryptering – lås telefonen. Ett glömt lösenord går inte att återställa, och ett svagt lösenord kan gissas, så välj ett långt. Rensar du webbplatsdata försvinner allt, så spara en backup-fil då och då (Inställningar → Data).
+> **Honest about the limits:** the data in the phone is protected by the phone's own lock, not by separate encryption – lock your phone. A forgotten password cannot be recovered, and a weak password can be guessed, so choose a long one. If you clear site data everything disappears, so save a backup file now and then (Settings → Data).
 
-### Säkerhetstestad ✅
+### Security tested ✅
 
-Automatiska tester körs före varje ny version och varje uppladdning. Underkänt test = ingen release.
+Automatic tests run before every new version and every upload. Failed test = no release.
 
-**Säkerhetskontroll**
-- [x] **Bara appens egen kod körs** – webbläsaren blockerar allt annat.
-- [x] **Inget lämnar telefonen** – appen pratar aldrig med någon server; även valutakurserna är inbyggda.
-- [x] **Din data stannar hos dig** – sparas bara i telefonen; appen rör bara sina egna uppgifter.
-- [x] **Fungerar utan nät** – med bara appens egna filer.
-- [x] **Låst backup** – bara ditt lösenord öppnar filen. Lösenordet sparas aldrig.
+**Security check**
+- [x] **Only the app's own code runs** – the browser blocks everything else.
+- [x] **Nothing leaves the phone** – the app never talks to any server; even the exchange rates are built in.
+- [x] **Your data stays with you** – stored only in the phone; the app only touches its own data.
+- [x] **Works offline** – with only the app's own files.
+- [x] **Locked backup** – only your password opens the file. The password is never stored in the file.
 
-**Funktionstester**
-- [x] **Trasiga filer stoppas** – en backup från fel app, eller som någon ändrat i, läses inte in.
-- [x] **Inget innehåll kan bli kod** – allt visas som vanlig text.
-- [x] **Backup tur och retur** – ger identisk data; Radera tömmer bara appens egna data.
-- [x] **Rätt summor** – allt räknas i hela ören.
+**Function tests**
+- [x] **Broken files are stopped** – a backup from the wrong app, or one someone has changed, is not restored.
+- [x] **No content can become code** – everything is shown as plain text.
+- [x] **Backup round trip** – gives identical data; Delete only empties the app's own data.
+- [x] **Correct totals** – everything is counted in whole öre/cents.
 
-
-## Installera på mobilen
+## Install on your phone
 
 **Android (Chrome)**
-1. Öppna [appen](https://flyinggooner.github.io/budget-buddy/) i Chrome.
-2. Tryck på menyn **⋮** → **Installera app** (eller *Lägg till på startskärmen*).
+1. Open [the app](https://flyinggooner.github.io/budget-buddy/) in Chrome.
+2. Tap the menu **⋮** → **Install app** (or *Add to Home screen*).
 
 **iPhone (Safari)**
-1. Öppna [appen](https://flyinggooner.github.io/budget-buddy/) i Safari.
-2. Tryck på **Dela** → **Lägg till på hemskärmen**.
+1. Open [the app](https://flyinggooner.github.io/budget-buddy/) in Safari.
+2. Tap **Share** → **Add to Home Screen**.
 
-Versionsnumret syns uppe till höger i appen. Nya versioner hämtas automatiskt.
+The version number is shown at the top right of the app. New versions are fetched automatically.
 
-## För utvecklare
+## For developers
 
-Ren HTML, CSS och JavaScript – inga ramverk, inga beroenden, inget byggsteg för appen.
+Plain HTML, CSS and JavaScript – no frameworks, no dependencies, no build step for the app.
 
-**Köra lokalt:** servera mappen statiskt, t.ex. `python3 -m http.server 8080`, och öppna http://localhost:8080 (service workern kräver `localhost` eller HTTPS).
+**Run locally:** serve the folder statically, e.g. `python3 -m http.server 8080`, and open http://localhost:8080 (the service worker needs `localhost` or HTTPS).
 
-**Testfil:** `tools\build-single.ps1` bakar ihop appen till en enda fil, `dist/budget-buddy.html`, som går att öppna direkt i webbläsaren eller skicka till någon.
+**Test file:** `tools\build-single.ps1` bakes the app into a single file, `dist/budget-buddy.html`, which can be opened directly in the browser or sent to someone.
 
-| Fil | Innehåll |
+| File | Contents |
 |---|---|
-| `index.html` | Appens markup |
-| `styles.css`, `app.js` | Stil och logik |
-| `store.js` | Lagring i `localStorage`, validering av sparad data och export/import |
-| `backup.js` | Spara och läsa backup-fil (gemensam för alla appar, original i arbetsytans mall) |
-| `version.js` | Versionsnummer (enda källan) |
-| `sw.js`, `manifest.webmanifest`, `icons/` | Installation som app (PWA) och offline |
-| `docs/SPEC.md` | Specifikation av funktioner och beteende |
-| `docs/MANUAL.md` | Manualen (samma text som Hjälp i appen) |
-| `docs/presentation.html` | Fristående mobilpresentation av appen |
-| `docs/standard.html` | Små appar, hög nivå – det alla appar har gemensamt (synkas från mallen) |
-| `tools/build-single.ps1` | Bygger testfilen |
-| `tools/tests/` | Enhets- och flödestester (körs i headless Edge) |
-| `tools/update-rates.ps1` | Hämtar ECB-kurser (Frankfurter) till `store.js` – körs automatiskt före varje commit |
-| `CLAUDE.md` | Regler för utveckling |
+| `index.html` | The app's markup |
+| `styles.css`, `app.js` | Style and logic |
+| `store.js` | Storage in `localStorage`, validation of saved data, export/import and currency conversion (`changeHome`) |
+| `backup.js` | Saving and reading the backup file (shared by all apps, original in the workspace template) |
+| `i18n.js`, `i18n-en.js` | Language support: the source text is Swedish; `i18n.js` (shared by all apps) translates what is drawn with the dictionary in `i18n-en.js` |
+| `version.js` | Version number (single source) |
+| `sw.js`, `manifest.webmanifest`, `icons/` | Installation as an app (PWA) and offline |
+| `docs/SPEC.md` | Specification of features and behaviour |
+| `docs/MANUAL.md`, `docs/MANUAL.en.md` | The manual in Swedish and English (the same text as Help in the app) |
+| `docs/presentation.html` | Stand-alone mobile presentation of the app (English by default, Swedish with the button on the first slide) |
+| `docs/standard.html` | Small apps, high standard – what all the apps have in common (synced from the template) |
+| `tools/build-single.ps1` | Builds the test file |
+| `tools/tests/` | Unit and flow tests (run in headless Edge) |
+| `tools/update-rates.ps1` | Fetches ECB rates (Frankfurter) into `store.js` – run automatically before every commit |
+| `CLAUDE.md` | Rules for development |
 
-Publiceras till GitHub Pages från `main`.
+Published to GitHub Pages from `main`.
