@@ -95,14 +95,15 @@ function fillWelcome() {
       CURRENCIES.map((c) => el('option', { value: c, selected: c === home(), text: CUR_NAMES[c] }))));
   const pick = el('button', { type: 'button', class: 'btn filled', text: 'Välj lösenord', on: { click: () => { I18N.setLang(I18N.lang(), false); choosePassword(); } } });
   const pw = needsPassword();
-  welcomeDlg.replaceChildren(
+  welcomeDlg.replaceChildren(...[   // [].filter: replaceChildren writes false as text
+   
     el('h2', { id: 'wl-title', text: 'Välkommen!' }),
     segs, curSel,
     pw && el('p', { text: 'Välj ett lösenord som skyddar dina backup-filer. Spara det i din lösenordshanterare – utan det går en backup inte att läsa in.' }),
     pw && el('p', { class: 'muted small', text: 'Allt stannar på din enhet. Använd ett nytt lösenord – det sparas här.' }),
     pw ? el('div', { class: 'welcome-actions' }, pick, !welcomeHasData() && el('label', { class: 'btn tonal btn-file' }, 'Jag har en backup-fil', file))
       : el('div', { class: 'welcome-actions' }, el('button', { type: 'button', class: 'btn filled', text: 'Fortsätt', on: { click: () => { I18N.setLang(I18N.lang(), false); closeWelcome(); } } })),
-    err);
+    err].filter(Boolean));
 }
 function welcomeCheck() {
   if (!needsWelcome() || welcomeDlg?.open || typeof HTMLDialogElement !== 'function') return;
