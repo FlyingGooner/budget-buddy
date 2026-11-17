@@ -25,4 +25,5 @@ jobs:
           git config user.email "41898283+github-actions[bot]@users.noreply.github.com"
           git add store.js version.js budget-buddy.html
           git commit -m "Valutakurser: ECB $(grep -o "RATES_DATE = '[^']*'" store.js | cut -d"'" -f2)"
+          git pull --rebase -X theirs origin main && node tools/build-single.mjs --out budget-buddy.html && git add budget-buddy.html && (git diff --cached --quiet || git commit -m "Bygg budget-buddy.html")
           git push
