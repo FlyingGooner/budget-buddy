@@ -535,3 +535,10 @@ body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; 
 #acc-list .row-main { min-height: 44px; }
 #acc-list .acc-amt { font-weight: 500; }
 #acc-rates:empty { display: none; }
+/* Sparande-kortet förenklat (2026-11-17): en rad per konto (med sitt månadssparande), tryck för att ändra */
+#savings-card > h2 { padding-bottom: 0; }
+.sv-big { border-bottom: 0; padding-bottom: 2px; margin-top: 6px; }
+.sv-accs li { padding: 0; }
+.sv-row { width: 100%; display: grid; grid-template-columns: 1fr auto; gap: 12px; align-items: center; min-height: 48px; padding: 6px 0; border: 0; background: none; color: inherit; font: inherit; text-align: left; cursor: pointer; }
+.sv-foot { display: flex; justify-content: space-between; margin-top: 2px; }
+.sv-foot .link { border: 0; background: none; padding: 8px 0; color: var(--primary); font: 500 .875rem var(--font); cursor: pointer; }

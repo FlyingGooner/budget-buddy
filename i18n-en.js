@@ -160,6 +160,8 @@ I18N.add({
   [/^(\d+) poster$/, '$1 items'],
   [/^Den (\d+):e \(lönedag\)$/, 'The $1th (payday)'],
   [/^Den (\d+):e$/, 'The $1th'],
+  [/^(.+)\. Ändra$/, '$1. Edit'],
+  [/^\+(.+)\/mån( · \(.+\))?$/, (g) => `+${g[1]}/mo${g[2] || ''}`],
   [/^beräknat \+ (.+)$/, 'estimated + $1'],
   [/^ifyllt (\S+)$/, (g, tr) => `entered ${tr(g[1])}`],
   [/^\((.+)\) · (.+)$/, (g, tr) => `(${g[1]}) · ${tr(g[2])}`],

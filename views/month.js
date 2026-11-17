@@ -110,44 +110,39 @@ function renderMonth() {
 }
 
 // Sparande (2026-11-17): eget kort med andel av inkomsten, så att det syns att pengarna inte är borta.
-// Sparande-kortet (2026-11-17): månadens sparande + ackumulerat på sparkontona, per konto med ändring mot förra månaden.
+// Sparande-kortet (2026-11-17, förenklat): en lista där varje rad är ett sparkonto med sitt månadssparande
+// (sparpost + konto hör ihop). Sparposter utan konto får en egen rad. Tryck på en rad för att ändra.
 function renderSavingsCard(saving, t) {
   if (!saving.length && !data.accounts.length) return;
   const share = t.income ? Math.round((t.savings / t.income) * 100) : 0;
-  const bar = el('span', { class: 'cg-bar sv-bar' }); bar.style.width = Math.min(100, share) + '%';
   const prev = addMonths(month, -1), round = (v) => Math.round(v / 100) * 100;
-  const accs = data.accounts.map((a) => {
+  const used = new Set();
+  const rowsOut = data.accounts.map((a) => {
     const cur = estBalance(data, a, month), was = estBalance(data, a, prev);
-    return { a, cur, now: round(toSek(cur?.amount || 0, a.currency)), diff: cur && was ? round(toSek(cur.amount - was.amount, a.currency)) : null };
-  });
-  const total = accs.reduce((s, x) => s + x.now, 0), totalDiff = accs.reduce((s, x) => s + (x.diff || 0), 0);
-  const toAccounts = (e) => { e.preventDefault(); e.stopPropagation(); showTab('stats'); $('stats-accounts').scrollIntoView({ block: 'start' }); };
-  fill($('savings-card'), fold('sav', [
-    // Kompakt (2026-11-17): månadens sparande och andel på rubrikraden, totalen på en rad, kontona tätt under.
+    const items = saving.filter((r) => (a.feeds || []).includes(r.id)); items.forEach((r) => used.add(r.id));
+    return { name: a.name, a, items, monthly: items.reduce((x, r) => x + r.amount, 0), cur,
+      now: cur ? round(toSek(cur.amount, a.currency)) : null, diff: cur && was ? round(toSek(cur.amount - was.amount, a.currency)) : null };
+  }).concat(saving.filter((r) => !used.has(r.id)).map((r) => ({ name: r.name, items: [r], monthly: r.amount })));
+  const total = rowsOut.reduce((x, r) => x + (r.now || 0), 0), totalDiff = rowsOut.reduce((x, r) => x + (r.diff || 0), 0);
+  const approx = rowsOut.some((r) => r.cur?.estimated || (r.a && r.a.currency !== home()));
+  const open = (r) => (r.items.length === 1 ? openRowDialog(r.items[0]) : r.a ? openAccDialog(r.a) : null);
+  fill($('savings-card'),
     el('h2', { class: 'split' }, el('span', { text: '🐷 Sparande' }),
       el('span', { text: `${kr(t.savings)}/mån` + (t.income && t.savings ? ` · ${share} %` : '') })),
-    accs.length ? el('div', { class: 'sv-sum' },
-      el('div', { class: 'sv-big' },
-        el('span', { class: 'sv-amt' }, el('small', { text: 'Totalt sparat' }), (accs.some((x) => x.cur?.estimated || x.a.currency !== home()) ? '≈ ' : '') + kr(total)),
-        el('span', { class: 'sv-side' },
-          totalDiff ? el('span', { class: 'sv-diff ' + (totalDiff < 0 ? 'neg' : 'pos'), text: `${totalDiff > 0 ? '+' : '−'}${kr(Math.abs(totalDiff))} sedan ${monthShortLabel(prev).toLowerCase()}` }) : null,
-          el('button', { type: 'button', class: 'link sv-more', text: 'Sparkonton ›', on: { click: toAccounts } }))),
-      // Varje konto i hemvalutan; konto i annan valuta har sitt eget belopp under namnet (t.ex. "730 USD").
-      el('ul', { class: 'sv-accs' }, accs.map((x) => {
-        const foreign = x.a.currency !== home();
-        return el('li', {},
-          el('span', { class: 'sv-name' }, el('span', { text: x.a.name }),
-            foreign && x.cur ? el('small', { text: money(x.cur.amount, x.a.currency) }) : null),
-          el('span', { class: 'sv-val' }, el('span', { text: x.cur ? ((x.cur.estimated || foreign) ? '≈ ' : '') + kr(x.now) : '–' }),
-            x.diff ? el('small', { class: (x.diff < 0 ? 'neg' : 'pos'), text: `${x.diff > 0 ? '+' : '−'}${kr(Math.abs(x.diff))}` }) : null));
-      })),
-      ) : null],
-    saving.length ? el('ul', { class: 'list' }, saving.map((r) => {
-      const li = monthRow(r), acc = data.accounts.find((a) => (a.feeds || []).includes(r.id));
-      if (acc) li.querySelector('.row-sub')?.append(` → ${acc.name}`);
-      return li;
-    })) : null,
-    addLike(saving.length ? saving : [{ category: SAVINGS_CAT }], 'Sparande')));
+    data.accounts.length ? el('div', { class: 'sv-big' },
+      el('span', { class: 'sv-amt' }, el('small', { text: 'Totalt sparat' }), (approx ? '≈ ' : '') + kr(total)),
+      totalDiff ? el('span', { class: 'sv-diff ' + (totalDiff < 0 ? 'neg' : 'pos'), text: `${totalDiff > 0 ? '+' : '−'}${kr(Math.abs(totalDiff))} sedan ${monthShortLabel(prev).toLowerCase()}` }) : null) : null,
+    el('ul', { class: 'sv-accs' }, rowsOut.map((r) => {
+      const foreign = r.a && r.a.currency !== home();
+      const sub = [r.monthly ? `+${kr(r.monthly)}/mån` : null, foreign && r.cur ? `(${money(r.cur.amount, r.a.currency)})` : null].filter(Boolean).join(' · ');
+      return el('li', {}, el('button', { type: 'button', class: 'sv-row', 'aria-label': `${r.name}. Ändra`, on: { click: () => open(r) } },
+        el('span', { class: 'sv-name' }, el('span', { text: r.name }), sub ? el('small', { text: sub }) : null),
+        el('span', { class: 'sv-val' }, el('span', { text: r.a ? (r.cur ? ((r.cur.estimated || foreign) ? '≈ ' : '') + kr(r.now) : '–') : '' }),
+          r.diff ? el('small', { class: r.diff < 0 ? 'neg' : 'pos', text: `${r.diff > 0 ? '+' : '−'}${kr(Math.abs(r.diff))}` }) : null)));
+    })),
+    el('div', { class: 'sv-foot' },
+      el('button', { type: 'button', class: 'link', text: '+ Nytt sparande', on: { click: () => focusAdd('savings') } }),
+      data.accounts.length ? el('button', { type: 'button', class: 'link', text: 'Sparkonton ›', on: { click: () => { showTab('stats'); $('stats-accounts').scrollIntoView({ block: 'start' }); } } }) : null));
 }
 
 // Stäng månaden (2026-11-17): skriv in vad som faktiskt var kvar dagen före nästa lön. Ersätter planerat kvar i Historik och saldo.
