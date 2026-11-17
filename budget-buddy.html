@@ -411,6 +411,17 @@ body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; 
 .set-body .data-more { border-top: 1px solid var(--outline-variant); margin-top: 12px; }
 .help-wrap.set-sec > summary.help-title { min-height: 52px; }
 .add-like { display: block; min-height: 40px; margin: 0 0 6px 12px; padding: 0; border: 0; background: none; color: var(--primary); font: 500 .875rem var(--font); cursor: pointer; }
+/* Historik: graf pengar över tid (2026-11-17) */
+.chart .mc-line { fill: none; stroke: var(--primary); stroke-width: 2.5; stroke-linejoin: round; stroke-linecap: round; }
+.chart .mc-future { stroke-dasharray: 4 4; opacity: .7; }
+.chart .mc-area { fill: var(--primary); opacity: .12; }
+.chart .mc-now { fill: var(--primary); stroke: var(--surface-container); stroke-width: 2; }
+.chart .zero { stroke: var(--on-surface-variant); stroke-width: 1; stroke-dasharray: 2 3; }
+.lg-fut { background: none !important; border-top: 2px dashed var(--primary); height: 0 !important; }
+.mc-kpis { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 10px; text-align: center; }
+.mc-kpis b { display: block; font-size: 1.25rem; font-weight: 500; font-variant-numeric: tabular-nums; }
+.mc-kpis span { font-size: .75rem; color: var(--on-surface-variant); }
+.lg-fut { width: 14px !important; vertical-align: middle; }
 
 </style>
 </head>
@@ -1252,6 +1263,7 @@ I18N.add({
   '+ Inkomst': '+ Income', '+ Kostnad': '+ Cost', 'bara denna månad': 'this month only', 'Alla poster ›': 'All items ›', 'Tillbaka till Månad': 'Back to Month', 'Ändra posten': 'Edit item',
   '🐷 Sparande': '🐷 Savings',
   'Valuta och kurser': 'Currency and rates', 'Personer, kategorier, startsaldo': 'People, categories, starting balance', 'Språk, data, hjälp': 'Language, data, help', 'Backup, import, radera': 'Backup, import, delete',
+  'Saldo över tid': 'Balance over time', 'Pengar kvar över tid': 'Money left over time', 'Pengar kvar över tid, ackumulerat': 'Money left over time, cumulative', 'Hittills': 'So far', 'Prognos': 'Forecast', 'Snitt kvar/mån': 'Average left/mo', 'Kommande kvartal': 'Next quarter', 'Summa 3 mån': 'Total 3 mo',
   'Hemvaluta': 'Home currency', 'Fler val': 'More options', 'CSV, text, egen kod, radera': 'CSV, text, own code, delete', 'Ett okrypterat kalkylark, t.ex. för Excel.': 'An unencrypted spreadsheet, e.g. for Excel.', 'All data finns bara i den här webbläsaren. Läs in backup-filen på en annan enhet för att flytta den.': 'All data is only in this browser. Load the backup file on another device to move it.', 'Backupen låses med koden. Spara den i din lösenordshanterare.': 'The backup is locked with the code. Save it in your password manager.',
   'Valutakurser': 'Exchange rates', 'Allmänt': 'General', 'Inga': 'None', 'Inget': 'None', 'Tom': 'Empty', 'Egna': 'Own', 'Appens': "The app's", 'Importera från text': 'Import from text',
   'Byter du valuta räknas alla belopp om med valutakurserna (Ångra finns). Sparkonton behåller sin egen valuta.': 'If you change currency, all amounts are converted with the exchange rates (Undo is available). Savings accounts keep their own currency.',
@@ -1314,6 +1326,7 @@ I18N.add({
   [/^(\d+) st$/, '$1'],
   [/^(.+) från (\d{4}-\d{2})$/, '$1 from $2'],
   [/^(\d+) poster$/, '$1 items'],
+  [/^Bäst: (.+)$/, 'Best: $1'],
   [/^\+ Lägg till i (.+)$/, '+ Add to $1'],
   [/^(\d+) % av inkomsten$/, '$1 % of income'],
   [/^t\.o\.m\. (.+)$/, 'through $1'],
@@ -1367,7 +1380,7 @@ I18N.add({
 </script>
 <script>
 // ---- version.js ----
-﻿self.APP_VERSION = '0.12.53';
+﻿self.APP_VERSION = '0.12.54';
 
 </script>
   <script>
@@ -2658,11 +2671,44 @@ function ovRows(months, max, anyBal) {
     anyBal ? el('span', { class: 'amount muted small', text: r.bal == null ? '' : kr(r.bal) }) : null));
   }));
 }
+// Graf (2026-11-17): pengar kvar över tid – ackumulerat kvar (eller saldo om startsaldo finns), bakåt heldraget, framåt streckat.
+function moneyChart(past, next) {
+  const pts = [...past].reverse().concat(next);
+  if (pts.length < 2) return null;
+  const useBal = pts.every((r) => r.bal != null);
+  let acc = 0;
+  const vals = pts.map((r) => (useBal ? r.bal : (acc += r.left)));
+  const W = 340, H = 170, P = { l: 44, r: 10, t: 10, b: 20 };
+  const lo = Math.min(0, ...vals), hi = Math.max(1, ...vals);
+  const x = (i) => P.l + ((W - P.l - P.r) * i) / (pts.length - 1);
+  const y = (v) => P.t + (H - P.t - P.b) * (1 - (v - lo) / (hi - lo || 1));
+  const short = (ore) => nf0.format(Math.round(ore / 100000)) + 'k';
+  const nPast = past.length;
+  const line = (from, to) => vals.slice(from, to).map((v, k) => `${k ? 'L' : 'M'}${x(from + k).toFixed(1)},${y(v).toFixed(1)}`).join('');
+  const area = `${line(0, nPast)}L${x(nPast - 1).toFixed(1)},${y(lo).toFixed(1)}L${x(0).toFixed(1)},${y(lo).toFixed(1)}Z`;
+  const kids = [lo, (lo + hi) / 2, hi].map((v) => [
+    svg('line', { class: 'grid', x1: P.l, x2: W - P.r, y1: y(v), y2: y(v) }),
+    svg('text', { class: 'ax', x: P.l - 4, y: y(v) + 3, 'text-anchor': 'end' }, short(v))]);
+  if (lo < 0) kids.push(svg('line', { class: 'zero', x1: P.l, x2: W - P.r, y1: y(0), y2: y(0) }));
+  if (nPast > 1) kids.push(svg('path', { class: 'mc-area', d: area }), svg('path', { class: 'mc-line', d: line(0, nPast) }));
+  kids.push(svg('path', { class: 'mc-line mc-future', d: line(nPast - 1, pts.length) }));
+  kids.push(svg('circle', { class: 'mc-now', cx: x(nPast - 1), cy: y(vals[nPast - 1]), r: 4 }));
+  pts.forEach((r, i) => { if (i === 0 || i === pts.length - 1 || i === nPast - 1) kids.push(svg('text', { class: 'ax', x: x(i), y: H - 5, 'text-anchor': i === 0 ? 'start' : i === pts.length - 1 ? 'end' : 'middle' }, monthShortLabel(r.m))); });
+  const best = past.reduce((b, r) => (r.left > b.left ? r : b), past[0] || next[0]);
+  const avg = past.length ? Math.round(past.reduce((a, r) => a + r.left, 0) / past.length / 100) * 100 : 0;
+  return el('div', { class: 'card' },
+    el('h2', { class: 'split' }, el('span', { text: useBal ? 'Saldo över tid' : 'Pengar kvar över tid' }), el('span', { text: kr(vals[nPast - 1]) })),
+    svg('svg', { class: 'chart', viewBox: `0 0 ${W} ${H}`, role: 'img', 'aria-label': useBal ? 'Saldo över tid' : 'Pengar kvar över tid, ackumulerat' }, kids),
+    el('div', { class: 'legend' }, el('span', { class: 'lg lg-in' }), 'Hittills', el('span', { class: 'lg lg-fut' }), 'Prognos', el('span', { class: 'muted', text: `(tusental ${unit()})` })),
+    past.length ? el('div', { class: 'mc-kpis' },
+      el('div', {}, el('b', { class: avg < 0 ? 'neg' : '', text: kr(avg, true) }), el('span', { text: 'Snitt kvar/mån' })),
+      el('div', {}, el('b', { text: kr(best.left, true) }), el('span', { text: `Bäst: ${monthShortLabel(best.m).toLowerCase()}` }))) : null);
+}
 function renderOverview() {
   const box = $('overview'), end = overviewStart;
   const calc = (m) => ({ m, ...totals(rowsForMonth(data, m)), bal: balanceAfter(data, m) });
   const past = Array.from({ length: 12 }, (_, i) => calc(addMonths(end, i - 11))).filter((r) => r.income || r.expense).reverse();
-  const next = Array.from({ length: 12 }, (_, i) => calc(addMonths(end, i + 1)));
+  const next = Array.from({ length: 3 }, (_, i) => calc(addMonths(end, i + 1)));   // ett kvartal framåt (2026-11-17)
   const all = [...past, ...next];
   const max = Math.max(1, ...all.map((r) => Math.abs(r.left)));
   const anyBal = all.some((r) => r.bal != null);
@@ -2677,17 +2723,18 @@ function renderOverview() {
 
   const hasData = data.recurring.length || data.oneOffs.length;
   if (!hasData) {
-    fill(box, el('div', { class: 'card' }, el('div', { class: 'empty' },
+    fill(box, head, el('div', { class: 'card' }, el('div', { class: 'empty' },
       el('p', { class: 'muted', text: 'Inga poster än – lägg till inkomster och räkningar så syns månaderna här.' }),
       el('button', { type: 'button', class: 'btn tonal', text: 'Lägg till inkomster och kostnader', on: { click: () => focusAdd('income') } }))));
     return;
   }
   fill(box,
     head,
+    moneyChart(past, next),
+    el('div', { class: 'card' }, el('h2', { text: 'Kommande kvartal' }), ovRows(next, max, anyBal), total('Summa 3 mån', next)),
     el('div', { class: 'card' }, el('h2', { text: 'Senaste 12 månaderna' }),
       past.length ? ovRows(past, max, anyBal) : el('p', { class: 'muted', text: 'Inga poster bakåt i tiden.' }),
       past.length ? total('Summa', past) : null),
-    el('div', { class: 'card' }, el('h2', { text: 'Kommande 12 månader' }), ovRows(next, max, anyBal), total('Summa 12 mån', next)),
     anyBal ? el('p', { class: 'muted small', text: 'Högra kolumnen: saldo efter månaden.' }) : null);
 }
 

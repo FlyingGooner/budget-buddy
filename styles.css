@@ -394,3 +394,14 @@ body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; 
 .set-body .data-more { border-top: 1px solid var(--outline-variant); margin-top: 12px; }
 .help-wrap.set-sec > summary.help-title { min-height: 52px; }
 .add-like { display: block; min-height: 40px; margin: 0 0 6px 12px; padding: 0; border: 0; background: none; color: var(--primary); font: 500 .875rem var(--font); cursor: pointer; }
+/* Historik: graf pengar över tid (2026-11-17) */
+.chart .mc-line { fill: none; stroke: var(--primary); stroke-width: 2.5; stroke-linejoin: round; stroke-linecap: round; }
+.chart .mc-future { stroke-dasharray: 4 4; opacity: .7; }
+.chart .mc-area { fill: var(--primary); opacity: .12; }
+.chart .mc-now { fill: var(--primary); stroke: var(--surface-container); stroke-width: 2; }
+.chart .zero { stroke: var(--on-surface-variant); stroke-width: 1; stroke-dasharray: 2 3; }
+.lg-fut { background: none !important; border-top: 2px dashed var(--primary); height: 0 !important; }
+.mc-kpis { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 10px; text-align: center; }
+.mc-kpis b { display: block; font-size: 1.25rem; font-weight: 500; font-variant-numeric: tabular-nums; }
+.mc-kpis span { font-size: .75rem; color: var(--on-surface-variant); }
+.lg-fut { width: 14px !important; vertical-align: middle; }
