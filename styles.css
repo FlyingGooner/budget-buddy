@@ -453,3 +453,10 @@ body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; 
 .delta { display: block; margin-top: 2px; }
 .sav-sum .row-name > span:first-child { font-weight: 500; }
 .step-title .m-span { display: block; font-size: .75rem; font-weight: 400; color: var(--on-surface-variant); margin-top: 2px; }
+/* Genomgång (2026-11-17): tom platshållare i Poster-raden syns inte; Fler val med samma ▸ som övriga rader */
+.items-bar > span.icon-btn { visibility: hidden; }
+.data-more > summary { display: flex; align-items: center; gap: 8px; list-style: none; }
+.data-more > summary::-webkit-details-marker { display: none; }
+.data-more > summary::after { content: none !important; }
+.data-more > summary::before { content: '▸'; color: var(--on-surface-variant); transition: transform .15s; }
+.data-more[open] > summary::before { transform: rotate(90deg); }

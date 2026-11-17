@@ -38,7 +38,7 @@ function renderItems() {
     const rest = items.filter((r) => !savers.includes(r));
     const savMonthly = savers.filter((r) => r.every === 1 && (!r.end || r.end >= now)).reduce((s, r) => s + r.amount, 0);
     const savRow = savers.length ? el('li', { class: 'row sav-sum' }, el('button', { type: 'button', class: 'row-main',
-      'aria-label': `Sparande, ${kr(savMonthly)} per månad. Visa sparposterna`, on: { click: () => $('sav-card').scrollIntoView({ behavior: 'smooth', block: 'start' }) } },
+      'aria-label': `Sparande ${kr(savMonthly)}/mån`, on: { click: () => $('sav-card').scrollIntoView({ behavior: 'smooth', block: 'start' }) } },
     el('span', { class: 'row-name' }, el('span', { text: '🐷 Sparande' }), el('span', { class: 'row-sub', text: savers.length === 1 ? '1 sparpost · se nedan' : `${savers.length} sparposter · se nedan` })),
     el('span', { class: 'amount', text: kr(savMonthly) }))) : null;
     fill($(list), items.length ? [...rest.map((r) => itemRow(r, now)), savRow] : el('li', { class: 'muted empty-row', text: empty }));

@@ -470,6 +470,13 @@ body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; 
 .delta { display: block; margin-top: 2px; }
 .sav-sum .row-name > span:first-child { font-weight: 500; }
 .step-title .m-span { display: block; font-size: .75rem; font-weight: 400; color: var(--on-surface-variant); margin-top: 2px; }
+/* Genomgång (2026-11-17): tom platshållare i Poster-raden syns inte; Fler val med samma ▸ som övriga rader */
+.items-bar > span.icon-btn { visibility: hidden; }
+.data-more > summary { display: flex; align-items: center; gap: 8px; list-style: none; }
+.data-more > summary::-webkit-details-marker { display: none; }
+.data-more > summary::after { content: none !important; }
+.data-more > summary::before { content: '▸'; color: var(--on-surface-variant); transition: transform .15s; }
+.data-more[open] > summary::before { transform: rotate(90deg); }
 
 </style>
 </head>
@@ -1328,6 +1335,7 @@ I18N.add({
   'Saldo över tid': 'Balance over time', 'Pengar kvar över tid': 'Money left over time', 'Pengar kvar över tid, ackumulerat': 'Money left over time, cumulative', 'Hittills': 'So far', 'Prognos': 'Forecast', 'Snitt kvar/mån': 'Average left/mo', 'Kommande kvartal': 'Next quarter', 'Summa 3 mån': 'Total 3 mo',
   'Sparande som går hit varje månad:': 'Savings that go here every month:', 'Lägg en återkommande kostnad i kategorin Sparande, så kan den kopplas hit och saldot räknas upp själv.': 'Add a recurring cost in the Savings category, then it can be linked here and the balance counts up by itself.', 'På sparkontona': 'In savings accounts',
   'Lönedag': 'Payday', 'Budgetmånaden börjar': 'The budget month starts', 'Den 1:a (kalendermånad)': 'The 1st (calendar month)', 'Budgetmånaden följer kalendern': 'The budget month follows the calendar', 'Får du lön t.ex. den 25:e räcker lönen den 25 november till december: den månaden heter December och gäller 25 nov – 24 dec.': 'If you are paid e.g. on the 25th, the salary on 25 November covers December: that month is called December and runs 25 Nov – 24 Dec.',
+  'Budget buddy (den här)': 'Budget buddy (this one)',
   'Hemvaluta': 'Home currency', 'Fler val': 'More options', 'CSV, text, egen kod, radera': 'CSV, text, own code, delete', 'Ett okrypterat kalkylark, t.ex. för Excel.': 'An unencrypted spreadsheet, e.g. for Excel.', 'All data finns bara i den här webbläsaren. Läs in backup-filen på en annan enhet för att flytta den.': 'All data is only in this browser. Load the backup file on another device to move it.', 'Backupen låses med koden. Spara den i din lösenordshanterare.': 'The backup is locked with the code. Save it in your password manager.',
   'Valutakurser': 'Exchange rates', 'Allmänt': 'General', 'Inga': 'None', 'Inget': 'None', 'Tom': 'Empty', 'Egna': 'Own', 'Appens': "The app's", 'Importera från text': 'Import from text',
   'Byter du valuta räknas alla belopp om med valutakurserna (Ångra finns). Sparkonton behåller sin egen valuta.': 'If you change currency, all amounts are converted with the exchange rates (Undo is available). Savings accounts keep their own currency.',
@@ -1392,6 +1400,7 @@ I18N.add({
   [/^(\d+) poster$/, '$1 items'],
   [/^Den (\d+):e \(lönedag\)$/, 'The $1th (payday)'],
   [/^Den (\d+):e$/, 'The $1th'],
+  [/^Sparande (.+)\/mån$/, 'Savings $1/mo'],
   [/^(\d+) (\S+) – (\d+) (\S+)$/, (g, tr) => `${g[1]} ${tr(g[2])} – ${g[3]} ${tr(g[4])}`],
   [/^Budgetmånaden börjar den (\d+):e$/, 'The budget month starts on the $1th'],
   [/^1 sparpost · se nedan$/, '1 savings item · see below'],
@@ -1458,7 +1467,7 @@ I18N.add({
 </script>
 <script>
 // ---- version.js ----
-﻿self.APP_VERSION = '0.12.65';
+﻿self.APP_VERSION = '0.12.66';
 
 </script>
   <script>
@@ -2862,7 +2871,7 @@ function renderOverview() {
 
   const head = el('div', { class: 'monthbar' },
     el('button', { type: 'button', class: 'icon-btn', 'aria-label': 'Föregående år', on: { click: () => { overviewStart = addMonths(overviewStart, -12); renderOverview(); } } }, '◀'),
-    el('h1', { class: 'ov-title' }, 'Historik', el('small', { text: `t.o.m. ${monthShortLabel(end).toLowerCase()} ${end.slice(0, 4)}` })),
+    el('h1', { class: 'ov-title' }, 'Historik', el('small', { text: `t.o.m. ${monthLabel(end).toLowerCase()}` })),
     el('button', { type: 'button', class: 'icon-btn', 'aria-label': 'Nästa år', on: { click: () => { overviewStart = addMonths(overviewStart, 12); renderOverview(); } } }, '▶'));
 
   const hasData = data.recurring.length || data.oneOffs.length;
@@ -3102,7 +3111,7 @@ function renderItems() {
     const rest = items.filter((r) => !savers.includes(r));
     const savMonthly = savers.filter((r) => r.every === 1 && (!r.end || r.end >= now)).reduce((s, r) => s + r.amount, 0);
     const savRow = savers.length ? el('li', { class: 'row sav-sum' }, el('button', { type: 'button', class: 'row-main',
-      'aria-label': `Sparande, ${kr(savMonthly)} per månad. Visa sparposterna`, on: { click: () => $('sav-card').scrollIntoView({ behavior: 'smooth', block: 'start' }) } },
+      'aria-label': `Sparande ${kr(savMonthly)}/mån`, on: { click: () => $('sav-card').scrollIntoView({ behavior: 'smooth', block: 'start' }) } },
     el('span', { class: 'row-name' }, el('span', { text: '🐷 Sparande' }), el('span', { class: 'row-sub', text: savers.length === 1 ? '1 sparpost · se nedan' : `${savers.length} sparposter · se nedan` })),
     el('span', { class: 'amount', text: kr(savMonthly) }))) : null;
     fill($(list), items.length ? [...rest.map((r) => itemRow(r, now)), savRow] : el('li', { class: 'muted empty-row', text: empty }));

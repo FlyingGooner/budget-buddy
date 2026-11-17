@@ -60,7 +60,7 @@ function renderOverview() {
 
   const head = el('div', { class: 'monthbar' },
     el('button', { type: 'button', class: 'icon-btn', 'aria-label': 'Föregående år', on: { click: () => { overviewStart = addMonths(overviewStart, -12); renderOverview(); } } }, '◀'),
-    el('h1', { class: 'ov-title' }, 'Historik', el('small', { text: `t.o.m. ${monthShortLabel(end).toLowerCase()} ${end.slice(0, 4)}` })),
+    el('h1', { class: 'ov-title' }, 'Historik', el('small', { text: `t.o.m. ${monthLabel(end).toLowerCase()}` })),
     el('button', { type: 'button', class: 'icon-btn', 'aria-label': 'Nästa år', on: { click: () => { overviewStart = addMonths(overviewStart, 12); renderOverview(); } } }, '▶'));
 
   const hasData = data.recurring.length || data.oneOffs.length;
