@@ -1,0 +1,28 @@
+# Uppdaterar de inbyggda valutakurserna (ECB via Frankfurter) varje vardag och committar till main med höjd version,
+# så att appen får nya kurser utan att själv göra några anrop. Bygger också om budget-buddy.html.
+# GITHUB_TOKEN-pushar startar inga nya körningar, så single-html.yml körs inte – därför byggs HTML-filen här.
+name: Valutakurser
+on:
+  schedule:
+    - cron: '23 16 * * 1-5'   # vardagar 16:23 UTC, efter att ECB publicerat dagens kurser
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  rates:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - id: upd
+        run: |
+          out=$(node tools/update-rates.mjs)
+          echo "$out"
+          echo "result=$(echo "$out" | tail -n1)" >> "$GITHUB_OUTPUT"
+      - if: steps.upd.outputs.result == 'changed'
+        run: |
+          node tools/build-single.mjs --out budget-buddy.html
+          git config user.name "github-actions[bot]"
+          git config user.email "41898283+github-actions[bot]@users.noreply.github.com"
+          git add store.js version.js budget-buddy.html
+          git commit -m "Valutakurser: ECB $(grep -o "RATES_DATE = '[^']*'" store.js | cut -d"'" -f2)"
+          git push

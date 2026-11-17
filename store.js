@@ -21,7 +21,7 @@ const MAX_TRASH = 200;
 const TRASH_DAYS = 30; // Papperskorg: removed items are kept this many days, then deleted for good
 const EVERY = [1, 2, 3, 12];
 // Currencies for savings accounts (v0.8.0). Rates = öre per 1 unit. Built-in defaults are ECB reference rates
-// on RATES_DATE, written here by tools/update-rates.ps1 (run by hand) – the app itself never fetches rates.
+// on RATES_DATE, written here by tools/update-rates.mjs (GitHub Action rates.yml, weekdays) – the app itself never fetches rates.
 // The user can change them in Inställningar.
 const CURRENCIES = ['SEK', 'USD', 'EUR', 'GBP', 'NOK', 'DKK'];
 const DEFAULT_RATES = { USD: 1005, EUR: 1111, GBP: 1329, NOK: 105, DKK: 149 };
