@@ -61,6 +61,7 @@ function openAccDialog(a) {
   $('ad-title').textContent = a.name;
   $('ad-sub').textContent = `Saldo i ${monthLabel(month).toLowerCase()}.` + (cur && cur.month !== month ? ` Senast: ${money(cur.amount, a.currency)} (${monthLabel(cur.month).toLowerCase()}).` : '');
   $('ad-currency').value = a.currency;
+  $('ad-show').checked = !a.hidden;
   setAccCurrencyLabel();
   const est = estBalance(data, a, month);
   $('ad-amount').value = Object.hasOwn(a.balances, month) ? krInput(a.balances[month]) : '';
@@ -90,7 +91,7 @@ $('ad-form').addEventListener('submit', (e) => {
   const a = data.accounts.find((x) => x.id === dialogAcc.id);
   const feeds = [...$('ad-feeds').querySelectorAll('input:checked')].map((i) => i.value);
   if (!raw && !a?.feeds?.length && !feeds.length && !Object.keys(a?.balances || {}).length) { $('ad-error').textContent = 'Skriv ett saldo, t.ex. 45 000 eller 1250,50.'; return; }
-  if (a) { if (raw) a.balances[month] = amount; a.currency = $('ad-currency').value; a.feeds = feeds; }
+  if (a) { if (raw) a.balances[month] = amount; a.currency = $('ad-currency').value; a.feeds = feeds; a.hidden = !$('ad-show').checked; }
   data = loadData(data);
   $('acc-dialog').close();
   save();

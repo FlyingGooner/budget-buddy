@@ -193,7 +193,7 @@ function loadData(d) {
       const currency = CURRENCIES.includes(a.currency) ? a.currency : 'SEK'; // v0.8.0; balances in minor units of it
       // feeds (2026-11-17): återkommande sparposter som fyller på kontot varje månad (beräknat saldo, se estBalance).
       const feeds = Array.isArray(a.feeds) ? [...new Set(a.feeds.filter((x) => recIds.has(x)))].slice(0, 20) : [];
-      out.accounts.push({ id: a.id, name, currency, balances, feeds });
+      out.accounts.push({ id: a.id, name, currency, balances, feeds, hidden: a.hidden === true });   // hidden: visas inte i Månad
     }
   }
   // Papperskorg (v0.13): [{ d: removed date, rec | one | acc: the item, adj?: { month: amount } for rec }]. Each entry is
@@ -297,7 +297,7 @@ function packData(d) {
   if (Object.keys(d.closed || {}).length) out.closed = d.closed;
   if (d.accounts.length) out.accounts = d.accounts.map((a) => Object.assign({ id: a.id, name: a.name },
     a.currency !== 'SEK' ? { currency: a.currency } : {}, Object.keys(a.balances).length ? { balances: a.balances } : {},
-    a.feeds && a.feeds.length ? { feeds: a.feeds } : {}));
+    a.feeds && a.feeds.length ? { feeds: a.feeds } : {}, a.hidden ? { hidden: true } : {}));
   return out;
 }
 
@@ -319,7 +319,7 @@ function unpackData(p) {
     oneOffs: list(p.oneOffs).map((o) => ({ ...item(o), month: o.month })),
     adjustments: isObj(p.adjustments) ? p.adjustments : {},
     closed: isObj(p.closed) ? p.closed : {},
-    accounts: list(p.accounts).map((a) => ({ id: a.id, name: a.name, currency: a.currency ?? 'SEK', balances: isObj(a.balances) ? a.balances : {}, feeds: Array.isArray(a.feeds) ? a.feeds : [] })),
+    accounts: list(p.accounts).map((a) => ({ id: a.id, name: a.name, currency: a.currency ?? 'SEK', balances: isObj(a.balances) ? a.balances : {}, feeds: Array.isArray(a.feeds) ? a.feeds : [], hidden: a.hidden === true })),
   };
 }
 

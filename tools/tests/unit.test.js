@@ -210,3 +210,8 @@ T.test('sparkonto i annan valuta räknas upp med omräknat sparande', () => {
   const e = estBalance(d, d.accounts[0], '2026-11');
   T.eq(e.amount, 100000 + Math.round(111100 * 100 / d.settings.rates.EUR));
 });
+T.test('sparkonto: dold i Månad följer med i exporten', () => {
+  const d = loadData({ accounts: [{ id: 'a1', name: 'Barnen', balances: {}, hidden: true }, { id: 'a2', name: 'B', balances: {}, hidden: 'ja' }] });
+  T.eq(d.accounts.map((a) => a.hidden), [true, false]);
+  T.eq(importText(exportText(d, '2026-11-17')).data.accounts.map((a) => a.hidden), [true, false]);
+});

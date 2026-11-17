@@ -3,78 +3,64 @@
 Samma text finns i appen under **Inställningar → Allmänt → Hjälp och manual**. Skriv bara här: Hjälp i `index.html` byggs från den här filen med `node tools/build-help.mjs` (eller `tools/build-help.ps1`).
 
 ## Kom igång
-- Tryck **+ Inkomst** under Månad och lägg in din lön efter skatt. Tryck **+ Kostnad** och lägg in hyra, el, lån och andra räkningar. Ange hur ofta en kostnad kommer – varje månad, varannan, kvartal eller en gång om året.
-- Allt läggs in en gång. Sedan räknar appen ut varje månad åt dig.
-- Får du lön en annan dag än den 1:a: välj **Lönedag** under Inställningar → Hushåll (se nedan).
-
-## Varför din data är säker här
-- Här finns hela din ekonomi: lön, lån, räkningar, sparande och vem i hushållet som betalar vad. Sådant ska inte hamna hos ett företag, en annonsör eller en hackare.
-- **Ingen server att hacka.** Din data finns bara i din telefon. Den som vill åt den måste komma åt just din telefon.
-- **Inget att sälja.** Inget konto, ingen analys, ingen reklam och inga spårare. Webbläsaren spärrar dessutom tekniskt alla anrop ut, så datan kan inte skickas iväg ens av misstag.
-- **Låst backup.** Backup-filen krypteras med AES-256 och din kod. Lägger du den i molnet ser molntjänsten bara obegriplig data.
-- **Öppen kod.** All kod ligger öppet på GitHub och kan granskas av vem som helst.
-- **Ärligt: inget är 100 % säkert.** Lås telefonen med kod och håll den uppdaterad, och spara backup-koden i en lösenordshanterare.
+- Under **Månad** finns fyra knappar: **+ Inkomst** (lön efter skatt), **+ Kostnad** (hyra, el, lån …), **+ Sparande** och **+ Avvikelse** (något som bara gäller en månad).
+- Allt läggs in en gång och gäller sedan varje månad. Appen räknar ut vad som blir kvar.
+- Får du lön en annan dag än den 1:a: välj **Lönedag** under Inställningar → Hushåll.
 
 ## Månad
-- Överst står vad som blir **Kvar** efter månadens kostnader och sparande, jämfört med förra månaden. Stapeln visar vart inkomsten går: kostnader, sparande och kvar.
-- **Inkomster**, **Kostnader** och **Sparande** är hopfällda. Tryck för att fälla ut. Kostnaderna är grupperade per kategori – tryck på en kategori för att se posterna. **+ Lägg till i Boende** lägger till en kostnad med samma kategori, person och hur ofta.
-- Byt månad med **◀ ▶** eller svep åt vänster/höger. Tryck på **Månad** i menyn för att komma tillbaka till nuvarande månad.
-- Tryck på en rad för att ändra beloppet bara den här månaden, hoppa över den eller **Ändra posten** (namn, belopp, kategori, period). **+ Avvikelse** lägger till en engångspost, t.ex. nya däck eller en tandläkarräkning.
-- **Alla poster ›** visar alla återkommande poster. Där kan du sortera (↕), och hålla in en post för att markera flera: **Avsluta** sätter en sista månad, **Ta bort** lägger dem i papperskorgen.
+- **Kvar** överst är det som blir över efter kostnader och sparande. Raden under visar In · Ut · Sparat, och jämförelsen med förra månaden. Stapeln visar vart inkomsten går.
+- **Inkomster** och **Kostnader** är hopfällda – tryck för att se dem. Kostnaderna är grupperade per kategori, och de tre största syns direkt.
+- Tryck på en rad för att ändra beloppet bara den här månaden, hoppa över den eller **Ändra posten** (namn, belopp, kategori, period). **+ Lägg till i Boende** lägger till en kostnad med samma kategori, person och hur ofta.
+- Byt månad med **◀ ▶** eller svep. Tryck på **Månad** i menyn för att komma tillbaka till aktuell månad.
+- **Alla poster ›** visar alla återkommande poster. Där kan du sortera (↕) och hålla in en post för att markera flera (Avsluta, Ta bort).
+
+## Sparande
+- Sparande är inte en kostnad, men dras av från det som blir kvar. Lägg till med **+ Sparande**: namn, belopp, hur ofta och gärna **Saldo nu**. Då skapas ett sparkonto som räknas upp av sig självt varje månad.
+- Kortet **🐷 Sparande** i Månad visar månadens sparande, **Totalt sparat** och en rad per konto: saldo i din valuta, månadssparandet och ändringen sedan förra månaden. Konton i annan valuta visar sitt eget belopp inom parentes, t.ex. (730 USD).
+- Tryck på en rad för att ändra belopp, välja vilket **Sparkonto** pengarna går till eller rätta saldot. Saldot märkt ≈ är beräknat: senast ifyllt plus sparandet.
+- Konton som inte rörs (t.ex. barnens) kan döljas från Månad: tryck på kontot under Trend → Sparkonton och bocka ur **Visa i Månad**. Det räknas fortfarande i Totalt sparat.
+- Alla konton, med graf, finns också under **Trend → Sparkonton**. Där lägger du till ett konto utan sparpost, eller tar bort ett (det hamnar i papperskorgen).
 
 ## Stäng månaden
-- Det som står under Kvar är planerat – det som blir över efter de fasta kostnaderna. Mat, nöjen och oväntade utgifter syns inte där.
-- När månaden är slut (dagen före lönen) trycker du **✓ Stäng månaden** under Kvar och skriver in vad som faktiskt fanns kvar på kontot. Då visar Kvar det faktiska beloppet, och skillnaden mot det planerade visas som **Rörligt** i stapeln.
-- I samma ruta fyller du i saldot på sparkontona – de är förifyllda med det beräknade saldot, så du ändrar bara det som skiljer, t.ex. efter en extra överföring.
-- Stänger du den aktuella månaden går appen vidare till nästa månad – den blir den aktuella (även när du trycker på Månad i menyn eller öppnar appen), fast lönen inte har kommit än.
-- Flera månader kan vara öppna samtidigt. Har du börjat stänga månader visas överst i Månad de tidigare månader som inte är stängda (**Inte stängd: Okt**) – tryck för att gå dit och stänga.
-- Historik, Trend och saldot använder sedan det faktiska beloppet för den månaden. I Historik räknas månader som inte är stängda med snittet av de rörliga utgifterna (≈), så prognosen för helåret blir realistisk. Grafen visar kvar + sparat över tid. ✓ = stängd månad. **Ändra** rättar beloppet, **Öppna igen** tar bort det.
+- Det som står under Kvar är planerat. Mat, nöjen och oväntade utgifter syns inte där.
+- Dagen före lön trycker du **✓ Stäng månaden** under Kvar och skriver in vad som faktiskt fanns kvar på kontot. I samma ruta stämmer du av sparkontona (förifyllda – ändra bara det som skiljer).
+- Kvar visar då det faktiska beloppet, och skillnaden visas som **Rörligt** i stapeln. Nästa månad blir den aktuella direkt.
+- Har du börjat stänga månader visas överst i Månad de som inte är stängda (**Inte stängd: Okt**) – tryck för att gå dit. **Ändra** rättar beloppet, **Öppna igen** tar bort stängningen.
 
 ## Lönedag
 - Under **Inställningar → Hushåll → Lönedag** väljer du vilken dag budgetmånaden börjar. Den 1:a är vanliga kalendermånader.
-- Får du lön t.ex. den 25:e räcker lönen den 25 november till december. Den månaden heter då **December**, med datumen **25 nov – 24 dec** under. Före lönedagen är du kvar i förra månaden.
-
-## Sparande och sparkonton
-- Sparande är en egen sorts post: tryck **+ Sparande** under Månad. Ange namn, belopp, hur ofta och gärna saldot nu – då skapas ett sparkonto som räknas upp varje månad. Sparandet dras av från det som blir kvar, men räknas inte som en kostnad, och visas i ett eget kort både i Månad och under Alla poster.
-- **Sparkonton** finns under **Trend**. Lägg till ett konto och fyll i saldot en gång. Kryssa sedan i vilka sparposter som går dit – då räknas saldot upp av sig självt varje månad (visas med ≈). Fyll i ett nytt saldo när du vill stämma av.
-- Tryck på en sparpost i Månad. Under **Sparkonto** väljer du vilket konto pengarna går till – ett befintligt, eller **Nytt konto** med samma namn. Saldot hämtas från kontot och räknas upp med sparandet varje månad; ändra det bara om det inte stämmer. Samma saldo visas när du stänger månaden.
-- Ett konto kan ha en annan valuta (t.ex. USD); då räknas summan om till din valuta med kurserna under Valuta. Även konton i annan valuta räknas upp – sparandet räknas om med kurserna. Valutan väljer du när du lägger till sparandet (Kontots valuta) eller i kontots ruta under Trend.
+- Med lön den 25:e räcker lönen den 25 november till december. Den månaden heter **December**, med **25 nov – 24 dec** under.
 
 ## Trend
-- Nyckeltal för månaden: hur mycket som blir kvar, sparkvot, snitt, sparat och största kostnaden. Kostnader per kategori och in/ut de senaste 12 månaderna. Längst ner: sparkonton.
+- Nyckeltal för månaden: kvar av inkomsten, sparkvot, snitt, sparat och största kostnaden. Kostnader per kategori, in och ut de senaste 12 månaderna, och sparkontona.
 
 ## Historik
-- Visar ett år i taget – byt år med **◀ ▶**. Överst statistik för året: inkomster, kostnader, sparat, kvar, snitt, bästa och sämsta månad och prognos för helåret.
-- En graf över hur mycket pengar som blir kvar under året – eller saldot, om du har fyllt i ett **Startsaldo** under Inställningar → Hushåll. Streckat är prognos.
-- Under grafen: årets månader. Tryck på en månad för att öppna den.
+- Ett år i taget – byt år med **◀ ▶**. Överst statistik för året: inkomster, kostnader, sparat, kvar, snitt, bästa och sämsta månad och prognos för helåret.
+- Grafen visar kvar + sparat över tid (eller saldot, om du har **Startsaldo** under Inställningar → Hushåll). Streckat är prognos.
+- Månader som inte är stängda räknas med snittet av de rörliga utgifterna (≈). ✓ = stängd. Tryck på en månad för att öppna den.
 
 ## Personer och kategorier
-- Valfritt: lägg till personerna i hushållet under **Inställningar → Hushåll**, så kan varje post höra till en person eller vara gemensam. Under Kvar visas då In, Ut och Kvar per person och för Gemensamt. Gemensamma kostnader delas inte automatiskt – raden **Delat lika** visar vad som blir kvar per person om de delas lika.
+- Valfritt: lägg till personerna i hushållet under **Inställningar → Hushåll**. Varje post kan då höra till en person eller vara gemensam, och Kvar visar In, Ut och Kvar per person. **Delat lika** visar vad som blir kvar per person om det gemensamma delas lika.
 - Kategorierna kan byta namn, läggas till och tas bort.
 
+## Valuta och kurser
+- Hemvalutan väljs under **Inställningar → Valuta** (kronor, euro, dollar, pund, norska eller danska kronor). Byter du räknas alla belopp om (Ångra finns). Sparkonton behåller sin egen valuta.
+- Appen har ECB:s referenskurser inbyggda. De uppdateras varje vardag när appen uppdateras – appen hämtar aldrig kurser själv. Egna kurser går att skriva in under **Valutakurser**.
+
 ## Papperskorg
-- Poster, avvikelser och sparkonton som du tar bort hamnar i **Papperskorg** under Inställningar → Allmänt. Där ligger de i 30 dagar och kan tas tillbaka med **Återställ**. Sedan raderas de för gott.
-
-## Språk och valuta
-- Byt språk under **Inställningar → Allmänt → Språk** och valuta (kronor, euro, dollar, pund, norska eller danska kronor) under **Inställningar → Valuta**.
-- Byter du valuta räknas alla belopp om med valutakurserna. Ångra finns direkt efteråt. Sparkonton behåller sin egen valuta.
-- Tal skrivs alltid likadant (1 250,50), oavsett språk.
-
-## Valutakurser
-- Appen har ECB:s referenskurser inbyggda (datumet står i kortet). De uppdateras varje vardag när appen uppdateras – appen hämtar aldrig kurser själv. Du kan skriva in egna kurser och trycka Spara; **Använd appens kurser** återställer.
+- Poster, avvikelser och sparkonton du tar bort ligger i **Papperskorg** under Inställningar → Allmänt i 30 dagar och kan tas tillbaka med **Återställ**.
 
 ## Backup och flytt
-- Under **Inställningar → Allmänt → Data**: tryck **Spara backup-fil** då och då. För att läsa tillbaka: **Läs in backup-fil**, kontrollera sammanfattningen och tryck **Ersätt** (Ångra finns).
-- Filen låses alltid med **din kod**: 16 slumpade tecken som appen skapar åt dig. **Visa**, **Kopiera** och **Ny kod** finns vid Din kod. Spara koden i din lösenordshanterare – på en ny telefon behöver du den för att öppna backupen.
-- Under **Fler val**: Exportera CSV, Klistra in text (om det inte går att välja filen), Välj egen kod och Radera all data.
+- Under **Inställningar → Allmänt → Data**: tryck **Spara backup-fil** då och då. För att läsa tillbaka: **Läs in backup-fil**, kontrollera och tryck **Ersätt** (Ångra finns).
+- Filen låses alltid med **din kod** (Visa, Kopiera, Ny kod). Spara koden i din lösenordshanterare – på en ny telefon behöver du den.
+- Under **Fler val**: Exportera CSV, Klistra in text, Välj egen kod och Radera all data.
 
-## Bakåt
-- Telefonens bakåtknapp stänger först den ruta som är öppen, sedan markeringsläget. Därefter går den tillbaka genom flikarna du besökt.
+## Varför din data är säker här
+- **Ingen server att hacka.** Din data finns bara i din telefon.
+- **Inget att sälja.** Inget konto, ingen analys, ingen reklam. Webbläsaren spärrar tekniskt alla anrop ut.
+- **Låst backup.** Backup-filen krypteras med AES-256 och din kod.
+- **Öppen kod** på GitHub. Lås telefonen med kod och håll den uppdaterad.
 
-## Installera och offline
-- **Android (Chrome):** menyn ⋮ → Installera app. **iPhone (Safari):** Dela → Lägg till på hemskärmen.
-- Installerad fungerar appen helt utan nät. Nya versioner hämtas automatiskt.
-
-## Integritet
-- Appen gör inga anrop – ingen server, ingen bankkoppling, ingen analys, inget konto. All data finns bara i den här webbläsaren.
-- Rensar du webbplatsdata försvinner allt. Därför: spara en backup-fil då och då.
+## Bakåt, installera och offline
+- Bakåtknappen stänger först den öppna rutan, sedan markeringsläget, sedan går den tillbaka genom flikarna.
+- **Android (Chrome):** menyn ⋮ → Installera app. **iPhone (Safari):** Dela → Lägg till på hemskärmen. Installerad fungerar appen utan nät. Rensar du webbplatsdata försvinner allt – spara backup då och då.

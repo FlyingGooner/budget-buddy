@@ -91,7 +91,7 @@ const catName = (id) => (data.settings.categories.find((c) => c.id === id) || { 
 const personName = (id) => (data.settings.people.find((p) => p.id === id) || { name: 'Gemensamt' }).name;
 const hasPeople = () => data.settings.people.length > 0;
 // Sub-line for a row: category, and person when people are used.
-const subLine = (r, ...extra) => [catName(r.category), hasPeople() ? personName(r.person) : null, ...extra].filter(Boolean).join(' · ');
+const subLine = (r, ...extra) => [r.category === SAVINGS_CAT ? null : catName(r.category), hasPeople() ? personName(r.person) : null, ...extra].filter(Boolean).join(' · ');
 const everyLabel = { 1: 'varje månad', 2: 'varannan månad', 3: 'varje kvartal', 12: 'en gång om året' };
 
 // ---------- Save ----------

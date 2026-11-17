@@ -117,14 +117,17 @@ function renderSavingsCard(saving, t) {
   const share = t.income ? Math.round((t.savings / t.income) * 100) : 0;
   const prev = addMonths(month, -1), round = (v) => Math.round(v / 100) * 100;
   const used = new Set();
-  const rowsOut = data.accounts.map((a) => {
+  // Dolda konton (t.ex. barnens, som inte rörs) räknas i Totalt sparat men visas inte som rad; deras sparposter döljs också.
+  const hiddenAcc = data.accounts.filter((a) => a.hidden);
+  const rowsAll = data.accounts.map((a) => {
     const cur = estBalance(data, a, month), was = estBalance(data, a, prev);
     const items = saving.filter((r) => (a.feeds || []).includes(r.id)); items.forEach((r) => used.add(r.id));
     return { name: a.name, a, items, monthly: items.reduce((x, r) => x + r.amount, 0), cur,
       now: cur ? round(toSek(cur.amount, a.currency)) : null, diff: cur && was ? round(toSek(cur.amount - was.amount, a.currency)) : null };
   }).concat(saving.filter((r) => !used.has(r.id)).map((r) => ({ name: r.name, items: [r], monthly: r.amount })));
-  const total = rowsOut.reduce((x, r) => x + (r.now || 0), 0), totalDiff = rowsOut.reduce((x, r) => x + (r.diff || 0), 0);
-  const approx = rowsOut.some((r) => r.cur?.estimated || (r.a && r.a.currency !== home()));
+  const rowsOut = rowsAll.filter((r) => !r.a || !r.a.hidden);
+  const total = rowsAll.reduce((x, r) => x + (r.now || 0), 0), totalDiff = rowsAll.reduce((x, r) => x + (r.diff || 0), 0);
+  const approx = rowsAll.some((r) => r.cur?.estimated || (r.a && r.a.currency !== home()));
   const open = (r) => (r.items.length === 1 ? openRowDialog(r.items[0]) : r.a ? openAccDialog(r.a) : null);
   fill($('savings-card'),
     el('h2', { class: 'split' }, el('span', { text: '🐷 Sparande' }),
@@ -140,6 +143,7 @@ function renderSavingsCard(saving, t) {
         el('span', { class: 'sv-val' }, el('span', { text: r.a ? (r.cur ? ((r.cur.estimated || foreign) ? '≈ ' : '') + kr(r.now) : '–') : '' }),
           r.diff ? el('small', { class: r.diff < 0 ? 'neg' : 'pos', text: `${r.diff > 0 ? '+' : '−'}${kr(Math.abs(r.diff))}` }) : null)));
     })),
+    hiddenAcc.length ? el('p', { class: 'sv-hidden', text: hiddenAcc.length === 1 ? `+ 1 dolt konto (${hiddenAcc[0].name})` : `+ ${hiddenAcc.length} dolda konton` }) : null,
     el('div', { class: 'sv-foot' },
       el('button', { type: 'button', class: 'link', text: '+ Nytt sparande', on: { click: () => focusAdd('savings') } }),
       data.accounts.length ? el('button', { type: 'button', class: 'link', text: 'Sparkonton ›', on: { click: () => { showTab('stats'); $('stats-accounts').scrollIntoView({ block: 'start' }); } } }) : null));
