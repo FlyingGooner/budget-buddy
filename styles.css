@@ -9,15 +9,17 @@
   --on-surface: #191c20; --on-surface-variant: #43474e; --outline: #73777f; --outline-variant: #c3c6cf;
   --error: #ba1a1a; --error-container: #ffdad6; --on-error-container: #410002;
   /* Shape: tighter, professional radii (see ../CLAUDE.md) */
-  --r-xs: 2px; --r-sm: 4px; --r-md: 6px; --r-lg: 8px; --r-xl: 12px;
+  --secondary-container: #e1e2e8; --on-secondary-container: #191c20;
+  --r-xs: 4px; --r-sm: 8px; --r-md: 12px; --r-lg: 20px; --r-xl: 28px; --r-full: 999px;
   --font: Roboto, "Roboto Flex", system-ui, -apple-system, "Segoe UI", sans-serif;
 }
 @media (prefers-color-scheme: dark) {
   :root {
     --primary: #a4c9ff; --on-primary: #00315e;
     --primary-container: #004884; --on-primary-container: #d4e3ff;
-    --surface: #111318; --surface-container: #1d2024; --surface-container-high: #282a2f;
-    --on-surface: #e1e2e8; --on-surface-variant: #c3c6cf; --outline: #8d9199; --outline-variant: #43474e;
+    --surface: #0e0e10; --surface-container: #1a1a1d; --surface-container-high: #26262a;
+    --secondary-container: #3a3a40; --on-secondary-container: #f2f2f4;
+    --on-surface: #ececee; --on-surface-variant: #a9a9b0; --outline: #7c7c84; --outline-variant: #34343a;
     --error: #ffb4ab; --error-container: #93000a; --on-error-container: #ffdad6;
   }
 }
@@ -282,3 +284,17 @@ html[lang="en"] .help[lang="sv"], html:not([lang="en"]) .help[lang="en"] { displ
 /* CSV-export (2026-11-15) */
 .csv-row { margin: 8px 0; }
 .csv-row p { margin: 2px 0 0; }
+
+/* Material 3 Expressive + liquid glass (2026-11-17, efter Fitness buddy): neutralt grått/svart dark mode, färg bara på knappar och element. */
+.card { padding: 12px 12px; }
+.btn { border-radius: var(--r-full); }
+#snackbar { bottom: calc(92px + env(safe-area-inset-bottom)); }
+#nav { z-index: 40; inset: auto 8px calc(10px + env(safe-area-inset-bottom)) 8px; max-width: 504px; margin-inline: auto; padding: 6px 4px; border-radius: var(--r-full);
+  background: color-mix(in srgb, var(--surface-container) 62%, transparent); -webkit-backdrop-filter: blur(18px) saturate(180%); backdrop-filter: blur(18px) saturate(180%);
+  border: 1px solid color-mix(in srgb, var(--on-surface) 12%, transparent); box-shadow: 0 8px 28px rgba(0,0,0,.28), inset 0 1px 0 color-mix(in srgb, #fff 14%, transparent); }
+#nav button { flex: 1; max-width: 88px; margin: 0 2px; padding: 4px 0; min-height: 52px; gap: 2px; border-radius: var(--r-full); transition: background .2s; }
+#nav .pill, #nav button[aria-current="page"] .pill { width: auto; height: 30px; background: none; }
+#nav button[aria-current="page"] { background: var(--secondary-container); color: var(--on-secondary-container); }
+main { padding-left: 8px; padding-right: 8px; }
+body { padding-bottom: calc(92px + env(safe-area-inset-bottom)); }
+#version { border-radius: var(--r-full); padding: 5px 12px; }
