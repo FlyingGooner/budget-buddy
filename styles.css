@@ -513,3 +513,16 @@ body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; 
 .open-months[hidden] { display: none; }
 .om-chip { min-height: 32px; padding: 0 12px; border: 0; border-radius: 999px; background: var(--surface-container); color: var(--primary); font: 500 .8125rem var(--font); cursor: pointer; }
 #summary .fold > summary > p.muted:not(.small) { font-size: .875rem; }
+/* Sparande-kortet kompakt (2026-11-17) */
+#savings-card .fold > summary h2 { padding-bottom: 0; }
+.sv-sum { margin-top: 8px; padding: 0; background: none; }
+.sv-big { display: flex; align-items: flex-end; justify-content: space-between; gap: 8px; padding-bottom: 6px; border-bottom: 1px solid var(--outline-variant); }
+.sv-amt { display: flex; flex-direction: column; font-size: 1.375rem; font-weight: 500; line-height: 1.15; font-variant-numeric: tabular-nums; }
+.sv-amt small { font-size: .75rem; font-weight: 400; color: var(--on-surface-variant); }
+.sv-side { display: flex; flex-direction: column; align-items: flex-end; gap: 0; }
+.sv-diff { font-size: .75rem; }
+.sv-more { margin: 0; padding: 2px 0; font-size: .8125rem; }
+.sv-accs { margin: 2px 0 0; }
+.sv-accs li { padding: 4px 0; font-size: .875rem; border-top: 0; }
+.sv-accs li + li { border-top: 1px solid color-mix(in srgb, var(--outline-variant) 60%, transparent); }
+.sv-val { font-weight: 500; }

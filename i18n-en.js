@@ -164,6 +164,7 @@ I18N.add({
   [/^Ifyllt (\S+)$/, (g, tr) => `Entered ${tr(g[1])}`],
   [/^1 månad hittills · (\d+) prognos$/, '1 month so far · $1 forecast'],
   [/^(.+) i månaden$/, '$1 this month'],
+  [/^(.+)\/mån · (\d+) %$/, '$1/mo · $2 %'],
   [/^([+−].+) sedan (\S+)$/, (g, tr) => `${g[1]} since ${tr(g[2])}`],
   [/^Nytt konto: (.+)$/, 'New account: $1'],
   [/^In (.+) · Ut (.+) · Sparat (.+)$/, 'In $1 · Out $2 · Saved $3'],

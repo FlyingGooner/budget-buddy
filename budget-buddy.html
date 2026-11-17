@@ -530,6 +530,19 @@ body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; 
 .open-months[hidden] { display: none; }
 .om-chip { min-height: 32px; padding: 0 12px; border: 0; border-radius: 999px; background: var(--surface-container); color: var(--primary); font: 500 .8125rem var(--font); cursor: pointer; }
 #summary .fold > summary > p.muted:not(.small) { font-size: .875rem; }
+/* Sparande-kortet kompakt (2026-11-17) */
+#savings-card .fold > summary h2 { padding-bottom: 0; }
+.sv-sum { margin-top: 8px; padding: 0; background: none; }
+.sv-big { display: flex; align-items: flex-end; justify-content: space-between; gap: 8px; padding-bottom: 6px; border-bottom: 1px solid var(--outline-variant); }
+.sv-amt { display: flex; flex-direction: column; font-size: 1.375rem; font-weight: 500; line-height: 1.15; font-variant-numeric: tabular-nums; }
+.sv-amt small { font-size: .75rem; font-weight: 400; color: var(--on-surface-variant); }
+.sv-side { display: flex; flex-direction: column; align-items: flex-end; gap: 0; }
+.sv-diff { font-size: .75rem; }
+.sv-more { margin: 0; padding: 2px 0; font-size: .8125rem; }
+.sv-accs { margin: 2px 0 0; }
+.sv-accs li { padding: 4px 0; font-size: .875rem; border-top: 0; }
+.sv-accs li + li { border-top: 1px solid color-mix(in srgb, var(--outline-variant) 60%, transparent); }
+.sv-val { font-weight: 500; }
 
 </style>
 </head>
@@ -1533,6 +1546,7 @@ I18N.add({
   [/^Ifyllt (\S+)$/, (g, tr) => `Entered ${tr(g[1])}`],
   [/^1 månad hittills · (\d+) prognos$/, '1 month so far · $1 forecast'],
   [/^(.+) i månaden$/, '$1 this month'],
+  [/^(.+)\/mån · (\d+) %$/, '$1/mo · $2 %'],
   [/^([+−].+) sedan (\S+)$/, (g, tr) => `${g[1]} since ${tr(g[2])}`],
   [/^Nytt konto: (.+)$/, 'New account: $1'],
   [/^In (.+) · Ut (.+) · Sparat (.+)$/, 'In $1 · Out $2 · Saved $3'],
@@ -1616,7 +1630,7 @@ I18N.add({
 </script>
 <script>
 // ---- version.js ----
-﻿self.APP_VERSION = '0.12.81';
+﻿self.APP_VERSION = '0.12.82';
 
 </script>
   <script>
@@ -2809,12 +2823,15 @@ function renderSavingsCard(saving, t) {
   const total = accs.reduce((s, x) => s + x.now, 0), totalDiff = accs.reduce((s, x) => s + (x.diff || 0), 0);
   const toAccounts = (e) => { e.preventDefault(); e.stopPropagation(); showTab('stats'); $('stats-accounts').scrollIntoView({ block: 'start' }); };
   fill($('savings-card'), fold('sav', [
-    el('h2', { class: 'split' }, el('span', { text: '🐷 Sparande' }), el('span', { text: `${kr(t.savings)} i månaden` })),
-    t.income && t.savings ? el('p', { class: 'sv-share' }, el('span', { text: `${share} % av inkomsten` }), el('span', { class: 'cg-track', 'aria-hidden': 'true' }, bar)) : null,
+    // Kompakt (2026-11-17): månadens sparande och andel på rubrikraden, totalen på en rad, kontona tätt under.
+    el('h2', { class: 'split' }, el('span', { text: '🐷 Sparande' }),
+      el('span', { text: `${kr(t.savings)}/mån` + (t.income && t.savings ? ` · ${share} %` : '') })),
     accs.length ? el('div', { class: 'sv-sum' },
-      el('div', { class: 'sv-big' }, el('span', { class: 'sv-lbl', text: 'Totalt sparat' }),
-        el('span', { class: 'sv-amt', text: (accs.some((x) => x.cur?.estimated || x.a.currency !== home()) ? '≈ ' : '') + kr(total) }),
-        totalDiff ? el('span', { class: 'sv-diff ' + (totalDiff < 0 ? 'neg' : 'pos'), text: `${totalDiff > 0 ? '+' : '−'}${kr(Math.abs(totalDiff))} sedan ${monthShortLabel(prev).toLowerCase()}` }) : null),
+      el('div', { class: 'sv-big' },
+        el('span', { class: 'sv-amt' }, el('small', { text: 'Totalt sparat' }), (accs.some((x) => x.cur?.estimated || x.a.currency !== home()) ? '≈ ' : '') + kr(total)),
+        el('span', { class: 'sv-side' },
+          totalDiff ? el('span', { class: 'sv-diff ' + (totalDiff < 0 ? 'neg' : 'pos'), text: `${totalDiff > 0 ? '+' : '−'}${kr(Math.abs(totalDiff))} sedan ${monthShortLabel(prev).toLowerCase()}` }) : null,
+          el('button', { type: 'button', class: 'link sv-more', text: 'Sparkonton ›', on: { click: toAccounts } }))),
       // Varje konto i hemvalutan; konto i annan valuta har sitt eget belopp under namnet (t.ex. "730 USD").
       el('ul', { class: 'sv-accs' }, accs.map((x) => {
         const foreign = x.a.currency !== home();
@@ -2824,7 +2841,7 @@ function renderSavingsCard(saving, t) {
           el('span', { class: 'sv-val' }, el('span', { text: x.cur ? ((x.cur.estimated || foreign) ? '≈ ' : '') + kr(x.now) : '–' }),
             x.diff ? el('small', { class: (x.diff < 0 ? 'neg' : 'pos'), text: `${x.diff > 0 ? '+' : '−'}${kr(Math.abs(x.diff))}` }) : null));
       })),
-      el('button', { type: 'button', class: 'link sv-more', text: 'Sparkonton ›', on: { click: toAccounts } })) : null],
+      ) : null],
     saving.length ? el('ul', { class: 'list' }, saving.map((r) => {
       const li = monthRow(r), acc = data.accounts.find((a) => (a.feeds || []).includes(r.id));
       if (acc) li.querySelector('.row-sub')?.append(` → ${acc.name}`);

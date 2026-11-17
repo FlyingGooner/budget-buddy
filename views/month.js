@@ -123,12 +123,15 @@ function renderSavingsCard(saving, t) {
   const total = accs.reduce((s, x) => s + x.now, 0), totalDiff = accs.reduce((s, x) => s + (x.diff || 0), 0);
   const toAccounts = (e) => { e.preventDefault(); e.stopPropagation(); showTab('stats'); $('stats-accounts').scrollIntoView({ block: 'start' }); };
   fill($('savings-card'), fold('sav', [
-    el('h2', { class: 'split' }, el('span', { text: '🐷 Sparande' }), el('span', { text: `${kr(t.savings)} i månaden` })),
-    t.income && t.savings ? el('p', { class: 'sv-share' }, el('span', { text: `${share} % av inkomsten` }), el('span', { class: 'cg-track', 'aria-hidden': 'true' }, bar)) : null,
+    // Kompakt (2026-11-17): månadens sparande och andel på rubrikraden, totalen på en rad, kontona tätt under.
+    el('h2', { class: 'split' }, el('span', { text: '🐷 Sparande' }),
+      el('span', { text: `${kr(t.savings)}/mån` + (t.income && t.savings ? ` · ${share} %` : '') })),
     accs.length ? el('div', { class: 'sv-sum' },
-      el('div', { class: 'sv-big' }, el('span', { class: 'sv-lbl', text: 'Totalt sparat' }),
-        el('span', { class: 'sv-amt', text: (accs.some((x) => x.cur?.estimated || x.a.currency !== home()) ? '≈ ' : '') + kr(total) }),
-        totalDiff ? el('span', { class: 'sv-diff ' + (totalDiff < 0 ? 'neg' : 'pos'), text: `${totalDiff > 0 ? '+' : '−'}${kr(Math.abs(totalDiff))} sedan ${monthShortLabel(prev).toLowerCase()}` }) : null),
+      el('div', { class: 'sv-big' },
+        el('span', { class: 'sv-amt' }, el('small', { text: 'Totalt sparat' }), (accs.some((x) => x.cur?.estimated || x.a.currency !== home()) ? '≈ ' : '') + kr(total)),
+        el('span', { class: 'sv-side' },
+          totalDiff ? el('span', { class: 'sv-diff ' + (totalDiff < 0 ? 'neg' : 'pos'), text: `${totalDiff > 0 ? '+' : '−'}${kr(Math.abs(totalDiff))} sedan ${monthShortLabel(prev).toLowerCase()}` }) : null,
+          el('button', { type: 'button', class: 'link sv-more', text: 'Sparkonton ›', on: { click: toAccounts } }))),
       // Varje konto i hemvalutan; konto i annan valuta har sitt eget belopp under namnet (t.ex. "730 USD").
       el('ul', { class: 'sv-accs' }, accs.map((x) => {
         const foreign = x.a.currency !== home();
@@ -138,7 +141,7 @@ function renderSavingsCard(saving, t) {
           el('span', { class: 'sv-val' }, el('span', { text: x.cur ? ((x.cur.estimated || foreign) ? '≈ ' : '') + kr(x.now) : '–' }),
             x.diff ? el('small', { class: (x.diff < 0 ? 'neg' : 'pos'), text: `${x.diff > 0 ? '+' : '−'}${kr(Math.abs(x.diff))}` }) : null));
       })),
-      el('button', { type: 'button', class: 'link sv-more', text: 'Sparkonton ›', on: { click: toAccounts } })) : null],
+      ) : null],
     saving.length ? el('ul', { class: 'list' }, saving.map((r) => {
       const li = monthRow(r), acc = data.accounts.find((a) => (a.feeds || []).includes(r.id));
       if (acc) li.querySelector('.row-sub')?.append(` → ${acc.name}`);
