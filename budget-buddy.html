@@ -517,6 +517,14 @@ body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; 
 .sv-val { font-variant-numeric: tabular-nums; }
 .sv-d { text-align: right; font-size: .75rem; font-variant-numeric: tabular-nums; }
 .sv-more { display: block; margin: 6px 0 0 auto; border: 0; background: none; padding: 4px 0; color: var(--primary); font: 500 .8125rem var(--font); cursor: pointer; }
+/* Sparkonton i Sparande-kortet: belopp i hemvalutan, utländskt belopp och ändring som liten text (2026-11-17) */
+.sv-accs { gap: 0; }
+.sv-accs li { grid-template-columns: 1fr auto; gap: 12px; align-items: center; padding: 6px 0; border-top: 1px solid var(--outline-variant); font-size: .9375rem; }
+.sv-accs li:first-child { border-top: 0; }
+.sv-name, .sv-val { display: flex; flex-direction: column; min-width: 0; }
+.sv-val { align-items: flex-end; font-variant-numeric: tabular-nums; font-weight: 500; }
+.sv-name small, .sv-val small { font-size: .75rem; font-weight: 400; color: var(--on-surface-variant); font-variant-numeric: tabular-nums; }
+.sv-val small.pos { color: var(--primary); } .sv-val small.neg { color: var(--error); }
 
 </style>
 </head>
@@ -1592,7 +1600,7 @@ I18N.add({
 </script>
 <script>
 // ---- version.js ----
-﻿self.APP_VERSION = '0.12.77';
+﻿self.APP_VERSION = '0.12.78';
 
 </script>
   <script>
@@ -2768,10 +2776,15 @@ function renderSavingsCard(saving, t) {
       el('div', { class: 'sv-big' }, el('span', { class: 'sv-lbl', text: 'Totalt sparat' }),
         el('span', { class: 'sv-amt', text: (accs.some((x) => x.cur?.estimated || x.a.currency !== home()) ? '≈ ' : '') + kr(total) }),
         totalDiff ? el('span', { class: 'sv-diff ' + (totalDiff < 0 ? 'neg' : 'pos'), text: `${totalDiff > 0 ? '+' : '−'}${kr(Math.abs(totalDiff))} sedan ${monthShortLabel(prev).toLowerCase()}` }) : null),
-      el('ul', { class: 'sv-accs' }, accs.map((x) => el('li', {},
-        el('span', { class: 'sv-name', text: x.a.name }),
-        el('span', { class: 'sv-val', text: x.cur ? (x.cur.estimated ? '≈ ' : '') + money(x.cur.amount, x.a.currency) : '–' }),
-        el('span', { class: 'sv-d ' + ((x.diff || 0) < 0 ? 'neg' : 'pos'), text: x.diff ? `${x.diff > 0 ? '+' : '−'}${kr(Math.abs(x.diff))}` : '' })))),
+      // Varje konto i hemvalutan; konto i annan valuta har sitt eget belopp under namnet (t.ex. "730 USD").
+      el('ul', { class: 'sv-accs' }, accs.map((x) => {
+        const foreign = x.a.currency !== home();
+        return el('li', {},
+          el('span', { class: 'sv-name' }, el('span', { text: x.a.name }),
+            foreign && x.cur ? el('small', { text: money(x.cur.amount, x.a.currency) }) : null),
+          el('span', { class: 'sv-val' }, el('span', { text: x.cur ? ((x.cur.estimated || foreign) ? '≈ ' : '') + kr(x.now) : '–' }),
+            x.diff ? el('small', { class: (x.diff < 0 ? 'neg' : 'pos'), text: `${x.diff > 0 ? '+' : '−'}${kr(Math.abs(x.diff))}` }) : null));
+      })),
       el('button', { type: 'button', class: 'link sv-more', text: 'Sparkonton ›', on: { click: toAccounts } })) : null],
     saving.length ? el('ul', { class: 'list' }, saving.map((r) => {
       const li = monthRow(r), acc = data.accounts.find((a) => (a.feeds || []).includes(r.id));

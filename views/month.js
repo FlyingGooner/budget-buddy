@@ -108,10 +108,15 @@ function renderSavingsCard(saving, t) {
       el('div', { class: 'sv-big' }, el('span', { class: 'sv-lbl', text: 'Totalt sparat' }),
         el('span', { class: 'sv-amt', text: (accs.some((x) => x.cur?.estimated || x.a.currency !== home()) ? '≈ ' : '') + kr(total) }),
         totalDiff ? el('span', { class: 'sv-diff ' + (totalDiff < 0 ? 'neg' : 'pos'), text: `${totalDiff > 0 ? '+' : '−'}${kr(Math.abs(totalDiff))} sedan ${monthShortLabel(prev).toLowerCase()}` }) : null),
-      el('ul', { class: 'sv-accs' }, accs.map((x) => el('li', {},
-        el('span', { class: 'sv-name', text: x.a.name }),
-        el('span', { class: 'sv-val', text: x.cur ? (x.cur.estimated ? '≈ ' : '') + money(x.cur.amount, x.a.currency) : '–' }),
-        el('span', { class: 'sv-d ' + ((x.diff || 0) < 0 ? 'neg' : 'pos'), text: x.diff ? `${x.diff > 0 ? '+' : '−'}${kr(Math.abs(x.diff))}` : '' })))),
+      // Varje konto i hemvalutan; konto i annan valuta har sitt eget belopp under namnet (t.ex. "730 USD").
+      el('ul', { class: 'sv-accs' }, accs.map((x) => {
+        const foreign = x.a.currency !== home();
+        return el('li', {},
+          el('span', { class: 'sv-name' }, el('span', { text: x.a.name }),
+            foreign && x.cur ? el('small', { text: money(x.cur.amount, x.a.currency) }) : null),
+          el('span', { class: 'sv-val' }, el('span', { text: x.cur ? ((x.cur.estimated || foreign) ? '≈ ' : '') + kr(x.now) : '–' }),
+            x.diff ? el('small', { class: (x.diff < 0 ? 'neg' : 'pos'), text: `${x.diff > 0 ? '+' : '−'}${kr(Math.abs(x.diff))}` }) : null));
+      })),
       el('button', { type: 'button', class: 'link sv-more', text: 'Sparkonton ›', on: { click: toAccounts } })) : null],
     saving.length ? el('ul', { class: 'list' }, saving.map((r) => {
       const li = monthRow(r), acc = data.accounts.find((a) => (a.feeds || []).includes(r.id));
