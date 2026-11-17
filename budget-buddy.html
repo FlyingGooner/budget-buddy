@@ -437,6 +437,16 @@ body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; 
 .set-group-wrap > summary::before, .set-sec > summary::before { font-size: .75rem; width: 14px; }
 .set-group-wrap > summary.set-group .sect-sub { font-size: .9375rem; }
 .set-foot { margin: 16px 0 0; text-align: center; }
+/* Inställningar = Fitness buddys mått exakt (2026-11-17) */
+.set-group-wrap { margin-top: 10px; }
+.set-group-wrap > summary.set-group { min-height: 48px; padding: 0 4px; font-size: .875rem; gap: 8px; }
+.set-group-wrap > summary.set-group .set-title { font-size: 1rem; font-weight: 500; }
+.set-group-wrap > summary::before, .set-sec > summary::before { font-size: inherit; width: auto; }
+.set-group-wrap > summary.set-group .sect-sub, .set-sec .sect-sub { margin-left: auto; flex: 0 1 auto; max-width: 60%; font-size: .8125rem; }
+.card.set-sec { padding: 4px 14px; }
+.set-sec > summary { min-height: 48px; }
+.set-group-wrap > .set-sec + .set-sec { margin-top: 8px; }
+.set-body { padding: 4px 0 12px; }
 
 </style>
 </head>
@@ -549,7 +559,7 @@ body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; 
     <h1>Inställningar</h1>
     <div class="col set-col">
       <details class="set-group-wrap">
-        <summary class="set-group"><span class="set-title">Hushåll</span><span class="sect-sub">Personer, kategorier, startsaldo</span></summary>
+        <summary class="set-group"><span class="set-title">Hushåll</span><span class="sect-sub" id="g-household"></span></summary>
         <details class="card set-sec">
           <summary><span class="set-title">Personer</span><span class="sect-sub" id="sum-people"></span></summary>
           <div class="set-body">
@@ -594,7 +604,7 @@ body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; 
         </details>
       </details>
       <details class="set-group-wrap">
-        <summary class="set-group"><span class="set-title">Valuta</span><span class="sect-sub">Valuta och kurser</span></summary>
+        <summary class="set-group"><span class="set-title">Valuta</span><span class="sect-sub" id="g-currency"></span></summary>
         <details class="card set-sec">
           <summary><span class="set-title">Hemvaluta</span><span class="sect-sub" id="sum-home"></span></summary>
           <div class="set-body">
@@ -619,7 +629,7 @@ body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; 
         </details>
       </details>
       <details class="set-group-wrap">
-        <summary class="set-group"><span class="set-title">Allmänt</span><span class="sect-sub">Språk, data, hjälp</span></summary>
+        <summary class="set-group"><span class="set-title">Allmänt</span><span class="sect-sub" id="g-general"></span></summary>
         <details class="card set-sec">
           <summary><span class="set-title">Språk</span><span class="sect-sub" id="sum-lang"></span></summary>
           <div class="set-body">
@@ -1342,6 +1352,9 @@ I18N.add({
   [/^(\d+) st$/, '$1'],
   [/^(.+) från (\d{4}-\d{2})$/, '$1 from $2'],
   [/^(\d+) poster$/, '$1 items'],
+  [/^(Inga personer|1 person|(\d+) personer) · (\d+) kategorier$/, (g) => `${g[1] === 'Inga personer' ? 'No people' : g[1] === '1 person' ? '1 person' : g[2] + ' people'} · ${g[3]} categories`],
+  [/^(\w+) · egna kurser$/, '$1 · own rates'],
+  [/^(\w+) · appens kurser$/, "$1 · the app's rates"],
   [/^Budget buddy v(\S+) · inga externa anrop · data bara på enheten$/, 'Budget buddy v$1 · no external calls · data only on the device'],
   [/^Bäst: (.+)$/, 'Best: $1'],
   [/^\+ Lägg till i (.+)$/, '+ Add to $1'],
@@ -1397,7 +1410,7 @@ I18N.add({
 </script>
 <script>
 // ---- version.js ----
-﻿self.APP_VERSION = '0.12.56';
+﻿self.APP_VERSION = '0.12.57';
 
 </script>
   <script>
@@ -3191,6 +3204,11 @@ function renderSettings() {
   $('sum-people').textContent = data.settings.people.length ? data.settings.people.map((p) => p.name).join(', ') : 'Inga';
   $('sum-start').textContent = data.settings.startMonth ? `${kr(data.settings.startBalance)} från ${data.settings.startMonth}` : 'Inget';
   $('set-foot').textContent = `Budget buddy v${self.APP_VERSION} · inga externa anrop · data bara på enheten`;
+  // Grupprader visar läget, som i Fitness buddy.
+  const nCat = data.settings.categories.length, ppl = data.settings.people.length;
+  $('g-household').textContent = `${ppl ? (ppl === 1 ? '1 person' : `${ppl} personer`) : 'Inga personer'} · ${nCat} kategorier`;
+  $('g-currency').textContent = `${home()} · ${data.settings.ratesOwn ? 'egna kurser' : 'appens kurser'}`;
+  $('g-general').textContent = 'Språk, data, hjälp';
   $('sum-lang').textContent = I18N.LANGS[I18N.lang()] || '';
   $('sum-home').textContent = home();
   $('sum-rates').textContent = data.settings.ratesOwn ? 'Egna' : 'Appens';

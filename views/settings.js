@@ -51,6 +51,11 @@ function renderSettings() {
   $('sum-people').textContent = data.settings.people.length ? data.settings.people.map((p) => p.name).join(', ') : 'Inga';
   $('sum-start').textContent = data.settings.startMonth ? `${kr(data.settings.startBalance)} från ${data.settings.startMonth}` : 'Inget';
   $('set-foot').textContent = `Budget buddy v${self.APP_VERSION} · inga externa anrop · data bara på enheten`;
+  // Grupprader visar läget, som i Fitness buddy.
+  const nCat = data.settings.categories.length, ppl = data.settings.people.length;
+  $('g-household').textContent = `${ppl ? (ppl === 1 ? '1 person' : `${ppl} personer`) : 'Inga personer'} · ${nCat} kategorier`;
+  $('g-currency').textContent = `${home()} · ${data.settings.ratesOwn ? 'egna kurser' : 'appens kurser'}`;
+  $('g-general').textContent = 'Språk, data, hjälp';
   $('sum-lang').textContent = I18N.LANGS[I18N.lang()] || '';
   $('sum-home').textContent = home();
   $('sum-rates').textContent = data.settings.ratesOwn ? 'Egna' : 'Appens';

@@ -420,3 +420,13 @@ body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; 
 .set-group-wrap > summary::before, .set-sec > summary::before { font-size: .75rem; width: 14px; }
 .set-group-wrap > summary.set-group .sect-sub { font-size: .9375rem; }
 .set-foot { margin: 16px 0 0; text-align: center; }
+/* Inställningar = Fitness buddys mått exakt (2026-11-17) */
+.set-group-wrap { margin-top: 10px; }
+.set-group-wrap > summary.set-group { min-height: 48px; padding: 0 4px; font-size: .875rem; gap: 8px; }
+.set-group-wrap > summary.set-group .set-title { font-size: 1rem; font-weight: 500; }
+.set-group-wrap > summary::before, .set-sec > summary::before { font-size: inherit; width: auto; }
+.set-group-wrap > summary.set-group .sect-sub, .set-sec .sect-sub { margin-left: auto; flex: 0 1 auto; max-width: 60%; font-size: .8125rem; }
+.card.set-sec { padding: 4px 14px; }
+.set-sec > summary { min-height: 48px; }
+.set-group-wrap > .set-sec + .set-sec { margin-top: 8px; }
+.set-body { padding: 4px 0 12px; }
