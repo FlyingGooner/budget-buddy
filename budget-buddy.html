@@ -561,6 +561,7 @@ body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; 
 .sv-foot .link { border: 0; background: none; padding: 8px 0; color: var(--primary); font: 500 .875rem var(--font); cursor: pointer; }
 .sv-hidden { margin: 2px 0 0; font-size: .75rem; color: var(--on-surface-variant); }
 #savings-card .fold[open] > summary { margin-bottom: 4px; }
+.sv-hidden .link { border: 0; background: none; padding: 4px 0; color: var(--primary); font: inherit; cursor: pointer; }
 
 </style>
 </head>
@@ -839,7 +840,7 @@ body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; 
           <p>Sparande är inte en kostnad, men dras av från det som blir kvar. Lägg till med + Sparande: namn, belopp, hur ofta och gärna Saldo nu. Då skapas ett sparkonto som räknas upp av sig självt varje månad.</p>
           <p>Kortet 🐷 Sparande i Månad visar månadens sparande och Totalt sparat i din valuta. Tryck för att fälla ut en rad per konto: saldo i din valuta, månadssparandet och ändringen sedan förra månaden. Konton i annan valuta visar sitt eget belopp inom parentes, t.ex. (730 USD).</p>
           <p>Tryck på en rad för att ändra belopp, välja vilket Sparkonto pengarna går till eller rätta saldot. Saldot märkt ≈ är beräknat: senast ifyllt plus sparandet.</p>
-          <p>Konton som inte rörs (t.ex. barnens) kan döljas från Månad: tryck på kontot under Trend → Sparkonton och bocka ur Visa i Månad. Det räknas fortfarande i Totalt sparat.</p>
+          <p>Konton som inte rörs (t.ex. barnens) kan döljas från Månad: tryck på raden i Sparande-kortet och bocka ur Visa i Månad. Tryck på namnet under &quot;+ 1 dolt konto&quot; för att visa det igen. Det räknas fortfarande i Totalt sparat.</p>
           <p>Alla konton, med graf, finns också under Trend → Sparkonton. Där lägger du till ett konto utan sparpost, eller tar bort ett (det hamnar i papperskorgen).</p>
         </details>
         <details><summary>Stäng månaden</summary>
@@ -907,7 +908,7 @@ body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; 
           <p>Savings are not a cost, but they are deducted from what is left. Add with + Saving: name, amount, frequency and preferably Balance now. A savings account is then created that counts up by itself every month.</p>
           <p>The 🐷 Savings card in Month shows the month's savings and Total saved in your currency. Tap to unfold one row per account: balance in your currency, the monthly saving and the change since last month. Accounts in another currency show their own amount in brackets, e.g. (730 USD).</p>
           <p>Tap a row to change the amount, choose which Savings account the money goes to, or correct the balance. A balance marked ≈ is estimated: last entered plus the savings.</p>
-          <p>Accounts you never touch (e.g. the children's) can be hidden from Month: tap the account under Trend → Savings accounts and untick Show in Month. It still counts in Total saved.</p>
+          <p>Accounts you never touch (e.g. the children's) can be hidden from Month: tap the row in the Savings card and untick Show in Month. Tap the name under &quot;+ 1 hidden account&quot; to show it again. It still counts in Total saved.</p>
           <p>All accounts, with a chart, are also under Trend → Savings accounts. There you add an account without a savings item, or delete one (it goes to the trash).</p>
         </details>
         <details><summary>Close the month</summary>
@@ -981,6 +982,7 @@ body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; 
       <label class="field"><span>Sparkonto</span><select id="rd-acc-pick"></select></label>
       <label class="field"><span id="rd-bal-label">Saldo på kontot nu</span><input id="rd-balance" inputmode="decimal" autocomplete="off"></label>
       <p class="muted small" id="rd-acc-note"></p>
+      <label class="check" id="rd-show-wrap"><input type="checkbox" id="rd-show"><span>Visa i Månad</span></label>
     </div>
     <p class="error" id="rd-error" role="alert"></p>
     <div class="actions wrap">
@@ -1471,6 +1473,7 @@ I18N.add({
   'Ifyllt': 'Entered',
   'Inte stängd:': 'Not closed:', 'Inte stängda:': 'Not closed:',
   'Visa i Månad': 'Show in Month',
+  '+ 1 dolt konto: ': '+ 1 hidden account: ',
   'Hemvaluta': 'Home currency', 'Fler val': 'More options', 'CSV, text, egen kod, radera': 'CSV, text, own code, delete', 'Ett okrypterat kalkylark, t.ex. för Excel.': 'An unencrypted spreadsheet, e.g. for Excel.', 'All data finns bara i den här webbläsaren. Läs in backup-filen på en annan enhet för att flytta den.': 'All data is only in this browser. Load the backup file on another device to move it.', 'Backupen låses med koden. Spara den i din lösenordshanterare.': 'The backup is locked with the code. Save it in your password manager.',
   'Valutakurser': 'Exchange rates', 'Allmänt': 'General', 'Inga': 'None', 'Inget': 'None', 'Tom': 'Empty', 'Egna': 'Own', 'Appens': "The app's", 'Importera från text': 'Import from text',
   'Byter du valuta räknas alla belopp om med valutakurserna (Ångra finns). Sparkonton behåller sin egen valuta.': 'If you change currency, all amounts are converted with the exchange rates (Undo is available). Savings accounts keep their own currency.',
@@ -1535,6 +1538,7 @@ I18N.add({
   [/^(\d+) poster$/, '$1 items'],
   [/^Den (\d+):e \(lönedag\)$/, 'The $1th (payday)'],
   [/^Den (\d+):e$/, 'The $1th'],
+  [/^\+ (\d+) dolda konton: $/, '+ $1 hidden accounts: '],
   [/^\+ 1 dolt konto \((.+)\)$/, '+ 1 hidden account ($1)'],
   [/^\+ (\d+) dolda konton$/, '+ $1 hidden accounts'],
   [/^(.+), (.+), (återkommande|avvikelse)(, justerad denna månad)?(\. Ändra)?$/, (g) => `${g[1]}, ${g[2]}, ${g[3] === 'avvikelse' ? 'deviation' : 'recurring'}${g[4] ? ', adjusted this month' : ''}${g[5] ? '. Edit' : ''}`],
@@ -1633,7 +1637,7 @@ I18N.add({
 </script>
 <script>
 // ---- version.js ----
-﻿self.APP_VERSION = '0.12.86';
+﻿self.APP_VERSION = '0.12.87';
 
 </script>
   <script>
@@ -2847,7 +2851,8 @@ function renderSavingsCard(saving, t) {
         el('span', { class: 'sv-val' }, el('span', { text: r.a ? (r.cur ? ((r.cur.estimated || foreign) ? '≈ ' : '') + kr(r.now) : '–') : '' }),
           r.diff ? el('small', { class: r.diff < 0 ? 'neg' : 'pos', text: `${r.diff > 0 ? '+' : '−'}${kr(Math.abs(r.diff))}` }) : null)));
     })),
-    hiddenAcc.length ? el('p', { class: 'sv-hidden', text: hiddenAcc.length === 1 ? `+ 1 dolt konto (${hiddenAcc[0].name})` : `+ ${hiddenAcc.length} dolda konton` }) : null,
+    hiddenAcc.length ? el('p', { class: 'sv-hidden' }, hiddenAcc.length === 1 ? '+ 1 dolt konto: ' : `+ ${hiddenAcc.length} dolda konton: `,   // tryck för att visa igen
+      ...hiddenAcc.map((a, i) => el('button', { type: 'button', class: 'link', text: (i ? ', ' : '') + a.name, on: { click: () => openAccDialog(a) } }))) : null,
     el('div', { class: 'sv-foot' },
       el('button', { type: 'button', class: 'link', text: '+ Nytt sparande', on: { click: () => focusAdd('savings') } }),
       data.accounts.length ? el('button', { type: 'button', class: 'link', text: 'Sparkonton ›', on: { click: () => { showTab('stats'); $('stats-accounts').scrollIntoView({ block: 'start' }); } } }) : null)));
@@ -3085,6 +3090,8 @@ $('rd-edit').addEventListener('click', () => {
 function showAccBalance() {
   const pick = $('rd-acc-pick').value, acc = data.accounts.find((a) => a.id === pick), est = acc ? estBalance(data, acc, month) : null;
   $('rd-balance').closest('label').hidden = !pick;
+  $('rd-show-wrap').hidden = !acc;
+  $('rd-show').checked = acc ? !acc.hidden : true;
   $('rd-bal-label').textContent = acc ? `Saldo på ${acc.name} (${unit(acc.currency)})` : 'Saldo på kontot nu';
   $('rd-balance').value = est ? krInput(est.amount) : '';
   $('rd-balance').dataset.orig = $('rd-balance').value;
@@ -3113,6 +3120,7 @@ $('rd-form').addEventListener('submit', (e) => {
     }
     if (acc) {
       acc.feeds.push(r.id);
+      if (!$('rd-show-wrap').hidden) acc.hidden = !$('rd-show').checked;   // dölj kontot i Sparande-kortet
       if (balRaw && balRaw !== $('rd-balance').dataset.orig) acc.balances[month] = bal;
     }
   }

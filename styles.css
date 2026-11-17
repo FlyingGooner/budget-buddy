@@ -544,3 +544,4 @@ body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; 
 .sv-foot .link { border: 0; background: none; padding: 8px 0; color: var(--primary); font: 500 .875rem var(--font); cursor: pointer; }
 .sv-hidden { margin: 2px 0 0; font-size: .75rem; color: var(--on-surface-variant); }
 #savings-card .fold[open] > summary { margin-bottom: 4px; }
+.sv-hidden .link { border: 0; background: none; padding: 4px 0; color: var(--primary); font: inherit; cursor: pointer; }

@@ -144,7 +144,8 @@ function renderSavingsCard(saving, t) {
         el('span', { class: 'sv-val' }, el('span', { text: r.a ? (r.cur ? ((r.cur.estimated || foreign) ? '≈ ' : '') + kr(r.now) : '–') : '' }),
           r.diff ? el('small', { class: r.diff < 0 ? 'neg' : 'pos', text: `${r.diff > 0 ? '+' : '−'}${kr(Math.abs(r.diff))}` }) : null)));
     })),
-    hiddenAcc.length ? el('p', { class: 'sv-hidden', text: hiddenAcc.length === 1 ? `+ 1 dolt konto (${hiddenAcc[0].name})` : `+ ${hiddenAcc.length} dolda konton` }) : null,
+    hiddenAcc.length ? el('p', { class: 'sv-hidden' }, hiddenAcc.length === 1 ? '+ 1 dolt konto: ' : `+ ${hiddenAcc.length} dolda konton: `,   // tryck för att visa igen
+      ...hiddenAcc.map((a, i) => el('button', { type: 'button', class: 'link', text: (i ? ', ' : '') + a.name, on: { click: () => openAccDialog(a) } }))) : null,
     el('div', { class: 'sv-foot' },
       el('button', { type: 'button', class: 'link', text: '+ Nytt sparande', on: { click: () => focusAdd('savings') } }),
       data.accounts.length ? el('button', { type: 'button', class: 'link', text: 'Sparkonton ›', on: { click: () => { showTab('stats'); $('stats-accounts').scrollIntoView({ block: 'start' }); } } }) : null)));
@@ -382,6 +383,8 @@ $('rd-edit').addEventListener('click', () => {
 function showAccBalance() {
   const pick = $('rd-acc-pick').value, acc = data.accounts.find((a) => a.id === pick), est = acc ? estBalance(data, acc, month) : null;
   $('rd-balance').closest('label').hidden = !pick;
+  $('rd-show-wrap').hidden = !acc;
+  $('rd-show').checked = acc ? !acc.hidden : true;
   $('rd-bal-label').textContent = acc ? `Saldo på ${acc.name} (${unit(acc.currency)})` : 'Saldo på kontot nu';
   $('rd-balance').value = est ? krInput(est.amount) : '';
   $('rd-balance').dataset.orig = $('rd-balance').value;
@@ -410,6 +413,7 @@ $('rd-form').addEventListener('submit', (e) => {
     }
     if (acc) {
       acc.feeds.push(r.id);
+      if (!$('rd-show-wrap').hidden) acc.hidden = !$('rd-show').checked;   // dölj kontot i Sparande-kortet
       if (balRaw && balRaw !== $('rd-balance').dataset.orig) acc.balances[month] = bal;
     }
   }
