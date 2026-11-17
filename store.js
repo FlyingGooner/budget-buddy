@@ -433,15 +433,17 @@ function balanceAt(acc, m) {
   return ms.length ? { month: ms[ms.length - 1], amount: acc.balances[ms[ms.length - 1]] } : null;
 }
 // Beräknat saldo (2026-11-17): senast ifyllda saldo + de kopplade sparposternas belopp för varje månad efter det
-// (med månadens justeringar). Bara när kontot har samma valuta som hemvalutan. estimated = inte ifyllt den månaden.
+// (med månadens justeringar), omräknat till kontots valuta. estimated = inte ifyllt den månaden.
 function estBalance(d, acc, m) {
   const cur = balanceAt(acc, m);
   if (!cur) return null;
   const feeds = acc.feeds || [];
-  if (!feeds.length || cur.month === m || acc.currency !== (d.settings.home || 'SEK')) return { ...cur, estimated: false };
+  if (!feeds.length || cur.month === m) return { ...cur, estimated: false };
+  // 2026-11-17: konto i annan valuta räknas också upp – sparandet (i hemvalutan) räknas om med kurserna.
+  const homeCur = d.settings.home || 'SEK';
   let amount = cur.amount, n = 0;
   for (let x = addMonths(cur.month, 1); x <= m && n < 600; x = addMonths(x, 1), n++) {
-    for (const r of rowsForMonth(d, x)) if (feeds.includes(r.id)) amount += r.amount;
+    for (const r of rowsForMonth(d, x)) if (feeds.includes(r.id)) amount += convert(d, r.amount, homeCur, acc.currency);
   }
   return { month: m, amount, estimated: amount !== cur.amount, from: cur.month };
 }

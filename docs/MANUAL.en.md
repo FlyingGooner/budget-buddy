@@ -36,7 +36,7 @@ The same text is in the app under **Settings → General → Help and manual**. 
 - Savings are their own kind of item: tap **+ Saving** under Month. Enter name, amount, frequency and preferably the balance now – a savings account is then created that counts up every month. Savings are deducted from what is left, but do not count as a cost, and are shown in a card of their own both in Month and under All items.
 - **Savings accounts** are under **Trend**. Add an account and enter the balance once. Then tick which savings items go there – the balance then counts up by itself every month (shown with ≈). Enter a new balance whenever you want to reconcile.
 - Tap a savings item in Month. Under **Savings account** you choose which account the money goes to – an existing one, or **New account** with the same name. The balance is taken from the account and counts up with the savings every month; only change it if it is wrong. The same balance is shown when you close the month.
-- An account can have another currency (e.g. USD); the total is then converted to your currency with the rates under Currency. Accounts in another currency do not count up automatically.
+- An account can have another currency (e.g. USD); the total is then converted to your currency with the rates under Currency. Accounts in another currency count up too – the savings are converted with the rates. You choose the currency when you add the saving (Account currency) or in the account dialog under Trend.
 
 ## Trend
 - Key figures for the month: how much is left, savings rate, average, saved and the largest cost. Expenses by category and in/out over the last 12 months. At the bottom: savings accounts.

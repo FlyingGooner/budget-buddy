@@ -204,3 +204,9 @@ T.test('stängd månad: faktiskt kvar ersätter planerat, valideras och följer 
   T.eq(balanceAfter(d, '2026-11'), 2500000);
   T.eq(importText(exportText(d, '2026-11-17')).data.closed, { '2026-10': 500000 });
 });
+T.test('sparkonto i annan valuta räknas upp med omräknat sparande', () => {
+  const d = loadData({ recurring: [{ id: 's1', name: 'ISK', type: 'expense', amount: 111100, category: 'savings', start: '2026-01' }],
+    accounts: [{ id: 'a1', name: 'Euro', currency: 'EUR', balances: { '2026-10': 100000 }, feeds: ['s1'] }] });
+  const e = estBalance(d, d.accounts[0], '2026-11');
+  T.eq(e.amount, 100000 + Math.round(111100 * 100 / d.settings.rates.EUR));
+});

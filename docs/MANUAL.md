@@ -36,7 +36,7 @@ Samma text finns i appen under **Inställningar → Allmänt → Hjälp och manu
 - Sparande är en egen sorts post: tryck **+ Sparande** under Månad. Ange namn, belopp, hur ofta och gärna saldot nu – då skapas ett sparkonto som räknas upp varje månad. Sparandet dras av från det som blir kvar, men räknas inte som en kostnad, och visas i ett eget kort både i Månad och under Alla poster.
 - **Sparkonton** finns under **Trend**. Lägg till ett konto och fyll i saldot en gång. Kryssa sedan i vilka sparposter som går dit – då räknas saldot upp av sig självt varje månad (visas med ≈). Fyll i ett nytt saldo när du vill stämma av.
 - Tryck på en sparpost i Månad. Under **Sparkonto** väljer du vilket konto pengarna går till – ett befintligt, eller **Nytt konto** med samma namn. Saldot hämtas från kontot och räknas upp med sparandet varje månad; ändra det bara om det inte stämmer. Samma saldo visas när du stänger månaden.
-- Ett konto kan ha en annan valuta (t.ex. USD); då räknas summan om till din valuta med kurserna under Valuta. Konton i annan valuta räknas inte upp automatiskt.
+- Ett konto kan ha en annan valuta (t.ex. USD); då räknas summan om till din valuta med kurserna under Valuta. Även konton i annan valuta räknas upp – sparandet räknas om med kurserna. Valutan väljer du när du lägger till sparandet (Kontots valuta) eller i kontots ruta under Trend.
 
 ## Trend
 - Nyckeltal för månaden: hur mycket som blir kvar, sparkvot, snitt, sparat och största kostnaden. Kostnader per kategori och in/ut de senaste 12 månaderna. Längst ner: sparkonton.

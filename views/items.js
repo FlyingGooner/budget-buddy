@@ -59,6 +59,8 @@ function renderItems() {
     fillPersonSelect(f.elements.person, f.elements.person.value);
   }
   fillPersonSelect($('sav-form').elements.person, $('sav-form').elements.person.value);
+  { const c = $('sav-form').elements.currency, v = c.value || home();   // kontots valuta, förval hemvalutan
+    c.replaceChildren(...CURRENCIES.map((x) => el('option', { value: x, text: CUR_NAMES[x] }))); c.value = v; }
 }
 
 // Quick add: name + amount (+ category) + how often. Starts the month being viewed.
@@ -81,7 +83,7 @@ function setupAddForm(form) {
     data.recurring.push({ id, name, amount, type, category: f.category.value, person: personValue(f.person),
       every: type === 'income' ? 1 : Number(f.every.value), start: month, end: null });
     if (bal != null && data.accounts.length < MAX_ACCOUNTS)   // sparande med saldo = eget sparkonto som räknas upp
-      data.accounts.push({ id: 'a' + newId().slice(-10), name: cleanName(name, 30), currency: home(), balances: { [month]: bal }, feeds: [id] });
+      data.accounts.push({ id: 'a' + newId().slice(-10), name: cleanName(name, 30), currency: f.currency && CURRENCIES.includes(f.currency.value) ? f.currency.value : home(), balances: { [month]: bal }, feeds: [id] });
     if (f.balance) f.balance.value = '';
     data = loadData(data);
     save();
