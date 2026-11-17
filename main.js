@@ -333,3 +333,19 @@ $('csv-export').addEventListener('click', () => {
   const text = Csv.build(['Månad', 'Namn', 'Typ', 'Kategori', 'Person', 'Belopp', 'Valuta', 'Återkommande', 'Ändrad denna månad'], rows);
   snackbar(Csv.download(`budget-buddy-${isoToday()}.csv`, text) ? 'CSV-filen laddas ner' : 'Kunde inte skapa filen', null, null, 3000);
 });
+
+// Swipe sideways on the bottom menu → the next/previous view (2026-11-17, same in all apps).
+(function navSwipe(nav, item, on) {
+  if (!nav) return;
+  let t0 = null;
+  nav.addEventListener('touchstart', (e) => { const t = e.touches[0]; t0 = e.touches.length === 1 ? { x: t.clientX, y: t.clientY } : null; }, { passive: true });
+  nav.addEventListener('touchend', (e) => {
+    if (!t0) return;
+    const t = e.changedTouches[0], dx = t.clientX - t0.x, dy = t.clientY - t0.y;
+    t0 = null;
+    if (Math.abs(dx) < 40 || Math.abs(dx) < 1.5 * Math.abs(dy)) return;
+    const items = [...nav.querySelectorAll(item)].filter((x) => !x.hidden && x.offsetParent);
+    const next = items[items.findIndex((x) => x.matches(on)) + (dx < 0 ? 1 : -1)];
+    if (next) next.click();
+  }, { passive: true });
+})(document.getElementById('nav'), 'button', '[aria-current="page"]');
