@@ -65,7 +65,7 @@ function renderMonth() {
     el('button', { type: 'button', class: 'link', text: label, on: { click: () => focusAdd(type) } }));
 
   fill($('income-card'),
-    el('h2', { class: 'split' }, el('span', { text: 'Inkomster' }), el('span', { text: kr(t.income) })),
+    el('h2', { class: 'split' }, el('span', {}, 'Inkomster ', el('small', { class: 'netto', text: '(netto)' })), el('span', { text: kr(t.income) })),
     income.length ? el('ul', { class: 'list' }, income.map(monthRow))
       : emptyMsg('Inga inkomster den här månaden.', 'Lägg till', 'income'));
   fill($('expense-card'),

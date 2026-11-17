@@ -380,6 +380,7 @@ body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; 
 .tab .monthbar { background: var(--surface-container); border-radius: var(--r-lg); padding: 8px; }
 .ov-title { margin: 0; font-size: 1.125rem; font-weight: 500; display: flex; flex-direction: column; align-items: center; }
 .ov-title small { font-size: .8125rem; font-weight: 400; color: var(--on-surface-variant); }
+.card h2 .netto { text-transform: none; letter-spacing: 0; font-size: .75rem; font-weight: 400; }
 
 </style>
 </head>
@@ -450,7 +451,7 @@ body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; 
     <!-- Inkomster: namn + belopp (alltid per månad, netto) -->
     <div id="sort-bar"></div>
     <div class="card scroll" id="inc-card">
-      <h2 class="split"><span>Inkomster</span><span id="inc-sum"></span></h2>
+      <h2 class="split"><span>Inkomster <small class="netto">(netto)</small></span><span id="inc-sum"></span></h2>
       <ul class="list" id="inc-list"></ul>
       <details class="add-wrap" id="inc-add"><summary>+ Ny inkomst</summary>
       <form class="add-form" id="inc-form" data-type="income" novalidate>
@@ -1238,7 +1239,7 @@ I18N.add({
   'Kvar av inkomst': 'Left of income', '🐷 Sparkvot (sparande av inkomst)': '🐷 Savings rate (savings of income)', 'Största kostnad': 'Largest expense',
   '🐷 Sparat 12 mån': '🐷 Saved 12 mo', '🐷 Sparat den här månaden': '🐷 Saved this month', 'Gå till kostnader': 'Go to expenses', 'In och ut, 12 månader': 'In and out, 12 months',
   'Inga poster än – lägg till inkomster och kostnader så syns trenden här.': 'No items yet – add income and expenses and the trend shows here.',
-  'Avsluta markering': 'End selection', 'In': 'In', 'Ut': 'Out', 'Inkomster': 'Income', 'Kostnader': 'Expenses', 'Kostnader per kategori': 'Expenses by category', 'Kvar': 'Left',
+  'Avsluta markering': 'End selection', 'In': 'In', 'Ut': 'Out', 'Inkomster': 'Income', '(netto)': '(net)', 'Kostnader': 'Expenses', 'Kostnader per kategori': 'Expenses by category', 'Kvar': 'Left',
   'Markerade poster': 'Selected items', 'Nyckeltal': 'Key figures', 'Personens poster blir gemensamma': "The person's items become shared", 'standard': 'default',
   'Totalt sparsaldo': 'Total savings', 'Saldo': 'Balance', 'Namn': 'Name', 'Period': 'Period', 'Från': 'From', 'Till': 'To', 'Avsluta': 'End', 'Avslutade': 'Ended', 'Aktiva': 'Active',
   'Kronor (SEK)': 'Swedish kronor (SEK)', 'Euro (EUR)': 'Euro (EUR)', 'Dollar (USD)': 'US dollar (USD)', 'Pund (GBP)': 'British pound (GBP)', 'Norska kronor (NOK)': 'Norwegian kroner (NOK)', 'Danska kronor (DKK)': 'Danish kroner (DKK)',
@@ -1304,7 +1305,7 @@ I18N.add({
 </script>
 <script>
 // ---- version.js ----
-﻿self.APP_VERSION = '0.12.47';
+﻿self.APP_VERSION = '0.12.48';
 
 </script>
   <script>
@@ -2381,7 +2382,7 @@ function renderMonth() {
     el('button', { type: 'button', class: 'link', text: label, on: { click: () => focusAdd(type) } }));
 
   fill($('income-card'),
-    el('h2', { class: 'split' }, el('span', { text: 'Inkomster' }), el('span', { text: kr(t.income) })),
+    el('h2', { class: 'split' }, el('span', {}, 'Inkomster ', el('small', { class: 'netto', text: '(netto)' })), el('span', { text: kr(t.income) })),
     income.length ? el('ul', { class: 'list' }, income.map(monthRow))
       : emptyMsg('Inga inkomster den här månaden.', 'Lägg till', 'income'));
   fill($('expense-card'),
