@@ -387,6 +387,10 @@ body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; 
 .add-row .extra .muted { font-size: .6875rem; }
 .all-items { justify-self: center; min-height: 40px; padding: 0 12px; border: 0; background: none; color: var(--primary); font: 500 .875rem var(--font); cursor: pointer; }
 .items-bar h1 { flex: 1; text-align: center; margin: 0; font-size: 1.125rem; }
+/* Sparande som eget kort i Månad (2026-11-17) */
+.card.savings { background: color-mix(in srgb, var(--primary-container) 45%, var(--surface-container)); }
+.sv-share { display: grid; gap: 6px; margin: 0 0 6px; font-size: .8125rem; color: var(--on-surface-variant); }
+.sv-share .cg-track { margin: 0; }
 
 </style>
 </head>
@@ -413,6 +417,7 @@ body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; 
       <div class="card summary" id="summary"></div>
       <div class="card" id="income-card"></div>
       <div class="card" id="expense-card"></div>
+      <div class="card savings" id="savings-card" hidden></div>
       <div class="add-row">
         <button type="button" class="extra" id="add-income">+ Inkomst</button>
         <button type="button" class="extra" id="add-expense">+ Kostnad</button>
@@ -1204,6 +1209,7 @@ I18N.add({
   'Byter du valuta räknas alla belopp om med valutakurserna nedan (Ångra finns). Sparkonton behåller sin egen valuta.': 'If you change currency all amounts are converted with the exchange rates below (Undo is available). Savings accounts keep their own currency.',
   '+ Ny inkomst': '+ New income', '+ Ny kostnad': '+ New cost', '+ Nytt sparkonto': '+ New savings account', '1 post': '1 item', 'Hjälp och manual': 'Help and manual', 'Så funkar appen': 'How the app works', 'All data finns bara i den här webbläsaren. Spara en backup-fil då och då.': 'All data is only in this browser. Save a backup file now and then.', 'Nettobelopp per månad, efter skatt. Engångsinkomster läggs som avvikelse i Månad.': 'Net amount per month, after tax. One-off income goes in as a deviation in Month.', 'Tryck på en post för att ändra den, håll in för att markera flera. Nya poster gäller från den månad du tittar på.': 'Tap an item to change it, press and hold to select several. New items apply from the month you are viewing.',
   '+ Inkomst': '+ Income', '+ Kostnad': '+ Cost', 'bara denna månad': 'this month only', 'Alla poster ›': 'All items ›', 'Tillbaka till Månad': 'Back to Month', 'Ändra posten': 'Edit item',
+  '🐷 Sparande': '🐷 Savings',
   'Fler val': 'More options', 'CSV, text, egen kod, radera': 'CSV, text, own code, delete', 'Ett okrypterat kalkylark, t.ex. för Excel.': 'An unencrypted spreadsheet, e.g. for Excel.', 'All data finns bara i den här webbläsaren. Läs in backup-filen på en annan enhet för att flytta den.': 'All data is only in this browser. Load the backup file on another device to move it.', 'Backupen låses med koden. Spara den i din lösenordshanterare.': 'The backup is locked with the code. Save it in your password manager.',
   'Valutakurser': 'Exchange rates', 'Allmänt': 'General', 'Inga': 'None', 'Inget': 'None', 'Tom': 'Empty', 'Egna': 'Own', 'Appens': "The app's", 'Importera från text': 'Import from text',
   'Byter du valuta räknas alla belopp om med valutakurserna (Ångra finns). Sparkonton behåller sin egen valuta.': 'If you change currency, all amounts are converted with the exchange rates (Undo is available). Savings accounts keep their own currency.',
@@ -1266,6 +1272,7 @@ I18N.add({
   [/^(\d+) st$/, '$1'],
   [/^(.+) från (\d{4}-\d{2})$/, '$1 from $2'],
   [/^(\d+) poster$/, '$1 items'],
+  [/^(\d+) % av inkomsten$/, '$1 % of income'],
   [/^t\.o\.m\. (.+)$/, 'through $1'],
   [/^(\d+) återkommande poster$/, '$1 recurring items'],
   [/^(\d+) engångsposter$/, '$1 one-off items'],
@@ -1317,7 +1324,7 @@ I18N.add({
 </script>
 <script>
 // ---- version.js ----
-﻿self.APP_VERSION = '0.12.49';
+﻿self.APP_VERSION = '0.12.50';
 
 </script>
   <script>
@@ -2356,11 +2363,13 @@ function renderMonth() {
   const bal = balanceAfter(data, month);
 
   const income = rows.filter((r) => r.type === 'income');
-  const expense = rows.filter((r) => r.type === 'expense');
+  const expense = rows.filter((r) => r.type === 'expense' && r.category !== SAVINGS_CAT);
+  const saving = rows.filter((r) => r.type === 'expense' && r.category === SAVINGS_CAT);   // eget kort (2026-11-17)
 
   // Nothing at all this month: one welcoming card instead of three empty ones.
   const blank = !rows.length;
   $('income-card').hidden = $('expense-card').hidden = blank;
+  $('savings-card').hidden = blank || !saving.length;
   if (blank) {
     const any = data.recurring.length || data.oneOffs.length;
     const step = (n, text) => el('li', {}, el('span', { class: 'step-n', text: n }), el('span', { text }));
@@ -2400,9 +2409,21 @@ function renderMonth() {
       : emptyMsg('Inga inkomster den här månaden.', 'Lägg till', 'income'));
   fill($('expense-card'),
     el('h2', { class: 'split' }, el('span', { text: 'Kostnader' }),
-      el('span', { text: kr(t.expense) })),
+      el('span', { text: kr(t.expense - t.savings) })),
     expense.length ? expenseGroups(expense)
       : emptyMsg('Inga kostnader den här månaden.', 'Lägg till', 'expense'));
+  renderSavingsCard(saving, t);
+}
+
+// Sparande (2026-11-17): eget kort med andel av inkomsten, så att det syns att pengarna inte är borta.
+function renderSavingsCard(saving, t) {
+  if (!saving.length) return;
+  const share = t.income ? Math.round((t.savings / t.income) * 100) : 0;
+  const bar = el('span', { class: 'cg-bar sv-bar' }); bar.style.width = Math.min(100, share) + '%';
+  fill($('savings-card'),
+    el('h2', { class: 'split' }, el('span', { text: '🐷 Sparande' }), el('span', { text: kr(t.savings) })),
+    t.income ? el('p', { class: 'sv-share' }, el('span', { text: `${share} % av inkomsten` }), el('span', { class: 'cg-track', 'aria-hidden': 'true' }, bar)) : null,
+    el('ul', { class: 'list' }, saving.map(monthRow)));
 }
 
 // Kostnader per kategori (2026-11-17): en rad per kategori med summa och andel; tryck för att fälla ut posterna.
@@ -2792,7 +2813,7 @@ function itemRow(r, now) {
     'aria-label': sel ? `${r.name}, ${kr(r.amount)}` : `${r.name}, ${kr(r.amount)}. Ändra`, ...(sel ? { 'aria-pressed': String(on) } : {}),
     on: { click: () => (sel ? toggleSel(r.id) : openItemDialog(r)) } },
   sel ? el('span', { class: 'sel-box', 'aria-hidden': 'true', text: on ? '✓' : '' }) : null,
-  el('span', { class: 'row-name' }, el('span', { text: r.name + (ended ? ' (avslutad)' : '') }), el('span', { class: 'row-sub', text: sub })),
+  el('span', { class: 'row-name' }, el('span', { text: (r.category === SAVINGS_CAT ? '🐷 ' : '') + r.name + (ended ? ' (avslutad)' : '') }), el('span', { class: 'row-sub', text: sub })),
   el('span', { class: 'amount', text: kr(r.amount) })));
 }
 

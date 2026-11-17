@@ -16,7 +16,7 @@ function itemRow(r, now) {
     'aria-label': sel ? `${r.name}, ${kr(r.amount)}` : `${r.name}, ${kr(r.amount)}. Ändra`, ...(sel ? { 'aria-pressed': String(on) } : {}),
     on: { click: () => (sel ? toggleSel(r.id) : openItemDialog(r)) } },
   sel ? el('span', { class: 'sel-box', 'aria-hidden': 'true', text: on ? '✓' : '' }) : null,
-  el('span', { class: 'row-name' }, el('span', { text: r.name + (ended ? ' (avslutad)' : '') }), el('span', { class: 'row-sub', text: sub })),
+  el('span', { class: 'row-name' }, el('span', { text: (r.category === SAVINGS_CAT ? '🐷 ' : '') + r.name + (ended ? ' (avslutad)' : '') }), el('span', { class: 'row-sub', text: sub })),
   el('span', { class: 'amount', text: kr(r.amount) })));
 }
 

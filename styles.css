@@ -370,3 +370,7 @@ body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; 
 .add-row .extra .muted { font-size: .6875rem; }
 .all-items { justify-self: center; min-height: 40px; padding: 0 12px; border: 0; background: none; color: var(--primary); font: 500 .875rem var(--font); cursor: pointer; }
 .items-bar h1 { flex: 1; text-align: center; margin: 0; font-size: 1.125rem; }
+/* Sparande som eget kort i Månad (2026-11-17) */
+.card.savings { background: color-mix(in srgb, var(--primary-container) 45%, var(--surface-container)); }
+.sv-share { display: grid; gap: 6px; margin: 0 0 6px; font-size: .8125rem; color: var(--on-surface-variant); }
+.sv-share .cg-track { margin: 0; }

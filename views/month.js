@@ -26,11 +26,13 @@ function renderMonth() {
   const bal = balanceAfter(data, month);
 
   const income = rows.filter((r) => r.type === 'income');
-  const expense = rows.filter((r) => r.type === 'expense');
+  const expense = rows.filter((r) => r.type === 'expense' && r.category !== SAVINGS_CAT);
+  const saving = rows.filter((r) => r.type === 'expense' && r.category === SAVINGS_CAT);   // eget kort (2026-11-17)
 
   // Nothing at all this month: one welcoming card instead of three empty ones.
   const blank = !rows.length;
   $('income-card').hidden = $('expense-card').hidden = blank;
+  $('savings-card').hidden = blank || !saving.length;
   if (blank) {
     const any = data.recurring.length || data.oneOffs.length;
     const step = (n, text) => el('li', {}, el('span', { class: 'step-n', text: n }), el('span', { text }));
@@ -70,9 +72,21 @@ function renderMonth() {
       : emptyMsg('Inga inkomster den här månaden.', 'Lägg till', 'income'));
   fill($('expense-card'),
     el('h2', { class: 'split' }, el('span', { text: 'Kostnader' }),
-      el('span', { text: kr(t.expense) })),
+      el('span', { text: kr(t.expense - t.savings) })),
     expense.length ? expenseGroups(expense)
       : emptyMsg('Inga kostnader den här månaden.', 'Lägg till', 'expense'));
+  renderSavingsCard(saving, t);
+}
+
+// Sparande (2026-11-17): eget kort med andel av inkomsten, så att det syns att pengarna inte är borta.
+function renderSavingsCard(saving, t) {
+  if (!saving.length) return;
+  const share = t.income ? Math.round((t.savings / t.income) * 100) : 0;
+  const bar = el('span', { class: 'cg-bar sv-bar' }); bar.style.width = Math.min(100, share) + '%';
+  fill($('savings-card'),
+    el('h2', { class: 'split' }, el('span', { text: '🐷 Sparande' }), el('span', { text: kr(t.savings) })),
+    t.income ? el('p', { class: 'sv-share' }, el('span', { text: `${share} % av inkomsten` }), el('span', { class: 'cg-track', 'aria-hidden': 'true' }, bar)) : null,
+    el('ul', { class: 'list' }, saving.map(monthRow)));
 }
 
 // Kostnader per kategori (2026-11-17): en rad per kategori med summa och andel; tryck för att fälla ut posterna.
