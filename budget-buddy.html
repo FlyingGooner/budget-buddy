@@ -1458,7 +1458,7 @@ I18N.add({
 </script>
 <script>
 // ---- version.js ----
-﻿self.APP_VERSION = '0.12.64';
+﻿self.APP_VERSION = '0.12.65';
 
 </script>
   <script>
@@ -2476,7 +2476,11 @@ function showTab(name, push = true) {
 }
 $('nav').addEventListener('click', (e) => {
   const b = e.target.closest('button[data-tab]');
-  if (b) showTab(b.dataset.tab);
+  if (!b) return;
+  // 2026-11-17: tryck på en flik i menyn går alltid till aktuell period (Månad, Trend och Historik).
+  const now = currentMonth();
+  if (month !== now || overviewStart !== now) { month = now; overviewStart = now; render(); }
+  showTab(b.dataset.tab);
 });
 // Lager (nav.js): varje öppen ruta och markeringsläget är ett steg. Bakåt stänger det översta; Spara/Avbryt/✕ går
 // tillbaka ett steg själva. Välkomstrutan är inget lager – den går inte att stänga utan lösenord.
