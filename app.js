@@ -122,7 +122,9 @@ function withUndo(label, change) {
 function showTab(name, push = true) {
   if (!TABS.includes(name)) name = 'month';
   // Leaving Inställningar folds its sections again (as in the other apps).
-  if (!$('tab-settings').hidden && name !== 'settings') for (const d of $('tab-settings').querySelectorAll('details[open]')) d.open = false;
+  // 2026-11-17: varje flikbyte (även tryck på samma flik) fäller ihop allt igen – kategorier, formulär, inställningar.
+  for (const d of document.querySelectorAll('main details[open]')) d.open = false;
+  if (typeof openCats !== 'undefined') openCats.clear();
   if (location.hash.slice(1) !== name) {
     if (push) history.pushState({ tab: 1 }, '', '#' + name); else history.replaceState(history.state, '', '#' + name);
   }
