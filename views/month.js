@@ -52,29 +52,27 @@ function renderMonth() {
   const pct = t.income ? Math.min(100, Math.round((t.expense / t.income) * 100)) : (t.expense ? 100 : 0);
   const barFill = el('div', { class: 'bar-fill' + (t.left < 0 ? ' over' : '') });
   barFill.style.width = pct + '%'; // CSSOM, allowed by CSP
-  fill($('summary'),
-    el('h2', { text: 'Kvar' }),
+  fill($('summary'), fold('kvar', [el('h2', { text: 'Kvar' }),
     el('p', { class: 'big ' + (t.left < 0 ? 'neg' : 'pos'), text: kr(t.left, true) }),
-    el('p', { class: 'muted', text: `In ${kr(t.income)} · Ut ${kr(t.expense)}` }),
+    el('p', { class: 'muted', text: `In ${kr(t.income)} · Ut ${kr(t.expense)}` })],
     t.savings ? el('p', { class: 'muted small', text: `Varav sparande ${kr(t.savings)} 🐷` }) : null,
     el('div', { class: 'bar', role: 'img', 'aria-label': `${pct} procent av inkomsterna går till kostnader` }, barFill),
     bal == null ? null : el('p', { class: 'muted small', text: `Saldo efter månaden: ${kr(bal)}` }),
-    perPerson(rows),
-  );
+    perPerson(rows)));
 
   // Empty card: one quiet line with a text link to Poster (like follow-diet-tracker), not a big button.
   const emptyMsg = (text, label, type) => el('p', { class: 'empty-line muted' }, text + ' ',
     el('button', { type: 'button', class: 'link', text: label, on: { click: () => focusAdd(type) } }));
 
-  fill($('income-card'),
+  fill($('income-card'), fold('inc',
     el('h2', { class: 'split' }, el('span', {}, 'Inkomster ', el('small', { class: 'netto', text: '(netto)' })), el('span', { text: kr(t.income) })),
     income.length ? el('ul', { class: 'list' }, income.map(monthRow))
-      : emptyMsg('Inga inkomster den här månaden.', 'Lägg till', 'income'));
-  fill($('expense-card'),
+      : emptyMsg('Inga inkomster den här månaden.', 'Lägg till', 'income')));
+  fill($('expense-card'), fold('exp',
     el('h2', { class: 'split' }, el('span', { text: 'Kostnader' }),
       el('span', { text: kr(t.expense - t.savings) })),
     expense.length ? expenseGroups(expense)
-      : emptyMsg('Inga kostnader den här månaden.', 'Lägg till', 'expense'));
+      : emptyMsg('Inga kostnader den här månaden.', 'Lägg till', 'expense')));
   renderSavingsCard(saving, t);
 }
 
@@ -83,11 +81,18 @@ function renderSavingsCard(saving, t) {
   if (!saving.length) return;
   const share = t.income ? Math.round((t.savings / t.income) * 100) : 0;
   const bar = el('span', { class: 'cg-bar sv-bar' }); bar.style.width = Math.min(100, share) + '%';
-  fill($('savings-card'),
+  fill($('savings-card'), fold('sav', [
     el('h2', { class: 'split' }, el('span', { text: '🐷 Sparande' }), el('span', { text: kr(t.savings) })),
-    t.income ? el('p', { class: 'sv-share' }, el('span', { text: `${share} % av inkomsten` }), el('span', { class: 'cg-track', 'aria-hidden': 'true' }, bar)) : null,
+    t.income ? el('p', { class: 'sv-share' }, el('span', { text: `${share} % av inkomsten` }), el('span', { class: 'cg-track', 'aria-hidden': 'true' }, bar)) : null],
     el('ul', { class: 'list' }, saving.map(monthRow)),
-    addLike(saving, 'Sparande'));
+    addLike(saving, 'Sparande')));
+}
+
+// Hopfällbart kort (2026-11-17): rubriken (och det viktigaste) syns alltid, resten fälls ut. Läget sparas i openCats.
+function fold(key, head, ...body) {
+  const d = el('details', { class: 'fold', open: openCats.has('#' + key) }, el('summary', {}, head), ...body);
+  d.addEventListener('toggle', () => { if (d.open) openCats.add('#' + key); else openCats.delete('#' + key); });
+  return d;
 }
 
 // Lägg till i en grupp (2026-11-17): öppnar Ny kostnad med samma kategori, person (om alla i gruppen har samma) och hur ofta.

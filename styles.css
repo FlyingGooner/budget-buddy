@@ -405,3 +405,11 @@ body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; 
 .mc-kpis b { display: block; font-size: 1.25rem; font-weight: 500; font-variant-numeric: tabular-nums; }
 .mc-kpis span { font-size: .75rem; color: var(--on-surface-variant); }
 .lg-fut { width: 14px !important; vertical-align: middle; }
+/* Månad: hopfällbara kort (2026-11-17) */
+.fold > summary { position: relative; display: block; cursor: pointer; list-style: none; padding-right: 22px; }
+.fold > summary::-webkit-details-marker { display: none; }
+.fold > summary::after { content: '›'; position: absolute; right: 0; top: 0; font-size: 1.3rem; line-height: 1; color: var(--on-surface-variant); transition: transform .2s; }
+.fold[open] > summary::after { transform: rotate(90deg); }
+.fold > summary h2 { padding-bottom: 0; }
+.fold[open] > summary { margin-bottom: 8px; }
+.fold > summary .sv-share { margin: 6px 0 0; }
