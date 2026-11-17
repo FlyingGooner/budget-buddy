@@ -24,8 +24,8 @@ const EVERY = [1, 2, 3, 12];
 // on RATES_DATE, written here by tools/update-rates.mjs (GitHub Action rates.yml, weekdays) – the app itself never fetches rates.
 // The user can change them in Inställningar.
 const CURRENCIES = ['SEK', 'USD', 'EUR', 'GBP', 'NOK', 'DKK'];
-const DEFAULT_RATES = { USD: 1005, EUR: 1111, GBP: 1329, NOK: 105, DKK: 149 };
-const RATES_DATE = '2026-11-13';
+const DEFAULT_RATES = { USD: 1007, EUR: 1109, GBP: 1330, NOK: 105, DKK: 148 };
+const RATES_DATE = '2026-11-16';
 const MAX_RATE = 100000; // 1 000 kr per unit
 const DATE_RE = /^(19|20)\d{2}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])$/;
 const TYPES = ['income', 'expense'];
