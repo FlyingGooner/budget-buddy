@@ -102,7 +102,7 @@ function renderSavingsCard(saving, t) {
       return li;
     })),
     data.accounts.length ? el('p', { class: 'sv-total split' }, el('span', { text: 'På sparkontona' }),
-      el('button', { type: 'button', class: 'link', text: '≈ ' + kr(data.accounts.reduce((s, a) => s + toSek(estBalance(data, a, month)?.amount || 0, a.currency), 0)) + ' ›', on: { click: () => { showTab('stats'); $('stats-accounts').scrollIntoView({ block: 'start' }); } } })) : null,
+      el('button', { type: 'button', class: 'link', text: '≈ ' + kr(Math.round(data.accounts.reduce((s, a) => s + toSek(estBalance(data, a, month)?.amount || 0, a.currency), 0) / 100) * 100) + ' ›', on: { click: () => { showTab('stats'); $('stats-accounts').scrollIntoView({ block: 'start' }); } } })) : null,
     addLike(saving, 'Sparande')));
 }
 
@@ -300,6 +300,18 @@ function openRowDialog(r) {
   $('rd-reset').hidden = isNew || r.kind !== 'rec' || !r.adjusted;
   $('rd-edit').hidden = isNew || r.kind !== 'rec';
   $('rd-skip').hidden = isNew || r.kind !== 'rec' || (r.adjusted && r.amount === 0);
+  // Sparpost = konto (2026-11-17): visa kontots saldo direkt i rutan. Saknas konto skapas ett med samma namn när du fyller i saldot.
+  const isSave = r && r.kind === 'rec' && r.category === SAVINGS_CAT;
+  $('rd-acc').hidden = !isSave;
+  if (isSave) {
+    const acc = data.accounts.find((a) => (a.feeds || []).includes(r.id));
+    const est = acc ? estBalance(data, acc, month) : null;
+    $('rd-bal-label').textContent = acc ? `Saldo på ${acc.name} (${unit(acc.currency)})` : 'Saldo på kontot nu (valfritt)';
+    $('rd-balance').value = est ? krInput(est.amount) : '';
+    $('rd-balance').dataset.orig = $('rd-balance').value;
+    $('rd-acc-note').textContent = acc ? (est && est.estimated ? 'Beräknat – ändra om det inte stämmer.' : 'Räknas upp med sparandet varje månad.')
+      : 'Fyll i så skapas ett sparkonto som räknas upp med sparandet varje månad.';
+  }
   $('rd-error').textContent = '';
   $('row-dialog').showModal();
   (isOne ? $('rd-name') : $('rd-amount')).focus();
@@ -325,6 +337,18 @@ $('rd-form').addEventListener('submit', (e) => {
   const amount = parseKr($('rd-amount').value);
   if (amount == null) { $('rd-error').textContent = 'Skriv ett belopp, t.ex. 1 250 eller 99,50.'; return; }
   const r = dialogRow;
+  const balRaw = !$('rd-acc').hidden ? $('rd-balance').value.trim() : '';
+  if (balRaw && balRaw !== $('rd-balance').dataset.orig) {
+    const bal = parseKr(balRaw);
+    if (bal == null || !isAmount(bal)) { $('rd-error').textContent = 'Skriv ett saldo, t.ex. 45 000 eller 1250,50.'; return; }
+    let acc = data.accounts.find((a) => (a.feeds || []).includes(r.id));
+    if (!acc) {
+      if (data.accounts.length >= MAX_ACCOUNTS) { $('rd-error').textContent = `Max ${MAX_ACCOUNTS} sparkonton.`; return; }
+      acc = { id: 'a' + newId().slice(-10), name: cleanName(r.name, 30) || 'Sparkonto', currency: home(), balances: {}, feeds: [r.id] };
+      data.accounts.push(acc);
+    }
+    acc.balances[month] = bal;
+  }
   if (!r || r.kind === 'one') {
     const name = cleanName($('rd-name').value);
     if (!name) { $('rd-error').textContent = 'Skriv ett namn.'; return; }

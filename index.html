@@ -293,6 +293,7 @@
         <details><summary>Sparande och sparkonton</summary>
           <p>Kostnader i kategorin Sparande visas i ett eget kort, både i Månad och under Alla poster. De räknas fortfarande av från det som blir kvar.</p>
           <p>Sparkonton finns under Trend. Lägg till ett konto och fyll i saldot en gång. Kryssa sedan i vilka sparposter som går dit – då räknas saldot upp av sig självt varje månad (visas med ≈). Fyll i ett nytt saldo när du vill stämma av.</p>
+          <p>Snabbast: tryck på en sparpost i Månad och fyll i Saldo på kontot nu. Finns inget konto skapas ett med samma namn, kopplat till sparposten. Sedan visas och ändras kontots saldo direkt i samma ruta.</p>
           <p>Ett konto kan ha en annan valuta (t.ex. USD); då räknas summan om till din valuta med kurserna under Valuta. Konton i annan valuta räknas inte upp automatiskt.</p>
         </details>
         <details><summary>Trend</summary>
@@ -372,6 +373,7 @@
         <details><summary>Savings and savings accounts</summary>
           <p>Costs in the Savings category are shown in a card of their own, both in Month and under All items. They are still deducted from what is left.</p>
           <p>Savings accounts are under Trend. Add an account and enter the balance once. Then tick which savings items go there – the balance then counts up by itself every month (shown with ≈). Enter a new balance whenever you want to reconcile.</p>
+          <p>Quickest: tap a savings item in Month and fill in Account balance now. If there is no account, one with the same name is created, linked to the savings item. After that the balance is shown and changed in the same dialog.</p>
           <p>An account can have another currency (e.g. USD); the total is then converted to your currency with the rates under Currency. Accounts in another currency do not count up automatically.</p>
         </details>
         <details><summary>Trend</summary>
@@ -436,6 +438,10 @@
       <label class="field person-field"><span>Person (valfritt)</span><select id="rd-person"></select></label>
     </div>
     <label class="field"><span>Belopp (<span class="cur-unit">kr</span>)</span><input id="rd-amount" inputmode="decimal" autocomplete="off"></label>
+    <div id="rd-acc" hidden>
+      <label class="field"><span id="rd-bal-label">Saldo på kontot nu</span><input id="rd-balance" inputmode="decimal" autocomplete="off"></label>
+      <p class="muted small" id="rd-acc-note"></p>
+    </div>
     <p class="error" id="rd-error" role="alert"></p>
     <div class="actions wrap">
       <button type="button" class="btn text danger" id="rd-delete">Ta bort</button>

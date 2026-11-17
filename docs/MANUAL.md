@@ -35,6 +35,7 @@ Samma text finns i appen under **Inställningar → Allmänt → Hjälp och manu
 ## Sparande och sparkonton
 - Kostnader i kategorin **Sparande** visas i ett eget kort, både i Månad och under Alla poster. De räknas fortfarande av från det som blir kvar.
 - **Sparkonton** finns under **Trend**. Lägg till ett konto och fyll i saldot en gång. Kryssa sedan i vilka sparposter som går dit – då räknas saldot upp av sig självt varje månad (visas med ≈). Fyll i ett nytt saldo när du vill stämma av.
+- Snabbast: tryck på en sparpost i Månad och fyll i **Saldo på kontot nu**. Finns inget konto skapas ett med samma namn, kopplat till sparposten. Sedan visas och ändras kontots saldo direkt i samma ruta.
 - Ett konto kan ha en annan valuta (t.ex. USD); då räknas summan om till din valuta med kurserna under Valuta. Konton i annan valuta räknas inte upp automatiskt.
 
 ## Trend

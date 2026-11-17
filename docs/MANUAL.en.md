@@ -35,6 +35,7 @@ The same text is in the app under **Settings → General → Help and manual**. 
 ## Savings and savings accounts
 - Costs in the **Savings** category are shown in a card of their own, both in Month and under All items. They are still deducted from what is left.
 - **Savings accounts** are under **Trend**. Add an account and enter the balance once. Then tick which savings items go there – the balance then counts up by itself every month (shown with ≈). Enter a new balance whenever you want to reconcile.
+- Quickest: tap a savings item in Month and fill in **Account balance now**. If there is no account, one with the same name is created, linked to the savings item. After that the balance is shown and changed in the same dialog.
 - An account can have another currency (e.g. USD); the total is then converted to your currency with the rates under Currency. Accounts in another currency do not count up automatically.
 
 ## Trend
