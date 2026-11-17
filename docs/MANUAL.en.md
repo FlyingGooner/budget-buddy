@@ -22,6 +22,11 @@ The same text is in the app under **Settings → General → Help and manual**. 
 - Tap a row to change the amount for this month only, skip it, or **Edit item** (name, amount, category, period). **+ Deviation** adds a one-off item, e.g. new tyres or a dentist bill.
 - **All items ›** shows all recurring items. There you can sort (↕), and press and hold an item to select several: **End** sets a last month, **Delete** moves them to the trash.
 
+## Close the month
+- What is shown under Left is planned – what is left after the fixed costs. Food, fun and unexpected spending do not show there.
+- When the month is over (the day before payday), tap **✓ Close the month** under Left and enter what was actually left in the account. Left then shows the actual amount, and the difference from the plan is shown as **Variable** in the bar.
+- History, Trend and the balance then use the actual amount for that month. **Edit** corrects the amount, **Reopen** removes it.
+
 ## Payday
 - Under **Settings → Household → Payday** you choose which day the budget month starts. The 1st means normal calendar months.
 - If you are paid e.g. on the 25th, the salary on 25 November covers December. That month is then called **December**, with the dates **25 Nov – 24 Dec** below. Before payday you are still in the previous month.

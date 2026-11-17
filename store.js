@@ -75,6 +75,7 @@ function emptyData() {
     adjustments: {},
     accounts: [],
     trash: [],
+    closed: {},
   };
 }
 
@@ -165,6 +166,13 @@ function loadData(d) {
       const clean = {};
       for (const [id, a] of Object.entries(map)) if (recIds.has(id) && isAmount(a)) clean[id] = a;
       if (Object.keys(clean).length) out.adjustments[m] = clean;
+    }
+  }
+  // Stängda månader (2026-11-17): { 'YYYY-MM': öre } – vad som faktiskt var kvar dagen före nästa lön. Ersätter planerat kvar.
+  if (isObj(d.closed)) {
+    for (const m of Object.keys(d.closed).filter(isMonth).sort().slice(-600)) {
+      const v = d.closed[m];
+      if (Number.isInteger(v) && Math.abs(v) <= MAX_AMOUNT) out.closed[m] = v;
     }
   }
   // Savings accounts (v0.7.0): { id, name, balances: { 'YYYY-MM': öre } }. New objects with only month keys
@@ -286,6 +294,7 @@ function packData(d) {
     r.every !== 1 ? { every: r.every } : {}, { start: r.start }, r.end ? { end: r.end } : {}));
   if (d.oneOffs.length) out.oneOffs = d.oneOffs.map((o) => ({ month: o.month, ...item(o) }));
   if (Object.keys(d.adjustments).length) out.adjustments = d.adjustments;
+  if (Object.keys(d.closed || {}).length) out.closed = d.closed;
   if (d.accounts.length) out.accounts = d.accounts.map((a) => Object.assign({ id: a.id, name: a.name },
     a.currency !== 'SEK' ? { currency: a.currency } : {}, Object.keys(a.balances).length ? { balances: a.balances } : {},
     a.feeds && a.feeds.length ? { feeds: a.feeds } : {}));
@@ -309,6 +318,7 @@ function unpackData(p) {
     recurring: list(p.recurring).map((r) => ({ ...item(r), every: r.every ?? 1, start: r.start, end: r.end ?? null })),
     oneOffs: list(p.oneOffs).map((o) => ({ ...item(o), month: o.month })),
     adjustments: isObj(p.adjustments) ? p.adjustments : {},
+    closed: isObj(p.closed) ? p.closed : {},
     accounts: list(p.accounts).map((a) => ({ id: a.id, name: a.name, currency: a.currency ?? 'SEK', balances: isObj(a.balances) ? a.balances : {}, feeds: Array.isArray(a.feeds) ? a.feeds : [] })),
   };
 }
@@ -349,6 +359,7 @@ function changeHome(d, to) {
   for (const r of x.recurring) r.amount = c(r.amount);
   for (const o of x.oneOffs) o.amount = c(o.amount);
   for (const m of Object.values(x.adjustments)) for (const k of Object.keys(m)) m[k] = c(m[k]);
+  for (const k of Object.keys(x.closed || {})) x.closed[k] = c(x.closed[k]);
   for (const t of x.trash) { if (t.rec) t.rec.amount = c(t.rec.amount); if (t.one) t.one.amount = c(t.one.amount); if (t.adj) for (const k of Object.keys(t.adj)) t.adj[k] = c(t.adj[k]); }
   return loadData(x);
 }
@@ -400,12 +411,18 @@ function totals(rows) {
   return { income, expense, savings, left: income - expense };
 }
 
+// Månadens summor; är månaden stängd ersätts planerat kvar av det faktiska (planned = det planerade, closed = true).
+function monthTotals(d, m) {
+  const t = totals(rowsForMonth(d, m));
+  return d.closed && Object.hasOwn(d.closed, m) ? { ...t, planned: t.left, left: d.closed[m], closed: true } : t;
+}
+
 // Running balance at the end of month m (null when no start month is set or m is before it).
 function balanceAfter(data, m) {
   const start = data.settings.startMonth;
   if (!start || m < start) return null;
   let bal = data.settings.startBalance;
-  for (let x = start; x <= m; x = addMonths(x, 1)) bal += totals(rowsForMonth(data, x)).left;
+  for (let x = start; x <= m; x = addMonths(x, 1)) bal += monthTotals(data, x).left;
   return bal;
 }
 

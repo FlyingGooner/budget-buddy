@@ -192,3 +192,15 @@ T.test('lönedag: valideras och följer med i exporten', () => {
   T.eq(loadData({ settings: { payday: 31 } }).settings.payday, 1, 'över 28 → 1');
   T.eq(importText(exportText(loadData({ settings: { payday: 25 } }), '2026-11-17')).data.settings.payday, 25);
 });
+T.test('stängd månad: faktiskt kvar ersätter planerat, valideras och följer med', () => {
+  const d = loadData({ settings: { startBalance: 0, startMonth: '2026-10' },
+    recurring: [{ id: 'i1', name: 'Lön', type: 'income', amount: 3000000, category: 'salary', start: '2026-01' },
+      { id: 'e1', name: 'Hyra', type: 'expense', amount: 1000000, category: 'home', start: '2026-01' }],
+    closed: { '2026-10': 500000, 'bad': 1, '2026-09': 'x' } });
+  T.eq(Object.keys(d.closed), ['2026-10']);
+  const t = monthTotals(d, '2026-10');
+  T.eq([t.left, t.planned, t.closed], [500000, 2000000, true]);
+  T.eq(monthTotals(d, '2026-11').left, 2000000);
+  T.eq(balanceAfter(d, '2026-11'), 2500000);
+  T.eq(importText(exportText(d, '2026-11-17')).data.closed, { '2026-10': 500000 });
+});

@@ -22,6 +22,11 @@ Samma text finns i appen under **Inställningar → Allmänt → Hjälp och manu
 - Tryck på en rad för att ändra beloppet bara den här månaden, hoppa över den eller **Ändra posten** (namn, belopp, kategori, period). **+ Avvikelse** lägger till en engångspost, t.ex. nya däck eller en tandläkarräkning.
 - **Alla poster ›** visar alla återkommande poster. Där kan du sortera (↕), och hålla in en post för att markera flera: **Avsluta** sätter en sista månad, **Ta bort** lägger dem i papperskorgen.
 
+## Stäng månaden
+- Det som står under Kvar är planerat – det som blir över efter de fasta kostnaderna. Mat, nöjen och oväntade utgifter syns inte där.
+- När månaden är slut (dagen före lönen) trycker du **✓ Stäng månaden** under Kvar och skriver in vad som faktiskt fanns kvar på kontot. Då visar Kvar det faktiska beloppet, och skillnaden mot det planerade visas som **Rörligt** i stapeln.
+- Historik, Trend och saldot använder sedan det faktiska beloppet för den månaden. **Ändra** rättar beloppet, **Öppna igen** tar bort det.
+
 ## Lönedag
 - Under **Inställningar → Hushåll → Lönedag** väljer du vilken dag budgetmånaden börjar. Den 1:a är vanliga kalendermånader.
 - Får du lön t.ex. den 25:e räcker lönen den 25 november till december. Den månaden heter då **December**, med datumen **25 nov – 24 dec** under. Före lönedagen är du kvar i förra månaden.

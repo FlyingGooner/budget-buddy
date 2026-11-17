@@ -22,7 +22,7 @@ function monthRow(r) {
 function renderMonth() {
   $('month-title').replaceChildren(...monthTitle(month));
   const rows = rowsForMonth(data, month);
-  const t = totals(rows);
+  const t = monthTotals(data, month);   // stängd månad: left = faktiskt kvar
   const bal = balanceAfter(data, month);
 
   const income = rows.filter((r) => r.type === 'income');
@@ -53,18 +53,20 @@ function renderMonth() {
   const barFill = el('div', { class: 'bar-fill' + (t.left < 0 ? ' over' : '') });
   barFill.style.width = pct + '%'; // CSSOM, allowed by CSP
   // Mer synligt (2026-11-17): fördelning av inkomsten (kostnader / sparande / kvar), jämförelse med förra månaden, saldo.
-  const prevT = totals(rowsForMonth(data, addMonths(month, -1)));
+  const prevT = monthTotals(data, addMonths(month, -1));
+  const varSpend = t.closed ? Math.max(0, t.planned - t.left) : 0;   // rörliga utgifter = planerat − faktiskt
   const delta = t.left - prevT.left, hasPrev = prevT.income || prevT.expense;
-  const base = Math.max(t.income, t.expense, 1);
+  const base = Math.max(t.income, t.expense + varSpend, 1);
   const seg = (cls, v, label) => { const x = el('span', { class: 'seg ' + cls, title: label }); x.style.width = Math.max(0, (v / base) * 100) + '%'; return x; };
   const legend = (cls, label, v) => el('span', { class: 'lgd' }, el('span', { class: 'dot ' + cls }), `${label} ${kr(v)}`);
   fill($('summary'), fold('kvar', [el('h2', { text: 'Kvar' }),
     el('p', { class: 'big ' + (t.left < 0 ? 'neg' : 'pos'), text: kr(t.left, true) }),
+    closeLine(t),
     el('p', { class: 'muted' }, `In ${kr(t.income)} · Ut ${kr(t.expense)}`,
       hasPrev && delta ? el('span', { class: 'delta ' + (delta < 0 ? 'neg' : 'pos'), text: `${delta > 0 ? '▲' : '▼'} ${kr(Math.abs(delta))} mot ${monthShortLabel(addMonths(month, -1)).toLowerCase()}` }) : null),
     el('div', { class: 'segbar', role: 'img', 'aria-label': `Av inkomsten: kostnader ${kr(t.expense - t.savings)}, sparande ${kr(t.savings)}, kvar ${kr(Math.max(0, t.left))}` },
-      seg('s-exp', t.expense - t.savings, 'Kostnader'), seg('s-sav', t.savings, 'Sparande'), seg('s-left', Math.max(0, t.left), 'Kvar')),
-    el('div', { class: 'lgds' }, legend('s-exp', 'Kostnader', t.expense - t.savings), t.savings ? legend('s-sav', 'Sparande', t.savings) : null,
+      seg('s-exp', t.expense - t.savings, 'Kostnader'), seg('s-sav', t.savings, 'Sparande'), seg('s-var', varSpend, 'Rörligt'), seg('s-left', Math.max(0, t.left), 'Kvar')),
+    el('div', { class: 'lgds' }, legend('s-exp', 'Kostnader', t.expense - t.savings), t.savings ? legend('s-sav', 'Sparande', t.savings) : null, varSpend ? legend('s-var', 'Rörligt', varSpend) : null,
       t.left > 0 ? legend('s-left', 'Kvar', t.left) : null),
     bal == null ? null : el('p', { class: 'muted small', text: `Saldo efter månaden: ${kr(bal)}` })],
     perPerson(rows)));
@@ -103,6 +105,45 @@ function renderSavingsCard(saving, t) {
       el('button', { type: 'button', class: 'link', text: '≈ ' + kr(data.accounts.reduce((s, a) => s + toSek(estBalance(data, a, month)?.amount || 0, a.currency), 0)) + ' ›', on: { click: () => { showTab('stats'); $('stats-accounts').scrollIntoView({ block: 'start' }); } } })) : null,
     addLike(saving, 'Sparande')));
 }
+
+// Stäng månaden (2026-11-17): skriv in vad som faktiskt var kvar dagen före nästa lön. Ersätter planerat kvar i Historik och saldo.
+function closeLine(t) {
+  const stop = (fn) => (e) => { e.preventDefault(); e.stopPropagation(); fn(); };   // knappen ligger i rubriken (summary)
+  if (t.closed) return el('p', { class: 'close-line' }, el('span', { text: `✓ Stängd · planerat ${kr(t.planned, true)}` }),
+    el('button', { type: 'button', class: 'link', text: 'Ändra', on: { click: stop(openCloseDialog) } }));
+  if (month > currentMonth()) return null;
+  return el('p', { class: 'close-line' }, el('button', { type: 'button', class: 'link', text: '✓ Stäng månaden – hur mycket blev kvar?', on: { click: stop(openCloseDialog) } }));
+}
+function closeDay() {   // dagen före nästa lön (eller sista dagen i månaden)
+  const p = data.settings.payday, n = addMonths(month, 1), [y, mo] = n.split('-').map(Number);
+  const d = p > 1 ? new Date(y, mo - 1, p - 1) : new Date(y, mo - 1, 0);
+  return dayLabel(`${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`);
+}
+function openCloseDialog() {
+  const t = monthTotals(data, month);
+  $('cd-title').textContent = `Stäng ${monthLabel(month).toLowerCase()}`;
+  $('cd-sub').textContent = `Hur mycket fanns kvar på kontot ${closeDay()}, dagen före lönen? Planerat kvar: ${kr(t.closed ? t.planned : t.left, true)}.`;
+  $('cd-amount').value = t.closed ? (t.left < 0 ? '-' : '') + krInput(Math.abs(t.left)) : '';
+  $('cd-reopen').hidden = !t.closed;
+  $('cd-error').textContent = '';
+  $('close-dialog').showModal();
+  $('cd-amount').focus();
+}
+$('cd-cancel').addEventListener('click', () => $('close-dialog').close());
+$('cd-form').addEventListener('submit', (e) => {
+  e.preventDefault();
+  const raw = $('cd-amount').value.trim(), neg = /^[-−]/.test(raw), ore = parseKr(neg ? raw.slice(1) : raw);
+  if (ore == null) { $('cd-error').textContent = 'Skriv beloppet, t.ex. 3 250 eller -500.'; return; }
+  data.closed[month] = neg ? -ore : ore;
+  data = loadData(data);
+  $('close-dialog').close();
+  save();
+  snackbar(`${monthLabel(month)} är stängd`, null, null, 3000);
+});
+$('cd-reopen').addEventListener('click', () => {
+  $('close-dialog').close();
+  withUndo(`${monthLabel(month)} är öppen igen`, () => { delete data.closed[month]; });
+});
 
 // Största kategorierna som små rader under rubriken (syns även hopfällt).
 function topCats(expense) {

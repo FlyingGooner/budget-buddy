@@ -494,6 +494,10 @@ body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; 
 .ov li.ov-future .ov-row { opacity: .6; }
 #overview .stats > h2 { text-transform: none; letter-spacing: 0; font-size: .8125rem; }
 #overview .stats .stat-n { font-size: 1.0625rem; }
+/* Stäng månaden (2026-11-17) */
+.close-line { display: flex; align-items: center; gap: 10px; margin: 6px 0 0; font-size: .8125rem; color: var(--on-surface-variant); }
+.close-line .link { border: 0; background: none; padding: 6px 0; color: var(--primary); font: 500 .8125rem var(--font); cursor: pointer; }
+.s-var { background: #8a6bbf; }
 
 </style>
 </head>
@@ -760,6 +764,11 @@ body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; 
           <p>Tryck på en rad för att ändra beloppet bara den här månaden, hoppa över den eller Ändra posten (namn, belopp, kategori, period). + Avvikelse lägger till en engångspost, t.ex. nya däck eller en tandläkarräkning.</p>
           <p>Alla poster › visar alla återkommande poster. Där kan du sortera (↕), och hålla in en post för att markera flera: Avsluta sätter en sista månad, Ta bort lägger dem i papperskorgen.</p>
         </details>
+        <details><summary>Stäng månaden</summary>
+          <p>Det som står under Kvar är planerat – det som blir över efter de fasta kostnaderna. Mat, nöjen och oväntade utgifter syns inte där.</p>
+          <p>När månaden är slut (dagen före lönen) trycker du ✓ Stäng månaden under Kvar och skriver in vad som faktiskt fanns kvar på kontot. Då visar Kvar det faktiska beloppet, och skillnaden mot det planerade visas som Rörligt i stapeln.</p>
+          <p>Historik, Trend och saldot använder sedan det faktiska beloppet för den månaden. Ändra rättar beloppet, Öppna igen tar bort det.</p>
+        </details>
         <details><summary>Lönedag</summary>
           <p>Under Inställningar → Hushåll → Lönedag väljer du vilken dag budgetmånaden börjar. Den 1:a är vanliga kalendermånader.</p>
           <p>Får du lön t.ex. den 25:e räcker lönen den 25 november till december. Den månaden heter då December, med datumen 25 nov – 24 dec under. Före lönedagen är du kvar i förra månaden.</p>
@@ -832,6 +841,11 @@ body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; 
           <p>Change month with ◀ ▶ or swipe left/right. Tap Month in the menu to return to the current month.</p>
           <p>Tap a row to change the amount for this month only, skip it, or Edit item (name, amount, category, period). + Deviation adds a one-off item, e.g. new tyres or a dentist bill.</p>
           <p>All items › shows all recurring items. There you can sort (↕), and press and hold an item to select several: End sets a last month, Delete moves them to the trash.</p>
+        </details>
+        <details><summary>Close the month</summary>
+          <p>What is shown under Left is planned – what is left after the fixed costs. Food, fun and unexpected spending do not show there.</p>
+          <p>When the month is over (the day before payday), tap ✓ Close the month under Left and enter what was actually left in the account. Left then shows the actual amount, and the difference from the plan is shown as Variable in the bar.</p>
+          <p>History, Trend and the balance then use the actual amount for that month. Edit corrects the amount, Reopen removes it.</p>
         </details>
         <details><summary>Payday</summary>
           <p>Under Settings → Household → Payday you choose which day the budget month starts. The 1st means normal calendar months.</p>
@@ -960,6 +974,21 @@ body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; 
 </dialog>
 
 <!-- Dialog: saldo på sparkonto -->
+<dialog id="close-dialog" aria-labelledby="cd-title">
+  <form method="dialog" id="cd-form" novalidate>
+    <h2 id="cd-title"></h2>
+    <p class="muted" id="cd-sub"></p>
+    <label class="field"><span>Kvar (<span class="cur-unit">kr</span>)</span><input id="cd-amount" inputmode="decimal" autocomplete="off"></label>
+    <p class="muted small">Skillnaden mot det planerade visas som rörliga utgifter (mat, nöjen, oväntat). Historik och saldo använder det faktiska beloppet.</p>
+    <p class="error" id="cd-error" role="alert"></p>
+    <div class="actions wrap">
+      <button type="button" class="btn text" id="cd-reopen">Öppna igen</button>
+      <span class="spacer"></span>
+      <button type="button" class="btn text" id="cd-cancel">Avbryt</button>
+      <button type="submit" class="btn filled">Stäng månaden</button>
+    </div>
+  </form>
+</dialog>
 <dialog id="acc-dialog" aria-labelledby="ad-title">
   <form method="dialog" id="ad-form" novalidate>
     <h2 id="ad-title"></h2>
@@ -1366,6 +1395,7 @@ I18N.add({
   '🐷 Sparkvot': '🐷 Savings rate', '🐷 Sparat i månaden': '🐷 Saved this month',
   'Delat lika: ': 'Split evenly: ', 'Delat lika:': 'Split evenly:',
   'Månad för månad': 'Month by month', 'Hela året': 'The whole year', 'Kvar helår (prognos)': 'Left full year (forecast)', '🐷 Sparat': '🐷 Saved',
+  'Rörligt': 'Variable', 'Ändra': 'Edit', 'Öppna igen': 'Reopen', 'Stäng månaden': 'Close month', '✓ Stäng månaden – hur mycket blev kvar?': '✓ Close the month – how much was left?', 'Skillnaden mot det planerade visas som rörliga utgifter (mat, nöjen, oväntat). Historik och saldo använder det faktiska beloppet.': 'The difference from the plan is shown as variable spending (food, fun, the unexpected). History and balance use the actual amount.', 'Skriv beloppet, t.ex. 3 250 eller -500.': 'Enter the amount, e.g. 3 250 or -500.',
   'Hemvaluta': 'Home currency', 'Fler val': 'More options', 'CSV, text, egen kod, radera': 'CSV, text, own code, delete', 'Ett okrypterat kalkylark, t.ex. för Excel.': 'An unencrypted spreadsheet, e.g. for Excel.', 'All data finns bara i den här webbläsaren. Läs in backup-filen på en annan enhet för att flytta den.': 'All data is only in this browser. Load the backup file on another device to move it.', 'Backupen låses med koden. Spara den i din lösenordshanterare.': 'The backup is locked with the code. Save it in your password manager.',
   'Valutakurser': 'Exchange rates', 'Allmänt': 'General', 'Inga': 'None', 'Inget': 'None', 'Tom': 'Empty', 'Egna': 'Own', 'Appens': "The app's", 'Importera från text': 'Import from text',
   'Byter du valuta räknas alla belopp om med valutakurserna (Ångra finns). Sparkonton behåller sin egen valuta.': 'If you change currency, all amounts are converted with the exchange rates (Undo is available). Savings accounts keep their own currency.',
@@ -1430,6 +1460,11 @@ I18N.add({
   [/^(\d+) poster$/, '$1 items'],
   [/^Den (\d+):e \(lönedag\)$/, 'The $1th (payday)'],
   [/^Den (\d+):e$/, 'The $1th'],
+  [/^✓ Stängd · planerat (.+)$/, '✓ Closed · planned $1'],
+  [/^Stäng (.+)$/, (g, tr) => `Close ${tr(g[1])}`],
+  [/^(.+) är stängd$/, (g, tr) => `${tr(g[1])} is closed`],
+  [/^(.+) är öppen igen$/, (g, tr) => `${tr(g[1])} is open again`],
+  [/^Hur mycket fanns kvar på kontot (.+), dagen före lönen\? Planerat kvar: (.+)\.$/, (g, tr) => `How much was left in the account on ${tr(g[1])}, the day before payday? Planned left: ${g[2]}.`],
   [/^Historik (\d{4})$/, 'History $1'],
   [/^(\d+) månader hittills · (\d+) prognos$/, '$1 months so far · $2 forecast'],
   [/^Året (\d{4}) · (hittills|prognos|helår)$/, (g) => `${g[1]} · ${{ hittills: 'so far', prognos: 'forecast', helår: 'full year' }[g[2]]}`],
@@ -1441,7 +1476,7 @@ I18N.add({
   [/^1 sparpost · se nedan$/, '1 savings item · see below'],
   [/^(\d+) sparposter · se nedan$/, '$1 savings items · see below'],
   [/^([▲▼]) (.+) mot (\S+)$/, (g, tr) => `${g[1]} ${g[2]} vs ${tr(g[3])}`],
-  [/^(Kostnader|Sparande|Kvar) (-?[\d\s ]+[,\d]* \S+)$/, (g, tr) => `${tr(g[1])} ${g[2]}`],
+  [/^(Kostnader|Sparande|Kvar|Rörligt) (-?[\d\s ]+[,\d]* \S+)$/, (g, tr) => `${tr(g[1])} ${g[2]}`],
   [/^Av inkomsten: kostnader (.+), sparande (.+), kvar (.+)$/, 'Of income: expenses $1, savings $2, left $3'],
   [/^Beräknat: ifyllt (\S+) \+ (.+)$/, 'Estimated: entered $1 + $2'],
   [/^(Inga personer|1 person|(\d+) personer) · (\d+) kategorier$/, (g) => `${g[1] === 'Inga personer' ? 'No people' : g[1] === '1 person' ? '1 person' : g[2] + ' people'} · ${g[3]} categories`],
@@ -1502,7 +1537,7 @@ I18N.add({
 </script>
 <script>
 // ---- version.js ----
-﻿self.APP_VERSION = '0.12.69';
+﻿self.APP_VERSION = '0.12.70';
 
 </script>
   <script>
@@ -2008,6 +2043,7 @@ function emptyData() {
     adjustments: {},
     accounts: [],
     trash: [],
+    closed: {},
   };
 }
 
@@ -2098,6 +2134,13 @@ function loadData(d) {
       const clean = {};
       for (const [id, a] of Object.entries(map)) if (recIds.has(id) && isAmount(a)) clean[id] = a;
       if (Object.keys(clean).length) out.adjustments[m] = clean;
+    }
+  }
+  // Stängda månader (2026-11-17): { 'YYYY-MM': öre } – vad som faktiskt var kvar dagen före nästa lön. Ersätter planerat kvar.
+  if (isObj(d.closed)) {
+    for (const m of Object.keys(d.closed).filter(isMonth).sort().slice(-600)) {
+      const v = d.closed[m];
+      if (Number.isInteger(v) && Math.abs(v) <= MAX_AMOUNT) out.closed[m] = v;
     }
   }
   // Savings accounts (v0.7.0): { id, name, balances: { 'YYYY-MM': öre } }. New objects with only month keys
@@ -2219,6 +2262,7 @@ function packData(d) {
     r.every !== 1 ? { every: r.every } : {}, { start: r.start }, r.end ? { end: r.end } : {}));
   if (d.oneOffs.length) out.oneOffs = d.oneOffs.map((o) => ({ month: o.month, ...item(o) }));
   if (Object.keys(d.adjustments).length) out.adjustments = d.adjustments;
+  if (Object.keys(d.closed || {}).length) out.closed = d.closed;
   if (d.accounts.length) out.accounts = d.accounts.map((a) => Object.assign({ id: a.id, name: a.name },
     a.currency !== 'SEK' ? { currency: a.currency } : {}, Object.keys(a.balances).length ? { balances: a.balances } : {},
     a.feeds && a.feeds.length ? { feeds: a.feeds } : {}));
@@ -2242,6 +2286,7 @@ function unpackData(p) {
     recurring: list(p.recurring).map((r) => ({ ...item(r), every: r.every ?? 1, start: r.start, end: r.end ?? null })),
     oneOffs: list(p.oneOffs).map((o) => ({ ...item(o), month: o.month })),
     adjustments: isObj(p.adjustments) ? p.adjustments : {},
+    closed: isObj(p.closed) ? p.closed : {},
     accounts: list(p.accounts).map((a) => ({ id: a.id, name: a.name, currency: a.currency ?? 'SEK', balances: isObj(a.balances) ? a.balances : {}, feeds: Array.isArray(a.feeds) ? a.feeds : [] })),
   };
 }
@@ -2282,6 +2327,7 @@ function changeHome(d, to) {
   for (const r of x.recurring) r.amount = c(r.amount);
   for (const o of x.oneOffs) o.amount = c(o.amount);
   for (const m of Object.values(x.adjustments)) for (const k of Object.keys(m)) m[k] = c(m[k]);
+  for (const k of Object.keys(x.closed || {})) x.closed[k] = c(x.closed[k]);
   for (const t of x.trash) { if (t.rec) t.rec.amount = c(t.rec.amount); if (t.one) t.one.amount = c(t.one.amount); if (t.adj) for (const k of Object.keys(t.adj)) t.adj[k] = c(t.adj[k]); }
   return loadData(x);
 }
@@ -2333,12 +2379,18 @@ function totals(rows) {
   return { income, expense, savings, left: income - expense };
 }
 
+// Månadens summor; är månaden stängd ersätts planerat kvar av det faktiska (planned = det planerade, closed = true).
+function monthTotals(d, m) {
+  const t = totals(rowsForMonth(d, m));
+  return d.closed && Object.hasOwn(d.closed, m) ? { ...t, planned: t.left, left: d.closed[m], closed: true } : t;
+}
+
 // Running balance at the end of month m (null when no start month is set or m is before it).
 function balanceAfter(data, m) {
   const start = data.settings.startMonth;
   if (!start || m < start) return null;
   let bal = data.settings.startBalance;
-  for (let x = start; x <= m; x = addMonths(x, 1)) bal += totals(rowsForMonth(data, x)).left;
+  for (let x = start; x <= m; x = addMonths(x, 1)) bal += monthTotals(data, x).left;
   return bal;
 }
 
@@ -2573,7 +2625,7 @@ function monthRow(r) {
 function renderMonth() {
   $('month-title').replaceChildren(...monthTitle(month));
   const rows = rowsForMonth(data, month);
-  const t = totals(rows);
+  const t = monthTotals(data, month);   // stängd månad: left = faktiskt kvar
   const bal = balanceAfter(data, month);
 
   const income = rows.filter((r) => r.type === 'income');
@@ -2604,18 +2656,20 @@ function renderMonth() {
   const barFill = el('div', { class: 'bar-fill' + (t.left < 0 ? ' over' : '') });
   barFill.style.width = pct + '%'; // CSSOM, allowed by CSP
   // Mer synligt (2026-11-17): fördelning av inkomsten (kostnader / sparande / kvar), jämförelse med förra månaden, saldo.
-  const prevT = totals(rowsForMonth(data, addMonths(month, -1)));
+  const prevT = monthTotals(data, addMonths(month, -1));
+  const varSpend = t.closed ? Math.max(0, t.planned - t.left) : 0;   // rörliga utgifter = planerat − faktiskt
   const delta = t.left - prevT.left, hasPrev = prevT.income || prevT.expense;
-  const base = Math.max(t.income, t.expense, 1);
+  const base = Math.max(t.income, t.expense + varSpend, 1);
   const seg = (cls, v, label) => { const x = el('span', { class: 'seg ' + cls, title: label }); x.style.width = Math.max(0, (v / base) * 100) + '%'; return x; };
   const legend = (cls, label, v) => el('span', { class: 'lgd' }, el('span', { class: 'dot ' + cls }), `${label} ${kr(v)}`);
   fill($('summary'), fold('kvar', [el('h2', { text: 'Kvar' }),
     el('p', { class: 'big ' + (t.left < 0 ? 'neg' : 'pos'), text: kr(t.left, true) }),
+    closeLine(t),
     el('p', { class: 'muted' }, `In ${kr(t.income)} · Ut ${kr(t.expense)}`,
       hasPrev && delta ? el('span', { class: 'delta ' + (delta < 0 ? 'neg' : 'pos'), text: `${delta > 0 ? '▲' : '▼'} ${kr(Math.abs(delta))} mot ${monthShortLabel(addMonths(month, -1)).toLowerCase()}` }) : null),
     el('div', { class: 'segbar', role: 'img', 'aria-label': `Av inkomsten: kostnader ${kr(t.expense - t.savings)}, sparande ${kr(t.savings)}, kvar ${kr(Math.max(0, t.left))}` },
-      seg('s-exp', t.expense - t.savings, 'Kostnader'), seg('s-sav', t.savings, 'Sparande'), seg('s-left', Math.max(0, t.left), 'Kvar')),
-    el('div', { class: 'lgds' }, legend('s-exp', 'Kostnader', t.expense - t.savings), t.savings ? legend('s-sav', 'Sparande', t.savings) : null,
+      seg('s-exp', t.expense - t.savings, 'Kostnader'), seg('s-sav', t.savings, 'Sparande'), seg('s-var', varSpend, 'Rörligt'), seg('s-left', Math.max(0, t.left), 'Kvar')),
+    el('div', { class: 'lgds' }, legend('s-exp', 'Kostnader', t.expense - t.savings), t.savings ? legend('s-sav', 'Sparande', t.savings) : null, varSpend ? legend('s-var', 'Rörligt', varSpend) : null,
       t.left > 0 ? legend('s-left', 'Kvar', t.left) : null),
     bal == null ? null : el('p', { class: 'muted small', text: `Saldo efter månaden: ${kr(bal)}` })],
     perPerson(rows)));
@@ -2654,6 +2708,45 @@ function renderSavingsCard(saving, t) {
       el('button', { type: 'button', class: 'link', text: '≈ ' + kr(data.accounts.reduce((s, a) => s + toSek(estBalance(data, a, month)?.amount || 0, a.currency), 0)) + ' ›', on: { click: () => { showTab('stats'); $('stats-accounts').scrollIntoView({ block: 'start' }); } } })) : null,
     addLike(saving, 'Sparande')));
 }
+
+// Stäng månaden (2026-11-17): skriv in vad som faktiskt var kvar dagen före nästa lön. Ersätter planerat kvar i Historik och saldo.
+function closeLine(t) {
+  const stop = (fn) => (e) => { e.preventDefault(); e.stopPropagation(); fn(); };   // knappen ligger i rubriken (summary)
+  if (t.closed) return el('p', { class: 'close-line' }, el('span', { text: `✓ Stängd · planerat ${kr(t.planned, true)}` }),
+    el('button', { type: 'button', class: 'link', text: 'Ändra', on: { click: stop(openCloseDialog) } }));
+  if (month > currentMonth()) return null;
+  return el('p', { class: 'close-line' }, el('button', { type: 'button', class: 'link', text: '✓ Stäng månaden – hur mycket blev kvar?', on: { click: stop(openCloseDialog) } }));
+}
+function closeDay() {   // dagen före nästa lön (eller sista dagen i månaden)
+  const p = data.settings.payday, n = addMonths(month, 1), [y, mo] = n.split('-').map(Number);
+  const d = p > 1 ? new Date(y, mo - 1, p - 1) : new Date(y, mo - 1, 0);
+  return dayLabel(`${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`);
+}
+function openCloseDialog() {
+  const t = monthTotals(data, month);
+  $('cd-title').textContent = `Stäng ${monthLabel(month).toLowerCase()}`;
+  $('cd-sub').textContent = `Hur mycket fanns kvar på kontot ${closeDay()}, dagen före lönen? Planerat kvar: ${kr(t.closed ? t.planned : t.left, true)}.`;
+  $('cd-amount').value = t.closed ? (t.left < 0 ? '-' : '') + krInput(Math.abs(t.left)) : '';
+  $('cd-reopen').hidden = !t.closed;
+  $('cd-error').textContent = '';
+  $('close-dialog').showModal();
+  $('cd-amount').focus();
+}
+$('cd-cancel').addEventListener('click', () => $('close-dialog').close());
+$('cd-form').addEventListener('submit', (e) => {
+  e.preventDefault();
+  const raw = $('cd-amount').value.trim(), neg = /^[-−]/.test(raw), ore = parseKr(neg ? raw.slice(1) : raw);
+  if (ore == null) { $('cd-error').textContent = 'Skriv beloppet, t.ex. 3 250 eller -500.'; return; }
+  data.closed[month] = neg ? -ore : ore;
+  data = loadData(data);
+  $('close-dialog').close();
+  save();
+  snackbar(`${monthLabel(month)} är stängd`, null, null, 3000);
+});
+$('cd-reopen').addEventListener('click', () => {
+  $('close-dialog').close();
+  withUndo(`${monthLabel(month)} är öppen igen`, () => { delete data.closed[month]; });
+});
 
 // Största kategorierna som små rader under rubriken (syns även hopfällt).
 function topCats(expense) {
@@ -2909,7 +3002,7 @@ function renderOverview() {
   const box = $('overview'), now = currentMonth();
   const year = Number(monthLabel(overviewStart).slice(-4));
   const first = addMonths(`${year}-01`, paySplit() ? -1 : 0);
-  const calc = (m) => ({ m, ...totals(rowsForMonth(data, m)), bal: balanceAfter(data, m) });
+  const calc = (m) => ({ m, ...monthTotals(data, m), bal: balanceAfter(data, m) });
   const months = Array.from({ length: 12 }, (_, i) => calc(addMonths(first, i)));
   const done = months.filter((r) => r.m <= now && (r.income || r.expense));
   const rest = months.filter((r) => r.m > now);
@@ -2983,7 +3076,7 @@ function renderStats() {
   $('stats-title').replaceChildren(...monthTitle(month));
   const rows = rowsForMonth(data, month), t = totals(rows);
   const exp = rows.filter((r) => r.type === 'expense');
-  const last12 = Array.from({ length: 12 }, (_, i) => addMonths(month, i - 11)).map((m) => ({ m, ...totals(rowsForMonth(data, m)) }));
+  const last12 = Array.from({ length: 12 }, (_, i) => addMonths(month, i - 11)).map((m) => ({ m, ...monthTotals(data, m) }));
   const used = last12.filter((x) => x.income || x.expense);
   const avgLeft = used.length ? Math.round(used.reduce((s, x) => s + x.left, 0) / used.length / 100) * 100 : null; // whole kronor
   const biggest = exp.filter((r) => r.category !== SAVINGS_CAT).reduce((b, r) => (!b || r.amount > b.amount ? r : b), null);

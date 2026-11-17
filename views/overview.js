@@ -52,7 +52,7 @@ function renderOverview() {
   const box = $('overview'), now = currentMonth();
   const year = Number(monthLabel(overviewStart).slice(-4));
   const first = addMonths(`${year}-01`, paySplit() ? -1 : 0);
-  const calc = (m) => ({ m, ...totals(rowsForMonth(data, m)), bal: balanceAfter(data, m) });
+  const calc = (m) => ({ m, ...monthTotals(data, m), bal: balanceAfter(data, m) });
   const months = Array.from({ length: 12 }, (_, i) => calc(addMonths(first, i)));
   const done = months.filter((r) => r.m <= now && (r.income || r.expense));
   const rest = months.filter((r) => r.m > now);

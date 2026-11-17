@@ -16,7 +16,7 @@ function renderStats() {
   $('stats-title').replaceChildren(...monthTitle(month));
   const rows = rowsForMonth(data, month), t = totals(rows);
   const exp = rows.filter((r) => r.type === 'expense');
-  const last12 = Array.from({ length: 12 }, (_, i) => addMonths(month, i - 11)).map((m) => ({ m, ...totals(rowsForMonth(data, m)) }));
+  const last12 = Array.from({ length: 12 }, (_, i) => addMonths(month, i - 11)).map((m) => ({ m, ...monthTotals(data, m) }));
   const used = last12.filter((x) => x.income || x.expense);
   const avgLeft = used.length ? Math.round(used.reduce((s, x) => s + x.left, 0) / used.length / 100) * 100 : null; // whole kronor
   const biggest = exp.filter((r) => r.category !== SAVINGS_CAT).reduce((b, r) => (!b || r.amount > b.amount ? r : b), null);

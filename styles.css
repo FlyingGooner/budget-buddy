@@ -477,3 +477,7 @@ body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; 
 .ov li.ov-future .ov-row { opacity: .6; }
 #overview .stats > h2 { text-transform: none; letter-spacing: 0; font-size: .8125rem; }
 #overview .stats .stat-n { font-size: 1.0625rem; }
+/* Stäng månaden (2026-11-17) */
+.close-line { display: flex; align-items: center; gap: 10px; margin: 6px 0 0; font-size: .8125rem; color: var(--on-surface-variant); }
+.close-line .link { border: 0; background: none; padding: 6px 0; color: var(--primary); font: 500 .8125rem var(--font); cursor: pointer; }
+.s-var { background: #8a6bbf; }
