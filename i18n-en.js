@@ -143,6 +143,7 @@ I18N.add({
   [/^(\d+) st$/, '$1'],
   [/^(.+) från (\d{4}-\d{2})$/, '$1 from $2'],
   [/^(\d+) poster$/, '$1 items'],
+  [/^Budget buddy v(\S+) · inga externa anrop · data bara på enheten$/, 'Budget buddy v$1 · no external calls · data only on the device'],
   [/^Bäst: (.+)$/, 'Best: $1'],
   [/^\+ Lägg till i (.+)$/, '+ Add to $1'],
   [/^(\d+) % av inkomsten$/, '$1 % of income'],

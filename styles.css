@@ -413,3 +413,10 @@ body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; 
 .fold > summary h2 { padding-bottom: 0; }
 .fold[open] > summary { margin-bottom: 8px; }
 .fold > summary .sv-share { margin: 6px 0 0; }
+/* Inställningar finputs (2026-11-17): som Fitness buddy – luftiga grupprader, liten pil, sammanfattning till höger */
+.set-group-wrap { margin-top: 2px; }
+.set-group-wrap > summary.set-group { min-height: 64px; padding: 0 4px; font-size: 1rem; }
+.set-group-wrap > summary.set-group .set-title { font-size: 1.0625rem; font-weight: 600; }
+.set-group-wrap > summary::before, .set-sec > summary::before { font-size: .75rem; width: 14px; }
+.set-group-wrap > summary.set-group .sect-sub { font-size: .9375rem; }
+.set-foot { margin: 16px 0 0; text-align: center; }

@@ -430,6 +430,13 @@ body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; 
 .fold > summary h2 { padding-bottom: 0; }
 .fold[open] > summary { margin-bottom: 8px; }
 .fold > summary .sv-share { margin: 6px 0 0; }
+/* Inställningar finputs (2026-11-17): som Fitness buddy – luftiga grupprader, liten pil, sammanfattning till höger */
+.set-group-wrap { margin-top: 2px; }
+.set-group-wrap > summary.set-group { min-height: 64px; padding: 0 4px; font-size: 1rem; }
+.set-group-wrap > summary.set-group .set-title { font-size: 1.0625rem; font-weight: 600; }
+.set-group-wrap > summary::before, .set-sec > summary::before { font-size: .75rem; width: 14px; }
+.set-group-wrap > summary.set-group .sect-sub { font-size: .9375rem; }
+.set-foot { margin: 16px 0 0; text-align: center; }
 
 </style>
 </head>
@@ -799,6 +806,7 @@ body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; 
       <!-- help-en:end -->
       </details>
       </details>
+      <p class="muted small set-foot" id="set-foot"></p>
     </div>
   </section>
 </main>
@@ -1334,6 +1342,7 @@ I18N.add({
   [/^(\d+) st$/, '$1'],
   [/^(.+) från (\d{4}-\d{2})$/, '$1 from $2'],
   [/^(\d+) poster$/, '$1 items'],
+  [/^Budget buddy v(\S+) · inga externa anrop · data bara på enheten$/, 'Budget buddy v$1 · no external calls · data only on the device'],
   [/^Bäst: (.+)$/, 'Best: $1'],
   [/^\+ Lägg till i (.+)$/, '+ Add to $1'],
   [/^(\d+) % av inkomsten$/, '$1 % of income'],
@@ -1388,7 +1397,7 @@ I18N.add({
 </script>
 <script>
 // ---- version.js ----
-﻿self.APP_VERSION = '0.12.55';
+﻿self.APP_VERSION = '0.12.56';
 
 </script>
   <script>
@@ -3181,6 +3190,7 @@ function renderSettings() {
   $('sum-expense').textContent = `${n('expense')} st`;
   $('sum-people').textContent = data.settings.people.length ? data.settings.people.map((p) => p.name).join(', ') : 'Inga';
   $('sum-start').textContent = data.settings.startMonth ? `${kr(data.settings.startBalance)} från ${data.settings.startMonth}` : 'Inget';
+  $('set-foot').textContent = `Budget buddy v${self.APP_VERSION} · inga externa anrop · data bara på enheten`;
   $('sum-lang').textContent = I18N.LANGS[I18N.lang()] || '';
   $('sum-home').textContent = home();
   $('sum-rates').textContent = data.settings.ratesOwn ? 'Egna' : 'Appens';
