@@ -86,7 +86,23 @@ function renderSavingsCard(saving, t) {
   fill($('savings-card'),
     el('h2', { class: 'split' }, el('span', { text: '🐷 Sparande' }), el('span', { text: kr(t.savings) })),
     t.income ? el('p', { class: 'sv-share' }, el('span', { text: `${share} % av inkomsten` }), el('span', { class: 'cg-track', 'aria-hidden': 'true' }, bar)) : null,
-    el('ul', { class: 'list' }, saving.map(monthRow)));
+    el('ul', { class: 'list' }, saving.map(monthRow)),
+    addLike(saving, 'Sparande'));
+}
+
+// Lägg till i en grupp (2026-11-17): öppnar Ny kostnad med samma kategori, person (om alla i gruppen har samma) och hur ofta.
+function addLike(rs, label) {
+  const same = (f) => rs.every((r) => (f(r) ?? null) === (f(rs[0]) ?? null)) ? f(rs[0]) ?? null : undefined;
+  const rec = (r) => data.recurring.find((x) => x.id === r.id);
+  return el('button', { type: 'button', class: 'link add-like', text: `+ Lägg till i ${label}`, on: { click: () => {
+    focusAdd('expense');
+    const f = $('exp-form').elements;
+    f.category.value = rs[0].category;
+    const person = same((r) => r.person);
+    if (person !== undefined && f.person) f.person.value = person || '';
+    const every = same((r) => rec(r)?.every);
+    if (every) f.every.value = String(every);
+  } } });
 }
 
 // Kostnader per kategori (2026-11-17): en rad per kategori med summa och andel; tryck för att fälla ut posterna.
@@ -103,7 +119,8 @@ function expenseGroups(expense) {
           el('span', { class: 'cg-name' }, el('span', { text: catName(id) }), el('span', { class: 'cg-n', text: rs.length === 1 ? '1 post' : `${rs.length} poster` })),
           el('span', { class: 'cg-sum', text: kr(sum) }),
           el('span', { class: 'cg-track', 'aria-hidden': 'true' }, bar)),
-        el('ul', { class: 'list' }, rs.map(monthRow)));
+        el('ul', { class: 'list' }, rs.map(monthRow)),
+        addLike(rs, catName(id)));
       d.addEventListener('toggle', () => { if (d.open) openCats.add(id); else openCats.delete(id); });
       return d;
     }));

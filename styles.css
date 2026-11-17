@@ -393,3 +393,4 @@ body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; 
 .set-body > * + * { margin-top: 8px; }
 .set-body .data-more { border-top: 1px solid var(--outline-variant); margin-top: 12px; }
 .help-wrap.set-sec > summary.help-title { min-height: 52px; }
+.add-like { display: block; min-height: 40px; margin: 0 0 6px 12px; padding: 0; border: 0; background: none; color: var(--primary); font: 500 .875rem var(--font); cursor: pointer; }
