@@ -16,7 +16,7 @@ The same text is in the app under **Settings → General → Help and manual**. 
 
 ## Savings
 - Savings are not a cost, but they are deducted from what is left. Add with **+ Saving**: name, amount, frequency and preferably **Balance now**. A savings account is then created that counts up by itself every month.
-- The **🐷 Savings** card in Month shows the month's savings, **Total saved** and one row per account: balance in your currency, the monthly saving and the change since last month. Accounts in another currency show their own amount in brackets, e.g. (730 USD).
+- The **🐷 Savings** card in Month shows the month's savings and **Total saved** in your currency. Tap to unfold one row per account: balance in your currency, the monthly saving and the change since last month. Accounts in another currency show their own amount in brackets, e.g. (730 USD).
 - Tap a row to change the amount, choose which **Savings account** the money goes to, or correct the balance. A balance marked ≈ is estimated: last entered plus the savings.
 - Accounts you never touch (e.g. the children's) can be hidden from Month: tap the account under Trend → Savings accounts and untick **Show in Month**. It still counts in Total saved.
 - All accounts, with a chart, are also under **Trend → Savings accounts**. There you add an account without a savings item, or delete one (it goes to the trash).

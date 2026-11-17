@@ -560,6 +560,7 @@ body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; 
 .sv-foot { display: flex; justify-content: space-between; margin-top: 2px; }
 .sv-foot .link { border: 0; background: none; padding: 8px 0; color: var(--primary); font: 500 .875rem var(--font); cursor: pointer; }
 .sv-hidden { margin: 2px 0 0; font-size: .75rem; color: var(--on-surface-variant); }
+#savings-card .fold[open] > summary { margin-bottom: 4px; }
 
 </style>
 </head>
@@ -836,7 +837,7 @@ body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; 
         </details>
         <details><summary>Sparande</summary>
           <p>Sparande är inte en kostnad, men dras av från det som blir kvar. Lägg till med + Sparande: namn, belopp, hur ofta och gärna Saldo nu. Då skapas ett sparkonto som räknas upp av sig självt varje månad.</p>
-          <p>Kortet 🐷 Sparande i Månad visar månadens sparande, Totalt sparat och en rad per konto: saldo i din valuta, månadssparandet och ändringen sedan förra månaden. Konton i annan valuta visar sitt eget belopp inom parentes, t.ex. (730 USD).</p>
+          <p>Kortet 🐷 Sparande i Månad visar månadens sparande och Totalt sparat i din valuta. Tryck för att fälla ut en rad per konto: saldo i din valuta, månadssparandet och ändringen sedan förra månaden. Konton i annan valuta visar sitt eget belopp inom parentes, t.ex. (730 USD).</p>
           <p>Tryck på en rad för att ändra belopp, välja vilket Sparkonto pengarna går till eller rätta saldot. Saldot märkt ≈ är beräknat: senast ifyllt plus sparandet.</p>
           <p>Konton som inte rörs (t.ex. barnens) kan döljas från Månad: tryck på kontot under Trend → Sparkonton och bocka ur Visa i Månad. Det räknas fortfarande i Totalt sparat.</p>
           <p>Alla konton, med graf, finns också under Trend → Sparkonton. Där lägger du till ett konto utan sparpost, eller tar bort ett (det hamnar i papperskorgen).</p>
@@ -904,7 +905,7 @@ body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; 
         </details>
         <details><summary>Savings</summary>
           <p>Savings are not a cost, but they are deducted from what is left. Add with + Saving: name, amount, frequency and preferably Balance now. A savings account is then created that counts up by itself every month.</p>
-          <p>The 🐷 Savings card in Month shows the month's savings, Total saved and one row per account: balance in your currency, the monthly saving and the change since last month. Accounts in another currency show their own amount in brackets, e.g. (730 USD).</p>
+          <p>The 🐷 Savings card in Month shows the month's savings and Total saved in your currency. Tap to unfold one row per account: balance in your currency, the monthly saving and the change since last month. Accounts in another currency show their own amount in brackets, e.g. (730 USD).</p>
           <p>Tap a row to change the amount, choose which Savings account the money goes to, or correct the balance. A balance marked ≈ is estimated: last entered plus the savings.</p>
           <p>Accounts you never touch (e.g. the children's) can be hidden from Month: tap the account under Trend → Savings accounts and untick Show in Month. It still counts in Total saved.</p>
           <p>All accounts, with a chart, are also under Trend → Savings accounts. There you add an account without a savings item, or delete one (it goes to the trash).</p>
@@ -1632,7 +1633,7 @@ I18N.add({
 </script>
 <script>
 // ---- version.js ----
-﻿self.APP_VERSION = '0.12.85';
+﻿self.APP_VERSION = '0.12.86';
 
 </script>
   <script>
@@ -2831,12 +2832,13 @@ function renderSavingsCard(saving, t) {
   const total = rowsAll.reduce((x, r) => x + (r.now || 0), 0), totalDiff = rowsAll.reduce((x, r) => x + (r.diff || 0), 0);
   const approx = rowsAll.some((r) => r.cur?.estimated || (r.a && r.a.currency !== home()));
   const open = (r) => (r.items.length === 1 ? openRowDialog(r.items[0]) : r.a ? openAccDialog(r.a) : null);
-  fill($('savings-card'),
+  // Hopfällt (2026-11-17): rubrik och Totalt sparat syns, kontona fälls ut.
+  fill($('savings-card'), fold('sav', [
     el('h2', { class: 'split' }, el('span', { text: '🐷 Sparande' }),
       el('span', { text: `${kr(t.savings)}/mån` + (t.income && t.savings ? ` · ${share} %` : '') })),
     data.accounts.length ? el('div', { class: 'sv-big' },
       el('span', { class: 'sv-amt' }, el('small', { text: 'Totalt sparat' }), (approx ? '≈ ' : '') + kr(total)),
-      totalDiff ? el('span', { class: 'sv-diff ' + (totalDiff < 0 ? 'neg' : 'pos'), text: `${totalDiff > 0 ? '+' : '−'}${kr(Math.abs(totalDiff))} sedan ${monthShortLabel(prev).toLowerCase()}` }) : null) : null,
+      totalDiff ? el('span', { class: 'sv-diff ' + (totalDiff < 0 ? 'neg' : 'pos'), text: `${totalDiff > 0 ? '+' : '−'}${kr(Math.abs(totalDiff))} sedan ${monthShortLabel(prev).toLowerCase()}` }) : null) : null],
     el('ul', { class: 'sv-accs' }, rowsOut.map((r) => {
       const foreign = r.a && r.a.currency !== home();
       const sub = [r.monthly ? `+${kr(r.monthly)}/mån` : null, foreign && r.cur ? `(${money(r.cur.amount, r.a.currency)})` : null].filter(Boolean).join(' · ');
@@ -2848,7 +2850,7 @@ function renderSavingsCard(saving, t) {
     hiddenAcc.length ? el('p', { class: 'sv-hidden', text: hiddenAcc.length === 1 ? `+ 1 dolt konto (${hiddenAcc[0].name})` : `+ ${hiddenAcc.length} dolda konton` }) : null,
     el('div', { class: 'sv-foot' },
       el('button', { type: 'button', class: 'link', text: '+ Nytt sparande', on: { click: () => focusAdd('savings') } }),
-      data.accounts.length ? el('button', { type: 'button', class: 'link', text: 'Sparkonton ›', on: { click: () => { showTab('stats'); $('stats-accounts').scrollIntoView({ block: 'start' }); } } }) : null));
+      data.accounts.length ? el('button', { type: 'button', class: 'link', text: 'Sparkonton ›', on: { click: () => { showTab('stats'); $('stats-accounts').scrollIntoView({ block: 'start' }); } } }) : null)));
 }
 
 // Stäng månaden (2026-11-17): skriv in vad som faktiskt var kvar dagen före nästa lön. Ersätter planerat kvar i Historik och saldo.
