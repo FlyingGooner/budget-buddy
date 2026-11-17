@@ -186,3 +186,9 @@ T.test('sparkonto: kopplad sparpost räknar upp saldot varje månad och följer 
   T.eq(estBalance(d, d.accounts[0], '2026-08'), null);
   T.eq(importText(exportText(d, '2026-11-17')).data.accounts[0].feeds, ['s1']);
 });
+T.test('lönedag: valideras och följer med i exporten', () => {
+  T.eq(loadData({}).settings.payday, 1);
+  T.eq(loadData({ settings: { payday: 25 } }).settings.payday, 25);
+  T.eq(loadData({ settings: { payday: 31 } }).settings.payday, 1, 'över 28 → 1');
+  T.eq(importText(exportText(loadData({ settings: { payday: 25 } }), '2026-11-17')).data.settings.payday, 25);
+});

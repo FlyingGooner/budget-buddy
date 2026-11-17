@@ -64,8 +64,15 @@ const monthFmt = new Intl.DateTimeFormat('sv-SE', { month: 'long', year: 'numeri
 const monthShort = new Intl.DateTimeFormat('sv-SE', { month: 'short' });
 const toDate = (m) => { const [y, mo] = m.split('-').map(Number); return new Date(y, mo - 1, 1); };
 const cap = (s) => s.charAt(0).toUpperCase() + s.slice(1);
-const monthLabel = (m) => cap(monthFmt.format(toDate(m)));
-const monthShortLabel = (m) => cap(monthShort.format(toDate(m)).replace('.', ''));
+// Med lönedag (payday > 1) spänner en budgetmånad över två kalendermånader: "November/december 2026", "Nov/dec".
+const paySplit = () => data?.settings?.payday > 1;
+const shortOf = (m) => monthShort.format(toDate(m)).replace('.', '');
+const monthLabel = (m) => {
+  if (!paySplit()) return cap(monthFmt.format(toDate(m)));
+  const n = addMonths(m, 1), [a, ay] = monthFmt.format(toDate(m)).split(' '), [b, by] = monthFmt.format(toDate(n)).split(' ');
+  return cap(ay === by ? `${a}/${b} ${ay}` : `${a} ${ay}/${b} ${by}`);
+};
+const monthShortLabel = (m) => cap(paySplit() ? `${shortOf(m)}/${shortOf(addMonths(m, 1))}` : shortOf(m));
 
 // Parse "1 234,50" / "1234.5" → öre (integer, no floats). null if invalid.
 function parseKr(s) {

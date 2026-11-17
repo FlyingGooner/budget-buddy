@@ -56,6 +56,8 @@ function renderSettings() {
   $('g-household').textContent = `${ppl ? (ppl === 1 ? '1 person' : `${ppl} personer`) : 'Inga personer'} · ${nCat} kategorier`;
   $('g-currency').textContent = `${home()} · ${data.settings.ratesOwn ? 'egna kurser' : 'appens kurser'}`;
   $('g-general').textContent = 'Språk, data, hjälp';
+  $('s-payday').value = String(data.settings.payday);
+  $('sum-payday').textContent = data.settings.payday > 1 ? `Den ${data.settings.payday}:e` : 'Den 1:a (kalendermånad)';
   $('sum-lang').textContent = I18N.LANGS[I18N.lang()] || '';
   $('sum-home').textContent = home();
   $('sum-rates').textContent = data.settings.ratesOwn ? 'Egna' : 'Appens';
@@ -148,4 +150,15 @@ $('s-save').addEventListener('click', () => {
   data.settings.startMonth = m;
   save();
   snackbar('Startsaldo sparat', null, null, 3000);
+});
+
+// Lönedag (2026-11-17): budgetmånad från lönedag till dagen före nästa. Byter bara namn och vilken månad som är "nu".
+$('s-payday').replaceChildren(...Array.from({ length: 28 }, (_, i) => el('option', { value: String(i + 1), text: i ? `Den ${i + 1}:e (lönedag)` : 'Den 1:a (kalendermånad)' })));
+$('s-payday').addEventListener('change', (e) => {
+  const was = currentMonth();
+  data.settings.payday = Number(e.target.value);
+  if (month === was) month = currentMonth();
+  overviewStart = currentMonth();
+  save();
+  snackbar(data.settings.payday > 1 ? `Budgetmånaden börjar den ${data.settings.payday}:e` : 'Budgetmånaden följer kalendern', null, null, 3000);
 });

@@ -69,7 +69,7 @@ function emptyData() {
   return {
     version: 1,
     settings: { categories: DEFAULT_CATEGORIES.map((c) => ({ ...c })), people: [], startBalance: 0, startMonth: null, catsV: CATS_V,
-      rates: { ...DEFAULT_RATES }, ratesDate: RATES_DATE, ratesOwn: false, sort: 'a-', home: 'SEK' },
+      rates: { ...DEFAULT_RATES }, ratesDate: RATES_DATE, ratesOwn: false, sort: 'a-', home: 'SEK', payday: 1 },
     recurring: [],
     oneOffs: [],
     adjustments: {},
@@ -110,6 +110,8 @@ function loadData(d) {
   if (Number.isInteger(s.startBalance) && Math.abs(s.startBalance) <= MAX_AMOUNT) out.settings.startBalance = s.startBalance;
   if (isMonth(s.startMonth)) out.settings.startMonth = s.startMonth;
   if (isSort(s.sort)) out.settings.sort = s.sort;
+  // Lönedag (2026-11-17): budgetmånaden börjar den dagen (1 = kalendermånad). Månaden heter efter den månad lönen kommer.
+  out.settings.payday = Number.isInteger(s.payday) && s.payday >= 1 && s.payday <= 28 ? s.payday : 1;
   if (CURRENCIES.includes(s.home)) out.settings.home = s.home; // v0.13 (2026-11-15): hemvaluta, alla belopp utom sparkonton är i den
   // Exchange rates: only own (user-saved) rates are kept; otherwise the built-in ones apply (newer after an update).
   if (s.ratesOwn === true && isObj(s.rates) && typeof s.ratesDate === 'string' && DATE_RE.test(s.ratesDate)) {
@@ -273,6 +275,7 @@ function packData(d) {
   if (s.startMonth) { set.startBalance = s.startBalance; set.startMonth = s.startMonth; }
   if (s.ratesOwn) { set.rates = { ...s.rates }; set.ratesDate = s.ratesDate; }
   if (s.home !== 'SEK') set.home = s.home;
+  if (s.payday > 1) set.payday = s.payday;
   if (Object.keys(set).length) out.settings = set;
   const item = (r) => {
     const o = { id: r.id, name: r.name, type: t(r.type), amount: r.amount, category: r.category };
@@ -295,7 +298,7 @@ function unpackData(p) {
   const type = (v) => (v === 'i' ? 'income' : v === 'e' ? 'expense' : null);
   const list = (v) => (Array.isArray(v) ? v.filter(isObj) : []);
   const s = isObj(p.settings) ? p.settings : {};
-  const settings = { catsV: CATS_V, startBalance: s.startBalance, startMonth: s.startMonth, home: s.home };
+  const settings = { catsV: CATS_V, startBalance: s.startBalance, startMonth: s.startMonth, home: s.home, payday: s.payday };
   if (Array.isArray(s.categories)) settings.categories = list(s.categories).map((c) => ({ id: c.id, name: c.name, type: type(c.type) }));
   if (Array.isArray(s.people)) settings.people = list(s.people).map((x) => ({ id: x.id, name: x.name }));
   if (isObj(s.rates)) { settings.rates = { ...s.rates }; settings.ratesDate = s.ratesDate; settings.ratesOwn = true; }
@@ -357,7 +360,10 @@ function addMonths(m, n) {
 }
 function currentMonth() {
   const d = new Date();
-  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+  const m = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+  let pay = 1;
+  try { if (data?.settings?.payday > 1) pay = data.settings.payday; } catch { /* data finns inte än (start, tester) */ }
+  return d.getDate() < pay ? addMonths(m, -1) : m;   // före lönedagen hör dagen till förra lönemånaden
 }
 
 // Does a recurring item apply in month m?

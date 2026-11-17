@@ -619,6 +619,13 @@ body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; 
           </div>
         </details>
         <details class="card set-sec">
+          <summary><span class="set-title">Lönedag</span><span class="sect-sub" id="sum-payday"></span></summary>
+          <div class="set-body">
+          <label class="field"><span>Budgetmånaden börjar</span><select id="s-payday"></select></label>
+          <p class="muted small">Får du lön t.ex. den 25:e gäller november-budgeten från 25 november till 24 december och heter "November/december". Lönen räknas till den månad den betalas ut.</p>
+          </div>
+        </details>
+        <details class="card set-sec">
           <summary><span class="set-title">Startsaldo</span><span class="sect-sub" id="sum-start"></span></summary>
           <div class="set-body">
           <p class="muted small">Valfritt. Visar löpande saldo i översikten från vald månad.</p>
@@ -1319,6 +1326,7 @@ I18N.add({
   'Valuta och kurser': 'Currency and rates', 'Personer, kategorier, startsaldo': 'People, categories, starting balance', 'Språk, data, hjälp': 'Language, data, help', 'Backup, import, radera': 'Backup, import, delete',
   'Saldo över tid': 'Balance over time', 'Pengar kvar över tid': 'Money left over time', 'Pengar kvar över tid, ackumulerat': 'Money left over time, cumulative', 'Hittills': 'So far', 'Prognos': 'Forecast', 'Snitt kvar/mån': 'Average left/mo', 'Kommande kvartal': 'Next quarter', 'Summa 3 mån': 'Total 3 mo',
   'Sparande som går hit varje månad:': 'Savings that go here every month:', 'Lägg en återkommande kostnad i kategorin Sparande, så kan den kopplas hit och saldot räknas upp själv.': 'Add a recurring cost in the Savings category, then it can be linked here and the balance counts up by itself.', 'På sparkontona': 'In savings accounts',
+  'Lönedag': 'Payday', 'Budgetmånaden börjar': 'The budget month starts', 'Den 1:a (kalendermånad)': 'The 1st (calendar month)', 'Budgetmånaden följer kalendern': 'The budget month follows the calendar', 'Får du lön t.ex. den 25:e gäller november-budgeten från 25 november till 24 december och heter "November/december". Lönen räknas till den månad den betalas ut.': 'If you are paid e.g. on the 25th, the November budget runs from 25 November to 24 December and is called "November/December". The salary counts in the month it is paid.',
   'Hemvaluta': 'Home currency', 'Fler val': 'More options', 'CSV, text, egen kod, radera': 'CSV, text, own code, delete', 'Ett okrypterat kalkylark, t.ex. för Excel.': 'An unencrypted spreadsheet, e.g. for Excel.', 'All data finns bara i den här webbläsaren. Läs in backup-filen på en annan enhet för att flytta den.': 'All data is only in this browser. Load the backup file on another device to move it.', 'Backupen låses med koden. Spara den i din lösenordshanterare.': 'The backup is locked with the code. Save it in your password manager.',
   'Valutakurser': 'Exchange rates', 'Allmänt': 'General', 'Inga': 'None', 'Inget': 'None', 'Tom': 'Empty', 'Egna': 'Own', 'Appens': "The app's", 'Importera från text': 'Import from text',
   'Byter du valuta räknas alla belopp om med valutakurserna (Ångra finns). Sparkonton behåller sin egen valuta.': 'If you change currency, all amounts are converted with the exchange rates (Undo is available). Savings accounts keep their own currency.',
@@ -1381,6 +1389,9 @@ I18N.add({
   [/^(\d+) st$/, '$1'],
   [/^(.+) från (\d{4}-\d{2})$/, '$1 from $2'],
   [/^(\d+) poster$/, '$1 items'],
+  [/^Den (\d+):e \(lönedag\)$/, 'The $1th (payday)'],
+  [/^Den (\d+):e$/, 'The $1th'],
+  [/^Budgetmånaden börjar den (\d+):e$/, 'The budget month starts on the $1th'],
   [/^1 sparpost · se nedan$/, '1 savings item · see below'],
   [/^(\d+) sparposter · se nedan$/, '$1 savings items · see below'],
   [/^([▲▼]) (.+) mot (\S+)$/, (g, tr) => `${g[1]} ${g[2]} vs ${tr(g[3])}`],
@@ -1445,7 +1456,7 @@ I18N.add({
 </script>
 <script>
 // ---- version.js ----
-﻿self.APP_VERSION = '0.12.62';
+﻿self.APP_VERSION = '0.12.63';
 
 </script>
   <script>
@@ -1945,7 +1956,7 @@ function emptyData() {
   return {
     version: 1,
     settings: { categories: DEFAULT_CATEGORIES.map((c) => ({ ...c })), people: [], startBalance: 0, startMonth: null, catsV: CATS_V,
-      rates: { ...DEFAULT_RATES }, ratesDate: RATES_DATE, ratesOwn: false, sort: 'a-', home: 'SEK' },
+      rates: { ...DEFAULT_RATES }, ratesDate: RATES_DATE, ratesOwn: false, sort: 'a-', home: 'SEK', payday: 1 },
     recurring: [],
     oneOffs: [],
     adjustments: {},
@@ -1986,6 +1997,8 @@ function loadData(d) {
   if (Number.isInteger(s.startBalance) && Math.abs(s.startBalance) <= MAX_AMOUNT) out.settings.startBalance = s.startBalance;
   if (isMonth(s.startMonth)) out.settings.startMonth = s.startMonth;
   if (isSort(s.sort)) out.settings.sort = s.sort;
+  // Lönedag (2026-11-17): budgetmånaden börjar den dagen (1 = kalendermånad). Månaden heter efter den månad lönen kommer.
+  out.settings.payday = Number.isInteger(s.payday) && s.payday >= 1 && s.payday <= 28 ? s.payday : 1;
   if (CURRENCIES.includes(s.home)) out.settings.home = s.home; // v0.13 (2026-11-15): hemvaluta, alla belopp utom sparkonton är i den
   // Exchange rates: only own (user-saved) rates are kept; otherwise the built-in ones apply (newer after an update).
   if (s.ratesOwn === true && isObj(s.rates) && typeof s.ratesDate === 'string' && DATE_RE.test(s.ratesDate)) {
@@ -2149,6 +2162,7 @@ function packData(d) {
   if (s.startMonth) { set.startBalance = s.startBalance; set.startMonth = s.startMonth; }
   if (s.ratesOwn) { set.rates = { ...s.rates }; set.ratesDate = s.ratesDate; }
   if (s.home !== 'SEK') set.home = s.home;
+  if (s.payday > 1) set.payday = s.payday;
   if (Object.keys(set).length) out.settings = set;
   const item = (r) => {
     const o = { id: r.id, name: r.name, type: t(r.type), amount: r.amount, category: r.category };
@@ -2171,7 +2185,7 @@ function unpackData(p) {
   const type = (v) => (v === 'i' ? 'income' : v === 'e' ? 'expense' : null);
   const list = (v) => (Array.isArray(v) ? v.filter(isObj) : []);
   const s = isObj(p.settings) ? p.settings : {};
-  const settings = { catsV: CATS_V, startBalance: s.startBalance, startMonth: s.startMonth, home: s.home };
+  const settings = { catsV: CATS_V, startBalance: s.startBalance, startMonth: s.startMonth, home: s.home, payday: s.payday };
   if (Array.isArray(s.categories)) settings.categories = list(s.categories).map((c) => ({ id: c.id, name: c.name, type: type(c.type) }));
   if (Array.isArray(s.people)) settings.people = list(s.people).map((x) => ({ id: x.id, name: x.name }));
   if (isObj(s.rates)) { settings.rates = { ...s.rates }; settings.ratesDate = s.ratesDate; settings.ratesOwn = true; }
@@ -2233,7 +2247,10 @@ function addMonths(m, n) {
 }
 function currentMonth() {
   const d = new Date();
-  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+  const m = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+  let pay = 1;
+  try { if (data?.settings?.payday > 1) pay = data.settings.payday; } catch { /* data finns inte än (start, tester) */ }
+  return d.getDate() < pay ? addMonths(m, -1) : m;   // före lönedagen hör dagen till förra lönemånaden
 }
 
 // Does a recurring item apply in month m?
@@ -2376,8 +2393,15 @@ const monthFmt = new Intl.DateTimeFormat('sv-SE', { month: 'long', year: 'numeri
 const monthShort = new Intl.DateTimeFormat('sv-SE', { month: 'short' });
 const toDate = (m) => { const [y, mo] = m.split('-').map(Number); return new Date(y, mo - 1, 1); };
 const cap = (s) => s.charAt(0).toUpperCase() + s.slice(1);
-const monthLabel = (m) => cap(monthFmt.format(toDate(m)));
-const monthShortLabel = (m) => cap(monthShort.format(toDate(m)).replace('.', ''));
+// Med lönedag (payday > 1) spänner en budgetmånad över två kalendermånader: "November/december 2026", "Nov/dec".
+const paySplit = () => data?.settings?.payday > 1;
+const shortOf = (m) => monthShort.format(toDate(m)).replace('.', '');
+const monthLabel = (m) => {
+  if (!paySplit()) return cap(monthFmt.format(toDate(m)));
+  const n = addMonths(m, 1), [a, ay] = monthFmt.format(toDate(m)).split(' '), [b, by] = monthFmt.format(toDate(n)).split(' ');
+  return cap(ay === by ? `${a}/${b} ${ay}` : `${a} ${ay}/${b} ${by}`);
+};
+const monthShortLabel = (m) => cap(paySplit() ? `${shortOf(m)}/${shortOf(addMonths(m, 1))}` : shortOf(m));
 
 // Parse "1 234,50" / "1234.5" → öre (integer, no floats). null if invalid.
 function parseKr(s) {
@@ -3319,6 +3343,8 @@ function renderSettings() {
   $('g-household').textContent = `${ppl ? (ppl === 1 ? '1 person' : `${ppl} personer`) : 'Inga personer'} · ${nCat} kategorier`;
   $('g-currency').textContent = `${home()} · ${data.settings.ratesOwn ? 'egna kurser' : 'appens kurser'}`;
   $('g-general').textContent = 'Språk, data, hjälp';
+  $('s-payday').value = String(data.settings.payday);
+  $('sum-payday').textContent = data.settings.payday > 1 ? `Den ${data.settings.payday}:e` : 'Den 1:a (kalendermånad)';
   $('sum-lang').textContent = I18N.LANGS[I18N.lang()] || '';
   $('sum-home').textContent = home();
   $('sum-rates').textContent = data.settings.ratesOwn ? 'Egna' : 'Appens';
@@ -3411,6 +3437,17 @@ $('s-save').addEventListener('click', () => {
   data.settings.startMonth = m;
   save();
   snackbar('Startsaldo sparat', null, null, 3000);
+});
+
+// Lönedag (2026-11-17): budgetmånad från lönedag till dagen före nästa. Byter bara namn och vilken månad som är "nu".
+$('s-payday').replaceChildren(...Array.from({ length: 28 }, (_, i) => el('option', { value: String(i + 1), text: i ? `Den ${i + 1}:e (lönedag)` : 'Den 1:a (kalendermånad)' })));
+$('s-payday').addEventListener('change', (e) => {
+  const was = currentMonth();
+  data.settings.payday = Number(e.target.value);
+  if (month === was) month = currentMonth();
+  overviewStart = currentMonth();
+  save();
+  snackbar(data.settings.payday > 1 ? `Budgetmånaden börjar den ${data.settings.payday}:e` : 'Budgetmånaden följer kalendern', null, null, 3000);
 });
 
 </script>
