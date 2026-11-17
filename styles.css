@@ -487,3 +487,4 @@ body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; 
 .add-row { grid-template-columns: repeat(4, 1fr); gap: 6px; }
 .add-row .extra { font-size: .875rem; padding: 6px 2px; }
 #sav-form .hint-row { grid-column: 1 / -1; }
+#cd-accounts .row2 { align-items: end; }

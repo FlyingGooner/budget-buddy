@@ -504,6 +504,7 @@ body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; 
 .add-row { grid-template-columns: repeat(4, 1fr); gap: 6px; }
 .add-row .extra { font-size: .875rem; padding: 6px 2px; }
 #sav-form .hint-row { grid-column: 1 / -1; }
+#cd-accounts .row2 { align-items: end; }
 
 </style>
 </head>
@@ -796,7 +797,7 @@ body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; 
         <details><summary>Sparande och sparkonton</summary>
           <p>Sparande är en egen sorts post: tryck + Sparande under Månad. Ange namn, belopp, hur ofta och gärna saldot nu – då skapas ett sparkonto som räknas upp varje månad. Sparandet dras av från det som blir kvar, men räknas inte som en kostnad, och visas i ett eget kort både i Månad och under Alla poster.</p>
           <p>Sparkonton finns under Trend. Lägg till ett konto och fyll i saldot en gång. Kryssa sedan i vilka sparposter som går dit – då räknas saldot upp av sig självt varje månad (visas med ≈). Fyll i ett nytt saldo när du vill stämma av.</p>
-          <p>Snabbast: tryck på en sparpost i Månad och fyll i Saldo på kontot nu. Finns inget konto skapas ett med samma namn, kopplat till sparposten. Sedan visas och ändras kontots saldo direkt i samma ruta.</p>
+          <p>Tryck på en sparpost i Månad. Under Sparkonto väljer du vilket konto pengarna går till – ett befintligt, eller Nytt konto med samma namn. Saldot hämtas från kontot och räknas upp med sparandet varje månad; ändra det bara om det inte stämmer. Samma saldo visas när du stänger månaden.</p>
           <p>Ett konto kan ha en annan valuta (t.ex. USD); då räknas summan om till din valuta med kurserna under Valuta. Konton i annan valuta räknas inte upp automatiskt.</p>
         </details>
         <details><summary>Trend</summary>
@@ -876,7 +877,7 @@ body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; 
         <details><summary>Savings and savings accounts</summary>
           <p>Savings are their own kind of item: tap + Saving under Month. Enter name, amount, frequency and preferably the balance now – a savings account is then created that counts up every month. Savings are deducted from what is left, but do not count as a cost, and are shown in a card of their own both in Month and under All items.</p>
           <p>Savings accounts are under Trend. Add an account and enter the balance once. Then tick which savings items go there – the balance then counts up by itself every month (shown with ≈). Enter a new balance whenever you want to reconcile.</p>
-          <p>Quickest: tap a savings item in Month and fill in Account balance now. If there is no account, one with the same name is created, linked to the savings item. After that the balance is shown and changed in the same dialog.</p>
+          <p>Tap a savings item in Month. Under Savings account you choose which account the money goes to – an existing one, or New account with the same name. The balance is taken from the account and counts up with the savings every month; only change it if it is wrong. The same balance is shown when you close the month.</p>
           <p>An account can have another currency (e.g. USD); the total is then converted to your currency with the rates under Currency. Accounts in another currency do not count up automatically.</p>
         </details>
         <details><summary>Trend</summary>
@@ -942,6 +943,7 @@ body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; 
     </div>
     <label class="field"><span>Belopp (<span class="cur-unit">kr</span>)</span><input id="rd-amount" inputmode="decimal" autocomplete="off"></label>
     <div id="rd-acc" hidden>
+      <label class="field"><span>Sparkonto</span><select id="rd-acc-pick"></select></label>
       <label class="field"><span id="rd-bal-label">Saldo på kontot nu</span><input id="rd-balance" inputmode="decimal" autocomplete="off"></label>
       <p class="muted small" id="rd-acc-note"></p>
     </div>
@@ -1428,6 +1430,7 @@ I18N.add({
   'Kvar + sparat över tid': 'Left + saved over time',
   'Saldo på kontot nu (valfritt)': 'Account balance now (optional)', 'Beräknat – ändra om det inte stämmer.': 'Estimated – change it if it is wrong.', 'Räknas upp med sparandet varje månad.': 'Counts up with the savings every month.', 'Fyll i så skapas ett sparkonto som räknas upp med sparandet varje månad.': 'Fill in and a savings account is created that counts up with the savings every month.',
   '+ Sparande': '+ Saving', '+ Nytt sparande': '+ New saving', 'Per gång (': 'Per time (', 'Saldo nu (valfritt)': 'Balance now (optional)', 'Sparande dras av från det som blir kvar, men räknas inte som en kostnad. Fyller du i saldot skapas ett sparkonto som räknas upp varje månad.': 'Savings are deducted from what is left, but do not count as a cost. If you fill in the balance, a savings account is created that counts up every month.',
+  'Sparkonto': 'Savings account', 'Inget sparkonto': 'No savings account', 'Saldo på kontot nu': 'Account balance now', 'Fyll i saldot så skapas kontot. Det räknas upp med sparandet varje månad.': 'Fill in the balance and the account is created. It counts up with the savings every month.', 'Beräknat från senaste saldot + sparandet – ändra om det inte stämmer.': 'Estimated from the latest balance + savings – change it if it is wrong.',
   'Hemvaluta': 'Home currency', 'Fler val': 'More options', 'CSV, text, egen kod, radera': 'CSV, text, own code, delete', 'Ett okrypterat kalkylark, t.ex. för Excel.': 'An unencrypted spreadsheet, e.g. for Excel.', 'All data finns bara i den här webbläsaren. Läs in backup-filen på en annan enhet för att flytta den.': 'All data is only in this browser. Load the backup file on another device to move it.', 'Backupen låses med koden. Spara den i din lösenordshanterare.': 'The backup is locked with the code. Save it in your password manager.',
   'Valutakurser': 'Exchange rates', 'Allmänt': 'General', 'Inga': 'None', 'Inget': 'None', 'Tom': 'Empty', 'Egna': 'Own', 'Appens': "The app's", 'Importera från text': 'Import from text',
   'Byter du valuta räknas alla belopp om med valutakurserna (Ångra finns). Sparkonton behåller sin egen valuta.': 'If you change currency, all amounts are converted with the exchange rates (Undo is available). Savings accounts keep their own currency.',
@@ -1492,6 +1495,7 @@ I18N.add({
   [/^(\d+) poster$/, '$1 items'],
   [/^Den (\d+):e \(lönedag\)$/, 'The $1th (payday)'],
   [/^Den (\d+):e$/, 'The $1th'],
+  [/^Nytt konto: (.+)$/, 'New account: $1'],
   [/^In (.+) · Ut (.+) · Sparat (.+)$/, 'In $1 · Out $2 · Saved $3'],
   [/^Saldo på (.+) \((.+)\)$/, 'Balance of $1 ($2)'],
   [/^Rörligt snitt\/mån \((\d+) stängda\)$/, 'Variable avg/mo ($1 closed)'],
@@ -1572,7 +1576,7 @@ I18N.add({
 </script>
 <script>
 // ---- version.js ----
-﻿self.APP_VERSION = '0.12.74';
+﻿self.APP_VERSION = '0.12.75';
 
 </script>
   <script>
@@ -2770,7 +2774,8 @@ function openCloseDialog() {
       const inp = el('input', { inputmode: 'decimal', autocomplete: 'off', 'data-acc': a.id, 'aria-label': `Saldo ${a.name}` });
       inp.value = est ? krInput(est.amount) : '';
       inp.dataset.orig = inp.value;
-      return el('label', { class: 'field' }, el('span', { text: `${a.name} (${unit(a.currency)})` }), inp);
+      const from = (a.feeds || []).map((id) => data.recurring.find((x) => x.id === id)?.name).filter(Boolean);
+      return el('label', { class: 'field' }, el('span', { text: `${a.name} (${unit(a.currency)})` + (from.length ? ` ← ${from.join(', ')}` : '') }), inp);
     }))] : null);
   $('cd-error').textContent = '';
   $('close-dialog').showModal();
@@ -2944,13 +2949,13 @@ function openRowDialog(r) {
   const isSave = r && r.kind === 'rec' && r.category === SAVINGS_CAT;
   $('rd-acc').hidden = !isSave;
   if (isSave) {
-    const acc = data.accounts.find((a) => (a.feeds || []).includes(r.id));
-    const est = acc ? estBalance(data, acc, month) : null;
-    $('rd-bal-label').textContent = acc ? `Saldo på ${acc.name} (${unit(acc.currency)})` : 'Saldo på kontot nu (valfritt)';
-    $('rd-balance').value = est ? krInput(est.amount) : '';
-    $('rd-balance').dataset.orig = $('rd-balance').value;
-    $('rd-acc-note').textContent = acc ? (est && est.estimated ? 'Beräknat – ändra om det inte stämmer.' : 'Räknas upp med sparandet varje månad.')
-      : 'Fyll i så skapas ett sparkonto som räknas upp med sparandet varje månad.';
+    // Koppla till ett befintligt sparkonto, skapa ett nytt eller inget. Saldot hämtas från kontot och räknas upp framåt.
+    const linked = data.accounts.find((a) => (a.feeds || []).includes(r.id));
+    $('rd-acc-pick').replaceChildren(el('option', { value: '', text: 'Inget sparkonto' }),
+      el('option', { value: 'new', text: `Nytt konto: ${r.name}` }),
+      ...data.accounts.map((a) => el('option', { value: a.id, text: a.name })));
+    $('rd-acc-pick').value = linked ? linked.id : data.accounts.length ? '' : 'new';
+    showAccBalance();
   }
   $('rd-error').textContent = '';
   $('row-dialog').showModal();
@@ -2970,6 +2975,16 @@ $('rd-edit').addEventListener('click', () => {
   $('row-dialog').close();
   setTimeout(() => openItemDialog(rec), 0);
 });
+function showAccBalance() {
+  const pick = $('rd-acc-pick').value, acc = data.accounts.find((a) => a.id === pick), est = acc ? estBalance(data, acc, month) : null;
+  $('rd-balance').closest('label').hidden = !pick;
+  $('rd-bal-label').textContent = acc ? `Saldo på ${acc.name} (${unit(acc.currency)})` : 'Saldo på kontot nu';
+  $('rd-balance').value = est ? krInput(est.amount) : '';
+  $('rd-balance').dataset.orig = $('rd-balance').value;
+  $('rd-acc-note').textContent = !pick ? '' : !acc ? 'Fyll i saldot så skapas kontot. Det räknas upp med sparandet varje månad.'
+    : est && est.estimated ? 'Beräknat från senaste saldot + sparandet – ändra om det inte stämmer.' : 'Räknas upp med sparandet varje månad.';
+}
+$('rd-acc-pick').addEventListener('change', showAccBalance);
 $('rd-type').addEventListener('change', () => fillCategorySelect($('rd-cat'), null, $('rd-type').value));
 $('rd-cancel').addEventListener('click', () => $('row-dialog').close());
 
@@ -2978,17 +2993,21 @@ $('rd-form').addEventListener('submit', (e) => {
   const amount = parseKr($('rd-amount').value);
   if (amount == null) { $('rd-error').textContent = 'Skriv ett belopp, t.ex. 1 250 eller 99,50.'; return; }
   const r = dialogRow;
-  const balRaw = !$('rd-acc').hidden ? $('rd-balance').value.trim() : '';
-  if (balRaw && balRaw !== $('rd-balance').dataset.orig) {
-    const bal = parseKr(balRaw);
-    if (bal == null || !isAmount(bal)) { $('rd-error').textContent = 'Skriv ett saldo, t.ex. 45 000 eller 1250,50.'; return; }
-    let acc = data.accounts.find((a) => (a.feeds || []).includes(r.id));
-    if (!acc) {
+  if (!$('rd-acc').hidden) {
+    const pick = $('rd-acc-pick').value, balRaw = $('rd-balance').value.trim();
+    const bal = balRaw ? parseKr(balRaw) : null;
+    if (balRaw && (bal == null || !isAmount(bal))) { $('rd-error').textContent = 'Skriv ett saldo, t.ex. 45 000 eller 1250,50.'; return; }
+    for (const a of data.accounts) a.feeds = (a.feeds || []).filter((x) => x !== r.id);   // en sparpost går till ett konto
+    let acc = data.accounts.find((a) => a.id === pick);
+    if (pick === 'new' && balRaw) {
       if (data.accounts.length >= MAX_ACCOUNTS) { $('rd-error').textContent = `Max ${MAX_ACCOUNTS} sparkonton.`; return; }
-      acc = { id: 'a' + newId().slice(-10), name: cleanName(r.name, 30) || 'Sparkonto', currency: home(), balances: {}, feeds: [r.id] };
+      acc = { id: 'a' + newId().slice(-10), name: cleanName(r.name, 30) || 'Sparkonto', currency: home(), balances: {}, feeds: [] };
       data.accounts.push(acc);
     }
-    acc.balances[month] = bal;
+    if (acc) {
+      acc.feeds.push(r.id);
+      if (balRaw && balRaw !== $('rd-balance').dataset.orig) acc.balances[month] = bal;
+    }
   }
   if (!r || r.kind === 'one') {
     const name = cleanName($('rd-name').value);

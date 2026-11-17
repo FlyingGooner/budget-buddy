@@ -132,7 +132,8 @@ function openCloseDialog() {
       const inp = el('input', { inputmode: 'decimal', autocomplete: 'off', 'data-acc': a.id, 'aria-label': `Saldo ${a.name}` });
       inp.value = est ? krInput(est.amount) : '';
       inp.dataset.orig = inp.value;
-      return el('label', { class: 'field' }, el('span', { text: `${a.name} (${unit(a.currency)})` }), inp);
+      const from = (a.feeds || []).map((id) => data.recurring.find((x) => x.id === id)?.name).filter(Boolean);
+      return el('label', { class: 'field' }, el('span', { text: `${a.name} (${unit(a.currency)})` + (from.length ? ` ← ${from.join(', ')}` : '') }), inp);
     }))] : null);
   $('cd-error').textContent = '';
   $('close-dialog').showModal();
@@ -306,13 +307,13 @@ function openRowDialog(r) {
   const isSave = r && r.kind === 'rec' && r.category === SAVINGS_CAT;
   $('rd-acc').hidden = !isSave;
   if (isSave) {
-    const acc = data.accounts.find((a) => (a.feeds || []).includes(r.id));
-    const est = acc ? estBalance(data, acc, month) : null;
-    $('rd-bal-label').textContent = acc ? `Saldo på ${acc.name} (${unit(acc.currency)})` : 'Saldo på kontot nu (valfritt)';
-    $('rd-balance').value = est ? krInput(est.amount) : '';
-    $('rd-balance').dataset.orig = $('rd-balance').value;
-    $('rd-acc-note').textContent = acc ? (est && est.estimated ? 'Beräknat – ändra om det inte stämmer.' : 'Räknas upp med sparandet varje månad.')
-      : 'Fyll i så skapas ett sparkonto som räknas upp med sparandet varje månad.';
+    // Koppla till ett befintligt sparkonto, skapa ett nytt eller inget. Saldot hämtas från kontot och räknas upp framåt.
+    const linked = data.accounts.find((a) => (a.feeds || []).includes(r.id));
+    $('rd-acc-pick').replaceChildren(el('option', { value: '', text: 'Inget sparkonto' }),
+      el('option', { value: 'new', text: `Nytt konto: ${r.name}` }),
+      ...data.accounts.map((a) => el('option', { value: a.id, text: a.name })));
+    $('rd-acc-pick').value = linked ? linked.id : data.accounts.length ? '' : 'new';
+    showAccBalance();
   }
   $('rd-error').textContent = '';
   $('row-dialog').showModal();
@@ -332,6 +333,16 @@ $('rd-edit').addEventListener('click', () => {
   $('row-dialog').close();
   setTimeout(() => openItemDialog(rec), 0);
 });
+function showAccBalance() {
+  const pick = $('rd-acc-pick').value, acc = data.accounts.find((a) => a.id === pick), est = acc ? estBalance(data, acc, month) : null;
+  $('rd-balance').closest('label').hidden = !pick;
+  $('rd-bal-label').textContent = acc ? `Saldo på ${acc.name} (${unit(acc.currency)})` : 'Saldo på kontot nu';
+  $('rd-balance').value = est ? krInput(est.amount) : '';
+  $('rd-balance').dataset.orig = $('rd-balance').value;
+  $('rd-acc-note').textContent = !pick ? '' : !acc ? 'Fyll i saldot så skapas kontot. Det räknas upp med sparandet varje månad.'
+    : est && est.estimated ? 'Beräknat från senaste saldot + sparandet – ändra om det inte stämmer.' : 'Räknas upp med sparandet varje månad.';
+}
+$('rd-acc-pick').addEventListener('change', showAccBalance);
 $('rd-type').addEventListener('change', () => fillCategorySelect($('rd-cat'), null, $('rd-type').value));
 $('rd-cancel').addEventListener('click', () => $('row-dialog').close());
 
@@ -340,17 +351,21 @@ $('rd-form').addEventListener('submit', (e) => {
   const amount = parseKr($('rd-amount').value);
   if (amount == null) { $('rd-error').textContent = 'Skriv ett belopp, t.ex. 1 250 eller 99,50.'; return; }
   const r = dialogRow;
-  const balRaw = !$('rd-acc').hidden ? $('rd-balance').value.trim() : '';
-  if (balRaw && balRaw !== $('rd-balance').dataset.orig) {
-    const bal = parseKr(balRaw);
-    if (bal == null || !isAmount(bal)) { $('rd-error').textContent = 'Skriv ett saldo, t.ex. 45 000 eller 1250,50.'; return; }
-    let acc = data.accounts.find((a) => (a.feeds || []).includes(r.id));
-    if (!acc) {
+  if (!$('rd-acc').hidden) {
+    const pick = $('rd-acc-pick').value, balRaw = $('rd-balance').value.trim();
+    const bal = balRaw ? parseKr(balRaw) : null;
+    if (balRaw && (bal == null || !isAmount(bal))) { $('rd-error').textContent = 'Skriv ett saldo, t.ex. 45 000 eller 1250,50.'; return; }
+    for (const a of data.accounts) a.feeds = (a.feeds || []).filter((x) => x !== r.id);   // en sparpost går till ett konto
+    let acc = data.accounts.find((a) => a.id === pick);
+    if (pick === 'new' && balRaw) {
       if (data.accounts.length >= MAX_ACCOUNTS) { $('rd-error').textContent = `Max ${MAX_ACCOUNTS} sparkonton.`; return; }
-      acc = { id: 'a' + newId().slice(-10), name: cleanName(r.name, 30) || 'Sparkonto', currency: home(), balances: {}, feeds: [r.id] };
+      acc = { id: 'a' + newId().slice(-10), name: cleanName(r.name, 30) || 'Sparkonto', currency: home(), balances: {}, feeds: [] };
       data.accounts.push(acc);
     }
-    acc.balances[month] = bal;
+    if (acc) {
+      acc.feeds.push(r.id);
+      if (balRaw && balRaw !== $('rd-balance').dataset.orig) acc.balances[month] = bal;
+    }
   }
   if (!r || r.kind === 'one') {
     const name = cleanName($('rd-name').value);
