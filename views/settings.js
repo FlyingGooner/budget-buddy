@@ -44,11 +44,19 @@ function renderSettings() {
   $('rates-note').textContent = ratesNote() + '.';
   $('rates-reset').hidden = !data.settings.ratesOwn;
   renderTrash();
+  // Sammanfattning på varje hopfälld rad
+  const n = (t) => data.settings.categories.filter((c) => c.type === t).length;
+  $('sum-income').textContent = `${n('income')} st`;
+  $('sum-expense').textContent = `${n('expense')} st`;
+  $('sum-people').textContent = data.settings.people.length ? data.settings.people.map((p) => p.name).join(', ') : 'Inga';
+  $('sum-start').textContent = data.settings.startMonth ? `${kr(data.settings.startBalance)} från ${data.settings.startMonth}` : 'Inget';
+  $('sum-rates').textContent = data.settings.ratesOwn ? 'Egna' : 'Appens';
 }
 // Papperskorg: newest first. Återställ puts the item back (with its month adjustments); Töm has Ångra.
 function renderTrash() {
   const list = data.trash.map((e, i) => [e, i]).reverse();
   $('trash-empty').hidden = !list.length;
+  $('sum-trash').textContent = list.length ? `${list.length} st` : 'Tom';
   fill($('trash-list'), list.length ? list.map(([e, i]) => {
     const x = e.rec || e.one || e.acc;
     const what = e.rec ? (e.rec.type === 'income' ? 'Inkomst' : 'Kostnad') : e.one ? `Avvikelse ${monthShortLabel(e.one.month).toLowerCase()} ${e.one.month.slice(0, 4)}` : 'Sparkonto';

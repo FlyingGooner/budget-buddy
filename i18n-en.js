@@ -76,7 +76,8 @@ I18N.add({
   'Inkomstkategorier': 'Income categories', 'Kostnadskategorier': 'Expense categories',
   'Språk och valuta': 'Language and currency', 'Valuta': 'Currency',
   'Byter du valuta räknas alla belopp om med valutakurserna nedan (Ångra finns). Sparkonton behåller sin egen valuta.': 'If you change currency all amounts are converted with the exchange rates below (Undo is available). Savings accounts keep their own currency.',
-  'Valutakurser': 'Exchange rates',
+  'Valutakurser': 'Exchange rates', 'Allmänt': 'General', 'Inga': 'None', 'Inget': 'None', 'Tom': 'Empty', 'Egna': 'Own', 'Appens': "The app's", 'Importera från text': 'Import from text',
+  'Byter du valuta räknas alla belopp om med valutakurserna (Ångra finns). Sparkonton behåller sin egen valuta.': 'If you change currency, all amounts are converted with the exchange rates (Undo is available). Savings accounts keep their own currency.',
   'Ungefärliga kurser för sparkonton i utländsk valuta. Appen hämtar inga kurser – ändra dem själv när du vill.': 'Approximate rates for savings accounts in other currencies and for changing currency. The app never fetches rates – change them yourself whenever you like.',
   'Använd appens kurser': "Use the app's rates", 'Papperskorg': 'Trash',
   'Poster, avvikelser och sparkonton du tar bort ligger här i 30 dagar. Sedan raderas de för gott.': 'Items, deviations and savings accounts you delete stay here for 30 days. Then they are deleted for good.',
@@ -133,6 +134,8 @@ I18N.add({
 }, [
   [/^Egna kurser från (.+)$/, 'Own rates from $1'],
   [/^ECB:s referenskurser (.+)$/, 'ECB reference rates $1'],
+  [/^(\d+) st$/, '$1'],
+  [/^(.+) från (\d{4}-\d{2})$/, '$1 from $2'],
   [/^(\d+) återkommande poster$/, '$1 recurring items'],
   [/^(\d+) engångsposter$/, '$1 one-off items'],
   [/^(\d+) ogiltiga hoppas över\.$/, '$1 invalid ones are skipped.'],

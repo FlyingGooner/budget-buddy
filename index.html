@@ -251,69 +251,66 @@
         </details>
       </div>
       <!-- help-en:end -->
-      <div class="card">
-        <h2>Startsaldo</h2>
-        <p class="muted">Valfritt. Visar löpande saldo i översikten från vald månad.</p>
-        <div class="row2">
-          <label class="field"><span>Saldo (<span class="cur-unit">kr</span>)</span><input id="s-balance" inputmode="decimal" autocomplete="off"></label>
-          <label class="field"><span>Från månad</span><input id="s-month" type="month" min="1900-01" max="2099-12"></label>
-        </div>
-        <div class="actions"><span class="spacer"></span><button type="button" class="btn tonal" id="s-save">Spara</button></div>
-      </div>
-      <div class="card">
-        <h2>Personer</h2>
-        <p class="muted">Valfritt. Lägg till personerna i hushållet så kan varje inkomst och kostnad kopplas till en person – eller vara gemensam.</p>
-        <ul class="list" id="person-list"></ul>
-        <form class="inline" id="person-form" novalidate>
-          <label class="field grow"><span>Ny person</span><input id="person-name" maxlength="30" autocomplete="off"></label>
-          <button type="submit" class="btn tonal">Lägg till</button>
-        </form>
-      </div>
-      <div class="card">
-        <h2>Inkomstkategorier</h2>
-        <ul class="list" id="cat-list-income"></ul>
-        <form class="inline cat-form" data-type="income" novalidate>
-          <label class="field grow"><span>Ny inkomstkategori</span><input name="name" maxlength="40" autocomplete="off"></label>
-          <button type="submit" class="btn tonal">Lägg till</button>
-        </form>
-      </div>
-      <div class="card">
-        <h2>Kostnadskategorier</h2>
-        <ul class="list" id="cat-list-expense"></ul>
-        <form class="inline cat-form" data-type="expense" novalidate>
-          <label class="field grow"><span>Ny kostnadskategori</span><input name="name" maxlength="40" autocomplete="off"></label>
-          <button type="submit" class="btn tonal">Lägg till</button>
-        </form>
-      </div>
-    </div>
-    <div class="col">
-      <div class="card" id="lang-card">
-        <h2>Språk och valuta</h2>
+      <div class="card set-group" id="lang-card">
+        <h2>Allmänt</h2>
         <div class="row2">
           <label class="field"><span>Språk</span><select id="s-lang"></select></label>
           <label class="field"><span>Valuta</span><select id="s-home"></select></label>
         </div>
-        <p class="muted small">Byter du valuta räknas alla belopp om med valutakurserna nedan (Ångra finns). Sparkonton behåller sin egen valuta.</p>
+        <p class="muted small">Byter du valuta räknas alla belopp om med valutakurserna (Ångra finns). Sparkonton behåller sin egen valuta.</p>
+        <details class="sect">
+          <summary><span>Startsaldo</span><span class="sect-sub" id="sum-start"></span></summary>
+          <p class="muted small">Valfritt. Visar löpande saldo i översikten från vald månad.</p>
+          <div class="row2">
+            <label class="field"><span>Saldo (<span class="cur-unit">kr</span>)</span><input id="s-balance" inputmode="decimal" autocomplete="off"></label>
+            <label class="field"><span>Från månad</span><input id="s-month" type="month" min="1900-01" max="2099-12"></label>
+          </div>
+          <div class="actions"><span class="spacer"></span><button type="button" class="btn tonal" id="s-save">Spara</button></div>
+        </details>
+        <details class="sect">
+          <summary><span>Valutakurser</span><span class="sect-sub" id="sum-rates"></span></summary>
+          <p class="muted small">Ungefärliga kurser för sparkonton i utländsk valuta. Appen hämtar inga kurser – ändra dem själv när du vill.</p>
+          <p class="small" id="rates-note"></p>
+          <div class="row2">
+            <label class="field"><span>1 USD = kr</span><input id="rate-USD" inputmode="decimal" autocomplete="off"></label>
+            <label class="field"><span>1 EUR = kr</span><input id="rate-EUR" inputmode="decimal" autocomplete="off"></label>
+            <label class="field"><span>1 GBP = kr</span><input id="rate-GBP" inputmode="decimal" autocomplete="off"></label>
+            <label class="field"><span>1 NOK = kr</span><input id="rate-NOK" inputmode="decimal" autocomplete="off"></label>
+            <label class="field"><span>1 DKK = kr</span><input id="rate-DKK" inputmode="decimal" autocomplete="off"></label>
+          </div>
+          <div class="actions"><button type="button" class="btn text" id="rates-reset" hidden>Använd appens kurser</button><span class="spacer"></span><button type="button" class="btn tonal" id="rates-save">Spara</button></div>
+        </details>
       </div>
-      <div class="card">
-        <h2>Valutakurser</h2>
-        <p class="muted">Ungefärliga kurser för sparkonton i utländsk valuta. Appen hämtar inga kurser – ändra dem själv när du vill.</p>
-        <p class="small" id="rates-note"></p>
-        <div class="row2">
-          <label class="field"><span>1 USD = kr</span><input id="rate-USD" inputmode="decimal" autocomplete="off"></label>
-          <label class="field"><span>1 EUR = kr</span><input id="rate-EUR" inputmode="decimal" autocomplete="off"></label>
-          <label class="field"><span>1 GBP = kr</span><input id="rate-GBP" inputmode="decimal" autocomplete="off"></label>
-          <label class="field"><span>1 NOK = kr</span><input id="rate-NOK" inputmode="decimal" autocomplete="off"></label>
-          <label class="field"><span>1 DKK = kr</span><input id="rate-DKK" inputmode="decimal" autocomplete="off"></label>
-        </div>
-        <div class="actions"><button type="button" class="btn text" id="rates-reset" hidden>Använd appens kurser</button><span class="spacer"></span><button type="button" class="btn tonal" id="rates-save">Spara</button></div>
+      <div class="card set-group">
+        <h2>Hushåll</h2>
+        <details class="sect">
+          <summary><span>Personer</span><span class="sect-sub" id="sum-people"></span></summary>
+          <p class="muted small">Valfritt. Lägg till personerna i hushållet så kan varje inkomst och kostnad kopplas till en person – eller vara gemensam.</p>
+          <ul class="list" id="person-list"></ul>
+          <form class="inline" id="person-form" novalidate>
+            <label class="field grow"><span>Ny person</span><input id="person-name" maxlength="30" autocomplete="off"></label>
+            <button type="submit" class="btn tonal">Lägg till</button>
+          </form>
+        </details>
+        <details class="sect">
+          <summary><span>Inkomstkategorier</span><span class="sect-sub" id="sum-income"></span></summary>
+          <ul class="list" id="cat-list-income"></ul>
+          <form class="inline cat-form" data-type="income" novalidate>
+            <label class="field grow"><span>Ny inkomstkategori</span><input name="name" maxlength="40" autocomplete="off"></label>
+            <button type="submit" class="btn tonal">Lägg till</button>
+          </form>
+        </details>
+        <details class="sect">
+          <summary><span>Kostnadskategorier</span><span class="sect-sub" id="sum-expense"></span></summary>
+          <ul class="list" id="cat-list-expense"></ul>
+          <form class="inline cat-form" data-type="expense" novalidate>
+            <label class="field grow"><span>Ny kostnadskategori</span><input name="name" maxlength="40" autocomplete="off"></label>
+            <button type="submit" class="btn tonal">Lägg till</button>
+          </form>
+        </details>
       </div>
-      <div class="card" id="trash-card">
-        <h2>Papperskorg</h2>
-        <p class="muted">Poster, avvikelser och sparkonton du tar bort ligger här i 30 dagar. Sedan raderas de för gott.</p>
-        <ul class="list" id="trash-list"></ul>
-        <div class="actions"><span class="spacer"></span><button type="button" class="btn text danger" id="trash-empty" hidden>Töm papperskorgen</button></div>
-      </div>
+    </div>
+    <div class="col">
       <div class="card" id="data-card">
         <h2>Data</h2>
         <p class="muted">Backup-filen innehåller all din ekonomidata och låses alltid med din kod nedan. Radera gamla filer. Läs in filen på en annan enhet för att flytta din data.</p>
@@ -324,10 +321,16 @@
         <div class="pwd-box" id="pwd-box"></div>
         <div class="csv-row"><button type="button" class="btn text" id="csv-export">Exportera CSV</button><p class="muted small">CSV-filen är ett enkelt kalkylark för t.ex. Excel eller en egen app. Den är inte krypterad – spara den inte där andra kommer åt den.</p></div>
         <p class="error" id="import-error" role="alert"></p>
-        <details class="data-text">
-          <summary class="data-text-title">Klistra in text</summary>
+        <details class="sect data-text">
+          <summary><span>Klistra in text</span></summary>
           <label class="field"><span>Importera (ersätter all data)</span><textarea id="import-text" rows="4" autocomplete="off" spellcheck="false" placeholder="Klistra in innehållet i en backup-fil"></textarea></label>
           <div class="actions"><span class="spacer"></span><button type="button" class="btn tonal" id="import-btn">Importera</button></div>
+        </details>
+        <details class="sect" id="trash-card">
+          <summary><span>Papperskorg</span><span class="sect-sub" id="sum-trash"></span></summary>
+          <p class="muted small">Poster, avvikelser och sparkonton du tar bort ligger här i 30 dagar. Sedan raderas de för gott.</p>
+          <ul class="list" id="trash-list"></ul>
+          <div class="actions"><span class="spacer"></span><button type="button" class="btn text danger" id="trash-empty" hidden>Töm papperskorgen</button></div>
         </details>
         <div class="actions"><button type="button" class="btn text danger" id="reset">Radera all data</button></div>
       </div>

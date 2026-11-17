@@ -307,3 +307,15 @@ body { padding-bottom: calc(92px + env(safe-area-inset-bottom)); }
   }
 }
 body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; text-rendering: optimizeLegibility; }
+
+/* Inställningar: grupper med hopfällbara delar (2026-11-17) */
+.set-group > h2 { padding-bottom: 4px; }
+.sect { border-top: 1px solid var(--outline-variant); }
+.set-group > .row2 + p + .sect, .set-group > h2 + .sect { border-top: 0; }
+.sect > summary { display: flex; align-items: center; gap: 8px; min-height: 48px; padding: 8px 0; cursor: pointer; list-style: none; font-weight: 500; color: var(--on-surface); }
+.sect > summary::-webkit-details-marker { display: none; }
+.sect > summary::after { content: '›'; margin-left: 4px; font-size: 1.4rem; line-height: 1; color: var(--on-surface-variant); transition: transform .2s; }
+.sect[open] > summary::after { transform: rotate(90deg); }
+.sect-sub { flex: 1; text-align: right; color: var(--on-surface-variant); font-size: .875rem; font-weight: 400; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.sect[open] { padding-bottom: 8px; }
+#data-card .sect.data-text { margin-top: 8px; }
