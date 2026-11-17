@@ -26,7 +26,7 @@ Samma text finns i appen under **Inställningar → Allmänt → Hjälp och manu
 - Det som står under Kvar är planerat – det som blir över efter de fasta kostnaderna. Mat, nöjen och oväntade utgifter syns inte där.
 - När månaden är slut (dagen före lönen) trycker du **✓ Stäng månaden** under Kvar och skriver in vad som faktiskt fanns kvar på kontot. Då visar Kvar det faktiska beloppet, och skillnaden mot det planerade visas som **Rörligt** i stapeln.
 - I samma ruta fyller du i saldot på sparkontona – de är förifyllda med det beräknade saldot, så du ändrar bara det som skiljer, t.ex. efter en extra överföring.
-- Historik, Trend och saldot använder sedan det faktiska beloppet för den månaden. **Ändra** rättar beloppet, **Öppna igen** tar bort det.
+- Historik, Trend och saldot använder sedan det faktiska beloppet för den månaden. I Historik räknas månader som inte är stängda med snittet av de rörliga utgifterna (≈), så prognosen för helåret blir realistisk. Grafen visar kvar + sparat över tid. ✓ = stängd månad. **Ändra** rättar beloppet, **Öppna igen** tar bort det.
 
 ## Lönedag
 - Under **Inställningar → Hushåll → Lönedag** väljer du vilken dag budgetmånaden börjar. Den 1:a är vanliga kalendermånader.

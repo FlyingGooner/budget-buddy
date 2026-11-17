@@ -9,7 +9,7 @@ function ovRows(months, max, anyBal) {
       on: { click: () => { showTab('month'); setMonth(r.m); } } },
     el('span', { class: 'ov-m', text: `${monthShortLabel(r.m)}${''}` }),
     el('span', { class: 'bar' }, barFill),
-    el('span', { class: 'amount ' + (r.left < 0 ? 'neg' : ''), text: kr(r.left, true) }),
+    el('span', { class: 'amount ' + (r.left < 0 ? 'neg' : ''), text: (r.estimated ? '≈ ' : r.closed ? '✓ ' : '') + kr(r.left, true) }),
     anyBal ? el('span', { class: 'amount muted small', text: r.bal == null ? '' : kr(r.bal) }) : null));
   }));
 }
@@ -19,7 +19,7 @@ function moneyChart(past, next, kpis = true) {
   if (pts.length < 2) return null;
   const useBal = pts.every((r) => r.bal != null);
   let acc = 0;
-  const vals = pts.map((r) => (useBal ? r.bal : (acc += r.left)));
+  const vals = pts.map((r) => (useBal ? r.bal : (acc += r.left + r.savings)));   // pengar över tid: kvar + sparat
   const W = 340, H = 170, P = { l: 44, r: 10, t: 10, b: 20 };
   const lo = Math.min(0, ...vals), hi = Math.max(1, ...vals);
   const x = (i) => P.l + ((W - P.l - P.r) * i) / (pts.length - 1);
@@ -39,7 +39,7 @@ function moneyChart(past, next, kpis = true) {
   const best = past.reduce((b, r) => (r.left > b.left ? r : b), past[0] || next[0]);
   const avg = past.length ? Math.round(past.reduce((a, r) => a + r.left, 0) / past.length / 100) * 100 : 0;
   return el('div', { class: 'card' },
-    el('h2', { class: 'split' }, el('span', { text: useBal ? 'Saldo över tid' : 'Pengar kvar över tid' }), el('span', { text: kr(vals[nPast - 1]) })),
+    el('h2', { class: 'split' }, el('span', { text: useBal ? 'Saldo över tid' : 'Kvar + sparat över tid' }), el('span', { text: kr(vals[nPast - 1]) })),
     svg('svg', { class: 'chart', viewBox: `0 0 ${W} ${H}`, role: 'img', 'aria-label': useBal ? 'Saldo över tid' : 'Pengar kvar över tid, ackumulerat' }, kids),
     el('div', { class: 'legend' }, el('span', { class: 'lg lg-in' }), 'Hittills', el('span', { class: 'lg lg-fut' }), 'Prognos', el('span', { class: 'muted', text: `(tusental ${unit()})` })),
     kpis && past.length ? el('div', { class: 'mc-kpis' },
@@ -52,7 +52,22 @@ function renderOverview() {
   const box = $('overview'), now = currentMonth();
   const year = Number(monthLabel(overviewStart).slice(-4));
   const first = addMonths(`${year}-01`, paySplit() ? -1 : 0);
-  const calc = (m) => ({ m, ...monthTotals(data, m), bal: balanceAfter(data, m) });
+  // Prognos (2026-11-17): månader som inte är stängda räknas med snittet av de rörliga utgifterna i stängda månader
+  // (planerat − faktiskt kvar). Utan stängda månader är prognosen det planerade.
+  const closedMs = Object.keys(data.closed);
+  const avgVar = closedMs.length ? Math.round(closedMs.reduce((a, m) => { const t = monthTotals(data, m); return a + (t.planned - t.left); }, 0) / closedMs.length / 100) * 100 : 0;
+  const isEst = (t) => !t.closed && avgVar && (t.income || t.expense);
+  const estBal = (m) => {   // saldo där varje ostängd månad sedan startsaldot också får de rörliga utgifterna
+    const bal = balanceAfter(data, m);
+    if (bal == null || !avgVar) return bal;
+    let n = 0;
+    for (let x = data.settings.startMonth; x <= m; x = addMonths(x, 1)) if (isEst(monthTotals(data, x))) n++;
+    return bal - n * avgVar;
+  };
+  const calc = (m) => {
+    const t = monthTotals(data, m), est = isEst(t);
+    return { m, ...t, left: est ? t.left - avgVar : t.left, estimated: !!est, bal: estBal(m) };
+  };
   const months = Array.from({ length: 12 }, (_, i) => calc(addMonths(first, i)));
   const done = months.filter((r) => r.m <= now && (r.income || r.expense));
   const rest = months.filter((r) => r.m > now);
@@ -89,7 +104,8 @@ function renderOverview() {
     stat(monthShortLabel(best.m), `Bäst: ${kr(best.left, true)}`),
     worst !== best ? stat(monthShortLabel(worst.m), `Sämst: ${kr(worst.left, true)}`) : null,
     done.length && rest.length ? stat(kr(sum(months, 'left'), true), 'Kvar helår (prognos)') : null,
-    sum(base, 'income') ? stat(Math.round((sum(base, 'savings') / sum(base, 'income')) * 100) + ' %', '🐷 Sparkvot') : null);
+    sum(base, 'income') ? stat(Math.round((sum(base, 'savings') / sum(base, 'income')) * 100) + ' %', '🐷 Sparkvot') : null,
+    avgVar ? stat(kr(avgVar), `Rörligt snitt/mån (${closedMs.length} stängda)`) : null);
 
   const chartPast = (done.length ? done : months.slice(0, 1)).slice().reverse();
   const chartNext = done.length ? rest : months.slice(1);
