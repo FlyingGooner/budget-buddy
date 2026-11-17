@@ -14,7 +14,7 @@ Mobil-först PWA för att planera ekonomin månad för månad. Spec: `docs/SPEC.
 - Hemvaluta (2026-11-15): `data.settings.home` (SEK, EUR, USD, GBP, NOK, DKK). Alla belopp utom sparkonton är i hemvalutan; byte räknar om med `changeHome()` i `store.js` (Ångra). Tal skrivs alltid på svenskt sätt, bara enheten (`unit()` i `app.js`) byts.
 - UI på svenska (källa) och engelska. Kod och variabelnamn på engelska.
 - Ny fil som appen behöver → `ASSETS` i `sw.js`. Version bara i `version.js` (sätts av `release.ps1`). Relativa sökvägar.
-- Manualen: skriv bara i `docs/MANUAL.md`; Hjälp i `index.html` (mellan `help:start`/`help:end`) byggs från den med `tools/build-help.ps1`.
+- Manualen: skriv bara i `docs/MANUAL.md`; Hjälp i `index.html` (mellan `help:start`/`help:end`) byggs från den med `node tools/build-help.mjs` (eller `tools/build-help.ps1`).
 - Bakåt: flikbyte = `pushState`; varje lager (öppen `<dialog>` med id, markeringsläget) är ett steg via `nav.js` (`layerOpened`/`layerClosed` i `app.js`; dialoger fångas automatiskt). Test i `tools/tests/nav.node.mjs`.
 - Papperskorg: borttagna poster, avvikelser och sparkonton → `data.trash` (`trashItems`/`restoreItem`/`purgeTrash` i `store.js`), 30 dagar, inte i exporten.
 - Tester: `tools\test.ps1` (Node: `unit.test.js` via `tools/node-unit.mjs`, och `*.node.mjs`); `ui.test.js` i Edge.

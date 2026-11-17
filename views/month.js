@@ -170,7 +170,18 @@ function perPerson(rows) {
       el('th', { scope: 'col', text: 'Ut' }), el('th', { scope: 'col', text: 'Kvar' }))),
     el('tbody', {}, lines.map((g) => el('tr', {}, el('th', { scope: 'row', text: g.name }),
       el('td', { text: kr(g.income) }), el('td', { text: kr(g.expense) }),
-      el('td', { class: g.left < 0 ? 'neg' : '', text: kr(g.left, true) })))));
+      el('td', { class: g.left < 0 ? 'neg' : '', text: kr(g.left, true) })))),
+    sharedSplit(lines));
+}
+// Delat lika (2026-11-17): gemensamt (in och ut) fördelat jämnt på personerna, så att Gemensamt-raden inte vilseleder.
+function sharedSplit(lines) {
+  const shared = lines.find((g) => g.id === null), people = data.settings.people;
+  if (!shared || !people.length || !(shared.income || shared.expense)) return null;
+  const share = Math.round(shared.left / people.length / 100) * 100;   // hela kronor
+  return el('tfoot', {}, el('tr', { class: 'split-row' }, el('th', { scope: 'row', colspan: '4' },
+    el('span', { text: 'Delat lika: ' }),
+    ...people.map((p, i) => { const g = lines.find((x) => x.id === p.id) || { left: 0 }, v = g.left + share;
+      return el('span', { class: v < 0 ? 'neg' : 'pos', text: `${i ? ' · ' : ''}${p.name} ${kr(v, true)}` }); }))));
 }
 
 

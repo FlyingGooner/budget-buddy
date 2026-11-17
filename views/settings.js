@@ -37,7 +37,13 @@ function renderSettings() {
   })) : el('li', { class: 'muted empty-row', text: 'Inga personer – allt räknas som gemensamt.' }));
   $('s-balance').value = data.settings.startMonth ? krInput(Math.abs(data.settings.startBalance)) : '';
   if (data.settings.startBalance < 0) $('s-balance').value = '-' + $('s-balance').value;
-  $('s-month').value = data.settings.startMonth || '';
+  { // 2026-11-17: månadsväljare med appens månadsnamn (lönedag ger t.ex. "December 2026") – 3 år bakåt, 1 år framåt
+    const now = currentMonth(), sm = data.settings.startMonth;
+    const ms = Array.from({ length: 49 }, (_, i) => addMonths(now, 12 - i));
+    if (sm && !ms.includes(sm)) ms.push(sm);
+    $('s-month').replaceChildren(el('option', { value: '', text: '–' }), ...ms.sort().reverse().map((m) => el('option', { value: m, text: monthLabel(m) })));
+    $('s-month').value = sm || '';
+  }
   $('s-lang').value = I18N.lang();
   $('s-home').value = home();
   for (const c of Object.keys(DEFAULT_RATES)) $('rate-' + c).value = nf2.format(data.settings.rates[c] / 100);

@@ -471,3 +471,5 @@ body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; 
 .tab .monthbar .icon-btn { min-width: 44px; min-height: 44px; }
 .add-row .extra { min-height: 48px; }
 .cat-group > summary { min-height: 46px; padding: 6px 0; }
+.per-person tfoot th { padding-top: 8px; font-weight: 400; font-size: .8125rem; color: var(--on-surface-variant); text-align: left; border-top: 1px solid var(--outline-variant); }
+.per-person tfoot .pos { color: var(--on-surface); }

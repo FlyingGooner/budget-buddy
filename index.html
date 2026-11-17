@@ -176,7 +176,7 @@
           <p class="muted small">Valfritt. Visar löpande saldo i översikten från vald månad.</p>
           <div class="row2">
             <label class="field"><span>Saldo (<span class="cur-unit">kr</span>)</span><input id="s-balance" inputmode="decimal" autocomplete="off"></label>
-            <label class="field"><span>Från månad</span><input id="s-month" type="month" min="1900-01" max="2099-12"></label>
+            <label class="field"><span>Från månad</span><select id="s-month"></select></label>
           </div>
           <div class="actions"><span class="spacer"></span><button type="button" class="btn tonal" id="s-save">Spara</button></div>
           </div>
@@ -261,59 +261,63 @@
       <div class="card help" lang="sv" data-no-tr>
         <h2>Hjälp</h2>
         <details><summary>Kom igång</summary>
-          <img class="shot" src="docs/manual/poster.png" alt="Poster: inkomster och kostnader" width="390" loading="lazy">
-          <p>Gå till Poster och lägg in dina inkomster (efter skatt) och fasta kostnader. Ange hur ofta en kostnad kommer – varje månad, varannan, kvartal eller en gång om året – och från vilken månad.</p>
+          <p>Tryck + Inkomst under Månad och lägg in din lön efter skatt. Tryck + Kostnad och lägg in hyra, el, lån och andra räkningar. Ange hur ofta en kostnad kommer – varje månad, varannan, kvartal eller en gång om året.</p>
           <p>Allt läggs in en gång. Sedan räknar appen ut varje månad åt dig.</p>
-          <p>Markera flera poster: håll fingret på en post tills den blir markerad och tryck på fler. Avsluta sätter en sista månad på alla markerade (historiken bakåt finns kvar), Ta bort lägger dem i papperskorgen. Ångra finns direkt efteråt. ✕ eller Bakåt avslutar.</p>
-          <p>Sortera poster: tryck på ↕ ovanför Inkomster. Då visas kolumnerna Belopp, Namn, Kategori och Start. Tryck på en kolumn för att sortera på den, och på samma kolumn igen för att vända ordningen (↑ stigande, ↓ fallande). Valet gäller både inkomster och kostnader och sparas.</p>
+          <p>Får du lön en annan dag än den 1:a: välj Lönedag under Inställningar → Hushåll (se nedan).</p>
         </details>
         <details><summary>Varför din data är säker här</summary>
           <p>Här finns hela din ekonomi: lön, lån, räkningar, sparande och vem i hushållet som betalar vad. Sådant ska inte hamna hos ett företag, en annonsör eller en hackare.</p>
-          <p>Ingen server att hacka. De flesta stora läckor sker när ett företags databas med miljontals användares uppgifter hackas. Här finns ingen sådan databas: din data finns bara i din telefon. Den som vill åt den måste komma åt just din telefon.</p>
-          <p>Inget att sälja. Många gratisappar – och även betalappar – tjänar pengar på din data eller delar den med partner för annonser och analys. Den här appen har inget konto, ingen analys, ingen reklam och inga spårare. Webbläsaren spärrar dessutom tekniskt alla anrop ut, så datan kan inte skickas iväg ens av misstag.</p>
-          <p>Låst backup. Backup-filen krypteras med AES-256 och ditt lösenord. Lägger du den i molnet ser molntjänsten bara obegriplig data.</p>
+          <p>Ingen server att hacka. Din data finns bara i din telefon. Den som vill åt den måste komma åt just din telefon.</p>
+          <p>Inget att sälja. Inget konto, ingen analys, ingen reklam och inga spårare. Webbläsaren spärrar dessutom tekniskt alla anrop ut, så datan kan inte skickas iväg ens av misstag.</p>
+          <p>Låst backup. Backup-filen krypteras med AES-256 och din kod. Lägger du den i molnet ser molntjänsten bara obegriplig data.</p>
           <p>Öppen kod. All kod ligger öppet på GitHub och kan granskas av vem som helst.</p>
-          <p>Ärligt: inget är 100 % säkert. Det som återstår är din egen telefon – lås den med kod och håll den uppdaterad – ett svagt backup-lösenord, och att appens kod på GitHub Pages inte ändras av någon obehörig. Men för den här sortens uppgifter finns inget säkrare praktiskt sätt än att de aldrig lämnar telefonen.</p>
+          <p>Ärligt: inget är 100 % säkert. Lås telefonen med kod och håll den uppdaterad, och spara backup-koden i en lösenordshanterare.</p>
         </details>
         <details><summary>Månad</summary>
-          <img class="shot" src="docs/manual/manad.png" alt="Månad: kvar, sparande och per person" width="390" loading="lazy">
-          <p>Visar vad som är kvar efter månadens kostnader, och hur mycket av det som är sparande.</p>
-          <p>Byt månad med ◀ ▶ eller svep åt vänster/höger. Tryck på en rad för att ändra beloppet bara den här månaden. + Avvikelse lägger till en engångspost, t.ex. nya däck eller en tandläkarräkning.</p>
+          <p>Överst står vad som blir Kvar efter månadens kostnader och sparande, jämfört med förra månaden. Stapeln visar vart inkomsten går: kostnader, sparande och kvar.</p>
+          <p>Inkomster, Kostnader och Sparande är hopfällda. Tryck för att fälla ut. Kostnaderna är grupperade per kategori – tryck på en kategori för att se posterna. + Lägg till i Boende lägger till en kostnad med samma kategori, person och hur ofta.</p>
+          <p>Byt månad med ◀ ▶ eller svep åt vänster/höger. Tryck på Månad i menyn för att komma tillbaka till nuvarande månad.</p>
+          <p>Tryck på en rad för att ändra beloppet bara den här månaden, hoppa över den eller Ändra posten (namn, belopp, kategori, period). + Avvikelse lägger till en engångspost, t.ex. nya däck eller en tandläkarräkning.</p>
+          <p>Alla poster › visar alla återkommande poster. Där kan du sortera (↕), och hålla in en post för att markera flera: Avsluta sätter en sista månad, Ta bort lägger dem i papperskorgen.</p>
         </details>
-        <details><summary>Översikt</summary>
-          <img class="shot" src="docs/manual/oversikt.png" alt="Översikt: kommande 12 månader" width="390" loading="lazy">
-          <p>De kommande 12 månaderna på en gång. Månader med underskott markeras.</p>
-          <p>Fyll i ett Startsaldo under Inställningar för att se det löpande saldot efter varje månad.</p>
+        <details><summary>Lönedag</summary>
+          <p>Under Inställningar → Hushåll → Lönedag väljer du vilken dag budgetmånaden börjar. Den 1:a är vanliga kalendermånader.</p>
+          <p>Får du lön t.ex. den 25:e räcker lönen den 25 november till december. Den månaden heter då December, med datumen 25 nov – 24 dec under. Före lönedagen är du kvar i förra månaden.</p>
         </details>
-        <details><summary>Statistik och sparande</summary>
-          <img class="shot" src="docs/manual/sparkonton.png" alt="Sparkonton med valuta" width="390" loading="lazy">
-          <p>Nyckeltal, sparkvot, kostnader per kategori och in/ut de senaste 12 månaderna. Kostnader i kategorin Sparande visas som sparande.</p>
-          <p>Sparkonton (längst ner i Statistik): lägg till ett konto och fyll i vad som står på det varje månad. Kontot kan ha en annan valuta (t.ex. USD); då räknas summan om till din valuta med kurserna under Valutakurser.</p>
+        <details><summary>Sparande och sparkonton</summary>
+          <p>Kostnader i kategorin Sparande visas i ett eget kort, både i Månad och under Alla poster. De räknas fortfarande av från det som blir kvar.</p>
+          <p>Sparkonton finns under Trend. Lägg till ett konto och fyll i saldot en gång. Kryssa sedan i vilka sparposter som går dit – då räknas saldot upp av sig självt varje månad (visas med ≈). Fyll i ett nytt saldo när du vill stämma av.</p>
+          <p>Ett konto kan ha en annan valuta (t.ex. USD); då räknas summan om till din valuta med kurserna under Valuta. Konton i annan valuta räknas inte upp automatiskt.</p>
+        </details>
+        <details><summary>Trend</summary>
+          <p>Nyckeltal för månaden: hur mycket som blir kvar, sparkvot, snitt, sparat och största kostnaden. Kostnader per kategori och in/ut de senaste 12 månaderna. Längst ner: sparkonton.</p>
+        </details>
+        <details><summary>Historik</summary>
+          <p>En graf över hur mycket pengar som blir kvar över tid – eller saldot, om du har fyllt i ett Startsaldo under Inställningar → Hushåll. Streckat är prognos.</p>
+          <p>Under grafen: kommande kvartal och de senaste 12 månaderna. Tryck på en månad för att öppna den.</p>
         </details>
         <details><summary>Personer och kategorier</summary>
-          <p>Valfritt: lägg till personerna i hushållet, så kan varje post höra till en person eller vara gemensam. Kategorierna kan byta namn, läggas till och tas bort.</p>
+          <p>Valfritt: lägg till personerna i hushållet under Inställningar → Hushåll, så kan varje post höra till en person eller vara gemensam. Under Kvar visas då In, Ut och Kvar per person och för Gemensamt. Gemensamma kostnader delas inte automatiskt – raden Delat lika visar vad som blir kvar per person om de delas lika.</p>
+          <p>Kategorierna kan byta namn, läggas till och tas bort.</p>
         </details>
         <details><summary>Papperskorg</summary>
-          <p>Poster, avvikelser och sparkonton som du tar bort hamnar i Papperskorg under Inställningar. Där ligger de i 30 dagar och kan tas tillbaka med Återställ, med sina ändrade belopp per månad. Sedan raderas de för gott. Töm papperskorgen raderar allt på en gång (Ångra finns direkt efteråt).</p>
+          <p>Poster, avvikelser och sparkonton som du tar bort hamnar i Papperskorg under Inställningar → Allmänt. Där ligger de i 30 dagar och kan tas tillbaka med Återställ. Sedan raderas de för gott.</p>
         </details>
         <details><summary>Språk och valuta</summary>
-          <p>Appen är på svenska med kronor från början. Byt språk och valuta (kronor, euro, dollar, pund, norska eller danska kronor) under Inställningar → Språk och valuta.</p>
-          <p>Byter du valuta när du redan har data räknas alla belopp (inkomster, kostnader, avvikelser, startsaldo och papperskorgen) om med valutakurserna. Ångra finns direkt efteråt. Sparkonton behåller sin egen valuta.</p>
+          <p>Byt språk under Inställningar → Allmänt → Språk och valuta (kronor, euro, dollar, pund, norska eller danska kronor) under Inställningar → Valuta.</p>
+          <p>Byter du valuta räknas alla belopp om med valutakurserna. Ångra finns direkt efteråt. Sparkonton behåller sin egen valuta.</p>
           <p>Tal skrivs alltid likadant (1 250,50), oavsett språk.</p>
         </details>
         <details><summary>Valutakurser</summary>
-          <p>Appen har ungefärliga kurser från ECB inbyggda (datumet står i kortet). De uppdateras när appen uppdateras – appen hämtar aldrig kurser själv. Du kan skriva in egna kurser och trycka Spara; Använd appens kurser återställer. Kurserna är i kronor per enhet, oavsett vilken valuta du har.</p>
+          <p>Appen har ECB:s referenskurser inbyggda (datumet står i kortet). De uppdateras varje vardag när appen uppdateras – appen hämtar aldrig kurser själv. Du kan skriva in egna kurser och trycka Spara; Använd appens kurser återställer.</p>
         </details>
         <details><summary>Backup och flytt</summary>
-          <img class="shot" src="docs/manual/data.png" alt="Kortet Data: export och import" width="390" loading="lazy">
-          <p>Under Data: tryck Spara backup-fil. Filen heter t.ex. budget-buddy-2026-11-09.txt och hamnar bland hämtade filer (i Claude-appen bekräftar du först). Gör det då och då.</p>
-          <p>För att läsa tillbaka: tryck Läs in backup-fil och välj filen, kontrollera sammanfattningen och tryck Ersätt. All nuvarande data ersätts – Ångra finns direkt efteråt.</p>
-          <p>Går det inte att välja filen: öppna Klistra in text och klistra in filens innehåll.</p>
-          <p>Filen innehåller all din ekonomidata och låses alltid med din kod (se nedan). Radera gamla filer.</p>
-          <p>Backup-filen låses alltid med din kod: 16 slumpade tecken som appen skapar åt dig första gången den startas och sparar på enheten. Vill du hellre använda en egen kod (t.ex. samma i alla dina appar) trycker du Välj egen kod – den måste ha minst 16 tecken med stor och liten bokstav, siffra och specialtecken, samma krav som den skapade. Backup sparas med ett tryck. Under Inställningar → Data finns Din kod: Visa, Kopiera och Ny kod. Spara koden i din lösenordshanterare – på en ny telefon (eller efter Radera all data) behöver du den för att öppna en backup. Läser du in en backup med en annan kod används den koden sedan för nya backuper. Ny kod gör att gamla backup-filer bara öppnas med den gamla koden (Ångra finns). Appen samlar ingen data – koden är bara en nyckel som skyddar dina backuper.</p>
+          <p>Under Inställningar → Allmänt → Data: tryck Spara backup-fil då och då. För att läsa tillbaka: Läs in backup-fil, kontrollera sammanfattningen och tryck Ersätt (Ångra finns).</p>
+          <p>Filen låses alltid med din kod: 16 slumpade tecken som appen skapar åt dig. Visa, Kopiera och Ny kod finns vid Din kod. Spara koden i din lösenordshanterare – på en ny telefon behöver du den för att öppna backupen.</p>
+          <p>Under Fler val: Exportera CSV, Klistra in text (om det inte går att välja filen), Välj egen kod och Radera all data.</p>
         </details>
         <details><summary>Bakåt</summary>
-          <p>Telefonens bakåtknapp stänger först den ruta som är öppen, sedan markeringsläget. Därefter går den tillbaka genom flikarna du besökt. Appen stängs först i fliken du började i.</p>
+          <p>Telefonens bakåtknapp stänger först den ruta som är öppen, sedan markeringsläget. Därefter går den tillbaka genom flikarna du besökt.</p>
         </details>
         <details><summary>Installera och offline</summary>
           <p>Android (Chrome): menyn ⋮ → Installera app. iPhone (Safari): Dela → Lägg till på hemskärmen.</p>
@@ -329,67 +333,71 @@
       <div class="card help" lang="en" data-no-tr>
         <h2>Help</h2>
         <details><summary>Get started</summary>
-          <img class="shot" src="docs/manual/poster.png" alt="Items: income and expenses" width="390" loading="lazy">
-          <p>Go to Items and add your income (after tax) and fixed expenses. Say how often an expense comes – every month, every other month, quarterly or once a year – and from which month.</p>
-          <p>Everything is entered once. After that the app works out every month for you.</p>
-          <p>Select several items: hold your finger on an item until it is selected and tap more. End sets a last month on all selected (the history is kept), Remove puts them in the trash. Undo is available right afterwards. ✕ or Back ends.</p>
-          <p>Sort items: tap ↕ above Income. The columns Amount, Name, Category and Start then show. Tap a column to sort by it, and the same column again to reverse the order (↑ ascending, ↓ descending). The choice applies to both income and expenses and is saved.</p>
+          <p>Tap + Income under Month and add your salary after tax. Tap + Cost and add rent, electricity, loans and other bills. Choose how often a cost comes – every month, every other month, quarterly or once a year.</p>
+          <p>Everything is entered once. Then the app works out every month for you.</p>
+          <p>Paid on another day than the 1st? Choose Payday under Settings → Household (see below).</p>
         </details>
         <details><summary>Why your data is safe here</summary>
-          <p>This app holds your whole financial life: salary, loans, bills, savings and who in the household pays what. That should not end up with a company, an advertiser or a hacker.</p>
-          <p>No server to hack. Most big leaks happen when a company's database with millions of users' data is hacked. There is no such database here: your data is only in your phone. Anyone who wants it has to get into your particular phone.</p>
-          <p>Nothing to sell. Many free apps – and paid ones too – make money from your data or share it with partners for ads and analytics. This app has no account, no analytics, no ads and no trackers. The browser also technically blocks every request out, so the data cannot be sent anywhere, not even by mistake.</p>
-          <p>Locked backup. The backup file is encrypted with AES-256 and your password. If you put it in the cloud, the cloud service only sees unreadable data.</p>
-          <p>Open code. All the code is public on GitHub and can be reviewed by anyone.</p>
-          <p>Honestly: nothing is 100 % safe. What remains is your own phone – lock it with a code and keep it updated – a weak backup password, and that the app's code on GitHub Pages is not changed by someone unauthorised. But for this kind of data there is no safer practical way than never letting it leave the phone.</p>
+          <p>This is your whole economy: salary, loans, bills, savings and who in the household pays what. That should not end up with a company, an advertiser or a hacker.</p>
+          <p>No server to hack. Your data is only on your phone. Anyone who wants it has to get into your phone.</p>
+          <p>Nothing to sell. No account, no analytics, no ads and no trackers. The browser also technically blocks all outgoing calls, so the data cannot be sent anywhere even by mistake.</p>
+          <p>Locked backup. The backup file is encrypted with AES-256 and your code. If you put it in the cloud, the cloud service only sees unreadable data.</p>
+          <p>Open source. All code is public on GitHub and can be reviewed by anyone.</p>
+          <p>Honestly: nothing is 100 % safe. Lock your phone with a code, keep it updated, and save the backup code in a password manager.</p>
         </details>
         <details><summary>Month</summary>
-          <img class="shot" src="docs/manual/manad.png" alt="Month: left, savings and per person" width="390" loading="lazy">
-          <p>Shows what is left after the month's expenses, and how much of it is savings.</p>
-          <p>Change month with ◀ ▶ or swipe left/right. Tap a line to change the amount for this month only. + Deviation adds a one-off item, e.g. new tyres or a dentist's bill.</p>
+          <p>At the top is what is Left after the month's costs and savings, compared with last month. The bar shows where the income goes: costs, savings and left.</p>
+          <p>Income, Expenses and Savings are folded. Tap to unfold. Expenses are grouped by category – tap a category to see the items. + Add to Housing adds a cost with the same category, person and frequency.</p>
+          <p>Change month with ◀ ▶ or swipe left/right. Tap Month in the menu to return to the current month.</p>
+          <p>Tap a row to change the amount for this month only, skip it, or Edit item (name, amount, category, period). + Deviation adds a one-off item, e.g. new tyres or a dentist bill.</p>
+          <p>All items › shows all recurring items. There you can sort (↕), and press and hold an item to select several: End sets a last month, Delete moves them to the trash.</p>
         </details>
-        <details><summary>Overview</summary>
-          <img class="shot" src="docs/manual/oversikt.png" alt="Overview: next 12 months" width="390" loading="lazy">
-          <p>The next 12 months at once. Months with a deficit are marked.</p>
-          <p>Fill in a Starting balance under Settings to see the running balance after each month.</p>
+        <details><summary>Payday</summary>
+          <p>Under Settings → Household → Payday you choose which day the budget month starts. The 1st means normal calendar months.</p>
+          <p>If you are paid e.g. on the 25th, the salary on 25 November covers December. That month is then called December, with the dates 25 Nov – 24 Dec below. Before payday you are still in the previous month.</p>
         </details>
-        <details><summary>Statistics and savings</summary>
-          <img class="shot" src="docs/manual/sparkonton.png" alt="Savings accounts with currency" width="390" loading="lazy">
-          <p>Key figures, savings rate, expenses by category and in/out over the last 12 months. Expenses in the category Savings are shown as savings.</p>
-          <p>Savings accounts (at the bottom of Statistics): add an account and fill in what is on it each month. The account can have another currency (e.g. USD); the total is then converted to your currency with the rates under Exchange rates.</p>
+        <details><summary>Savings and savings accounts</summary>
+          <p>Costs in the Savings category are shown in a card of their own, both in Month and under All items. They are still deducted from what is left.</p>
+          <p>Savings accounts are under Trend. Add an account and enter the balance once. Then tick which savings items go there – the balance then counts up by itself every month (shown with ≈). Enter a new balance whenever you want to reconcile.</p>
+          <p>An account can have another currency (e.g. USD); the total is then converted to your currency with the rates under Currency. Accounts in another currency do not count up automatically.</p>
+        </details>
+        <details><summary>Trend</summary>
+          <p>Key figures for the month: how much is left, savings rate, average, saved and the largest cost. Expenses by category and in/out over the last 12 months. At the bottom: savings accounts.</p>
+        </details>
+        <details><summary>History</summary>
+          <p>A chart of how much money is left over time – or the balance, if you have entered a Starting balance under Settings → Household. Dashed is forecast.</p>
+          <p>Below the chart: the next quarter and the last 12 months. Tap a month to open it.</p>
         </details>
         <details><summary>People and categories</summary>
-          <p>Optional: add the people in the household, so each item can belong to a person or be shared. Categories can be renamed, added and removed.</p>
+          <p>Optional: add the people in the household under Settings → Household, so each item can belong to a person or be shared. Under Left you then see In, Out and Left per person and for Shared. Shared costs are not split automatically – the row Split evenly shows what is left per person if they are shared evenly.</p>
+          <p>Categories can be renamed, added and removed.</p>
         </details>
         <details><summary>Trash</summary>
-          <p>Items, deviations and savings accounts you delete end up in the Trash under Settings. They stay there for 30 days and can be brought back with Restore, with their changed amounts per month. Then they are deleted for good. Empty the trash deletes everything at once (Undo is available right afterwards).</p>
+          <p>Items, deviations and savings accounts you delete go to Trash under Settings → General. They stay there for 30 days and can be brought back with Restore. Then they are deleted for good.</p>
         </details>
         <details><summary>Language and currency</summary>
-          <p>The app starts in Swedish with kronor. Change language and currency (kronor, euro, dollar, pound, Norwegian or Danish kroner) under Settings → Language and currency.</p>
-          <p>If you change currency when you already have data, all amounts (income, expenses, deviations, starting balance and the trash) are converted with the exchange rates. Undo is available right afterwards. Savings accounts keep their own currency.</p>
+          <p>Change language under Settings → General → Language and currency (kronor, euro, dollar, pound, Norwegian or Danish kroner) under Settings → Currency.</p>
+          <p>If you change currency, all amounts are converted with the exchange rates. Undo is available right after. Savings accounts keep their own currency.</p>
           <p>Numbers are always written the same way (1 250,50), whatever the language.</p>
         </details>
         <details><summary>Exchange rates</summary>
-          <p>The app has approximate rates from the ECB built in (the date is shown in the card). They are updated when the app is updated – the app never fetches rates itself. You can enter your own rates and tap Save; Use the app's rates resets them. The rates are in Swedish kronor per unit, whatever your currency.</p>
+          <p>The app has the ECB reference rates built in (the date is shown in the card). They are updated every weekday when the app is updated – the app never fetches rates itself. You can enter your own rates and tap Save; Use the app's rates resets them.</p>
         </details>
         <details><summary>Backup and moving</summary>
-          <img class="shot" src="docs/manual/data.png" alt="The Data card: export and import" width="390" loading="lazy">
-          <p>Under Data: tap Save backup file. The file is called e.g. budget-buddy-2026-11-09.txt and ends up among your downloads (in the Claude app you confirm first). Do it now and then.</p>
-          <p>To restore: tap Restore backup file and choose the file, check the summary and tap Replace. All current data is replaced – Undo is available right afterwards.</p>
-          <p>If you cannot choose the file: open Paste text and paste the file's contents.</p>
-          <p>The file contains all your financial data and is always locked with your code (see below). Delete old files.</p>
-          <p>The backup file is always locked with your code: 16 random characters the app creates for you the first time it starts and stores on the device. If you would rather use your own code (e.g. the same in all your apps), tap Choose your own code – it needs at least 16 characters with upper and lower case, a digit and a special character, the same requirements as the created one. A backup takes one tap. Under Settings → Data you find Your code: Show, Copy and New code. Save the code in your password manager – on a new phone (or after Delete all data) you need it to open a backup. If you restore a backup with a different code, that code is used for new backups from then on. New code means old backup files open only with the old code (Undo is available). The app collects no data – the code is just a key that protects your backups.</p>
+          <p>Under Settings → General → Data: tap Save backup file now and then. To restore: Load backup file, check the summary and tap Replace (Undo is available).</p>
+          <p>The file is always locked with your code: 16 random characters the app creates for you. Show, Copy and New code are next to Your code. Save the code in your password manager – on a new phone you need it to open the backup.</p>
+          <p>Under More options: Export CSV, Paste text (if the file cannot be chosen), Choose your own code and Delete all data.</p>
         </details>
         <details><summary>Back</summary>
-          <p>The phone's back button first closes the box that is open, then the selection mode. After that it goes back through the tabs you have visited. The app closes only in the tab you started in.</p>
+          <p>The phone's back button first closes the open dialog, then selection mode. After that it goes back through the tabs you visited.</p>
         </details>
         <details><summary>Install and offline</summary>
-          <p>Android (Chrome): the ⋮ menu → Install app. iPhone (Safari): Share → Add to Home Screen.</p>
-          <p>Installed, the app works completely offline. New versions are fetched automatically.</p>
+          <p>Android (Chrome): menu ⋮ → Install app. iPhone (Safari): Share → Add to Home Screen.</p>
+          <p>Installed, the app works fully offline. New versions are fetched automatically.</p>
         </details>
         <details><summary>Privacy</summary>
-          <p>The app makes no requests – no server, no bank connection, no analytics, no account. All data is only in this browser.</p>
-          <p>If you clear site data everything disappears. So: save a backup file now and then.</p>
+          <p>The app makes no calls – no server, no bank connection, no analytics, no account. All data is only in this browser.</p>
+          <p>If you clear site data, everything is gone. So: save a backup file now and then.</p>
         </details>
       </div>
       <!-- help-en:end -->
