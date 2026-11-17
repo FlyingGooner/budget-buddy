@@ -543,6 +543,15 @@ body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; 
 .sv-accs li { padding: 4px 0; font-size: .875rem; border-top: 0; }
 .sv-accs li + li { border-top: 1px solid color-mix(in srgb, var(--outline-variant) 60%, transparent); }
 .sv-val { font-weight: 500; }
+/* Sparkonton i Trend (2026-11-17): stor total i hemvalutan */
+#stats-accounts > h2 { padding-bottom: 2px; }
+.acc-big { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; margin: 0 0 6px; }
+#acc-total { font-size: 1.75rem; font-weight: 500; font-variant-numeric: tabular-nums; }
+.acc-total-diff { font-size: .8125rem; font-variant-numeric: tabular-nums; }
+.acc-total-diff.pos { color: var(--primary); } .acc-total-diff.neg { color: var(--error); }
+#acc-list .row-main { min-height: 44px; }
+#acc-list .acc-amt { font-weight: 500; }
+#acc-rates:empty { display: none; }
 
 </style>
 </head>
@@ -600,7 +609,8 @@ body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; 
     <div class="col">
       <div class="card" id="stats-trend"></div>
       <div class="card" id="stats-accounts">
-        <h2 class="split"><span>🐷 Sparkonton</span><span id="acc-total"></span></h2>
+        <h2>🐷 Sparkonton</h2>
+        <p class="acc-big"><span id="acc-total"></span><span class="acc-total-diff" id="acc-total-diff"></span></p>
         <ul class="list" id="acc-list"></ul>
         <p class="muted small" id="acc-rates"></p>
         <div id="acc-chart"></div>
@@ -1542,6 +1552,10 @@ I18N.add({
   [/^(\d+) poster$/, '$1 items'],
   [/^Den (\d+):e \(lönedag\)$/, 'The $1th (payday)'],
   [/^Den (\d+):e$/, 'The $1th'],
+  [/^beräknat \+ (.+)$/, 'estimated + $1'],
+  [/^ifyllt (\S+)$/, (g, tr) => `entered ${tr(g[1])}`],
+  [/^\((.+)\) · (.+)$/, (g, tr) => `(${g[1]}) · ${tr(g[2])}`],
+  [/^Utländsk valuta räknas om: (.+) \(ändras under Inställningar\)\.$/, (g, tr) => `Foreign currency is converted: ${tr(g[1])} (changed under Settings).`],
   [/^Gå till (.+) och stäng den$/, (g, tr) => `Go to ${tr(g[1])} and close it`],
   [/^Ifyllt (\S+)$/, (g, tr) => `Entered ${tr(g[1])}`],
   [/^1 månad hittills · (\d+) prognos$/, '1 month so far · $1 forecast'],
@@ -1630,7 +1644,7 @@ I18N.add({
 </script>
 <script>
 // ---- version.js ----
-﻿self.APP_VERSION = '0.12.82';
+﻿self.APP_VERSION = '0.12.83';
 
 </script>
   <script>
@@ -3354,28 +3368,36 @@ function renderAccounts() {
   const accs = data.accounts;
   const total = (m) => Math.round(accs.reduce((s, a) => s + toSek(estBalance(data, a, m)?.amount || 0, a.currency), 0) / 100) * 100;   // hela kronor
   const foreign = accs.some((a) => a.currency !== home());
-  $('acc-total').textContent = accs.length ? (foreign ? '≈ ' : '') + kr(total(month)) : '';
-  $('acc-rates').textContent = foreign ? `Omräknat till ${CUR_NAMES[home()]}: ${ratesNote()}. Kurserna ändras under Inställningar.` : '';
+  // Hemvalutan i fokus (2026-11-17): stor total, varje konto i hemvalutan, egen valuta inom parentes.
+  const tNow = total(month), tDiff = accs.length ? tNow - total(addMonths(month, -1)) : 0;
+  $('acc-total').textContent = accs.length ? (foreign ? '≈ ' : '') + kr(tNow) : '';
+  $('acc-total-diff').textContent = tDiff ? `${tDiff > 0 ? '+' : '−'}${kr(Math.abs(tDiff))} sedan ${monthShortLabel(addMonths(month, -1)).toLowerCase()}` : '';
+  $('acc-total-diff').className = 'acc-total-diff ' + (tDiff < 0 ? 'neg' : 'pos');
+  $('acc-rates').textContent = foreign ? `Utländsk valuta räknas om: ${ratesNote()} (ändras under Inställningar).` : '';
   fill($('acc-list'), accs.length ? accs.map((a) => {
     const cur = estBalance(data, a, month), real = balanceAt(a, month);
     const prev = cur ? estBalance(data, a, addMonths(month, -1)) : null;
     const diff = cur && prev ? cur.amount - prev.amount : null;
     const feedNames = (a.feeds || []).map((id) => data.recurring.find((r) => r.id === id)?.name).filter(Boolean);
-    const sub = !cur ? 'Inget saldo än – tryck för att fylla i'
-      : cur.estimated ? `Beräknat: ifyllt ${monthShortLabel(cur.from).toLowerCase()} + ${feedNames.join(', ')}`
-      : real && real.month === month ? 'Ifyllt' : `Ifyllt ${monthShortLabel(real.month).toLowerCase()}`;
+    const foreignA = a.currency !== home();
+    const subBits = [foreignA && cur ? `(${money(cur.amount, a.currency)})` : null,
+      !cur ? 'Inget saldo än – tryck för att fylla i'
+        : cur.estimated ? `beräknat + ${feedNames.join(', ')}`
+        : real && real.month !== month ? `ifyllt ${monthShortLabel(real.month).toLowerCase()}` : null].filter(Boolean);
+    const sub = subBits.join(' · ');
+    const homeAmt = cur ? Math.round(toSek(cur.amount, a.currency) / 100) * 100 : null;
+    const homeDiff = diff != null ? Math.round(toSek(diff, a.currency) / 100) * 100 : null;
     return el('li', { class: 'row' }, el('button', { type: 'button', class: 'row-main',
       'aria-label': `${a.name}, ${cur ? money(cur.amount, a.currency) : 'inget saldo'}. Fyll i saldo`, on: { click: () => openAccDialog(a) } },
-    el('span', { class: 'row-name' }, el('span', { text: a.name }), el('span', { class: 'row-sub', text: sub })),
-    el('span', { class: 'acc-amt amount' }, el('span', { text: cur ? (cur.estimated ? '≈ ' : '') + money(cur.amount, a.currency) : '–' }),
-      cur && a.currency !== home() ? el('span', { class: 'row-sub', text: '≈ ' + kr(Math.round(toSek(cur.amount, a.currency) / 100) * 100) }) : null,
-      diff != null ? el('span', { class: 'row-sub ' + (diff < 0 ? 'neg' : 'pos'), text: money(diff, a.currency, true) }) : null)));
+    el('span', { class: 'row-name' }, el('span', { text: a.name }), sub ? el('span', { class: 'row-sub', text: sub }) : null),
+    el('span', { class: 'acc-amt amount' }, el('span', { text: cur ? ((cur.estimated || foreignA) ? '≈ ' : '') + kr(homeAmt) : '–' }),
+      homeDiff ? el('span', { class: 'row-sub ' + (homeDiff < 0 ? 'neg' : 'pos'), text: kr(homeDiff, true) }) : null)));
   }) : el('li', { class: 'muted empty-row', text: 'Inga sparkonton än – lägg till det första nedan.' }));
 
   // Total savings balance, the 12 months up to the chosen month
   // Grafen börjar vid första månaden med saldo (minst 4 månader), så att staplarna inte blir tunna streck.
   let ms = Array.from({ length: 12 }, (_, i) => addMonths(month, i - 11)), vals = ms.map(total);
-  if (!vals.some((v) => v > 0)) { fill($('acc-chart')); return; }
+  if (vals.filter((v) => v > 0).length < 2) { fill($('acc-chart')); return; }   // en stapel säger inget
   const firstI = Math.min(vals.findIndex((v) => v > 0), 8);
   ms = ms.slice(firstI); vals = vals.slice(firstI);
   const W = 340, H = 140, P = { l: 40, r: 6, t: 8, b: 20 };

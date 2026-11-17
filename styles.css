@@ -526,3 +526,12 @@ body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; 
 .sv-accs li { padding: 4px 0; font-size: .875rem; border-top: 0; }
 .sv-accs li + li { border-top: 1px solid color-mix(in srgb, var(--outline-variant) 60%, transparent); }
 .sv-val { font-weight: 500; }
+/* Sparkonton i Trend (2026-11-17): stor total i hemvalutan */
+#stats-accounts > h2 { padding-bottom: 2px; }
+.acc-big { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; margin: 0 0 6px; }
+#acc-total { font-size: 1.75rem; font-weight: 500; font-variant-numeric: tabular-nums; }
+.acc-total-diff { font-size: .8125rem; font-variant-numeric: tabular-nums; }
+.acc-total-diff.pos { color: var(--primary); } .acc-total-diff.neg { color: var(--error); }
+#acc-list .row-main { min-height: 44px; }
+#acc-list .acc-amt { font-weight: 500; }
+#acc-rates:empty { display: none; }

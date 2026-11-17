@@ -5,28 +5,36 @@ function renderAccounts() {
   const accs = data.accounts;
   const total = (m) => Math.round(accs.reduce((s, a) => s + toSek(estBalance(data, a, m)?.amount || 0, a.currency), 0) / 100) * 100;   // hela kronor
   const foreign = accs.some((a) => a.currency !== home());
-  $('acc-total').textContent = accs.length ? (foreign ? '≈ ' : '') + kr(total(month)) : '';
-  $('acc-rates').textContent = foreign ? `Omräknat till ${CUR_NAMES[home()]}: ${ratesNote()}. Kurserna ändras under Inställningar.` : '';
+  // Hemvalutan i fokus (2026-11-17): stor total, varje konto i hemvalutan, egen valuta inom parentes.
+  const tNow = total(month), tDiff = accs.length ? tNow - total(addMonths(month, -1)) : 0;
+  $('acc-total').textContent = accs.length ? (foreign ? '≈ ' : '') + kr(tNow) : '';
+  $('acc-total-diff').textContent = tDiff ? `${tDiff > 0 ? '+' : '−'}${kr(Math.abs(tDiff))} sedan ${monthShortLabel(addMonths(month, -1)).toLowerCase()}` : '';
+  $('acc-total-diff').className = 'acc-total-diff ' + (tDiff < 0 ? 'neg' : 'pos');
+  $('acc-rates').textContent = foreign ? `Utländsk valuta räknas om: ${ratesNote()} (ändras under Inställningar).` : '';
   fill($('acc-list'), accs.length ? accs.map((a) => {
     const cur = estBalance(data, a, month), real = balanceAt(a, month);
     const prev = cur ? estBalance(data, a, addMonths(month, -1)) : null;
     const diff = cur && prev ? cur.amount - prev.amount : null;
     const feedNames = (a.feeds || []).map((id) => data.recurring.find((r) => r.id === id)?.name).filter(Boolean);
-    const sub = !cur ? 'Inget saldo än – tryck för att fylla i'
-      : cur.estimated ? `Beräknat: ifyllt ${monthShortLabel(cur.from).toLowerCase()} + ${feedNames.join(', ')}`
-      : real && real.month === month ? 'Ifyllt' : `Ifyllt ${monthShortLabel(real.month).toLowerCase()}`;
+    const foreignA = a.currency !== home();
+    const subBits = [foreignA && cur ? `(${money(cur.amount, a.currency)})` : null,
+      !cur ? 'Inget saldo än – tryck för att fylla i'
+        : cur.estimated ? `beräknat + ${feedNames.join(', ')}`
+        : real && real.month !== month ? `ifyllt ${monthShortLabel(real.month).toLowerCase()}` : null].filter(Boolean);
+    const sub = subBits.join(' · ');
+    const homeAmt = cur ? Math.round(toSek(cur.amount, a.currency) / 100) * 100 : null;
+    const homeDiff = diff != null ? Math.round(toSek(diff, a.currency) / 100) * 100 : null;
     return el('li', { class: 'row' }, el('button', { type: 'button', class: 'row-main',
       'aria-label': `${a.name}, ${cur ? money(cur.amount, a.currency) : 'inget saldo'}. Fyll i saldo`, on: { click: () => openAccDialog(a) } },
-    el('span', { class: 'row-name' }, el('span', { text: a.name }), el('span', { class: 'row-sub', text: sub })),
-    el('span', { class: 'acc-amt amount' }, el('span', { text: cur ? (cur.estimated ? '≈ ' : '') + money(cur.amount, a.currency) : '–' }),
-      cur && a.currency !== home() ? el('span', { class: 'row-sub', text: '≈ ' + kr(Math.round(toSek(cur.amount, a.currency) / 100) * 100) }) : null,
-      diff != null ? el('span', { class: 'row-sub ' + (diff < 0 ? 'neg' : 'pos'), text: money(diff, a.currency, true) }) : null)));
+    el('span', { class: 'row-name' }, el('span', { text: a.name }), sub ? el('span', { class: 'row-sub', text: sub }) : null),
+    el('span', { class: 'acc-amt amount' }, el('span', { text: cur ? ((cur.estimated || foreignA) ? '≈ ' : '') + kr(homeAmt) : '–' }),
+      homeDiff ? el('span', { class: 'row-sub ' + (homeDiff < 0 ? 'neg' : 'pos'), text: kr(homeDiff, true) }) : null)));
   }) : el('li', { class: 'muted empty-row', text: 'Inga sparkonton än – lägg till det första nedan.' }));
 
   // Total savings balance, the 12 months up to the chosen month
   // Grafen börjar vid första månaden med saldo (minst 4 månader), så att staplarna inte blir tunna streck.
   let ms = Array.from({ length: 12 }, (_, i) => addMonths(month, i - 11)), vals = ms.map(total);
-  if (!vals.some((v) => v > 0)) { fill($('acc-chart')); return; }
+  if (vals.filter((v) => v > 0).length < 2) { fill($('acc-chart')); return; }   // en stapel säger inget
   const firstI = Math.min(vals.findIndex((v) => v > 0), 8);
   ms = ms.slice(firstI); vals = vals.slice(firstI);
   const W = 340, H = 140, P = { l: 40, r: 6, t: 8, b: 20 };
