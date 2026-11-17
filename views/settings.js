@@ -50,6 +50,8 @@ function renderSettings() {
   $('sum-expense').textContent = `${n('expense')} st`;
   $('sum-people').textContent = data.settings.people.length ? data.settings.people.map((p) => p.name).join(', ') : 'Inga';
   $('sum-start').textContent = data.settings.startMonth ? `${kr(data.settings.startBalance)} från ${data.settings.startMonth}` : 'Inget';
+  $('sum-lang').textContent = I18N.LANGS[I18N.lang()] || '';
+  $('sum-home').textContent = home();
   $('sum-rates').textContent = data.settings.ratesOwn ? 'Egna' : 'Appens';
 }
 // Papperskorg: newest first. Återställ puts the item back (with its month adjustments); Töm has Ångra.

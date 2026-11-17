@@ -374,3 +374,22 @@ body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; 
 .card.savings { background: color-mix(in srgb, var(--primary-container) 45%, var(--surface-container)); }
 .sv-share { display: grid; gap: 6px; margin: 0 0 6px; font-size: .8125rem; color: var(--on-surface-variant); }
 .sv-share .cg-track { margin: 0; }
+
+/* Inställningar som Fitness buddy (2026-11-17): grupper (Hushåll, Valuta, Allmänt) med hopfällbara kort */
+.set-col { gap: 0; }
+.set-group-wrap { margin-top: 6px; }
+.set-group-wrap > summary.set-group { display: flex; align-items: center; gap: 8px; min-height: 48px; padding: 0 4px; cursor: pointer; list-style: none; font-size: .9375rem; font-weight: 500; }
+.set-group-wrap > summary::-webkit-details-marker, .set-sec > summary::-webkit-details-marker { display: none; }
+.set-group-wrap > summary::before, .set-sec > summary::before { content: '▸'; color: var(--on-surface-variant); transition: transform .15s; }
+.set-group-wrap[open] > summary::before, .set-sec[open] > summary::before { transform: rotate(90deg); }
+.set-group-wrap[open] { padding-bottom: 6px; }
+.set-group-wrap > .set-sec + .set-sec { margin-top: 8px; }
+.card.set-sec { padding: 2px 14px; }
+.set-sec > summary { display: flex; align-items: center; gap: 8px; min-height: 52px; cursor: pointer; list-style: none; }
+.set-sec > summary::after { content: none !important; }
+.set-title { font-weight: 500; font-size: 1rem; }
+.set-sec .sect-sub, .set-group .sect-sub { flex: 1; text-align: right; font-size: .8125rem; color: var(--on-surface-variant); font-weight: 400; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.set-sec[open] { padding-bottom: 12px; }
+.set-body > * + * { margin-top: 8px; }
+.set-body .data-more { border-top: 1px solid var(--outline-variant); margin-top: 12px; }
+.help-wrap.set-sec > summary.help-title { min-height: 52px; }
