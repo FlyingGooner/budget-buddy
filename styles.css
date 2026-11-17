@@ -473,3 +473,7 @@ body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; 
 .cat-group > summary { min-height: 46px; padding: 6px 0; }
 .per-person tfoot th { padding-top: 8px; font-weight: 400; font-size: .8125rem; color: var(--on-surface-variant); text-align: left; border-top: 1px solid var(--outline-variant); }
 .per-person tfoot .pos { color: var(--on-surface); }
+/* Historik per år (2026-11-17) */
+.ov li.ov-future .ov-row { opacity: .6; }
+#overview .stats > h2 { text-transform: none; letter-spacing: 0; font-size: .8125rem; }
+#overview .stats .stat-n { font-size: 1.0625rem; }

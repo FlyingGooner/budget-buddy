@@ -35,8 +35,9 @@ Samma text finns i appen under **Inställningar → Allmänt → Hjälp och manu
 - Nyckeltal för månaden: hur mycket som blir kvar, sparkvot, snitt, sparat och största kostnaden. Kostnader per kategori och in/ut de senaste 12 månaderna. Längst ner: sparkonton.
 
 ## Historik
-- En graf över hur mycket pengar som blir kvar över tid – eller saldot, om du har fyllt i ett **Startsaldo** under Inställningar → Hushåll. Streckat är prognos.
-- Under grafen: kommande kvartal och de senaste 12 månaderna. Tryck på en månad för att öppna den.
+- Visar ett år i taget – byt år med **◀ ▶**. Överst statistik för året: inkomster, kostnader, sparat, kvar, snitt, bästa och sämsta månad och prognos för helåret.
+- En graf över hur mycket pengar som blir kvar under året – eller saldot, om du har fyllt i ett **Startsaldo** under Inställningar → Hushåll. Streckat är prognos.
+- Under grafen: årets månader. Tryck på en månad för att öppna den.
 
 ## Personer och kategorier
 - Valfritt: lägg till personerna i hushållet under **Inställningar → Hushåll**, så kan varje post höra till en person eller vara gemensam. Under Kvar visas då In, Ut och Kvar per person och för Gemensamt. Gemensamma kostnader delas inte automatiskt – raden **Delat lika** visar vad som blir kvar per person om de delas lika.

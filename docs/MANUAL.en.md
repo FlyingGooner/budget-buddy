@@ -35,8 +35,9 @@ The same text is in the app under **Settings → General → Help and manual**. 
 - Key figures for the month: how much is left, savings rate, average, saved and the largest cost. Expenses by category and in/out over the last 12 months. At the bottom: savings accounts.
 
 ## History
-- A chart of how much money is left over time – or the balance, if you have entered a **Starting balance** under Settings → Household. Dashed is forecast.
-- Below the chart: the next quarter and the last 12 months. Tap a month to open it.
+- Shows one year at a time – change year with **◀ ▶**. At the top, figures for the year: income, expenses, saved, left, average, best and worst month and a forecast for the full year.
+- A chart of how much money is left during the year – or the balance, if you have entered a **Starting balance** under Settings → Household. Dashed is forecast.
+- Below the chart: the months of the year. Tap a month to open it.
 
 ## People and categories
 - Optional: add the people in the household under **Settings → Household**, so each item can belong to a person or be shared. Under Left you then see In, Out and Left per person and for Shared. Shared costs are not split automatically – the row **Split evenly** shows what is left per person if they are shared evenly.
