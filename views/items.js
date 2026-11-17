@@ -33,7 +33,24 @@ function renderItems() {
     const items = sortItems(data.recurring.filter((r) => r.type === type), data.settings.sort, catName);
     const monthly = items.filter((r) => r.every === 1 && (!r.end || r.end >= now)).reduce((s, r) => s + r.amount, 0);
     $(sum).textContent = items.length ? `${kr(monthly)}/mån` : '';
-    fill($(list), items.length ? items.map((r) => itemRow(r, now)) : el('li', { class: 'muted empty-row', text: empty }));
+    // Sparande (2026-11-17): i Kostnader en samlad rad (räknas med i summan), de enskilda sparposterna i eget kort.
+    const savers = type === 'expense' ? items.filter((r) => r.category === SAVINGS_CAT) : [];
+    const rest = items.filter((r) => !savers.includes(r));
+    const savMonthly = savers.filter((r) => r.every === 1 && (!r.end || r.end >= now)).reduce((s, r) => s + r.amount, 0);
+    const savRow = savers.length ? el('li', { class: 'row sav-sum' }, el('button', { type: 'button', class: 'row-main',
+      'aria-label': `Sparande, ${kr(savMonthly)} per månad. Visa sparposterna`, on: { click: () => $('sav-card').scrollIntoView({ behavior: 'smooth', block: 'start' }) } },
+    el('span', { class: 'row-name' }, el('span', { text: '🐷 Sparande' }), el('span', { class: 'row-sub', text: savers.length === 1 ? '1 sparpost · se nedan' : `${savers.length} sparposter · se nedan` })),
+    el('span', { class: 'amount', text: kr(savMonthly) }))) : null;
+    fill($(list), items.length ? [...rest.map((r) => itemRow(r, now)), savRow] : el('li', { class: 'muted empty-row', text: empty }));
+    if (type === 'expense') {
+      $('sav-card').hidden = !savers.length;
+      $('sav-sum').textContent = savers.length ? `${kr(savMonthly)}/mån` : '';
+      fill($('sav-list'), savers.map((r) => {
+        const li = itemRow(r, now), acc = data.accounts.find((a) => (a.feeds || []).includes(r.id));
+        if (acc) li.querySelector('.row-sub')?.append(` → ${acc.name}`);
+        return li;
+      }));
+    }
   }
   for (const f of [$('inc-form'), $('exp-form')]) {
     fillCategorySelect(f.elements.category, f.elements.category.value, f.dataset.type);
@@ -68,6 +85,7 @@ setupAddForm($('inc-form'));
 setupAddForm($('exp-form'));
 
 // Jump from an empty state to the right add form.
+$('sav-add').addEventListener('click', () => { focusAdd('expense'); $('exp-form').elements.category.value = SAVINGS_CAT; });
 function focusAdd(type) {
   showTab('items');
   $(type === 'income' ? 'inc-add' : 'exp-add').open = true;
@@ -194,8 +212,8 @@ const tabItems = $('tab-items');
 const endPress = () => { clearTimeout(pressTimer); pressAt = null; };
 tabItems.addEventListener('pointerdown', (e) => {
   endPress(); pressFired = false;
-  const b = e.target.closest('#inc-list .row-main, #exp-list .row-main');
-  if (!b || sel || e.button > 0) return;
+  const b = e.target.closest('#inc-list .row-main, #exp-list .row-main, #sav-list .row-main');
+  if (!b || !b.dataset.id || sel || e.button > 0) return;
   pressAt = { x: e.clientX, y: e.clientY };
   pressTimer = setTimeout(() => { pressAt = null; pressFired = true; getSelection()?.removeAllRanges(); startSel(b.dataset.id); }, CONFIG.longPressMs);
 });

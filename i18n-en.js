@@ -144,6 +144,8 @@ I18N.add({
   [/^(\d+) st$/, '$1'],
   [/^(.+) från (\d{4}-\d{2})$/, '$1 from $2'],
   [/^(\d+) poster$/, '$1 items'],
+  [/^1 sparpost · se nedan$/, '1 savings item · see below'],
+  [/^(\d+) sparposter · se nedan$/, '$1 savings items · see below'],
   [/^([▲▼]) (.+) mot (\S+)$/, (g, tr) => `${g[1]} ${g[2]} vs ${tr(g[3])}`],
   [/^(Kostnader|Sparande|Kvar) (-?[\d\s ]+[,\d]* \S+)$/, (g, tr) => `${tr(g[1])} ${g[2]}`],
   [/^Av inkomsten: kostnader (.+), sparande (.+), kvar (.+)$/, 'Of income: expenses $1, savings $2, left $3'],
