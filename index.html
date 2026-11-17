@@ -283,6 +283,7 @@
         <details><summary>Stäng månaden</summary>
           <p>Det som står under Kvar är planerat – det som blir över efter de fasta kostnaderna. Mat, nöjen och oväntade utgifter syns inte där.</p>
           <p>När månaden är slut (dagen före lönen) trycker du ✓ Stäng månaden under Kvar och skriver in vad som faktiskt fanns kvar på kontot. Då visar Kvar det faktiska beloppet, och skillnaden mot det planerade visas som Rörligt i stapeln.</p>
+          <p>I samma ruta fyller du i saldot på sparkontona – de är förifyllda med det beräknade saldot, så du ändrar bara det som skiljer, t.ex. efter en extra överföring.</p>
           <p>Historik, Trend och saldot använder sedan det faktiska beloppet för den månaden. Ändra rättar beloppet, Öppna igen tar bort det.</p>
         </details>
         <details><summary>Lönedag</summary>
@@ -361,6 +362,7 @@
         <details><summary>Close the month</summary>
           <p>What is shown under Left is planned – what is left after the fixed costs. Food, fun and unexpected spending do not show there.</p>
           <p>When the month is over (the day before payday), tap ✓ Close the month under Left and enter what was actually left in the account. Left then shows the actual amount, and the difference from the plan is shown as Variable in the bar.</p>
+          <p>In the same dialog you enter the savings account balances – they are prefilled with the estimated balance, so you only change what differs, e.g. after an extra transfer.</p>
           <p>History, Trend and the balance then use the actual amount for that month. Edit corrects the amount, Reopen removes it.</p>
         </details>
         <details><summary>Payday</summary>
@@ -495,6 +497,7 @@
     <h2 id="cd-title"></h2>
     <p class="muted" id="cd-sub"></p>
     <label class="field"><span>Kvar (<span class="cur-unit">kr</span>)</span><input id="cd-amount" inputmode="decimal" autocomplete="off"></label>
+    <div id="cd-accounts"></div>
     <p class="muted small">Skillnaden mot det planerade visas som rörliga utgifter (mat, nöjen, oväntat). Historik och saldo använder det faktiska beloppet.</p>
     <p class="error" id="cd-error" role="alert"></p>
     <div class="actions wrap">

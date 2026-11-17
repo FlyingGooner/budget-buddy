@@ -125,6 +125,15 @@ function openCloseDialog() {
   $('cd-sub').textContent = `Hur mycket fanns kvar på kontot ${closeDay()}, dagen före lönen? Planerat kvar: ${kr(t.closed ? t.planned : t.left, true)}.`;
   $('cd-amount').value = t.closed ? (t.left < 0 ? '-' : '') + krInput(Math.abs(t.left)) : '';
   $('cd-reopen').hidden = !t.closed;
+  // Sparkonton (2026-11-17): fyll i saldona samtidigt – förifyllt med beräknat/senaste saldo, t.ex. efter en extra överföring.
+  fill($('cd-accounts'), data.accounts.length ? [el('p', { class: 'cd-acc-h', text: 'Saldo på sparkontona' }),
+    el('div', { class: 'row2' }, data.accounts.map((a) => {
+      const est = estBalance(data, a, month);
+      const inp = el('input', { inputmode: 'decimal', autocomplete: 'off', 'data-acc': a.id, 'aria-label': `Saldo ${a.name}` });
+      inp.value = est ? krInput(est.amount) : '';
+      inp.dataset.orig = inp.value;
+      return el('label', { class: 'field' }, el('span', { text: `${a.name} (${unit(a.currency)})` }), inp);
+    }))] : null);
   $('cd-error').textContent = '';
   $('close-dialog').showModal();
   $('cd-amount').focus();
@@ -134,6 +143,14 @@ $('cd-form').addEventListener('submit', (e) => {
   e.preventDefault();
   const raw = $('cd-amount').value.trim(), neg = /^[-−]/.test(raw), ore = parseKr(neg ? raw.slice(1) : raw);
   if (ore == null) { $('cd-error').textContent = 'Skriv beloppet, t.ex. 3 250 eller -500.'; return; }
+  for (const inp of $('cd-accounts').querySelectorAll('input[data-acc]')) {
+    const v = inp.value.trim();
+    if (!v || v === inp.dataset.orig && !Object.hasOwn(data.accounts.find((a) => a.id === inp.dataset.acc)?.balances || {}, month)) continue;
+    const amt = parseKr(v);
+    if (amt == null || !isAmount(amt)) { $('cd-error').textContent = 'Skriv ett saldo, t.ex. 45 000 eller 1250,50.'; return; }
+    const a = data.accounts.find((x) => x.id === inp.dataset.acc);
+    if (a) a.balances[month] = amt;
+  }
   data.closed[month] = neg ? -ore : ore;
   data = loadData(data);
   $('close-dialog').close();

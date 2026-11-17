@@ -498,6 +498,8 @@ body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; 
 .close-line { display: flex; align-items: center; gap: 10px; margin: 6px 0 0; font-size: .8125rem; color: var(--on-surface-variant); }
 .close-line .link { border: 0; background: none; padding: 6px 0; color: var(--primary); font: 500 .8125rem var(--font); cursor: pointer; }
 .s-var { background: #8a6bbf; }
+.cd-acc-h { margin: 12px 0 0; font-size: .875rem; font-weight: 500; }
+#cd-accounts .row2 { margin-top: 4px; }
 
 </style>
 </head>
@@ -767,6 +769,7 @@ body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; 
         <details><summary>Stäng månaden</summary>
           <p>Det som står under Kvar är planerat – det som blir över efter de fasta kostnaderna. Mat, nöjen och oväntade utgifter syns inte där.</p>
           <p>När månaden är slut (dagen före lönen) trycker du ✓ Stäng månaden under Kvar och skriver in vad som faktiskt fanns kvar på kontot. Då visar Kvar det faktiska beloppet, och skillnaden mot det planerade visas som Rörligt i stapeln.</p>
+          <p>I samma ruta fyller du i saldot på sparkontona – de är förifyllda med det beräknade saldot, så du ändrar bara det som skiljer, t.ex. efter en extra överföring.</p>
           <p>Historik, Trend och saldot använder sedan det faktiska beloppet för den månaden. Ändra rättar beloppet, Öppna igen tar bort det.</p>
         </details>
         <details><summary>Lönedag</summary>
@@ -845,6 +848,7 @@ body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; 
         <details><summary>Close the month</summary>
           <p>What is shown under Left is planned – what is left after the fixed costs. Food, fun and unexpected spending do not show there.</p>
           <p>When the month is over (the day before payday), tap ✓ Close the month under Left and enter what was actually left in the account. Left then shows the actual amount, and the difference from the plan is shown as Variable in the bar.</p>
+          <p>In the same dialog you enter the savings account balances – they are prefilled with the estimated balance, so you only change what differs, e.g. after an extra transfer.</p>
           <p>History, Trend and the balance then use the actual amount for that month. Edit corrects the amount, Reopen removes it.</p>
         </details>
         <details><summary>Payday</summary>
@@ -979,6 +983,7 @@ body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; 
     <h2 id="cd-title"></h2>
     <p class="muted" id="cd-sub"></p>
     <label class="field"><span>Kvar (<span class="cur-unit">kr</span>)</span><input id="cd-amount" inputmode="decimal" autocomplete="off"></label>
+    <div id="cd-accounts"></div>
     <p class="muted small">Skillnaden mot det planerade visas som rörliga utgifter (mat, nöjen, oväntat). Historik och saldo använder det faktiska beloppet.</p>
     <p class="error" id="cd-error" role="alert"></p>
     <div class="actions wrap">
@@ -1396,6 +1401,7 @@ I18N.add({
   'Delat lika: ': 'Split evenly: ', 'Delat lika:': 'Split evenly:',
   'Månad för månad': 'Month by month', 'Hela året': 'The whole year', 'Kvar helår (prognos)': 'Left full year (forecast)', '🐷 Sparat': '🐷 Saved',
   'Rörligt': 'Variable', 'Ändra': 'Edit', 'Öppna igen': 'Reopen', 'Stäng månaden': 'Close month', '✓ Stäng månaden – hur mycket blev kvar?': '✓ Close the month – how much was left?', 'Skillnaden mot det planerade visas som rörliga utgifter (mat, nöjen, oväntat). Historik och saldo använder det faktiska beloppet.': 'The difference from the plan is shown as variable spending (food, fun, the unexpected). History and balance use the actual amount.', 'Skriv beloppet, t.ex. 3 250 eller -500.': 'Enter the amount, e.g. 3 250 or -500.',
+  'Saldo på sparkontona': 'Savings account balances',
   'Hemvaluta': 'Home currency', 'Fler val': 'More options', 'CSV, text, egen kod, radera': 'CSV, text, own code, delete', 'Ett okrypterat kalkylark, t.ex. för Excel.': 'An unencrypted spreadsheet, e.g. for Excel.', 'All data finns bara i den här webbläsaren. Läs in backup-filen på en annan enhet för att flytta den.': 'All data is only in this browser. Load the backup file on another device to move it.', 'Backupen låses med koden. Spara den i din lösenordshanterare.': 'The backup is locked with the code. Save it in your password manager.',
   'Valutakurser': 'Exchange rates', 'Allmänt': 'General', 'Inga': 'None', 'Inget': 'None', 'Tom': 'Empty', 'Egna': 'Own', 'Appens': "The app's", 'Importera från text': 'Import from text',
   'Byter du valuta räknas alla belopp om med valutakurserna (Ångra finns). Sparkonton behåller sin egen valuta.': 'If you change currency, all amounts are converted with the exchange rates (Undo is available). Savings accounts keep their own currency.',
@@ -1537,7 +1543,7 @@ I18N.add({
 </script>
 <script>
 // ---- version.js ----
-﻿self.APP_VERSION = '0.12.70';
+﻿self.APP_VERSION = '0.12.71';
 
 </script>
   <script>
@@ -2728,6 +2734,15 @@ function openCloseDialog() {
   $('cd-sub').textContent = `Hur mycket fanns kvar på kontot ${closeDay()}, dagen före lönen? Planerat kvar: ${kr(t.closed ? t.planned : t.left, true)}.`;
   $('cd-amount').value = t.closed ? (t.left < 0 ? '-' : '') + krInput(Math.abs(t.left)) : '';
   $('cd-reopen').hidden = !t.closed;
+  // Sparkonton (2026-11-17): fyll i saldona samtidigt – förifyllt med beräknat/senaste saldo, t.ex. efter en extra överföring.
+  fill($('cd-accounts'), data.accounts.length ? [el('p', { class: 'cd-acc-h', text: 'Saldo på sparkontona' }),
+    el('div', { class: 'row2' }, data.accounts.map((a) => {
+      const est = estBalance(data, a, month);
+      const inp = el('input', { inputmode: 'decimal', autocomplete: 'off', 'data-acc': a.id, 'aria-label': `Saldo ${a.name}` });
+      inp.value = est ? krInput(est.amount) : '';
+      inp.dataset.orig = inp.value;
+      return el('label', { class: 'field' }, el('span', { text: `${a.name} (${unit(a.currency)})` }), inp);
+    }))] : null);
   $('cd-error').textContent = '';
   $('close-dialog').showModal();
   $('cd-amount').focus();
@@ -2737,6 +2752,14 @@ $('cd-form').addEventListener('submit', (e) => {
   e.preventDefault();
   const raw = $('cd-amount').value.trim(), neg = /^[-−]/.test(raw), ore = parseKr(neg ? raw.slice(1) : raw);
   if (ore == null) { $('cd-error').textContent = 'Skriv beloppet, t.ex. 3 250 eller -500.'; return; }
+  for (const inp of $('cd-accounts').querySelectorAll('input[data-acc]')) {
+    const v = inp.value.trim();
+    if (!v || v === inp.dataset.orig && !Object.hasOwn(data.accounts.find((a) => a.id === inp.dataset.acc)?.balances || {}, month)) continue;
+    const amt = parseKr(v);
+    if (amt == null || !isAmount(amt)) { $('cd-error').textContent = 'Skriv ett saldo, t.ex. 45 000 eller 1250,50.'; return; }
+    const a = data.accounts.find((x) => x.id === inp.dataset.acc);
+    if (a) a.balances[month] = amt;
+  }
   data.closed[month] = neg ? -ore : ore;
   data = loadData(data);
   $('close-dialog').close();

@@ -25,6 +25,7 @@ The same text is in the app under **Settings → General → Help and manual**. 
 ## Close the month
 - What is shown under Left is planned – what is left after the fixed costs. Food, fun and unexpected spending do not show there.
 - When the month is over (the day before payday), tap **✓ Close the month** under Left and enter what was actually left in the account. Left then shows the actual amount, and the difference from the plan is shown as **Variable** in the bar.
+- In the same dialog you enter the savings account balances – they are prefilled with the estimated balance, so you only change what differs, e.g. after an extra transfer.
 - History, Trend and the balance then use the actual amount for that month. **Edit** corrects the amount, **Reopen** removes it.
 
 ## Payday
