@@ -452,6 +452,22 @@ body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; 
 .ad-feeds .check { min-height: 40px; }
 .sv-total { align-items: center; margin: 4px 0 0; font-size: .875rem; }
 .sv-total .link { border: 0; background: none; color: var(--primary); font: 500 .875rem var(--font); cursor: pointer; padding: 6px 0; }
+/* Månad: mer information synlig (2026-11-17) */
+.segbar { display: flex; height: 10px; margin: 12px 0 8px; border-radius: 5px; overflow: hidden; background: var(--surface-container-high); }
+.segbar .seg { display: block; height: 100%; }
+.s-exp { background: var(--error); opacity: .75; } .s-sav { background: #e8a33d; } .s-left { background: var(--primary); }
+.lgds { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: .8125rem; color: var(--on-surface-variant); }
+.lgd { display: inline-flex; align-items: center; gap: 6px; font-variant-numeric: tabular-nums; }
+.lgd .dot { width: 8px; height: 8px; border-radius: 50%; opacity: 1; }
+.delta { font-size: .8125rem; }
+#summary .fold > summary .muted.small { margin: 8px 0 0; }
+.top-cats { list-style: none; margin: 8px 0 0; padding: 0; display: grid; gap: 6px; }
+.top-cats li { display: grid; grid-template-columns: 7.5rem 1fr auto; align-items: center; gap: 10px; font-size: .8125rem; color: var(--on-surface-variant); }
+.top-cats li > span:first-child { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.top-cats .cg-track { margin: 0; }
+.fold[open] .top-cats { display: none; }
+.top-cats .cg-track { grid-column: 2; grid-row: 1; }
+.delta { display: block; margin-top: 2px; }
 
 </style>
 </head>
@@ -1359,6 +1375,9 @@ I18N.add({
   [/^(\d+) st$/, '$1'],
   [/^(.+) från (\d{4}-\d{2})$/, '$1 from $2'],
   [/^(\d+) poster$/, '$1 items'],
+  [/^([▲▼]) (.+) mot (\S+)$/, (g, tr) => `${g[1]} ${g[2]} vs ${tr(g[3])}`],
+  [/^(Kostnader|Sparande|Kvar) (-?[\d\s ]+[,\d]* \S+)$/, (g, tr) => `${tr(g[1])} ${g[2]}`],
+  [/^Av inkomsten: kostnader (.+), sparande (.+), kvar (.+)$/, 'Of income: expenses $1, savings $2, left $3'],
   [/^Beräknat: ifyllt (\S+) \+ (.+)$/, 'Estimated: entered $1 + $2'],
   [/^(Inga personer|1 person|(\d+) personer) · (\d+) kategorier$/, (g) => `${g[1] === 'Inga personer' ? 'No people' : g[1] === '1 person' ? '1 person' : g[2] + ' people'} · ${g[3]} categories`],
   [/^(\w+) · egna kurser$/, '$1 · own rates'],
@@ -1418,7 +1437,7 @@ I18N.add({
 </script>
 <script>
 // ---- version.js ----
-﻿self.APP_VERSION = '0.12.60';
+﻿self.APP_VERSION = '0.12.61';
 
 </script>
   <script>
@@ -2501,12 +2520,21 @@ function renderMonth() {
   const pct = t.income ? Math.min(100, Math.round((t.expense / t.income) * 100)) : (t.expense ? 100 : 0);
   const barFill = el('div', { class: 'bar-fill' + (t.left < 0 ? ' over' : '') });
   barFill.style.width = pct + '%'; // CSSOM, allowed by CSP
+  // Mer synligt (2026-11-17): fördelning av inkomsten (kostnader / sparande / kvar), jämförelse med förra månaden, saldo.
+  const prevT = totals(rowsForMonth(data, addMonths(month, -1)));
+  const delta = t.left - prevT.left, hasPrev = prevT.income || prevT.expense;
+  const base = Math.max(t.income, t.expense, 1);
+  const seg = (cls, v, label) => { const x = el('span', { class: 'seg ' + cls, title: label }); x.style.width = Math.max(0, (v / base) * 100) + '%'; return x; };
+  const legend = (cls, label, v) => el('span', { class: 'lgd' }, el('span', { class: 'dot ' + cls }), `${label} ${kr(v)}`);
   fill($('summary'), fold('kvar', [el('h2', { text: 'Kvar' }),
     el('p', { class: 'big ' + (t.left < 0 ? 'neg' : 'pos'), text: kr(t.left, true) }),
-    el('p', { class: 'muted', text: `In ${kr(t.income)} · Ut ${kr(t.expense)}` })],
-    t.savings ? el('p', { class: 'muted small', text: `Varav sparande ${kr(t.savings)} 🐷` }) : null,
-    el('div', { class: 'bar', role: 'img', 'aria-label': `${pct} procent av inkomsterna går till kostnader` }, barFill),
-    bal == null ? null : el('p', { class: 'muted small', text: `Saldo efter månaden: ${kr(bal)}` }),
+    el('p', { class: 'muted' }, `In ${kr(t.income)} · Ut ${kr(t.expense)}`,
+      hasPrev && delta ? el('span', { class: 'delta ' + (delta < 0 ? 'neg' : 'pos'), text: `${delta > 0 ? '▲' : '▼'} ${kr(Math.abs(delta))} mot ${monthShortLabel(addMonths(month, -1)).toLowerCase()}` }) : null),
+    el('div', { class: 'segbar', role: 'img', 'aria-label': `Av inkomsten: kostnader ${kr(t.expense - t.savings)}, sparande ${kr(t.savings)}, kvar ${kr(Math.max(0, t.left))}` },
+      seg('s-exp', t.expense - t.savings, 'Kostnader'), seg('s-sav', t.savings, 'Sparande'), seg('s-left', Math.max(0, t.left), 'Kvar')),
+    el('div', { class: 'lgds' }, legend('s-exp', 'Kostnader', t.expense - t.savings), t.savings ? legend('s-sav', 'Sparande', t.savings) : null,
+      t.left > 0 ? legend('s-left', 'Kvar', t.left) : null),
+    bal == null ? null : el('p', { class: 'muted small', text: `Saldo efter månaden: ${kr(bal)}` })],
     perPerson(rows)));
 
   // Empty card: one quiet line with a text link to Poster (like follow-diet-tracker), not a big button.
@@ -2517,9 +2545,10 @@ function renderMonth() {
     el('h2', { class: 'split' }, el('span', {}, 'Inkomster ', el('small', { class: 'netto', text: '(netto)' })), el('span', { text: kr(t.income) })),
     income.length ? el('ul', { class: 'list' }, income.map(monthRow))
       : emptyMsg('Inga inkomster den här månaden.', 'Lägg till', 'income')));
-  fill($('expense-card'), fold('exp',
+  fill($('expense-card'), fold('exp', [
     el('h2', { class: 'split' }, el('span', { text: 'Kostnader' }),
       el('span', { text: kr(t.expense - t.savings) })),
+    expense.length ? topCats(expense) : null],
     expense.length ? expenseGroups(expense)
       : emptyMsg('Inga kostnader den här månaden.', 'Lägg till', 'expense')));
   renderSavingsCard(saving, t);
@@ -2541,6 +2570,17 @@ function renderSavingsCard(saving, t) {
     data.accounts.length ? el('p', { class: 'sv-total split' }, el('span', { text: 'På sparkontona' }),
       el('button', { type: 'button', class: 'link', text: '≈ ' + kr(data.accounts.reduce((s, a) => s + toSek(estBalance(data, a, month)?.amount || 0, a.currency), 0)) + ' ›', on: { click: () => { showTab('stats'); $('stats-accounts').scrollIntoView({ block: 'start' }); } } })) : null,
     addLike(saving, 'Sparande')));
+}
+
+// Största kategorierna som små rader under rubriken (syns även hopfällt).
+function topCats(expense) {
+  const sums = new Map();
+  for (const r of expense) sums.set(r.category, (sums.get(r.category) || 0) + r.amount);
+  const top = [...sums].sort((a, b) => b[1] - a[1]).slice(0, 3), all = expense.reduce((a, r) => a + r.amount, 0) || 1;
+  return el('ul', { class: 'top-cats' }, top.map(([id, v]) => {
+    const f = el('span', { class: 'cg-bar' }); f.style.width = Math.round((v / all) * 100) + '%';
+    return el('li', {}, el('span', { text: catName(id) }), el('span', { class: 'cg-track' }, f), el('span', { class: 'amount', text: kr(v) }));
+  }));
 }
 
 // Hopfällbart kort (2026-11-17): rubriken (och det viktigaste) syns alltid, resten fälls ut. Läget sparas i openCats.

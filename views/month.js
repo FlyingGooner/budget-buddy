@@ -52,12 +52,21 @@ function renderMonth() {
   const pct = t.income ? Math.min(100, Math.round((t.expense / t.income) * 100)) : (t.expense ? 100 : 0);
   const barFill = el('div', { class: 'bar-fill' + (t.left < 0 ? ' over' : '') });
   barFill.style.width = pct + '%'; // CSSOM, allowed by CSP
+  // Mer synligt (2026-11-17): fördelning av inkomsten (kostnader / sparande / kvar), jämförelse med förra månaden, saldo.
+  const prevT = totals(rowsForMonth(data, addMonths(month, -1)));
+  const delta = t.left - prevT.left, hasPrev = prevT.income || prevT.expense;
+  const base = Math.max(t.income, t.expense, 1);
+  const seg = (cls, v, label) => { const x = el('span', { class: 'seg ' + cls, title: label }); x.style.width = Math.max(0, (v / base) * 100) + '%'; return x; };
+  const legend = (cls, label, v) => el('span', { class: 'lgd' }, el('span', { class: 'dot ' + cls }), `${label} ${kr(v)}`);
   fill($('summary'), fold('kvar', [el('h2', { text: 'Kvar' }),
     el('p', { class: 'big ' + (t.left < 0 ? 'neg' : 'pos'), text: kr(t.left, true) }),
-    el('p', { class: 'muted', text: `In ${kr(t.income)} · Ut ${kr(t.expense)}` })],
-    t.savings ? el('p', { class: 'muted small', text: `Varav sparande ${kr(t.savings)} 🐷` }) : null,
-    el('div', { class: 'bar', role: 'img', 'aria-label': `${pct} procent av inkomsterna går till kostnader` }, barFill),
-    bal == null ? null : el('p', { class: 'muted small', text: `Saldo efter månaden: ${kr(bal)}` }),
+    el('p', { class: 'muted' }, `In ${kr(t.income)} · Ut ${kr(t.expense)}`,
+      hasPrev && delta ? el('span', { class: 'delta ' + (delta < 0 ? 'neg' : 'pos'), text: `${delta > 0 ? '▲' : '▼'} ${kr(Math.abs(delta))} mot ${monthShortLabel(addMonths(month, -1)).toLowerCase()}` }) : null),
+    el('div', { class: 'segbar', role: 'img', 'aria-label': `Av inkomsten: kostnader ${kr(t.expense - t.savings)}, sparande ${kr(t.savings)}, kvar ${kr(Math.max(0, t.left))}` },
+      seg('s-exp', t.expense - t.savings, 'Kostnader'), seg('s-sav', t.savings, 'Sparande'), seg('s-left', Math.max(0, t.left), 'Kvar')),
+    el('div', { class: 'lgds' }, legend('s-exp', 'Kostnader', t.expense - t.savings), t.savings ? legend('s-sav', 'Sparande', t.savings) : null,
+      t.left > 0 ? legend('s-left', 'Kvar', t.left) : null),
+    bal == null ? null : el('p', { class: 'muted small', text: `Saldo efter månaden: ${kr(bal)}` })],
     perPerson(rows)));
 
   // Empty card: one quiet line with a text link to Poster (like follow-diet-tracker), not a big button.
@@ -68,9 +77,10 @@ function renderMonth() {
     el('h2', { class: 'split' }, el('span', {}, 'Inkomster ', el('small', { class: 'netto', text: '(netto)' })), el('span', { text: kr(t.income) })),
     income.length ? el('ul', { class: 'list' }, income.map(monthRow))
       : emptyMsg('Inga inkomster den här månaden.', 'Lägg till', 'income')));
-  fill($('expense-card'), fold('exp',
+  fill($('expense-card'), fold('exp', [
     el('h2', { class: 'split' }, el('span', { text: 'Kostnader' }),
       el('span', { text: kr(t.expense - t.savings) })),
+    expense.length ? topCats(expense) : null],
     expense.length ? expenseGroups(expense)
       : emptyMsg('Inga kostnader den här månaden.', 'Lägg till', 'expense')));
   renderSavingsCard(saving, t);
@@ -92,6 +102,17 @@ function renderSavingsCard(saving, t) {
     data.accounts.length ? el('p', { class: 'sv-total split' }, el('span', { text: 'På sparkontona' }),
       el('button', { type: 'button', class: 'link', text: '≈ ' + kr(data.accounts.reduce((s, a) => s + toSek(estBalance(data, a, month)?.amount || 0, a.currency), 0)) + ' ›', on: { click: () => { showTab('stats'); $('stats-accounts').scrollIntoView({ block: 'start' }); } } })) : null,
     addLike(saving, 'Sparande')));
+}
+
+// Största kategorierna som små rader under rubriken (syns även hopfällt).
+function topCats(expense) {
+  const sums = new Map();
+  for (const r of expense) sums.set(r.category, (sums.get(r.category) || 0) + r.amount);
+  const top = [...sums].sort((a, b) => b[1] - a[1]).slice(0, 3), all = expense.reduce((a, r) => a + r.amount, 0) || 1;
+  return el('ul', { class: 'top-cats' }, top.map(([id, v]) => {
+    const f = el('span', { class: 'cg-bar' }); f.style.width = Math.round((v / all) * 100) + '%';
+    return el('li', {}, el('span', { text: catName(id) }), el('span', { class: 'cg-track' }, f), el('span', { class: 'amount', text: kr(v) }));
+  }));
 }
 
 // Hopfällbart kort (2026-11-17): rubriken (och det viktigaste) syns alltid, resten fälls ut. Läget sparas i openCats.

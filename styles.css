@@ -435,3 +435,19 @@ body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; 
 .ad-feeds .check { min-height: 40px; }
 .sv-total { align-items: center; margin: 4px 0 0; font-size: .875rem; }
 .sv-total .link { border: 0; background: none; color: var(--primary); font: 500 .875rem var(--font); cursor: pointer; padding: 6px 0; }
+/* Månad: mer information synlig (2026-11-17) */
+.segbar { display: flex; height: 10px; margin: 12px 0 8px; border-radius: 5px; overflow: hidden; background: var(--surface-container-high); }
+.segbar .seg { display: block; height: 100%; }
+.s-exp { background: var(--error); opacity: .75; } .s-sav { background: #e8a33d; } .s-left { background: var(--primary); }
+.lgds { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: .8125rem; color: var(--on-surface-variant); }
+.lgd { display: inline-flex; align-items: center; gap: 6px; font-variant-numeric: tabular-nums; }
+.lgd .dot { width: 8px; height: 8px; border-radius: 50%; opacity: 1; }
+.delta { font-size: .8125rem; }
+#summary .fold > summary .muted.small { margin: 8px 0 0; }
+.top-cats { list-style: none; margin: 8px 0 0; padding: 0; display: grid; gap: 6px; }
+.top-cats li { display: grid; grid-template-columns: 7.5rem 1fr auto; align-items: center; gap: 10px; font-size: .8125rem; color: var(--on-surface-variant); }
+.top-cats li > span:first-child { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.top-cats .cg-track { margin: 0; }
+.fold[open] .top-cats { display: none; }
+.top-cats .cg-track { grid-column: 2; grid-row: 1; }
+.delta { display: block; margin-top: 2px; }
