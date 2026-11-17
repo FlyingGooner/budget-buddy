@@ -460,3 +460,14 @@ body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; 
 .data-more > summary::after { content: none !important; }
 .data-more > summary::before { content: '▸'; color: var(--on-surface-variant); transition: transform .15s; }
 .data-more[open] > summary::before { transform: rotate(90deg); }
+/* Tätare utan att bli plottrigt (2026-11-17) */
+.col { gap: 10px; }
+.stats { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px 8px; }
+.stat { padding: 4px 0; font-size: .75rem; line-height: 1.25; }
+.stat-n { font-size: 1.25rem; font-weight: 500; }
+.row-main { min-height: 48px; padding: 4px; }
+.ov .ov-row { min-height: 40px; }
+.tab .monthbar { padding: 6px; }
+.tab .monthbar .icon-btn { min-width: 44px; min-height: 44px; }
+.add-row .extra { min-height: 48px; }
+.cat-group > summary { min-height: 46px; padding: 6px 0; }

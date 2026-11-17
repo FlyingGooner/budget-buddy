@@ -19,23 +19,24 @@ function renderStats() {
   const last12 = Array.from({ length: 12 }, (_, i) => addMonths(month, i - 11)).map((m) => ({ m, ...totals(rowsForMonth(data, m)) }));
   const used = last12.filter((x) => x.income || x.expense);
   const avgLeft = used.length ? Math.round(used.reduce((s, x) => s + x.left, 0) / used.length / 100) * 100 : null; // whole kronor
-  const biggest = exp.reduce((b, r) => (!b || r.amount > b.amount ? r : b), null);
+  const biggest = exp.filter((r) => r.category !== SAVINGS_CAT).reduce((b, r) => (!b || r.amount > b.amount ? r : b), null);
 
+  // Kompakt (2026-11-17): sex nyckeltal i två rader om tre.
   fill($('stats-kpi'),
     el('h2', { text: 'Nyckeltal' }),
     stat(t.income ? Math.round((t.left / t.income) * 100) + ' %' : '–', 'Kvar av inkomst'),
-    stat(t.income ? Math.round((t.savings / t.income) * 100) + ' %' : '–', '🐷 Sparkvot (sparande av inkomst)'),
-    stat(avgLeft == null ? '–' : kr(avgLeft, true), `Snitt kvar/mån (${used.length} mån)`),
-    stat(biggest ? kr(biggest.amount) : '–', biggest ? `Största: ${biggest.name}` : 'Största kostnad'),
+    stat(t.income ? Math.round((t.savings / t.income) * 100) + ' %' : '–', '🐷 Sparkvot'),
+    stat(avgLeft == null ? '–' : kr(avgLeft, true), `Snitt kvar (${used.length} mån)`),
+    stat(kr(t.savings), '🐷 Sparat i månaden'),
     stat(kr(last12.reduce((s, x) => s + x.savings, 0)), '🐷 Sparat 12 mån'),
-    stat(kr(t.savings), '🐷 Sparat den här månaden'));
+    stat(biggest ? kr(biggest.amount) : '–', biggest ? `Största: ${biggest.name}` : 'Största kostnad'));
 
   // Costs per category this month
   const byCat = new Map();
-  for (const r of exp) byCat.set(r.category, (byCat.get(r.category) || 0) + r.amount);
+  for (const r of exp) if (r.category !== SAVINGS_CAT) byCat.set(r.category, (byCat.get(r.category) || 0) + r.amount);
   const cats = [...byCat].sort((a, b) => b[1] - a[1]);
   const max = cats.length ? cats[0][1] : 1;
-  fill($('stats-cats'), el('h2', { class: 'split' }, el('span', { text: 'Kostnader per kategori' }), el('span', { text: kr(t.expense) })),
+  fill($('stats-cats'), el('h2', { class: 'split' }, el('span', { text: 'Kostnader per kategori' }), el('span', { text: kr(t.expense - t.savings) })),
     cats.length ? el('ul', { class: 'cat-bars' }, cats.map(([id, sum]) => {
       const f = el('div', { class: 'bar-fill' });
       f.style.width = Math.round((sum / max) * 100) + '%';

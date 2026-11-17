@@ -477,6 +477,17 @@ body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; 
 .data-more > summary::after { content: none !important; }
 .data-more > summary::before { content: '▸'; color: var(--on-surface-variant); transition: transform .15s; }
 .data-more[open] > summary::before { transform: rotate(90deg); }
+/* Tätare utan att bli plottrigt (2026-11-17) */
+.col { gap: 10px; }
+.stats { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px 8px; }
+.stat { padding: 4px 0; font-size: .75rem; line-height: 1.25; }
+.stat-n { font-size: 1.25rem; font-weight: 500; }
+.row-main { min-height: 48px; padding: 4px; }
+.ov .ov-row { min-height: 40px; }
+.tab .monthbar { padding: 6px; }
+.tab .monthbar .icon-btn { min-width: 44px; min-height: 44px; }
+.add-row .extra { min-height: 48px; }
+.cat-group > summary { min-height: 46px; padding: 6px 0; }
 
 </style>
 </head>
@@ -1336,6 +1347,7 @@ I18N.add({
   'Sparande som går hit varje månad:': 'Savings that go here every month:', 'Lägg en återkommande kostnad i kategorin Sparande, så kan den kopplas hit och saldot räknas upp själv.': 'Add a recurring cost in the Savings category, then it can be linked here and the balance counts up by itself.', 'På sparkontona': 'In savings accounts',
   'Lönedag': 'Payday', 'Budgetmånaden börjar': 'The budget month starts', 'Den 1:a (kalendermånad)': 'The 1st (calendar month)', 'Budgetmånaden följer kalendern': 'The budget month follows the calendar', 'Får du lön t.ex. den 25:e räcker lönen den 25 november till december: den månaden heter December och gäller 25 nov – 24 dec.': 'If you are paid e.g. on the 25th, the salary on 25 November covers December: that month is called December and runs 25 Nov – 24 Dec.',
   'Budget buddy (den här)': 'Budget buddy (this one)',
+  '🐷 Sparkvot': '🐷 Savings rate', '🐷 Sparat i månaden': '🐷 Saved this month',
   'Hemvaluta': 'Home currency', 'Fler val': 'More options', 'CSV, text, egen kod, radera': 'CSV, text, own code, delete', 'Ett okrypterat kalkylark, t.ex. för Excel.': 'An unencrypted spreadsheet, e.g. for Excel.', 'All data finns bara i den här webbläsaren. Läs in backup-filen på en annan enhet för att flytta den.': 'All data is only in this browser. Load the backup file on another device to move it.', 'Backupen låses med koden. Spara den i din lösenordshanterare.': 'The backup is locked with the code. Save it in your password manager.',
   'Valutakurser': 'Exchange rates', 'Allmänt': 'General', 'Inga': 'None', 'Inget': 'None', 'Tom': 'Empty', 'Egna': 'Own', 'Appens': "The app's", 'Importera från text': 'Import from text',
   'Byter du valuta räknas alla belopp om med valutakurserna (Ångra finns). Sparkonton behåller sin egen valuta.': 'If you change currency, all amounts are converted with the exchange rates (Undo is available). Savings accounts keep their own currency.',
@@ -1400,6 +1412,7 @@ I18N.add({
   [/^(\d+) poster$/, '$1 items'],
   [/^Den (\d+):e \(lönedag\)$/, 'The $1th (payday)'],
   [/^Den (\d+):e$/, 'The $1th'],
+  [/^Snitt kvar \((\d+) mån\)$/, 'Avg left ($1 mo)'],
   [/^Sparande (.+)\/mån$/, 'Savings $1/mo'],
   [/^(\d+) (\S+) – (\d+) (\S+)$/, (g, tr) => `${g[1]} ${tr(g[2])} – ${g[3]} ${tr(g[4])}`],
   [/^Budgetmånaden börjar den (\d+):e$/, 'The budget month starts on the $1th'],
@@ -1467,7 +1480,7 @@ I18N.add({
 </script>
 <script>
 // ---- version.js ----
-﻿self.APP_VERSION = '0.12.66';
+﻿self.APP_VERSION = '0.12.67';
 
 </script>
   <script>
@@ -2915,23 +2928,24 @@ function renderStats() {
   const last12 = Array.from({ length: 12 }, (_, i) => addMonths(month, i - 11)).map((m) => ({ m, ...totals(rowsForMonth(data, m)) }));
   const used = last12.filter((x) => x.income || x.expense);
   const avgLeft = used.length ? Math.round(used.reduce((s, x) => s + x.left, 0) / used.length / 100) * 100 : null; // whole kronor
-  const biggest = exp.reduce((b, r) => (!b || r.amount > b.amount ? r : b), null);
+  const biggest = exp.filter((r) => r.category !== SAVINGS_CAT).reduce((b, r) => (!b || r.amount > b.amount ? r : b), null);
 
+  // Kompakt (2026-11-17): sex nyckeltal i två rader om tre.
   fill($('stats-kpi'),
     el('h2', { text: 'Nyckeltal' }),
     stat(t.income ? Math.round((t.left / t.income) * 100) + ' %' : '–', 'Kvar av inkomst'),
-    stat(t.income ? Math.round((t.savings / t.income) * 100) + ' %' : '–', '🐷 Sparkvot (sparande av inkomst)'),
-    stat(avgLeft == null ? '–' : kr(avgLeft, true), `Snitt kvar/mån (${used.length} mån)`),
-    stat(biggest ? kr(biggest.amount) : '–', biggest ? `Största: ${biggest.name}` : 'Största kostnad'),
+    stat(t.income ? Math.round((t.savings / t.income) * 100) + ' %' : '–', '🐷 Sparkvot'),
+    stat(avgLeft == null ? '–' : kr(avgLeft, true), `Snitt kvar (${used.length} mån)`),
+    stat(kr(t.savings), '🐷 Sparat i månaden'),
     stat(kr(last12.reduce((s, x) => s + x.savings, 0)), '🐷 Sparat 12 mån'),
-    stat(kr(t.savings), '🐷 Sparat den här månaden'));
+    stat(biggest ? kr(biggest.amount) : '–', biggest ? `Största: ${biggest.name}` : 'Största kostnad'));
 
   // Costs per category this month
   const byCat = new Map();
-  for (const r of exp) byCat.set(r.category, (byCat.get(r.category) || 0) + r.amount);
+  for (const r of exp) if (r.category !== SAVINGS_CAT) byCat.set(r.category, (byCat.get(r.category) || 0) + r.amount);
   const cats = [...byCat].sort((a, b) => b[1] - a[1]);
   const max = cats.length ? cats[0][1] : 1;
-  fill($('stats-cats'), el('h2', { class: 'split' }, el('span', { text: 'Kostnader per kategori' }), el('span', { text: kr(t.expense) })),
+  fill($('stats-cats'), el('h2', { class: 'split' }, el('span', { text: 'Kostnader per kategori' }), el('span', { text: kr(t.expense - t.savings) })),
     cats.length ? el('ul', { class: 'cat-bars' }, cats.map(([id, sum]) => {
       const f = el('div', { class: 'bar-fill' });
       f.style.width = Math.round((sum / max) * 100) + '%';
