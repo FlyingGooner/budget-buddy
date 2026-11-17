@@ -16,7 +16,7 @@ function ovRows(months, max, anyBal) {
 // Graf (2026-11-17): pengar kvar över tid – ackumulerat kvar (eller saldo om startsaldo finns), bakåt heldraget, framåt streckat.
 function moneyChart(past, next, kpis = true) {
   const pts = [...past].reverse().concat(next);
-  if (pts.length < 2) return null;
+  if (pts.length < 3) return null;   // två punkter säger inget – grafen visas från tre månader
   const useBal = pts.every((r) => r.bal != null);
   let acc = 0;
   const vals = pts.map((r) => (useBal ? r.bal : (acc += r.left + r.savings)));   // pengar över tid: kvar + sparat
@@ -79,7 +79,7 @@ function renderOverview() {
   const head = el('div', { class: 'monthbar' },
     el('button', { type: 'button', class: 'icon-btn', 'aria-label': 'Föregående år', on: { click: () => go(-1) } }, '◀'),
     el('h1', { class: 'ov-title' }, `Historik ${year}`,
-      el('small', { text: rest.length === 12 ? 'Prognos' : rest.length ? `${done.length} månader hittills · ${rest.length} prognos` : 'Hela året' })),
+      el('small', { text: rest.length === 12 ? 'Prognos' : rest.length ? `${done.length === 1 ? '1 månad' : `${done.length} månader`} hittills · ${rest.length} prognos` : 'Hela året' })),
     el('button', { type: 'button', class: 'icon-btn', 'aria-label': 'Nästa år', on: { click: () => go(1) } }, '▶'));
 
   const hasData = data.recurring.length || data.oneOffs.length;

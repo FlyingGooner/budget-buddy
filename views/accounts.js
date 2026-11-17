@@ -3,7 +3,7 @@
 let dialogAcc = null;
 function renderAccounts() {
   const accs = data.accounts;
-  const total = (m) => accs.reduce((s, a) => s + toSek(estBalance(data, a, m)?.amount || 0, a.currency), 0);
+  const total = (m) => Math.round(accs.reduce((s, a) => s + toSek(estBalance(data, a, m)?.amount || 0, a.currency), 0) / 100) * 100;   // hela kronor
   const foreign = accs.some((a) => a.currency !== home());
   $('acc-total').textContent = accs.length ? (foreign ? '≈ ' : '') + kr(total(month)) : '';
   $('acc-rates').textContent = foreign ? `Omräknat till ${CUR_NAMES[home()]}: ${ratesNote()}. Kurserna ändras under Inställningar.` : '';
@@ -14,22 +14,25 @@ function renderAccounts() {
     const feedNames = (a.feeds || []).map((id) => data.recurring.find((r) => r.id === id)?.name).filter(Boolean);
     const sub = !cur ? 'Inget saldo än – tryck för att fylla i'
       : cur.estimated ? `Beräknat: ifyllt ${monthShortLabel(cur.from).toLowerCase()} + ${feedNames.join(', ')}`
-      : real && real.month === month ? 'Ifyllt den här månaden' : `Senast ifyllt ${monthLabel(real.month).toLowerCase()}`;
+      : real && real.month === month ? 'Ifyllt' : `Ifyllt ${monthShortLabel(real.month).toLowerCase()}`;
     return el('li', { class: 'row' }, el('button', { type: 'button', class: 'row-main',
       'aria-label': `${a.name}, ${cur ? money(cur.amount, a.currency) : 'inget saldo'}. Fyll i saldo`, on: { click: () => openAccDialog(a) } },
     el('span', { class: 'row-name' }, el('span', { text: a.name }), el('span', { class: 'row-sub', text: sub })),
     el('span', { class: 'acc-amt amount' }, el('span', { text: cur ? (cur.estimated ? '≈ ' : '') + money(cur.amount, a.currency) : '–' }),
-      cur && a.currency !== home() ? el('span', { class: 'row-sub', text: '≈ ' + kr(toSek(cur.amount, a.currency)) }) : null,
+      cur && a.currency !== home() ? el('span', { class: 'row-sub', text: '≈ ' + kr(Math.round(toSek(cur.amount, a.currency) / 100) * 100) }) : null,
       diff != null ? el('span', { class: 'row-sub ' + (diff < 0 ? 'neg' : 'pos'), text: money(diff, a.currency, true) }) : null)));
   }) : el('li', { class: 'muted empty-row', text: 'Inga sparkonton än – lägg till det första nedan.' }));
 
   // Total savings balance, the 12 months up to the chosen month
-  const ms = Array.from({ length: 12 }, (_, i) => addMonths(month, i - 11)), vals = ms.map(total);
+  // Grafen börjar vid första månaden med saldo (minst 4 månader), så att staplarna inte blir tunna streck.
+  let ms = Array.from({ length: 12 }, (_, i) => addMonths(month, i - 11)), vals = ms.map(total);
   if (!vals.some((v) => v > 0)) { fill($('acc-chart')); return; }
+  const firstI = Math.min(vals.findIndex((v) => v > 0), 8);
+  ms = ms.slice(firstI); vals = vals.slice(firstI);
   const W = 340, H = 140, P = { l: 40, r: 6, t: 8, b: 20 };
   const top = Math.max(1, ...vals);
   const y = (v) => P.t + (H - P.t - P.b) * (1 - v / top);
-  const cw = (W - P.l - P.r) / 12, bw = Math.max(4, cw * 0.6);
+  const cw = (W - P.l - P.r) / ms.length, bw = Math.min(28, Math.max(4, cw * 0.6));
   const short = (ore) => nf0.format(Math.round(ore / 100000)) + 'k';
   const kids = [0, 0.5, 1].map((f) => [
     svg('line', { class: 'grid', x1: P.l, x2: W - P.r, y1: y(top * f), y2: y(top * f) }),
@@ -37,7 +40,7 @@ function renderAccounts() {
   vals.forEach((v, i) => {
     const cx = P.l + cw * i + cw / 2;
     kids.push(svg('rect', { class: 'b-in' + (ms[i] === month ? ' b-cur' : ''), x: cx - bw / 2, y: y(v), width: bw, height: y(0) - y(v), rx: 1 }));
-    if (i % 2 === 1 || i === 11) kids.push(svg('text', { class: 'ax', x: cx, y: H - 6, 'text-anchor': 'middle' }, monthShortLabel(ms[i])));
+    if (ms.length <= 6 || i % 2 === (ms.length - 1) % 2) kids.push(svg('text', { class: 'ax', x: cx, y: H - 6, 'text-anchor': 'middle' }, monthShortLabel(ms[i])));
   });
   fill($('acc-chart'), svg('svg', { class: 'chart', viewBox: `0 0 ${W} ${H}`, role: 'img',
     'aria-label': `Totalt sparsaldo per månad, ${monthLabel(ms[0])} till ${monthLabel(month)}` }, kids),
