@@ -70,6 +70,7 @@ setupAddForm($('exp-form'));
 // Jump from an empty state to the right add form.
 function focusAdd(type) {
   showTab('items');
+  $(type === 'income' ? 'inc-add' : 'exp-add').open = true;
   const els = $(type === 'income' ? 'inc-form' : 'exp-form').elements;
   const input = els.name || els.category;
   input.scrollIntoView({ block: 'center', behavior: 'smooth' });

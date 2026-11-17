@@ -71,8 +71,28 @@ function renderMonth() {
   fill($('expense-card'),
     el('h2', { class: 'split' }, el('span', { text: 'Kostnader' }),
       el('span', { text: kr(t.expense) })),
-    expense.length ? el('ul', { class: 'list' }, expense.map(monthRow))
+    expense.length ? expenseGroups(expense)
       : emptyMsg('Inga kostnader den här månaden.', 'Lägg till', 'expense'));
+}
+
+// Kostnader per kategori (2026-11-17): en rad per kategori med summa och andel; tryck för att fälla ut posterna.
+const openCats = new Set();
+function expenseGroups(expense) {
+  const total = expense.reduce((a, r) => a + r.amount, 0) || 1;
+  const groups = new Map();
+  for (const r of expense) { if (!groups.has(r.category)) groups.set(r.category, []); groups.get(r.category).push(r); }
+  return el('div', { class: 'cat-groups' }, [...groups].map(([id, rs]) => [id, rs, rs.reduce((a, r) => a + r.amount, 0)])
+    .sort((a, b) => b[2] - a[2]).map(([id, rs, sum]) => {
+      const bar = el('span', { class: 'cg-bar' }); bar.style.width = Math.max(2, Math.round((sum / total) * 100)) + '%';
+      const d = el('details', { class: 'cat-group', open: openCats.has(id) },
+        el('summary', {},
+          el('span', { class: 'cg-name' }, el('span', { text: catName(id) }), el('span', { class: 'cg-n', text: rs.length === 1 ? '1 post' : `${rs.length} poster` })),
+          el('span', { class: 'cg-sum', text: kr(sum) }),
+          el('span', { class: 'cg-track', 'aria-hidden': 'true' }, bar)),
+        el('ul', { class: 'list' }, rs.map(monthRow)));
+      d.addEventListener('toggle', () => { if (d.open) openCats.add(id); else openCats.delete(id); });
+      return d;
+    }));
 }
 
 // Per person: income, costs and left for each person + "Gemensamt" (only when people are used).

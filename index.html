@@ -69,10 +69,12 @@
         <ul class="list" id="acc-list"></ul>
         <p class="muted small" id="acc-rates"></p>
         <div id="acc-chart"></div>
+        <details class="add-wrap" id="acc-add"><summary>+ Nytt sparkonto</summary>
         <form class="inline" id="acc-form" novalidate>
-          <label class="field grow"><span>Nytt sparkonto</span><input id="acc-name" maxlength="30" autocomplete="off" placeholder="t.ex. Buffert"></label>
+          <label class="field grow"><span>Namn</span><input id="acc-name" maxlength="30" autocomplete="off" placeholder="t.ex. Buffert"></label>
           <button type="submit" class="btn tonal">Lägg till</button>
         </form>
+        </details>
       </div>
     </div>
   </section>
@@ -85,19 +87,22 @@
     <div class="card scroll" id="inc-card">
       <h2 class="split"><span>Inkomster</span><span id="inc-sum"></span></h2>
       <ul class="list" id="inc-list"></ul>
+      <details class="add-wrap" id="inc-add"><summary>+ Ny inkomst</summary>
       <form class="add-form" id="inc-form" data-type="income" novalidate>
         <label class="field"><span>Ny inkomst (per månad)</span><select name="category"></select></label>
         <label class="field amt"><span>Efter skatt (<span class="cur-unit">kr</span>)</span><input name="amount" inputmode="decimal" autocomplete="off"></label>
         <label class="field person-field grow"><span>Person (valfritt)</span><select name="person"></select></label>
-        <p class="muted small hint-row">Fyll i nettobelopp per månad – det som kommer in på kontot efter skatt. Engångsinkomster (bonus, skatteåterbäring) läggs som avvikelse i Månad.</p>
+        <p class="muted small hint-row">Nettobelopp per månad, efter skatt. Engångsinkomster läggs som avvikelse i Månad.</p>
         <button type="submit" class="btn filled">Lägg till</button>
         <p class="error" role="alert"></p>
       </form>
+      </details>
     </div>
     <!-- Kostnader: namn + belopp + kategori + hur ofta -->
     <div class="card scroll" id="exp-card">
       <h2 class="split"><span>Kostnader</span><span id="exp-sum"></span></h2>
       <ul class="list" id="exp-list"></ul>
+      <details class="add-wrap" id="exp-add"><summary>+ Ny kostnad</summary>
       <form class="add-form" id="exp-form" data-type="expense" novalidate>
         <label class="field grow"><span>Ny kostnad</span><input name="name" maxlength="60" placeholder="t.ex. Hyra" autocomplete="off"></label>
         <label class="field amt"><span>Belopp (<span class="cur-unit">kr</span>)</span><input name="amount" inputmode="decimal" autocomplete="off"></label>
@@ -107,14 +112,115 @@
         <button type="submit" class="btn filled">Lägg till</button>
         <p class="error" role="alert"></p>
       </form>
+      </details>
     </div>
-    <p class="muted small hint">Nya poster gäller från och med den månad du tittar på. Tryck på en post för att ändra belopp, period eller ta bort den. Håll in för att markera flera.</p>
+    <p class="muted small hint">Tryck på en post för att ändra den, håll in för att markera flera. Nya poster gäller från den månad du tittar på.</p>
   </section>
 
   <!-- Inställningar -->
   <section class="tab" id="tab-settings" hidden>
     <h1>Inställningar</h1>
     <div class="col">
+      <div class="card set-group" id="lang-card">
+        <h2>Allmänt</h2>
+        <div class="row2">
+          <label class="field"><span>Språk</span><select id="s-lang"></select></label>
+          <label class="field"><span>Valuta</span><select id="s-home"></select></label>
+        </div>
+        <p class="muted small">Byter du valuta räknas alla belopp om med valutakurserna (Ångra finns). Sparkonton behåller sin egen valuta.</p>
+        <details class="sect">
+          <summary><span>Startsaldo</span><span class="sect-sub" id="sum-start"></span></summary>
+          <p class="muted small">Valfritt. Visar löpande saldo i översikten från vald månad.</p>
+          <div class="row2">
+            <label class="field"><span>Saldo (<span class="cur-unit">kr</span>)</span><input id="s-balance" inputmode="decimal" autocomplete="off"></label>
+            <label class="field"><span>Från månad</span><input id="s-month" type="month" min="1900-01" max="2099-12"></label>
+          </div>
+          <div class="actions"><span class="spacer"></span><button type="button" class="btn tonal" id="s-save">Spara</button></div>
+        </details>
+        <details class="sect">
+          <summary><span>Valutakurser</span><span class="sect-sub" id="sum-rates"></span></summary>
+          <p class="muted small">Ungefärliga kurser för sparkonton i utländsk valuta. Appen hämtar inga kurser – ändra dem själv när du vill.</p>
+          <p class="small" id="rates-note"></p>
+          <div class="row2">
+            <label class="field"><span>1 USD = kr</span><input id="rate-USD" inputmode="decimal" autocomplete="off"></label>
+            <label class="field"><span>1 EUR = kr</span><input id="rate-EUR" inputmode="decimal" autocomplete="off"></label>
+            <label class="field"><span>1 GBP = kr</span><input id="rate-GBP" inputmode="decimal" autocomplete="off"></label>
+            <label class="field"><span>1 NOK = kr</span><input id="rate-NOK" inputmode="decimal" autocomplete="off"></label>
+            <label class="field"><span>1 DKK = kr</span><input id="rate-DKK" inputmode="decimal" autocomplete="off"></label>
+          </div>
+          <div class="actions"><button type="button" class="btn text" id="rates-reset" hidden>Använd appens kurser</button><span class="spacer"></span><button type="button" class="btn tonal" id="rates-save">Spara</button></div>
+        </details>
+      </div>
+      <div class="card set-group">
+        <h2>Hushåll</h2>
+        <details class="sect">
+          <summary><span>Personer</span><span class="sect-sub" id="sum-people"></span></summary>
+          <p class="muted small">Valfritt. Lägg till personerna i hushållet så kan varje inkomst och kostnad kopplas till en person – eller vara gemensam.</p>
+          <ul class="list" id="person-list"></ul>
+          <form class="inline" id="person-form" novalidate>
+            <label class="field grow"><span>Ny person</span><input id="person-name" maxlength="30" autocomplete="off"></label>
+            <button type="submit" class="btn tonal">Lägg till</button>
+          </form>
+        </details>
+        <details class="sect">
+          <summary><span>Inkomstkategorier</span><span class="sect-sub" id="sum-income"></span></summary>
+          <ul class="list" id="cat-list-income"></ul>
+          <form class="inline cat-form" data-type="income" novalidate>
+            <label class="field grow"><span>Ny inkomstkategori</span><input name="name" maxlength="40" autocomplete="off"></label>
+            <button type="submit" class="btn tonal">Lägg till</button>
+          </form>
+        </details>
+        <details class="sect">
+          <summary><span>Kostnadskategorier</span><span class="sect-sub" id="sum-expense"></span></summary>
+          <ul class="list" id="cat-list-expense"></ul>
+          <form class="inline cat-form" data-type="expense" novalidate>
+            <label class="field grow"><span>Ny kostnadskategori</span><input name="name" maxlength="40" autocomplete="off"></label>
+            <button type="submit" class="btn tonal">Lägg till</button>
+          </form>
+        </details>
+      </div>
+    </div>
+    <div class="col">
+      <div class="card" id="data-card">
+        <h2>Data</h2>
+        <div class="actions wrap">
+          <button type="button" class="btn filled" id="backup-save">Spara backup-fil</button>
+          <label class="btn tonal btn-file">Läs in backup-fil<input type="file" id="import-file" accept=".txt,.json"></label>
+        </div>
+        <div class="pwd-box" id="pwd-box"></div>
+        <p class="error" id="import-error" role="alert"></p>
+        <details class="sect" id="trash-card">
+          <summary><span>Papperskorg</span><span class="sect-sub" id="sum-trash"></span></summary>
+          <p class="muted small">Poster, avvikelser och sparkonton du tar bort ligger här i 30 dagar. Sedan raderas de för gott.</p>
+          <ul class="list" id="trash-list"></ul>
+          <div class="actions"><span class="spacer"></span><button type="button" class="btn text danger" id="trash-empty" hidden>Töm papperskorgen</button></div>
+        </details>
+        <details class="sect data-more">
+          <summary><span>Fler val</span><span class="sect-sub">CSV, text, egen kod, radera</span></summary>
+          <div class="csv-row"><button type="button" class="btn text" id="csv-export">Exportera CSV</button><p class="muted small">Ett okrypterat kalkylark, t.ex. för Excel.</p></div>
+          <details class="data-text">
+            <summary class="data-text-title">Klistra in text</summary>
+            <label class="field"><span>Importera (ersätter all data)</span><textarea id="import-text" rows="4" autocomplete="off" spellcheck="false" placeholder="Klistra in innehållet i en backup-fil"></textarea></label>
+            <div class="actions"><span class="spacer"></span><button type="button" class="btn tonal" id="import-btn">Importera</button></div>
+          </details>
+          <div class="actions"><button type="button" class="btn text" id="pwd-own">Välj egen kod</button></div>
+          <p class="muted small">All data finns bara i den här webbläsaren. Läs in backup-filen på en annan enhet för att flytta den.</p>
+          <div class="actions"><button type="button" class="btn text danger" id="reset">Radera all data</button></div>
+        </details>
+      </div>
+      <div class="card">
+        <h2>App</h2>
+        <p class="muted small">All data finns bara i den här webbläsaren. Spara en backup-fil då och då.</p>
+        <div class="actions wrap">
+          <button type="button" class="btn filled" id="install" hidden>Installera appen</button>
+        </div>
+        <details class="dl-src-wrap">
+          <summary class="data-text-title">Alla mina appar</summary>
+          <div class="dl-src"><div class="dl-app"><b>Fitness buddy</b><a href="https://flyinggooner.github.io/simple-nutrition/" target="_blank" rel="noopener">Öppna</a><a href="https://flyinggooner.github.io/simple-nutrition/simple-nutrition.html" download="simple-nutrition.html">Ladda ner (HTML)</a><a href="https://github.com/FlyingGooner/simple-nutrition" target="_blank" rel="noopener">GitHub</a></div><div class="dl-app"><b>Budget buddy (den här)</b><a href="budget-buddy.html" download="budget-buddy.html">Ladda ner (HTML)</a><a href="https://github.com/FlyingGooner/budget-buddy" target="_blank" rel="noopener">GitHub</a></div><div class="dl-app"><b>Football, not soccer</b><a href="https://flyinggooner.github.io/Football-not-soccer/" target="_blank" rel="noopener">Öppna</a><a href="https://flyinggooner.github.io/Football-not-soccer/Football-not-soccer.html" download="Football-not-soccer.html">Ladda ner (HTML)</a><a href="https://github.com/FlyingGooner/Football-not-soccer" target="_blank" rel="noopener">GitHub</a></div><div class="dl-app"><b>Task buddy</b><a href="https://flyinggooner.github.io/Stress-control/" target="_blank" rel="noopener">Öppna</a><a href="https://flyinggooner.github.io/Stress-control/Stress-control.html" download="Stress-control.html">Ladda ner (HTML)</a><a href="https://github.com/FlyingGooner/Stress-control" target="_blank" rel="noopener">GitHub</a></div><p class="small">Spara som app: Android (Chrome) – tryck ⋮ och välj Installera app. iPhone (Safari) – tryck Dela och välj Lägg till på hemskärmen.</p><p class="muted small">Ladda ner (HTML) ger hela appen i en enda fil som du öppnar i webbläsaren, även utan nät. Den sparar sin data för sig – flytta data dit med en backup-fil.</p></div>
+        </details>
+      </div>
+      <details class="card help-wrap">
+        <summary class="help-title"><span>Hjälp och manual</span><span class="sect-sub">Så funkar appen</span></summary>
       <!-- help:start – byggs från docs/MANUAL.md med tools/build-help.ps1, ändra inte här -->
       <div class="card help" lang="sv" data-no-tr>
         <h2>Hjälp</h2>
@@ -251,104 +357,7 @@
         </details>
       </div>
       <!-- help-en:end -->
-      <div class="card set-group" id="lang-card">
-        <h2>Allmänt</h2>
-        <div class="row2">
-          <label class="field"><span>Språk</span><select id="s-lang"></select></label>
-          <label class="field"><span>Valuta</span><select id="s-home"></select></label>
-        </div>
-        <p class="muted small">Byter du valuta räknas alla belopp om med valutakurserna (Ångra finns). Sparkonton behåller sin egen valuta.</p>
-        <details class="sect">
-          <summary><span>Startsaldo</span><span class="sect-sub" id="sum-start"></span></summary>
-          <p class="muted small">Valfritt. Visar löpande saldo i översikten från vald månad.</p>
-          <div class="row2">
-            <label class="field"><span>Saldo (<span class="cur-unit">kr</span>)</span><input id="s-balance" inputmode="decimal" autocomplete="off"></label>
-            <label class="field"><span>Från månad</span><input id="s-month" type="month" min="1900-01" max="2099-12"></label>
-          </div>
-          <div class="actions"><span class="spacer"></span><button type="button" class="btn tonal" id="s-save">Spara</button></div>
-        </details>
-        <details class="sect">
-          <summary><span>Valutakurser</span><span class="sect-sub" id="sum-rates"></span></summary>
-          <p class="muted small">Ungefärliga kurser för sparkonton i utländsk valuta. Appen hämtar inga kurser – ändra dem själv när du vill.</p>
-          <p class="small" id="rates-note"></p>
-          <div class="row2">
-            <label class="field"><span>1 USD = kr</span><input id="rate-USD" inputmode="decimal" autocomplete="off"></label>
-            <label class="field"><span>1 EUR = kr</span><input id="rate-EUR" inputmode="decimal" autocomplete="off"></label>
-            <label class="field"><span>1 GBP = kr</span><input id="rate-GBP" inputmode="decimal" autocomplete="off"></label>
-            <label class="field"><span>1 NOK = kr</span><input id="rate-NOK" inputmode="decimal" autocomplete="off"></label>
-            <label class="field"><span>1 DKK = kr</span><input id="rate-DKK" inputmode="decimal" autocomplete="off"></label>
-          </div>
-          <div class="actions"><button type="button" class="btn text" id="rates-reset" hidden>Använd appens kurser</button><span class="spacer"></span><button type="button" class="btn tonal" id="rates-save">Spara</button></div>
-        </details>
-      </div>
-      <div class="card set-group">
-        <h2>Hushåll</h2>
-        <details class="sect">
-          <summary><span>Personer</span><span class="sect-sub" id="sum-people"></span></summary>
-          <p class="muted small">Valfritt. Lägg till personerna i hushållet så kan varje inkomst och kostnad kopplas till en person – eller vara gemensam.</p>
-          <ul class="list" id="person-list"></ul>
-          <form class="inline" id="person-form" novalidate>
-            <label class="field grow"><span>Ny person</span><input id="person-name" maxlength="30" autocomplete="off"></label>
-            <button type="submit" class="btn tonal">Lägg till</button>
-          </form>
-        </details>
-        <details class="sect">
-          <summary><span>Inkomstkategorier</span><span class="sect-sub" id="sum-income"></span></summary>
-          <ul class="list" id="cat-list-income"></ul>
-          <form class="inline cat-form" data-type="income" novalidate>
-            <label class="field grow"><span>Ny inkomstkategori</span><input name="name" maxlength="40" autocomplete="off"></label>
-            <button type="submit" class="btn tonal">Lägg till</button>
-          </form>
-        </details>
-        <details class="sect">
-          <summary><span>Kostnadskategorier</span><span class="sect-sub" id="sum-expense"></span></summary>
-          <ul class="list" id="cat-list-expense"></ul>
-          <form class="inline cat-form" data-type="expense" novalidate>
-            <label class="field grow"><span>Ny kostnadskategori</span><input name="name" maxlength="40" autocomplete="off"></label>
-            <button type="submit" class="btn tonal">Lägg till</button>
-          </form>
-        </details>
-      </div>
-    </div>
-    <div class="col">
-      <div class="card" id="data-card">
-        <h2>Data</h2>
-        <div class="actions wrap">
-          <button type="button" class="btn filled" id="backup-save">Spara backup-fil</button>
-          <label class="btn tonal btn-file">Läs in backup-fil<input type="file" id="import-file" accept=".txt,.json"></label>
-        </div>
-        <div class="pwd-box" id="pwd-box"></div>
-        <p class="error" id="import-error" role="alert"></p>
-        <details class="sect" id="trash-card">
-          <summary><span>Papperskorg</span><span class="sect-sub" id="sum-trash"></span></summary>
-          <p class="muted small">Poster, avvikelser och sparkonton du tar bort ligger här i 30 dagar. Sedan raderas de för gott.</p>
-          <ul class="list" id="trash-list"></ul>
-          <div class="actions"><span class="spacer"></span><button type="button" class="btn text danger" id="trash-empty" hidden>Töm papperskorgen</button></div>
-        </details>
-        <details class="sect data-more">
-          <summary><span>Fler val</span><span class="sect-sub">CSV, text, egen kod, radera</span></summary>
-          <div class="csv-row"><button type="button" class="btn text" id="csv-export">Exportera CSV</button><p class="muted small">Ett okrypterat kalkylark, t.ex. för Excel.</p></div>
-          <details class="data-text">
-            <summary class="data-text-title">Klistra in text</summary>
-            <label class="field"><span>Importera (ersätter all data)</span><textarea id="import-text" rows="4" autocomplete="off" spellcheck="false" placeholder="Klistra in innehållet i en backup-fil"></textarea></label>
-            <div class="actions"><span class="spacer"></span><button type="button" class="btn tonal" id="import-btn">Importera</button></div>
-          </details>
-          <div class="actions"><button type="button" class="btn text" id="pwd-own">Välj egen kod</button></div>
-          <p class="muted small">All data finns bara i den här webbläsaren. Läs in backup-filen på en annan enhet för att flytta den.</p>
-          <div class="actions"><button type="button" class="btn text danger" id="reset">Radera all data</button></div>
-        </details>
-      </div>
-      <div class="card">
-        <h2>App</h2>
-        <p class="muted">All data sparas bara i den här webbläsaren och lämnar aldrig enheten av sig själv. Rensas webbplatsdata försvinner allt – spara en backup-fil då och då.</p>
-        <div class="actions wrap">
-          <button type="button" class="btn filled" id="install" hidden>Installera appen</button>
-        </div>
-        <details class="dl-src-wrap">
-          <summary class="data-text-title">Alla mina appar</summary>
-          <div class="dl-src"><div class="dl-app"><b>Fitness buddy</b><a href="https://flyinggooner.github.io/simple-nutrition/" target="_blank" rel="noopener">Öppna</a><a href="https://flyinggooner.github.io/simple-nutrition/simple-nutrition.html" download="simple-nutrition.html">Ladda ner (HTML)</a><a href="https://github.com/FlyingGooner/simple-nutrition" target="_blank" rel="noopener">GitHub</a></div><div class="dl-app"><b>Budget buddy (den här)</b><a href="budget-buddy.html" download="budget-buddy.html">Ladda ner (HTML)</a><a href="https://github.com/FlyingGooner/budget-buddy" target="_blank" rel="noopener">GitHub</a></div><div class="dl-app"><b>Football, not soccer</b><a href="https://flyinggooner.github.io/Football-not-soccer/" target="_blank" rel="noopener">Öppna</a><a href="https://flyinggooner.github.io/Football-not-soccer/Football-not-soccer.html" download="Football-not-soccer.html">Ladda ner (HTML)</a><a href="https://github.com/FlyingGooner/Football-not-soccer" target="_blank" rel="noopener">GitHub</a></div><div class="dl-app"><b>Task buddy</b><a href="https://flyinggooner.github.io/Stress-control/" target="_blank" rel="noopener">Öppna</a><a href="https://flyinggooner.github.io/Stress-control/Stress-control.html" download="Stress-control.html">Ladda ner (HTML)</a><a href="https://github.com/FlyingGooner/Stress-control" target="_blank" rel="noopener">GitHub</a></div><p class="small">Spara som app: Android (Chrome) – tryck ⋮ och välj Installera app. iPhone (Safari) – tryck Dela och välj Lägg till på hemskärmen.</p><p class="muted small">Ladda ner (HTML) ger hela appen i en enda fil som du öppnar i webbläsaren, även utan nät. Den sparar sin data för sig – flytta data dit med en backup-fil.</p></div>
-        </details>
-      </div>
+      </details>
     </div>
   </section>
 </main>
