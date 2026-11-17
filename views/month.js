@@ -20,7 +20,7 @@ function monthRow(r) {
 }
 
 function renderMonth() {
-  $('month-title').textContent = monthLabel(month);
+  $('month-title').replaceChildren(...monthTitle(month));
   const rows = rowsForMonth(data, month);
   const t = totals(rows);
   const bal = balanceAfter(data, month);

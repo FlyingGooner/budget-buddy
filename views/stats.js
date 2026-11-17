@@ -13,7 +13,7 @@ function svg(tag, attrs = {}, ...children) {
 const stat = (value, label) => el('div', { class: 'stat' }, el('span', { class: 'stat-n', text: value }), el('span', { text: label }));
 
 function renderStats() {
-  $('stats-title').textContent = monthLabel(month);
+  $('stats-title').replaceChildren(...monthTitle(month));
   const rows = rowsForMonth(data, month), t = totals(rows);
   const exp = rows.filter((r) => r.type === 'expense');
   const last12 = Array.from({ length: 12 }, (_, i) => addMonths(month, i - 11)).map((m) => ({ m, ...totals(rowsForMonth(data, m)) }));

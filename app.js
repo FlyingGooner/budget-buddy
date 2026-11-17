@@ -64,15 +64,16 @@ const monthFmt = new Intl.DateTimeFormat('sv-SE', { month: 'long', year: 'numeri
 const monthShort = new Intl.DateTimeFormat('sv-SE', { month: 'short' });
 const toDate = (m) => { const [y, mo] = m.split('-').map(Number); return new Date(y, mo - 1, 1); };
 const cap = (s) => s.charAt(0).toUpperCase() + s.slice(1);
-// Med lönedag (payday > 1) spänner en budgetmånad över två kalendermånader: "November/december 2026", "Nov/dec".
+// Med lönedag (payday > 1, 2026-11-17): budgetmånaden heter efter vad pengarna används till – lönen den 25 november
+// är "December". Datan ligger kvar under lönemånaden (nyckeln), bara namnet flyttas en månad. monthSpan ger datumen.
 const paySplit = () => data?.settings?.payday > 1;
 const shortOf = (m) => monthShort.format(toDate(m)).replace('.', '');
-const monthLabel = (m) => {
-  if (!paySplit()) return cap(monthFmt.format(toDate(m)));
-  const n = addMonths(m, 1), [a, ay] = monthFmt.format(toDate(m)).split(' '), [b, by] = monthFmt.format(toDate(n)).split(' ');
-  return cap(ay === by ? `${a}/${b} ${ay}` : `${a} ${ay}/${b} ${by}`);
-};
-const monthShortLabel = (m) => cap(paySplit() ? `${shortOf(m)}/${shortOf(addMonths(m, 1))}` : shortOf(m));
+const named = (m) => (paySplit() ? addMonths(m, 1) : m);
+const monthLabel = (m) => cap(monthFmt.format(toDate(named(m))));
+const monthShortLabel = (m) => cap(shortOf(named(m)));
+const monthSpan = (m) => { const p = data.settings.payday; return `${p} ${shortOf(m)} – ${p - 1} ${shortOf(addMonths(m, 1))}`; };
+// Rubrik med datumspann under (bara med lönedag).
+const monthTitle = (m) => (paySplit() ? [monthLabel(m), el('small', { class: 'm-span', text: monthSpan(m) })] : [monthLabel(m)]);
 
 // Parse "1 234,50" / "1234.5" → öre (integer, no floats). null if invalid.
 function parseKr(s) {
