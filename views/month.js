@@ -166,6 +166,7 @@ function openRowDialog(r) {
   $('rd-amount').value = isNew ? '' : krInput(r.amount);
   $('rd-delete').hidden = isNew || r.kind !== 'one';
   $('rd-reset').hidden = isNew || r.kind !== 'rec' || !r.adjusted;
+  $('rd-edit').hidden = isNew || r.kind !== 'rec';
   $('rd-skip').hidden = isNew || r.kind !== 'rec' || (r.adjusted && r.amount === 0);
   $('rd-error').textContent = '';
   $('row-dialog').showModal();
@@ -173,6 +174,17 @@ function openRowDialog(r) {
 }
 
 $('add-oneoff').addEventListener('click', () => openRowDialog(null));
+// Lägg till som i Fitness buddy (2026-11-17): knappar under Månad öppnar Poster med rätt formulär; Poster har ingen egen flik.
+$('add-income').addEventListener('click', () => focusAdd('income'));
+$('add-expense').addEventListener('click', () => focusAdd('expense'));
+$('all-items').addEventListener('click', () => showTab('items'));
+$('items-back').addEventListener('click', () => history.back());
+$('rd-edit').addEventListener('click', () => {
+  const rec = dialogRow && data.recurring.find((x) => x.id === dialogRow.id);
+  if (!rec) return;
+  $('row-dialog').close();
+  setTimeout(() => openItemDialog(rec), 0);
+});
 $('rd-type').addEventListener('change', () => fillCategorySelect($('rd-cat'), null, $('rd-type').value));
 $('rd-cancel').addEventListener('click', () => $('row-dialog').close());
 

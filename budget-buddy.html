@@ -381,6 +381,12 @@ body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; 
 .ov-title { margin: 0; font-size: 1.125rem; font-weight: 500; display: flex; flex-direction: column; align-items: center; }
 .ov-title small { font-size: .8125rem; font-weight: 400; color: var(--on-surface-variant); }
 .card h2 .netto { text-transform: none; letter-spacing: 0; font-size: .75rem; font-weight: 400; }
+/* Lägg till under Månad (2026-11-17), som Extra fusk / Träningspass i Fitness buddy */
+.add-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+.add-row .extra { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 56px; padding: 6px 4px; }
+.add-row .extra .muted { font-size: .6875rem; }
+.all-items { justify-self: center; min-height: 40px; padding: 0 12px; border: 0; background: none; color: var(--primary); font: 500 .875rem var(--font); cursor: pointer; }
+.items-bar h1 { flex: 1; text-align: center; margin: 0; font-size: 1.125rem; }
 
 </style>
 </head>
@@ -392,7 +398,6 @@ body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; 
   <button type="button" data-tab="month" aria-current="page"><span class="pill" aria-hidden="true">📅</span><span>Månad</span></button>
   <button type="button" data-tab="stats"><span class="pill" aria-hidden="true">📈</span><span>Trend</span></button>
   <button type="button" data-tab="overview"><span class="pill" aria-hidden="true">🗓️</span><span>Historik</span></button>
-  <button type="button" data-tab="items"><span class="pill" aria-hidden="true">🔁</span><span>Poster</span></button>
   <button type="button" data-tab="settings"><span class="pill" aria-hidden="true">⚙️</span><span>Inst.</span></button>
 </nav>
 
@@ -408,7 +413,12 @@ body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; 
       <div class="card summary" id="summary"></div>
       <div class="card" id="income-card"></div>
       <div class="card" id="expense-card"></div>
-      <button type="button" class="extra" id="add-oneoff">+ Avvikelse <span class="muted">(engångspost den här månaden)</span></button>
+      <div class="add-row">
+        <button type="button" class="extra" id="add-income">+ Inkomst</button>
+        <button type="button" class="extra" id="add-expense">+ Kostnad</button>
+        <button type="button" class="extra" id="add-oneoff">+ Avvikelse <span class="muted">bara denna månad</span></button>
+      </div>
+      <button type="button" class="link all-items" id="all-items">Alla poster ›</button>
     </div>
   </section>
 
@@ -447,7 +457,7 @@ body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; 
 
   <!-- Poster -->
   <section class="tab" id="tab-items" hidden>
-    <h1>Poster</h1>
+    <div class="monthbar items-bar"><button type="button" class="icon-btn" id="items-back" aria-label="Tillbaka till Månad">◀</button><h1>Poster</h1><span class="icon-btn" aria-hidden="true"></span></div>
     <!-- Inkomster: namn + belopp (alltid per månad, netto) -->
     <div id="sort-bar"></div>
     <div class="card scroll" id="inc-card">
@@ -745,6 +755,7 @@ body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; 
     <p class="error" id="rd-error" role="alert"></p>
     <div class="actions wrap">
       <button type="button" class="btn text danger" id="rd-delete">Ta bort</button>
+      <button type="button" class="btn text" id="rd-edit">Ändra posten</button>
       <button type="button" class="btn text" id="rd-reset">Återställ</button>
       <button type="button" class="btn text" id="rd-skip">Hoppa över</button>
       <span class="spacer"></span>
@@ -1192,6 +1203,7 @@ I18N.add({
   'Språk och valuta': 'Language and currency', 'Valuta': 'Currency',
   'Byter du valuta räknas alla belopp om med valutakurserna nedan (Ångra finns). Sparkonton behåller sin egen valuta.': 'If you change currency all amounts are converted with the exchange rates below (Undo is available). Savings accounts keep their own currency.',
   '+ Ny inkomst': '+ New income', '+ Ny kostnad': '+ New cost', '+ Nytt sparkonto': '+ New savings account', '1 post': '1 item', 'Hjälp och manual': 'Help and manual', 'Så funkar appen': 'How the app works', 'All data finns bara i den här webbläsaren. Spara en backup-fil då och då.': 'All data is only in this browser. Save a backup file now and then.', 'Nettobelopp per månad, efter skatt. Engångsinkomster läggs som avvikelse i Månad.': 'Net amount per month, after tax. One-off income goes in as a deviation in Month.', 'Tryck på en post för att ändra den, håll in för att markera flera. Nya poster gäller från den månad du tittar på.': 'Tap an item to change it, press and hold to select several. New items apply from the month you are viewing.',
+  '+ Inkomst': '+ Income', '+ Kostnad': '+ Cost', 'bara denna månad': 'this month only', 'Alla poster ›': 'All items ›', 'Tillbaka till Månad': 'Back to Month', 'Ändra posten': 'Edit item',
   'Fler val': 'More options', 'CSV, text, egen kod, radera': 'CSV, text, own code, delete', 'Ett okrypterat kalkylark, t.ex. för Excel.': 'An unencrypted spreadsheet, e.g. for Excel.', 'All data finns bara i den här webbläsaren. Läs in backup-filen på en annan enhet för att flytta den.': 'All data is only in this browser. Load the backup file on another device to move it.', 'Backupen låses med koden. Spara den i din lösenordshanterare.': 'The backup is locked with the code. Save it in your password manager.',
   'Valutakurser': 'Exchange rates', 'Allmänt': 'General', 'Inga': 'None', 'Inget': 'None', 'Tom': 'Empty', 'Egna': 'Own', 'Appens': "The app's", 'Importera från text': 'Import from text',
   'Byter du valuta räknas alla belopp om med valutakurserna (Ångra finns). Sparkonton behåller sin egen valuta.': 'If you change currency, all amounts are converted with the exchange rates (Undo is available). Savings accounts keep their own currency.',
@@ -1305,7 +1317,7 @@ I18N.add({
 </script>
 <script>
 // ---- version.js ----
-﻿self.APP_VERSION = '0.12.48';
+﻿self.APP_VERSION = '0.12.49';
 
 </script>
   <script>
@@ -2283,8 +2295,9 @@ function showTab(name, push = true) {
     if (push) history.pushState({ tab: 1 }, '', '#' + name); else history.replaceState(history.state, '', '#' + name);
   }
   document.querySelectorAll('.tab').forEach((t) => { t.hidden = t.id !== `tab-${name}`; });
+  const navName = name === 'items' ? 'month' : name;   // Poster är en undersida till Månad (2026-11-17)
   document.querySelectorAll('#nav button').forEach((b) => {
-    if (b.dataset.tab === name) b.setAttribute('aria-current', 'page'); else b.removeAttribute('aria-current');
+    if (b.dataset.tab === navName) b.setAttribute('aria-current', 'page'); else b.removeAttribute('aria-current');
   });
   store.set(CONFIG.tabKey, name);
 }
@@ -2483,6 +2496,7 @@ function openRowDialog(r) {
   $('rd-amount').value = isNew ? '' : krInput(r.amount);
   $('rd-delete').hidden = isNew || r.kind !== 'one';
   $('rd-reset').hidden = isNew || r.kind !== 'rec' || !r.adjusted;
+  $('rd-edit').hidden = isNew || r.kind !== 'rec';
   $('rd-skip').hidden = isNew || r.kind !== 'rec' || (r.adjusted && r.amount === 0);
   $('rd-error').textContent = '';
   $('row-dialog').showModal();
@@ -2490,6 +2504,17 @@ function openRowDialog(r) {
 }
 
 $('add-oneoff').addEventListener('click', () => openRowDialog(null));
+// Lägg till som i Fitness buddy (2026-11-17): knappar under Månad öppnar Poster med rätt formulär; Poster har ingen egen flik.
+$('add-income').addEventListener('click', () => focusAdd('income'));
+$('add-expense').addEventListener('click', () => focusAdd('expense'));
+$('all-items').addEventListener('click', () => showTab('items'));
+$('items-back').addEventListener('click', () => history.back());
+$('rd-edit').addEventListener('click', () => {
+  const rec = dialogRow && data.recurring.find((x) => x.id === dialogRow.id);
+  if (!rec) return;
+  $('row-dialog').close();
+  setTimeout(() => openItemDialog(rec), 0);
+});
 $('rd-type').addEventListener('change', () => fillCategorySelect($('rd-cat'), null, $('rd-type').value));
 $('rd-cancel').addEventListener('click', () => $('row-dialog').close());
 

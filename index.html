@@ -25,7 +25,6 @@
   <button type="button" data-tab="month" aria-current="page"><span class="pill" aria-hidden="true">📅</span><span>Månad</span></button>
   <button type="button" data-tab="stats"><span class="pill" aria-hidden="true">📈</span><span>Trend</span></button>
   <button type="button" data-tab="overview"><span class="pill" aria-hidden="true">🗓️</span><span>Historik</span></button>
-  <button type="button" data-tab="items"><span class="pill" aria-hidden="true">🔁</span><span>Poster</span></button>
   <button type="button" data-tab="settings"><span class="pill" aria-hidden="true">⚙️</span><span>Inst.</span></button>
 </nav>
 
@@ -41,7 +40,12 @@
       <div class="card summary" id="summary"></div>
       <div class="card" id="income-card"></div>
       <div class="card" id="expense-card"></div>
-      <button type="button" class="extra" id="add-oneoff">+ Avvikelse <span class="muted">(engångspost den här månaden)</span></button>
+      <div class="add-row">
+        <button type="button" class="extra" id="add-income">+ Inkomst</button>
+        <button type="button" class="extra" id="add-expense">+ Kostnad</button>
+        <button type="button" class="extra" id="add-oneoff">+ Avvikelse <span class="muted">bara denna månad</span></button>
+      </div>
+      <button type="button" class="link all-items" id="all-items">Alla poster ›</button>
     </div>
   </section>
 
@@ -80,7 +84,7 @@
 
   <!-- Poster -->
   <section class="tab" id="tab-items" hidden>
-    <h1>Poster</h1>
+    <div class="monthbar items-bar"><button type="button" class="icon-btn" id="items-back" aria-label="Tillbaka till Månad">◀</button><h1>Poster</h1><span class="icon-btn" aria-hidden="true"></span></div>
     <!-- Inkomster: namn + belopp (alltid per månad, netto) -->
     <div id="sort-bar"></div>
     <div class="card scroll" id="inc-card">
@@ -378,6 +382,7 @@
     <p class="error" id="rd-error" role="alert"></p>
     <div class="actions wrap">
       <button type="button" class="btn text danger" id="rd-delete">Ta bort</button>
+      <button type="button" class="btn text" id="rd-edit">Ändra posten</button>
       <button type="button" class="btn text" id="rd-reset">Återställ</button>
       <button type="button" class="btn text" id="rd-skip">Hoppa över</button>
       <span class="spacer"></span>

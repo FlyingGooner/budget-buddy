@@ -127,8 +127,9 @@ function showTab(name, push = true) {
     if (push) history.pushState({ tab: 1 }, '', '#' + name); else history.replaceState(history.state, '', '#' + name);
   }
   document.querySelectorAll('.tab').forEach((t) => { t.hidden = t.id !== `tab-${name}`; });
+  const navName = name === 'items' ? 'month' : name;   // Poster är en undersida till Månad (2026-11-17)
   document.querySelectorAll('#nav button').forEach((b) => {
-    if (b.dataset.tab === name) b.setAttribute('aria-current', 'page'); else b.removeAttribute('aria-current');
+    if (b.dataset.tab === navName) b.setAttribute('aria-current', 'page'); else b.removeAttribute('aria-current');
   });
   store.set(CONFIG.tabKey, name);
 }
