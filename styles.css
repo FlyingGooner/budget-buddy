@@ -319,3 +319,6 @@ body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; 
 .sect-sub { flex: 1; text-align: right; color: var(--on-surface-variant); font-size: .875rem; font-weight: 400; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .sect[open] { padding-bottom: 8px; }
 #data-card .sect.data-text { margin-top: 8px; }
+/* Data-kortet städat (2026-11-17) */
+.data-more > :not(summary) { margin-top: 4px; }
+#data-card .data-more .data-text { margin-top: 0; }

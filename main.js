@@ -183,8 +183,7 @@ function renderPwd() {
   fill(box, el('div', { class: 'pwd-card' },
     el('div', { class: 'pwd-head' }, el('span', { text: '🔑 Din kod' }), toggle, copy, change),
     showPwd && p ? el('p', { class: 'pwd-show', text: p }) : null,
-    el('button', { type: 'button', class: 'btn text pwd-own', on: { click: ownPassword } }, 'Välj egen kod'),
-    el('p', { class: 'muted small pwd-note', text: 'Alla backup-filer låses med den här koden. Spara den i din lösenordshanterare – du behöver den för att öppna en backup på en ny telefon.' })));
+    el('p', { class: 'muted small pwd-note', text: 'Backupen låses med koden. Spara den i din lösenordshanterare.' })));
 }
 async function openImport(text) {
   const r = await openBackupText(text, 'budget-buddy');
@@ -321,6 +320,7 @@ if ('serviceWorker' in navigator && location.protocol === 'https:') {
 }
 
 // CSV (2026-11-15): en rad per post och månad – från första månaden med data till ett år framåt (högst 20 år). Inte krypterad.
+$('pwd-own').addEventListener('click', ownPassword);
 $('csv-export').addEventListener('click', () => {
   const tr = Csv.tr, cur = currentMonth();
   const months = [...data.recurring.map((r) => r.start), ...data.oneOffs.map((o) => o.month), cur].sort();

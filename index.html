@@ -1,4 +1,4 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="sv">
 <head>
 <meta charset="utf-8">
@@ -313,26 +313,30 @@
     <div class="col">
       <div class="card" id="data-card">
         <h2>Data</h2>
-        <p class="muted">Backup-filen innehåller all din ekonomidata och låses alltid med din kod nedan. Radera gamla filer. Läs in filen på en annan enhet för att flytta din data.</p>
         <div class="actions wrap">
           <button type="button" class="btn filled" id="backup-save">Spara backup-fil</button>
           <label class="btn tonal btn-file">Läs in backup-fil<input type="file" id="import-file" accept=".txt,.json"></label>
         </div>
         <div class="pwd-box" id="pwd-box"></div>
-        <div class="csv-row"><button type="button" class="btn text" id="csv-export">Exportera CSV</button><p class="muted small">CSV-filen är ett enkelt kalkylark för t.ex. Excel eller en egen app. Den är inte krypterad – spara den inte där andra kommer åt den.</p></div>
         <p class="error" id="import-error" role="alert"></p>
-        <details class="sect data-text">
-          <summary><span>Klistra in text</span></summary>
-          <label class="field"><span>Importera (ersätter all data)</span><textarea id="import-text" rows="4" autocomplete="off" spellcheck="false" placeholder="Klistra in innehållet i en backup-fil"></textarea></label>
-          <div class="actions"><span class="spacer"></span><button type="button" class="btn tonal" id="import-btn">Importera</button></div>
-        </details>
         <details class="sect" id="trash-card">
           <summary><span>Papperskorg</span><span class="sect-sub" id="sum-trash"></span></summary>
           <p class="muted small">Poster, avvikelser och sparkonton du tar bort ligger här i 30 dagar. Sedan raderas de för gott.</p>
           <ul class="list" id="trash-list"></ul>
           <div class="actions"><span class="spacer"></span><button type="button" class="btn text danger" id="trash-empty" hidden>Töm papperskorgen</button></div>
         </details>
-        <div class="actions"><button type="button" class="btn text danger" id="reset">Radera all data</button></div>
+        <details class="sect data-more">
+          <summary><span>Fler val</span><span class="sect-sub">CSV, text, egen kod, radera</span></summary>
+          <div class="csv-row"><button type="button" class="btn text" id="csv-export">Exportera CSV</button><p class="muted small">Ett okrypterat kalkylark, t.ex. för Excel.</p></div>
+          <details class="data-text">
+            <summary class="data-text-title">Klistra in text</summary>
+            <label class="field"><span>Importera (ersätter all data)</span><textarea id="import-text" rows="4" autocomplete="off" spellcheck="false" placeholder="Klistra in innehållet i en backup-fil"></textarea></label>
+            <div class="actions"><span class="spacer"></span><button type="button" class="btn tonal" id="import-btn">Importera</button></div>
+          </details>
+          <div class="actions"><button type="button" class="btn text" id="pwd-own">Välj egen kod</button></div>
+          <p class="muted small">All data finns bara i den här webbläsaren. Läs in backup-filen på en annan enhet för att flytta den.</p>
+          <div class="actions"><button type="button" class="btn text danger" id="reset">Radera all data</button></div>
+        </details>
       </div>
       <div class="card">
         <h2>App</h2>
