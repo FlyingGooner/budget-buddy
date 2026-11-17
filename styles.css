@@ -359,3 +359,7 @@ body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; 
 .help-wrap[open] > summary.help-title::after { transform: rotate(90deg); }
 .help-wrap > .card.help { padding: 0; background: none; box-shadow: none; }
 .help-wrap > .card.help > h2 { display: none; }
+/* Flikar som i Fitness buddy (2026-11-17): Månad, Trend, Historik, Poster, Inst.; månadsraden är ett kort */
+.tab .monthbar { background: var(--surface-container); border-radius: var(--r-lg); padding: 8px; }
+.ov-title { margin: 0; font-size: 1.125rem; font-weight: 500; display: flex; flex-direction: column; align-items: center; }
+.ov-title small { font-size: .8125rem; font-weight: 400; color: var(--on-surface-variant); }

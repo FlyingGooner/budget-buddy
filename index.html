@@ -23,8 +23,8 @@
 
 <nav id="nav" aria-label="Huvudmeny">
   <button type="button" data-tab="month" aria-current="page"><span class="pill" aria-hidden="true">📅</span><span>Månad</span></button>
-  <button type="button" data-tab="overview"><span class="pill" aria-hidden="true">🗓️</span><span>Översikt</span></button>
-  <button type="button" data-tab="stats"><span class="pill" aria-hidden="true">📊</span><span>Statistik</span></button>
+  <button type="button" data-tab="stats"><span class="pill" aria-hidden="true">📈</span><span>Trend</span></button>
+  <button type="button" data-tab="overview"><span class="pill" aria-hidden="true">🗓️</span><span>Historik</span></button>
   <button type="button" data-tab="items"><span class="pill" aria-hidden="true">🔁</span><span>Poster</span></button>
   <button type="button" data-tab="settings"><span class="pill" aria-hidden="true">⚙️</span><span>Inst.</span></button>
 </nav>
@@ -47,8 +47,7 @@
 
   <!-- Översikt -->
   <section class="tab" id="tab-overview" hidden>
-    <h1>Översikt</h1>
-    <div class="card" id="overview"></div>
+    <div class="col" id="overview"></div>
   </section>
 
   <!-- Statistik (follows the month chosen in Månad) -->

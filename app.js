@@ -4,7 +4,7 @@
 'use strict';
 
 const CONFIG = { storageKey: 'bb.data', tabKey: 'bb.tab', longPressMs: 450 };
-const TABS = ['month', 'overview', 'stats', 'items', 'settings'];
+const TABS = ['month', 'stats', 'overview', 'items', 'settings'];
 const $ = (id) => document.getElementById(id);
 
 let data = loadData(store.get(CONFIG.storageKey));
