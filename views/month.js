@@ -19,7 +19,28 @@ function monthRow(r) {
   return li;
 }
 
+// Ostängda månader (2026-11-17): flera månader kan vara öppna. Har man börjat stänga månader påminns man om
+// tidigare månader (från den första stängda) som inte är stängda – tryck för att gå dit och stänga.
+function unclosedMonths() {
+  const ms = Object.keys(data.closed).sort();
+  if (!ms.length) return [];
+  const out = [];
+  for (let x = ms[0]; x < activeMonth() && out.length < 24; x = addMonths(x, 1)) {
+    const t = monthTotals(data, x);
+    if (!t.closed && (t.income || t.expense)) out.push(x);
+  }
+  return out;
+}
+function renderOpenMonths() {
+  const open = unclosedMonths().filter((m) => m !== month);
+  $('open-months').hidden = !open.length;
+  fill($('open-months'), open.length ? [el('span', { text: open.length === 1 ? 'Inte stängd:' : 'Inte stängda:' }),
+    ...open.slice(-4).map((m) => el('button', { type: 'button', class: 'om-chip', text: monthShortLabel(m) + (m.slice(0, 4) !== activeMonth().slice(0, 4) ? ' ' + m.slice(2, 4) : ''),
+      'aria-label': `Gå till ${monthLabel(m)} och stäng den`, on: { click: () => setMonth(m) } }))] : null);
+}
+
 function renderMonth() {
+  renderOpenMonths();
   $('month-title').replaceChildren(...monthTitle(month));
   const rows = rowsForMonth(data, month);
   const t = monthTotals(data, month);   // stängd månad: left = faktiskt kvar

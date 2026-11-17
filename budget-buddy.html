@@ -525,6 +525,11 @@ body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; 
 .sv-val { align-items: flex-end; font-variant-numeric: tabular-nums; font-weight: 500; }
 .sv-name small, .sv-val small { font-size: .75rem; font-weight: 400; color: var(--on-surface-variant); font-variant-numeric: tabular-nums; }
 .sv-val small.pos { color: var(--primary); } .sv-val small.neg { color: var(--error); }
+/* Påminnelse om ostängda månader (2026-11-17) */
+.open-months { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; padding: 8px 12px; border-radius: var(--r-md); background: color-mix(in srgb, #e8a33d 18%, var(--surface-container)); font-size: .8125rem; color: var(--on-surface); }
+.open-months[hidden] { display: none; }
+.om-chip { min-height: 32px; padding: 0 12px; border: 0; border-radius: 999px; background: var(--surface-container); color: var(--primary); font: 500 .8125rem var(--font); cursor: pointer; }
+#summary .fold > summary > p.muted:not(.small) { font-size: .875rem; }
 
 </style>
 </head>
@@ -548,6 +553,7 @@ body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; 
         <h1><button type="button" class="step-title" id="month-title" title="Gå till denna månad"></button></h1>
         <button type="button" class="icon-btn" id="next-month" aria-label="Nästa månad">▶</button>
       </div>
+      <div class="open-months" id="open-months" hidden></div>
       <div class="card summary" id="summary"></div>
       <div class="card" id="income-card"></div>
       <div class="card" id="expense-card"></div>
@@ -810,6 +816,7 @@ body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; 
           <p>När månaden är slut (dagen före lönen) trycker du ✓ Stäng månaden under Kvar och skriver in vad som faktiskt fanns kvar på kontot. Då visar Kvar det faktiska beloppet, och skillnaden mot det planerade visas som Rörligt i stapeln.</p>
           <p>I samma ruta fyller du i saldot på sparkontona – de är förifyllda med det beräknade saldot, så du ändrar bara det som skiljer, t.ex. efter en extra överföring.</p>
           <p>Stänger du den aktuella månaden går appen vidare till nästa månad – den blir den aktuella (även när du trycker på Månad i menyn eller öppnar appen), fast lönen inte har kommit än.</p>
+          <p>Flera månader kan vara öppna samtidigt. Har du börjat stänga månader visas överst i Månad de tidigare månader som inte är stängda (Inte stängd: Okt) – tryck för att gå dit och stänga.</p>
           <p>Historik, Trend och saldot använder sedan det faktiska beloppet för den månaden. I Historik räknas månader som inte är stängda med snittet av de rörliga utgifterna (≈), så prognosen för helåret blir realistisk. Grafen visar kvar + sparat över tid. ✓ = stängd månad. Ändra rättar beloppet, Öppna igen tar bort det.</p>
         </details>
         <details><summary>Lönedag</summary>
@@ -891,6 +898,7 @@ body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; 
           <p>When the month is over (the day before payday), tap ✓ Close the month under Left and enter what was actually left in the account. Left then shows the actual amount, and the difference from the plan is shown as Variable in the bar.</p>
           <p>In the same dialog you enter the savings account balances – they are prefilled with the estimated balance, so you only change what differs, e.g. after an extra transfer.</p>
           <p>If you close the current month, the app moves on to the next month – it becomes the current one (also when you tap Month in the menu or open the app), even before payday.</p>
+          <p>Several months can be open at once. Once you have started closing months, earlier months that are not closed are shown at the top of Month (Not closed: Oct) – tap to go there and close it.</p>
           <p>History, Trend and the balance then use the actual amount for that month. In History, months that are not closed are counted with the average variable spending (≈), so the full-year forecast is realistic. The chart shows left + saved over time. ✓ = closed month. Edit corrects the amount, Reopen removes it.</p>
         </details>
         <details><summary>Payday</summary>
@@ -1456,6 +1464,7 @@ I18N.add({
   'Sparkonto': 'Savings account', 'Inget sparkonto': 'No savings account', 'Saldo på kontot nu': 'Account balance now', 'Fyll i saldot så skapas kontot. Det räknas upp med sparandet varje månad.': 'Fill in the balance and the account is created. It counts up with the savings every month.', 'Beräknat från senaste saldot + sparandet – ändra om det inte stämmer.': 'Estimated from the latest balance + savings – change it if it is wrong.',
   'Totalt sparat': 'Total saved', 'Sparkonton ›': 'Savings accounts ›',
   'Ifyllt': 'Entered',
+  'Inte stängd:': 'Not closed:', 'Inte stängda:': 'Not closed:',
   'Hemvaluta': 'Home currency', 'Fler val': 'More options', 'CSV, text, egen kod, radera': 'CSV, text, own code, delete', 'Ett okrypterat kalkylark, t.ex. för Excel.': 'An unencrypted spreadsheet, e.g. for Excel.', 'All data finns bara i den här webbläsaren. Läs in backup-filen på en annan enhet för att flytta den.': 'All data is only in this browser. Load the backup file on another device to move it.', 'Backupen låses med koden. Spara den i din lösenordshanterare.': 'The backup is locked with the code. Save it in your password manager.',
   'Valutakurser': 'Exchange rates', 'Allmänt': 'General', 'Inga': 'None', 'Inget': 'None', 'Tom': 'Empty', 'Egna': 'Own', 'Appens': "The app's", 'Importera från text': 'Import from text',
   'Byter du valuta räknas alla belopp om med valutakurserna (Ångra finns). Sparkonton behåller sin egen valuta.': 'If you change currency, all amounts are converted with the exchange rates (Undo is available). Savings accounts keep their own currency.',
@@ -1520,6 +1529,7 @@ I18N.add({
   [/^(\d+) poster$/, '$1 items'],
   [/^Den (\d+):e \(lönedag\)$/, 'The $1th (payday)'],
   [/^Den (\d+):e$/, 'The $1th'],
+  [/^Gå till (.+) och stäng den$/, (g, tr) => `Go to ${tr(g[1])} and close it`],
   [/^Ifyllt (\S+)$/, (g, tr) => `Entered ${tr(g[1])}`],
   [/^1 månad hittills · (\d+) prognos$/, '1 month so far · $1 forecast'],
   [/^(.+) i månaden$/, '$1 this month'],
@@ -1606,7 +1616,7 @@ I18N.add({
 </script>
 <script>
 // ---- version.js ----
-﻿self.APP_VERSION = '0.12.80';
+﻿self.APP_VERSION = '0.12.81';
 
 </script>
   <script>
@@ -2695,7 +2705,28 @@ function monthRow(r) {
   return li;
 }
 
+// Ostängda månader (2026-11-17): flera månader kan vara öppna. Har man börjat stänga månader påminns man om
+// tidigare månader (från den första stängda) som inte är stängda – tryck för att gå dit och stänga.
+function unclosedMonths() {
+  const ms = Object.keys(data.closed).sort();
+  if (!ms.length) return [];
+  const out = [];
+  for (let x = ms[0]; x < activeMonth() && out.length < 24; x = addMonths(x, 1)) {
+    const t = monthTotals(data, x);
+    if (!t.closed && (t.income || t.expense)) out.push(x);
+  }
+  return out;
+}
+function renderOpenMonths() {
+  const open = unclosedMonths().filter((m) => m !== month);
+  $('open-months').hidden = !open.length;
+  fill($('open-months'), open.length ? [el('span', { text: open.length === 1 ? 'Inte stängd:' : 'Inte stängda:' }),
+    ...open.slice(-4).map((m) => el('button', { type: 'button', class: 'om-chip', text: monthShortLabel(m) + (m.slice(0, 4) !== activeMonth().slice(0, 4) ? ' ' + m.slice(2, 4) : ''),
+      'aria-label': `Gå till ${monthLabel(m)} och stäng den`, on: { click: () => setMonth(m) } }))] : null);
+}
+
 function renderMonth() {
+  renderOpenMonths();
   $('month-title').replaceChildren(...monthTitle(month));
   const rows = rowsForMonth(data, month);
   const t = monthTotals(data, month);   // stängd månad: left = faktiskt kvar

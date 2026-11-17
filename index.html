@@ -37,6 +37,7 @@
         <h1><button type="button" class="step-title" id="month-title" title="Gå till denna månad"></button></h1>
         <button type="button" class="icon-btn" id="next-month" aria-label="Nästa månad">▶</button>
       </div>
+      <div class="open-months" id="open-months" hidden></div>
       <div class="card summary" id="summary"></div>
       <div class="card" id="income-card"></div>
       <div class="card" id="expense-card"></div>
@@ -299,6 +300,7 @@
           <p>När månaden är slut (dagen före lönen) trycker du ✓ Stäng månaden under Kvar och skriver in vad som faktiskt fanns kvar på kontot. Då visar Kvar det faktiska beloppet, och skillnaden mot det planerade visas som Rörligt i stapeln.</p>
           <p>I samma ruta fyller du i saldot på sparkontona – de är förifyllda med det beräknade saldot, så du ändrar bara det som skiljer, t.ex. efter en extra överföring.</p>
           <p>Stänger du den aktuella månaden går appen vidare till nästa månad – den blir den aktuella (även när du trycker på Månad i menyn eller öppnar appen), fast lönen inte har kommit än.</p>
+          <p>Flera månader kan vara öppna samtidigt. Har du börjat stänga månader visas överst i Månad de tidigare månader som inte är stängda (Inte stängd: Okt) – tryck för att gå dit och stänga.</p>
           <p>Historik, Trend och saldot använder sedan det faktiska beloppet för den månaden. I Historik räknas månader som inte är stängda med snittet av de rörliga utgifterna (≈), så prognosen för helåret blir realistisk. Grafen visar kvar + sparat över tid. ✓ = stängd månad. Ändra rättar beloppet, Öppna igen tar bort det.</p>
         </details>
         <details><summary>Lönedag</summary>
@@ -380,6 +382,7 @@
           <p>When the month is over (the day before payday), tap ✓ Close the month under Left and enter what was actually left in the account. Left then shows the actual amount, and the difference from the plan is shown as Variable in the bar.</p>
           <p>In the same dialog you enter the savings account balances – they are prefilled with the estimated balance, so you only change what differs, e.g. after an extra transfer.</p>
           <p>If you close the current month, the app moves on to the next month – it becomes the current one (also when you tap Month in the menu or open the app), even before payday.</p>
+          <p>Several months can be open at once. Once you have started closing months, earlier months that are not closed are shown at the top of Month (Not closed: Oct) – tap to go there and close it.</p>
           <p>History, Trend and the balance then use the actual amount for that month. In History, months that are not closed are counted with the average variable spending (≈), so the full-year forecast is realistic. The chart shows left + saved over time. ✓ = closed month. Edit corrects the amount, Reopen removes it.</p>
         </details>
         <details><summary>Payday</summary>

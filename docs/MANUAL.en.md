@@ -27,6 +27,7 @@ The same text is in the app under **Settings → General → Help and manual**. 
 - When the month is over (the day before payday), tap **✓ Close the month** under Left and enter what was actually left in the account. Left then shows the actual amount, and the difference from the plan is shown as **Variable** in the bar.
 - In the same dialog you enter the savings account balances – they are prefilled with the estimated balance, so you only change what differs, e.g. after an extra transfer.
 - If you close the current month, the app moves on to the next month – it becomes the current one (also when you tap Month in the menu or open the app), even before payday.
+- Several months can be open at once. Once you have started closing months, earlier months that are not closed are shown at the top of Month (**Not closed: Oct**) – tap to go there and close it.
 - History, Trend and the balance then use the actual amount for that month. In History, months that are not closed are counted with the average variable spending (≈), so the full-year forecast is realistic. The chart shows left + saved over time. ✓ = closed month. **Edit** corrects the amount, **Reopen** removes it.
 
 ## Payday
