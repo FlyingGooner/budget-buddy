@@ -41,9 +41,11 @@ function renderItems() {
       'aria-label': `Sparande ${kr(savMonthly)}/mån`, on: { click: () => $('sav-card').scrollIntoView({ behavior: 'smooth', block: 'start' }) } },
     el('span', { class: 'row-name' }, el('span', { text: '🐷 Sparande' }), el('span', { class: 'row-sub', text: savers.length === 1 ? '1 sparpost · se nedan' : `${savers.length} sparposter · se nedan` })),
     el('span', { class: 'amount', text: kr(savMonthly) }))) : null;
-    fill($(list), items.length ? [...rest.map((r) => itemRow(r, now)), savRow] : el('li', { class: 'muted empty-row', text: empty }));
+    // 2026-11-17: sparande är inte en kostnad – bara i eget kort, och inte med i Kostnaders summa.
+    if (type === 'expense') $(sum).textContent = rest.length ? `${kr(monthly - savMonthly)}/mån` : '';
+    void savRow;
+    fill($(list), rest.length ? rest.map((r) => itemRow(r, now)) : el('li', { class: 'muted empty-row', text: empty }));
     if (type === 'expense') {
-      $('sav-card').hidden = !savers.length;
       $('sav-sum').textContent = savers.length ? `${kr(savMonthly)}/mån` : '';
       fill($('sav-list'), savers.map((r) => {
         const li = itemRow(r, now), acc = data.accounts.find((a) => (a.feeds || []).includes(r.id));
@@ -56,6 +58,7 @@ function renderItems() {
     fillCategorySelect(f.elements.category, f.elements.category.value, f.dataset.type);
     fillPersonSelect(f.elements.person, f.elements.person.value);
   }
+  fillPersonSelect($('sav-form').elements.person, $('sav-form').elements.person.value);
 }
 
 // Quick add: name + amount (+ category) + how often. Starts the month being viewed.
@@ -72,8 +75,14 @@ function setupAddForm(form) {
     if (amount == null) { err.textContent = 'Skriv ett belopp, t.ex. 1 250 eller 99,50.'; f.amount.focus(); return; }
     if (data.recurring.length >= MAX_RECURRING) { err.textContent = `Max ${MAX_RECURRING} poster.`; return; }
     err.textContent = '';
-    data.recurring.push({ id: newId(), name, amount, type, category: f.category.value, person: personValue(f.person),
+    const bal = f.balance && f.balance.value.trim() ? parseKr(f.balance.value) : null;
+    if (f.balance && f.balance.value.trim() && (bal == null || !isAmount(bal))) { err.textContent = 'Skriv ett saldo, t.ex. 45 000 eller 1250,50.'; f.balance.focus(); return; }
+    const id = newId();
+    data.recurring.push({ id, name, amount, type, category: f.category.value, person: personValue(f.person),
       every: type === 'income' ? 1 : Number(f.every.value), start: month, end: null });
+    if (bal != null && data.accounts.length < MAX_ACCOUNTS)   // sparande med saldo = eget sparkonto som räknas upp
+      data.accounts.push({ id: 'a' + newId().slice(-10), name: cleanName(name, 30), currency: home(), balances: { [month]: bal }, feeds: [id] });
+    if (f.balance) f.balance.value = '';
     data = loadData(data);
     save();
     if (f.name) f.name.value = ''; f.amount.value = '';
@@ -83,13 +92,13 @@ function setupAddForm(form) {
 }
 setupAddForm($('inc-form'));
 setupAddForm($('exp-form'));
+setupAddForm($('sav-form'));
 
 // Jump from an empty state to the right add form.
-$('sav-add').addEventListener('click', () => { focusAdd('expense'); $('exp-form').elements.category.value = SAVINGS_CAT; });
 function focusAdd(type) {
   showTab('items');
-  $(type === 'income' ? 'inc-add' : 'exp-add').open = true;
-  const els = $(type === 'income' ? 'inc-form' : 'exp-form').elements;
+  $({ income: 'inc-add', expense: 'exp-add', savings: 'sav-addwrap' }[type]).open = true;
+  const els = $({ income: 'inc-form', expense: 'exp-form', savings: 'sav-form' }[type]).elements;
   const input = els.name || els.category;
   input.scrollIntoView({ block: 'center', behavior: 'smooth' });
   input.focus({ preventScroll: true });

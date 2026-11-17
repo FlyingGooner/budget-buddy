@@ -483,3 +483,7 @@ body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; 
 .s-var { background: #8a6bbf; }
 .cd-acc-h { margin: 12px 0 0; font-size: .875rem; font-weight: 500; }
 #cd-accounts .row2 { margin-top: 4px; }
+/* + Sparande som egen knapp (2026-11-17) */
+.add-row { grid-template-columns: repeat(4, 1fr); gap: 6px; }
+.add-row .extra { font-size: .875rem; padding: 6px 2px; }
+#sav-form .hint-row { grid-column: 1 / -1; }

@@ -62,7 +62,7 @@ function renderMonth() {
   fill($('summary'), fold('kvar', [el('h2', { text: 'Kvar' }),
     el('p', { class: 'big ' + (t.left < 0 ? 'neg' : 'pos'), text: kr(t.left, true) }),
     closeLine(t),
-    el('p', { class: 'muted' }, `In ${kr(t.income)} · Ut ${kr(t.expense)}`,
+    el('p', { class: 'muted' }, `In ${kr(t.income)} · Ut ${kr(t.expense - t.savings)}` + (t.savings ? ` · Sparat ${kr(t.savings)}` : ''),
       hasPrev && delta ? el('span', { class: 'delta ' + (delta < 0 ? 'neg' : 'pos'), text: `${delta > 0 ? '▲' : '▼'} ${kr(Math.abs(delta))} mot ${monthShortLabel(addMonths(month, -1)).toLowerCase()}` }) : null),
     el('div', { class: 'segbar', role: 'img', 'aria-label': `Av inkomsten: kostnader ${kr(t.expense - t.savings)}, sparande ${kr(t.savings)}, kvar ${kr(Math.max(0, t.left))}` },
       seg('s-exp', t.expense - t.savings, 'Kostnader'), seg('s-sav', t.savings, 'Sparande'), seg('s-var', varSpend, 'Rörligt'), seg('s-left', Math.max(0, t.left), 'Kvar')),
@@ -185,9 +185,10 @@ function addLike(rs, label) {
   const same = (f) => rs.every((r) => (f(r) ?? null) === (f(rs[0]) ?? null)) ? f(rs[0]) ?? null : undefined;
   const rec = (r) => data.recurring.find((x) => x.id === r.id);
   return el('button', { type: 'button', class: 'link add-like', text: `+ Lägg till i ${label}`, on: { click: () => {
-    focusAdd('expense');
-    const f = $('exp-form').elements;
-    f.category.value = rs[0].category;
+    const sav = rs[0].category === SAVINGS_CAT;
+    focusAdd(sav ? 'savings' : 'expense');
+    const f = $(sav ? 'sav-form' : 'exp-form').elements;
+    if (!sav) f.category.value = rs[0].category;
     const person = same((r) => r.person);
     if (person !== undefined && f.person) f.person.value = person || '';
     const every = same((r) => rec(r)?.every);
@@ -272,7 +273,8 @@ document.addEventListener('touchend', (e) => {
 // ---------- Row dialog (adjust a recurring item for one month / edit a one-off) ----------
 // Category select: only categories of the given type (income/expense).
 function fillCategorySelect(sel, value, type = 'expense') {
-  const cats = data.settings.categories.filter((c) => c.type === type);
+  // Sparande väljs inte som kostnadskategori – det har en egen knapp (+ Sparande). Kvar för befintliga sparposter.
+  const cats = data.settings.categories.filter((c) => c.type === type && (c.id !== SAVINGS_CAT || value === SAVINGS_CAT));
   sel.replaceChildren(...cats.map((c) => el('option', { value: c.id, text: c.name })));
   sel.value = cats.some((c) => c.id === value) ? value : FALLBACK_CAT[type];
 }
@@ -321,6 +323,7 @@ $('add-oneoff').addEventListener('click', () => openRowDialog(null));
 // Lägg till som i Fitness buddy (2026-11-17): knappar under Månad öppnar Poster med rätt formulär; Poster har ingen egen flik.
 $('add-income').addEventListener('click', () => focusAdd('income'));
 $('add-expense').addEventListener('click', () => focusAdd('expense'));
+$('add-saving').addEventListener('click', () => focusAdd('savings'));
 $('all-items').addEventListener('click', () => showTab('items'));
 $('items-back').addEventListener('click', () => history.back());
 $('rd-edit').addEventListener('click', () => {

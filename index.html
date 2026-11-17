@@ -44,7 +44,8 @@
       <div class="add-row">
         <button type="button" class="extra" id="add-income">+ Inkomst</button>
         <button type="button" class="extra" id="add-expense">+ Kostnad</button>
-        <button type="button" class="extra" id="add-oneoff">+ Avvikelse <span class="muted">bara denna månad</span></button>
+        <button type="button" class="extra" id="add-saving">+ Sparande</button>
+        <button type="button" class="extra" id="add-oneoff">+ Avvikelse</button>
       </div>
       <button type="button" class="link all-items" id="all-items">Alla poster ›</button>
     </div>
@@ -118,10 +119,22 @@
       </form>
       </details>
     </div>
-    <div class="card scroll savings" id="sav-card" hidden>
+    <div class="card scroll savings" id="sav-card">
       <h2 class="split"><span>🐷 Sparande</span><span id="sav-sum"></span></h2>
       <ul class="list" id="sav-list"></ul>
-      <button type="button" class="link add-like" id="sav-add">+ Ny sparpost</button>
+      <details class="add-wrap" id="sav-addwrap"><summary>+ Nytt sparande</summary>
+      <form class="add-form" id="sav-form" data-type="expense" novalidate>
+        <input type="hidden" name="category" value="savings">
+        <label class="field grow"><span>Namn</span><input name="name" maxlength="60" placeholder="t.ex. Buffert" autocomplete="off"></label>
+        <label class="field amt"><span>Per gång (<span class="cur-unit">kr</span>)</span><input name="amount" inputmode="decimal" autocomplete="off"></label>
+        <label class="field"><span>Hur ofta</span><select name="every"></select></label>
+        <label class="field person-field"><span>Person (valfritt)</span><select name="person"></select></label>
+        <label class="field amt"><span>Saldo nu (valfritt)</span><input name="balance" inputmode="decimal" autocomplete="off"></label>
+        <p class="muted small hint-row">Sparande dras av från det som blir kvar, men räknas inte som en kostnad. Fyller du i saldot skapas ett sparkonto som räknas upp varje månad.</p>
+        <button type="submit" class="btn filled">Lägg till</button>
+        <p class="error" role="alert"></p>
+      </form>
+      </details>
     </div>
     <p class="muted small hint">Tryck på en post för att ändra den, håll in för att markera flera. Nya poster gäller från den månad du tittar på.</p>
   </section>
@@ -291,7 +304,7 @@
           <p>Får du lön t.ex. den 25:e räcker lönen den 25 november till december. Den månaden heter då December, med datumen 25 nov – 24 dec under. Före lönedagen är du kvar i förra månaden.</p>
         </details>
         <details><summary>Sparande och sparkonton</summary>
-          <p>Kostnader i kategorin Sparande visas i ett eget kort, både i Månad och under Alla poster. De räknas fortfarande av från det som blir kvar.</p>
+          <p>Sparande är en egen sorts post: tryck + Sparande under Månad. Ange namn, belopp, hur ofta och gärna saldot nu – då skapas ett sparkonto som räknas upp varje månad. Sparandet dras av från det som blir kvar, men räknas inte som en kostnad, och visas i ett eget kort både i Månad och under Alla poster.</p>
           <p>Sparkonton finns under Trend. Lägg till ett konto och fyll i saldot en gång. Kryssa sedan i vilka sparposter som går dit – då räknas saldot upp av sig självt varje månad (visas med ≈). Fyll i ett nytt saldo när du vill stämma av.</p>
           <p>Snabbast: tryck på en sparpost i Månad och fyll i Saldo på kontot nu. Finns inget konto skapas ett med samma namn, kopplat till sparposten. Sedan visas och ändras kontots saldo direkt i samma ruta.</p>
           <p>Ett konto kan ha en annan valuta (t.ex. USD); då räknas summan om till din valuta med kurserna under Valuta. Konton i annan valuta räknas inte upp automatiskt.</p>
@@ -371,7 +384,7 @@
           <p>If you are paid e.g. on the 25th, the salary on 25 November covers December. That month is then called December, with the dates 25 Nov – 24 Dec below. Before payday you are still in the previous month.</p>
         </details>
         <details><summary>Savings and savings accounts</summary>
-          <p>Costs in the Savings category are shown in a card of their own, both in Month and under All items. They are still deducted from what is left.</p>
+          <p>Savings are their own kind of item: tap + Saving under Month. Enter name, amount, frequency and preferably the balance now – a savings account is then created that counts up every month. Savings are deducted from what is left, but do not count as a cost, and are shown in a card of their own both in Month and under All items.</p>
           <p>Savings accounts are under Trend. Add an account and enter the balance once. Then tick which savings items go there – the balance then counts up by itself every month (shown with ≈). Enter a new balance whenever you want to reconcile.</p>
           <p>Quickest: tap a savings item in Month and fill in Account balance now. If there is no account, one with the same name is created, linked to the savings item. After that the balance is shown and changed in the same dialog.</p>
           <p>An account can have another currency (e.g. USD); the total is then converted to your currency with the rates under Currency. Accounts in another currency do not count up automatically.</p>

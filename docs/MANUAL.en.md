@@ -33,7 +33,7 @@ The same text is in the app under **Settings → General → Help and manual**. 
 - If you are paid e.g. on the 25th, the salary on 25 November covers December. That month is then called **December**, with the dates **25 Nov – 24 Dec** below. Before payday you are still in the previous month.
 
 ## Savings and savings accounts
-- Costs in the **Savings** category are shown in a card of their own, both in Month and under All items. They are still deducted from what is left.
+- Savings are their own kind of item: tap **+ Saving** under Month. Enter name, amount, frequency and preferably the balance now – a savings account is then created that counts up every month. Savings are deducted from what is left, but do not count as a cost, and are shown in a card of their own both in Month and under All items.
 - **Savings accounts** are under **Trend**. Add an account and enter the balance once. Then tick which savings items go there – the balance then counts up by itself every month (shown with ≈). Enter a new balance whenever you want to reconcile.
 - Quickest: tap a savings item in Month and fill in **Account balance now**. If there is no account, one with the same name is created, linked to the savings item. After that the balance is shown and changed in the same dialog.
 - An account can have another currency (e.g. USD); the total is then converted to your currency with the rates under Currency. Accounts in another currency do not count up automatically.

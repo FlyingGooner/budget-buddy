@@ -33,7 +33,7 @@ Samma text finns i appen under **Inställningar → Allmänt → Hjälp och manu
 - Får du lön t.ex. den 25:e räcker lönen den 25 november till december. Den månaden heter då **December**, med datumen **25 nov – 24 dec** under. Före lönedagen är du kvar i förra månaden.
 
 ## Sparande och sparkonton
-- Kostnader i kategorin **Sparande** visas i ett eget kort, både i Månad och under Alla poster. De räknas fortfarande av från det som blir kvar.
+- Sparande är en egen sorts post: tryck **+ Sparande** under Månad. Ange namn, belopp, hur ofta och gärna saldot nu – då skapas ett sparkonto som räknas upp varje månad. Sparandet dras av från det som blir kvar, men räknas inte som en kostnad, och visas i ett eget kort både i Månad och under Alla poster.
 - **Sparkonton** finns under **Trend**. Lägg till ett konto och fyll i saldot en gång. Kryssa sedan i vilka sparposter som går dit – då räknas saldot upp av sig självt varje månad (visas med ≈). Fyll i ett nytt saldo när du vill stämma av.
 - Snabbast: tryck på en sparpost i Månad och fyll i **Saldo på kontot nu**. Finns inget konto skapas ett med samma namn, kopplat till sparposten. Sedan visas och ändras kontots saldo direkt i samma ruta.
 - Ett konto kan ha en annan valuta (t.ex. USD); då räknas summan om till din valuta med kurserna under Valuta. Konton i annan valuta räknas inte upp automatiskt.
