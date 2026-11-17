@@ -3,19 +3,22 @@
 let dialogAcc = null;
 function renderAccounts() {
   const accs = data.accounts;
-  const total = (m) => accs.reduce((s, a) => s + toSek(balanceAt(a, m)?.amount || 0, a.currency), 0);
+  const total = (m) => accs.reduce((s, a) => s + toSek(estBalance(data, a, m)?.amount || 0, a.currency), 0);
   const foreign = accs.some((a) => a.currency !== home());
   $('acc-total').textContent = accs.length ? (foreign ? '≈ ' : '') + kr(total(month)) : '';
   $('acc-rates').textContent = foreign ? `Omräknat till ${CUR_NAMES[home()]}: ${ratesNote()}. Kurserna ändras under Inställningar.` : '';
   fill($('acc-list'), accs.length ? accs.map((a) => {
-    const cur = balanceAt(a, month), prev = prevBalance(a, month);
+    const cur = estBalance(data, a, month), real = balanceAt(a, month);
+    const prev = cur ? estBalance(data, a, addMonths(month, -1)) : null;
     const diff = cur && prev ? cur.amount - prev.amount : null;
+    const feedNames = (a.feeds || []).map((id) => data.recurring.find((r) => r.id === id)?.name).filter(Boolean);
     const sub = !cur ? 'Inget saldo än – tryck för att fylla i'
-      : cur.month === month ? 'Ifyllt den här månaden' : `Senast ifyllt ${monthLabel(cur.month).toLowerCase()}`;
+      : cur.estimated ? `Beräknat: ifyllt ${monthShortLabel(cur.from).toLowerCase()} + ${feedNames.join(', ')}`
+      : real && real.month === month ? 'Ifyllt den här månaden' : `Senast ifyllt ${monthLabel(real.month).toLowerCase()}`;
     return el('li', { class: 'row' }, el('button', { type: 'button', class: 'row-main',
       'aria-label': `${a.name}, ${cur ? money(cur.amount, a.currency) : 'inget saldo'}. Fyll i saldo`, on: { click: () => openAccDialog(a) } },
     el('span', { class: 'row-name' }, el('span', { text: a.name }), el('span', { class: 'row-sub', text: sub })),
-    el('span', { class: 'acc-amt amount' }, el('span', { text: cur ? money(cur.amount, a.currency) : '–' }),
+    el('span', { class: 'acc-amt amount' }, el('span', { text: cur ? (cur.estimated ? '≈ ' : '') + money(cur.amount, a.currency) : '–' }),
       cur && a.currency !== home() ? el('span', { class: 'row-sub', text: '≈ ' + kr(toSek(cur.amount, a.currency)) }) : null,
       diff != null ? el('span', { class: 'row-sub ' + (diff < 0 ? 'neg' : 'pos'), text: money(diff, a.currency, true) }) : null)));
   }) : el('li', { class: 'muted empty-row', text: 'Inga sparkonton än – lägg till det första nedan.' }));
@@ -48,7 +51,15 @@ function openAccDialog(a) {
   $('ad-sub').textContent = `Saldo i ${monthLabel(month).toLowerCase()}.` + (cur && cur.month !== month ? ` Senast: ${money(cur.amount, a.currency)} (${monthLabel(cur.month).toLowerCase()}).` : '');
   $('ad-currency').value = a.currency;
   setAccCurrencyLabel();
+  const est = estBalance(data, a, month);
   $('ad-amount').value = Object.hasOwn(a.balances, month) ? krInput(a.balances[month]) : '';
+  $('ad-amount').placeholder = est && est.estimated ? krInput(est.amount) : '';
+  // Sparposter som fyller på kontot (2026-11-17): kryssa i, så räknas saldot upp varje månad.
+  const savers = data.recurring.filter((r) => r.type === 'expense' && r.category === SAVINGS_CAT);
+  fill($('ad-feeds'), savers.length ? [el('p', { class: 'small', text: 'Sparande som går hit varje månad:' }),
+    ...savers.map((r) => el('label', { class: 'check' }, el('input', { type: 'checkbox', value: r.id, checked: (a.feeds || []).includes(r.id) }),
+      el('span', { text: `${r.name} · ${kr(r.amount)}` })))]
+    : el('p', { class: 'muted small', text: 'Lägg en återkommande kostnad i kategorin Sparande, så kan den kopplas hit och saldot räknas upp själv.' }));
   $('ad-error').textContent = '';
   $('acc-dialog').showModal();
   $('ad-amount').focus();
@@ -62,10 +73,13 @@ $('ad-currency').addEventListener('change', setAccCurrencyLabel);
 $('ad-cancel').addEventListener('click', () => $('acc-dialog').close());
 $('ad-form').addEventListener('submit', (e) => {
   e.preventDefault();
-  const amount = parseKr($('ad-amount').value);
-  if (amount == null || !isAmount(amount)) { $('ad-error').textContent = 'Skriv ett saldo, t.ex. 45 000 eller 1250,50.'; return; }
+  const raw = $('ad-amount').value.trim();
+  const amount = raw ? parseKr(raw) : null;
+  if (raw && (amount == null || !isAmount(amount))) { $('ad-error').textContent = 'Skriv ett saldo, t.ex. 45 000 eller 1250,50.'; return; }
   const a = data.accounts.find((x) => x.id === dialogAcc.id);
-  if (a) { a.balances[month] = amount; a.currency = $('ad-currency').value; }
+  const feeds = [...$('ad-feeds').querySelectorAll('input:checked')].map((i) => i.value);
+  if (!raw && !a?.feeds?.length && !feeds.length && !Object.keys(a?.balances || {}).length) { $('ad-error').textContent = 'Skriv ett saldo, t.ex. 45 000 eller 1250,50.'; return; }
+  if (a) { if (raw) a.balances[month] = amount; a.currency = $('ad-currency').value; a.feeds = feeds; }
   data = loadData(data);
   $('acc-dialog').close();
   save();

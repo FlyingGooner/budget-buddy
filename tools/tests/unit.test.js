@@ -176,3 +176,13 @@ T.test('hemvaluta: changeHome räknar om budgetbelopp, inte sparkonton; följer 
   T.eq(importText(exportText(e, '2026-11-15')).data.settings.home, 'EUR');
   T.eq(loadData({ settings: { home: 'XYZ' } }).settings.home, 'SEK', 'okänd valuta → SEK');
 });
+T.test('sparkonto: kopplad sparpost räknar upp saldot varje månad och följer med i exporten', () => {
+  const d = loadData({ recurring: [{ id: 's1', name: 'ISK', type: 'expense', amount: 300000, category: 'savings', start: '2026-01' }],
+    accounts: [{ id: 'a1', name: 'Buffert', balances: { '2026-09': 1000000 }, feeds: ['s1', 'nope'] }] });
+  T.eq(d.accounts[0].feeds, ['s1'], 'okända id tas bort');
+  T.eq(estBalance(d, d.accounts[0], '2026-09').amount, 1000000);
+  T.eq(estBalance(d, d.accounts[0], '2026-11').amount, 1600000);
+  T.eq(estBalance(d, d.accounts[0], '2026-11').estimated, true);
+  T.eq(estBalance(d, d.accounts[0], '2026-08'), null);
+  T.eq(importText(exportText(d, '2026-11-17')).data.accounts[0].feeds, ['s1']);
+});

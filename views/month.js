@@ -84,7 +84,13 @@ function renderSavingsCard(saving, t) {
   fill($('savings-card'), fold('sav', [
     el('h2', { class: 'split' }, el('span', { text: '🐷 Sparande' }), el('span', { text: kr(t.savings) })),
     t.income ? el('p', { class: 'sv-share' }, el('span', { text: `${share} % av inkomsten` }), el('span', { class: 'cg-track', 'aria-hidden': 'true' }, bar)) : null],
-    el('ul', { class: 'list' }, saving.map(monthRow)),
+    el('ul', { class: 'list' }, saving.map((r) => {
+      const li = monthRow(r), acc = data.accounts.find((a) => (a.feeds || []).includes(r.id));
+      if (acc) li.querySelector('.row-sub')?.append(` → ${acc.name}`);
+      return li;
+    })),
+    data.accounts.length ? el('p', { class: 'sv-total split' }, el('span', { text: 'På sparkontona' }),
+      el('button', { type: 'button', class: 'link', text: '≈ ' + kr(data.accounts.reduce((s, a) => s + toSek(estBalance(data, a, month)?.amount || 0, a.currency), 0)) + ' ›', on: { click: () => { showTab('stats'); $('stats-accounts').scrollIntoView({ block: 'start' }); } } })) : null,
     addLike(saving, 'Sparande')));
 }
 

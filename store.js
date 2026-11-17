@@ -181,7 +181,9 @@ function loadData(d) {
       }
       seenA.add(a.id);
       const currency = CURRENCIES.includes(a.currency) ? a.currency : 'SEK'; // v0.8.0; balances in minor units of it
-      out.accounts.push({ id: a.id, name, currency, balances });
+      // feeds (2026-11-17): återkommande sparposter som fyller på kontot varje månad (beräknat saldo, se estBalance).
+      const feeds = Array.isArray(a.feeds) ? [...new Set(a.feeds.filter((x) => recIds.has(x)))].slice(0, 20) : [];
+      out.accounts.push({ id: a.id, name, currency, balances, feeds });
     }
   }
   // Papperskorg (v0.13): [{ d: removed date, rec | one | acc: the item, adj?: { month: amount } for rec }]. Each entry is
@@ -282,7 +284,8 @@ function packData(d) {
   if (d.oneOffs.length) out.oneOffs = d.oneOffs.map((o) => ({ month: o.month, ...item(o) }));
   if (Object.keys(d.adjustments).length) out.adjustments = d.adjustments;
   if (d.accounts.length) out.accounts = d.accounts.map((a) => Object.assign({ id: a.id, name: a.name },
-    a.currency !== 'SEK' ? { currency: a.currency } : {}, Object.keys(a.balances).length ? { balances: a.balances } : {}));
+    a.currency !== 'SEK' ? { currency: a.currency } : {}, Object.keys(a.balances).length ? { balances: a.balances } : {},
+    a.feeds && a.feeds.length ? { feeds: a.feeds } : {}));
   return out;
 }
 
@@ -303,7 +306,7 @@ function unpackData(p) {
     recurring: list(p.recurring).map((r) => ({ ...item(r), every: r.every ?? 1, start: r.start, end: r.end ?? null })),
     oneOffs: list(p.oneOffs).map((o) => ({ ...item(o), month: o.month })),
     adjustments: isObj(p.adjustments) ? p.adjustments : {},
-    accounts: list(p.accounts).map((a) => ({ id: a.id, name: a.name, currency: a.currency ?? 'SEK', balances: isObj(a.balances) ? a.balances : {} })),
+    accounts: list(p.accounts).map((a) => ({ id: a.id, name: a.name, currency: a.currency ?? 'SEK', balances: isObj(a.balances) ? a.balances : {}, feeds: Array.isArray(a.feeds) ? a.feeds : [] })),
   };
 }
 
@@ -405,6 +408,19 @@ function balanceAfter(data, m) {
 function balanceAt(acc, m) {
   const ms = Object.keys(acc.balances).filter((x) => x <= m).sort();
   return ms.length ? { month: ms[ms.length - 1], amount: acc.balances[ms[ms.length - 1]] } : null;
+}
+// Beräknat saldo (2026-11-17): senast ifyllda saldo + de kopplade sparposternas belopp för varje månad efter det
+// (med månadens justeringar). Bara när kontot har samma valuta som hemvalutan. estimated = inte ifyllt den månaden.
+function estBalance(d, acc, m) {
+  const cur = balanceAt(acc, m);
+  if (!cur) return null;
+  const feeds = acc.feeds || [];
+  if (!feeds.length || cur.month === m || acc.currency !== (d.settings.home || 'SEK')) return { ...cur, estimated: false };
+  let amount = cur.amount, n = 0;
+  for (let x = addMonths(cur.month, 1); x <= m && n < 600; x = addMonths(x, 1), n++) {
+    for (const r of rowsForMonth(d, x)) if (feeds.includes(r.id)) amount += r.amount;
+  }
+  return { month: m, amount, estimated: amount !== cur.amount, from: cur.month };
 }
 function prevBalance(acc, m) {
   const cur = balanceAt(acc, m);

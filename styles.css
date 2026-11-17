@@ -430,3 +430,8 @@ body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; 
 .set-sec > summary { min-height: 48px; }
 .set-group-wrap > .set-sec + .set-sec { margin-top: 8px; }
 .set-body { padding: 4px 0 12px; }
+/* Sparkonton kopplade till sparposter (2026-11-17) */
+.ad-feeds { margin: 8px 0 0; }
+.ad-feeds .check { min-height: 40px; }
+.sv-total { align-items: center; margin: 4px 0 0; font-size: .875rem; }
+.sv-total .link { border: 0; background: none; color: var(--primary); font: 500 .875rem var(--font); cursor: pointer; padding: 6px 0; }
