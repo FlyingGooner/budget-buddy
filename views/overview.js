@@ -4,7 +4,7 @@ function ovRows(months, max, anyBal) {
   return el('ul', { class: 'list ov' }, months.map((r) => {
     const barFill = el('div', { class: 'bar-fill' + (r.left < 0 ? ' over' : '') });
     barFill.style.width = Math.round((Math.abs(r.left) / max) * 100) + '%';
-    return el('li', {}, el('button', { type: 'button', class: 'ov-row' + (r.m === currentMonth() ? ' current' : ''),
+    return el('li', {}, el('button', { type: 'button', class: 'ov-row' + (r.m === activeMonth() ? ' current' : ''),
       'aria-label': `${monthLabel(r.m)}: kvar ${kr(r.left, true)}. Öppna månaden`,
       on: { click: () => { showTab('month'); setMonth(r.m); } } },
     el('span', { class: 'ov-m', text: `${monthShortLabel(r.m)}${''}` }),

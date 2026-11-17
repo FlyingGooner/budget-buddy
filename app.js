@@ -8,8 +8,10 @@ const TABS = ['month', 'stats', 'overview', 'items', 'settings'];
 const $ = (id) => document.getElementById(id);
 
 let data = loadData(store.get(CONFIG.storageKey));
-let month = currentMonth();
-let overviewStart = currentMonth();
+// Aktuell månad i appen (2026-11-17): är nu-månaden redan stängd (man stänger dagen före lön) gäller nästa månad.
+const activeMonth = () => { const c = currentMonth(); return data.closed && Object.hasOwn(data.closed, c) ? addMonths(c, 1) : c; };
+let month = activeMonth();
+let overviewStart = activeMonth();
 let editingId = null;     // recurring item in the form
 let dialogRow = null;     // row in the month dialog (null = new one-off)
 
@@ -147,7 +149,7 @@ $('nav').addEventListener('click', (e) => {
   const b = e.target.closest('button[data-tab]');
   if (!b) return;
   // 2026-11-17: tryck på en flik i menyn går alltid till aktuell period (Månad, Trend och Historik).
-  const now = currentMonth();
+  const now = activeMonth();
   if (month !== now || overviewStart !== now) { month = now; overviewStart = now; render(); }
   showTab(b.dataset.tab);
 });

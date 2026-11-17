@@ -285,13 +285,13 @@ function render() {
 // ---------- Visas igen (som de andra apparna) ----------
 // Ny månad sedan sist: Månad och Översikt följer med om de visade den gamla "nu"-månaden. Papperskorgen rensas.
 // Tryck på ett filfält öppnar filväljaren, som döljer appen en stund: då ritas inget om (Android kan annars byta ut fältet).
-let shownMonth = currentMonth(), filePick = false;
+let shownMonth = activeMonth(), filePick = false;
 document.addEventListener('click', (e) => { if (e.target.matches?.('input[type=file]')) filePick = true; }, true);
 function purge() { if (purgeTrash(data, isoToday())) store.set(CONFIG.storageKey, data); }
 document.addEventListener('visibilitychange', () => {
   if (document.visibilityState !== 'visible') return;
   if (filePick) { filePick = false; return; }
-  const now = currentMonth();
+  const now = activeMonth();
   if (now !== shownMonth) {
     if (month === shownMonth) month = now;
     if (overviewStart === shownMonth) overviewStart = now;

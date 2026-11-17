@@ -809,6 +809,7 @@ body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; 
           <p>Det som står under Kvar är planerat – det som blir över efter de fasta kostnaderna. Mat, nöjen och oväntade utgifter syns inte där.</p>
           <p>När månaden är slut (dagen före lönen) trycker du ✓ Stäng månaden under Kvar och skriver in vad som faktiskt fanns kvar på kontot. Då visar Kvar det faktiska beloppet, och skillnaden mot det planerade visas som Rörligt i stapeln.</p>
           <p>I samma ruta fyller du i saldot på sparkontona – de är förifyllda med det beräknade saldot, så du ändrar bara det som skiljer, t.ex. efter en extra överföring.</p>
+          <p>Stänger du den aktuella månaden går appen vidare till nästa månad – den blir den aktuella (även när du trycker på Månad i menyn eller öppnar appen), fast lönen inte har kommit än.</p>
           <p>Historik, Trend och saldot använder sedan det faktiska beloppet för den månaden. I Historik räknas månader som inte är stängda med snittet av de rörliga utgifterna (≈), så prognosen för helåret blir realistisk. Grafen visar kvar + sparat över tid. ✓ = stängd månad. Ändra rättar beloppet, Öppna igen tar bort det.</p>
         </details>
         <details><summary>Lönedag</summary>
@@ -889,6 +890,7 @@ body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; 
           <p>What is shown under Left is planned – what is left after the fixed costs. Food, fun and unexpected spending do not show there.</p>
           <p>When the month is over (the day before payday), tap ✓ Close the month under Left and enter what was actually left in the account. Left then shows the actual amount, and the difference from the plan is shown as Variable in the bar.</p>
           <p>In the same dialog you enter the savings account balances – they are prefilled with the estimated balance, so you only change what differs, e.g. after an extra transfer.</p>
+          <p>If you close the current month, the app moves on to the next month – it becomes the current one (also when you tap Month in the menu or open the app), even before payday.</p>
           <p>History, Trend and the balance then use the actual amount for that month. In History, months that are not closed are counted with the average variable spending (≈), so the full-year forecast is realistic. The chart shows left + saved over time. ✓ = closed month. Edit corrects the amount, Reopen removes it.</p>
         </details>
         <details><summary>Payday</summary>
@@ -1528,6 +1530,7 @@ I18N.add({
   [/^Rörligt snitt\/mån \((\d+) stängda\)$/, 'Variable avg/mo ($1 closed)'],
   [/^✓ Stängd · planerat (.+)$/, '✓ Closed · planned $1'],
   [/^Stäng (.+)$/, (g, tr) => `Close ${tr(g[1])}`],
+  [/^(.+) är stängd – nu gäller (.+)$/, (g, tr) => `${tr(g[1])} is closed – now ${tr(g[2])}`],
   [/^(.+) är stängd$/, (g, tr) => `${tr(g[1])} is closed`],
   [/^(.+) är öppen igen$/, (g, tr) => `${tr(g[1])} is open again`],
   [/^Hur mycket fanns kvar på kontot (.+), dagen före lönen\? Planerat kvar: (.+)\.$/, (g, tr) => `How much was left in the account on ${tr(g[1])}, the day before payday? Planned left: ${g[2]}.`],
@@ -1603,7 +1606,7 @@ I18N.add({
 </script>
 <script>
 // ---- version.js ----
-﻿self.APP_VERSION = '0.12.79';
+﻿self.APP_VERSION = '0.12.80';
 
 </script>
   <script>
@@ -2503,8 +2506,10 @@ const TABS = ['month', 'stats', 'overview', 'items', 'settings'];
 const $ = (id) => document.getElementById(id);
 
 let data = loadData(store.get(CONFIG.storageKey));
-let month = currentMonth();
-let overviewStart = currentMonth();
+// Aktuell månad i appen (2026-11-17): är nu-månaden redan stängd (man stänger dagen före lön) gäller nästa månad.
+const activeMonth = () => { const c = currentMonth(); return data.closed && Object.hasOwn(data.closed, c) ? addMonths(c, 1) : c; };
+let month = activeMonth();
+let overviewStart = activeMonth();
 let editingId = null;     // recurring item in the form
 let dialogRow = null;     // row in the month dialog (null = new one-off)
 
@@ -2642,7 +2647,7 @@ $('nav').addEventListener('click', (e) => {
   const b = e.target.closest('button[data-tab]');
   if (!b) return;
   // 2026-11-17: tryck på en flik i menyn går alltid till aktuell period (Månad, Trend och Historik).
-  const now = currentMonth();
+  const now = activeMonth();
   if (month !== now || overviewStart !== now) { month = now; overviewStart = now; render(); }
   showTab(b.dataset.tab);
 });
@@ -2715,7 +2720,7 @@ function renderMonth() {
           step('2', 'Lägg in räkningarna – hyra, el, försäkringar …'),
           step('3', 'Se vad som blir kvar varje månad – och hur mycket du sparar.')),
       el('div', { class: 'actions' },
-        any ? el('button', { type: 'button', class: 'btn tonal', text: 'Till innevarande månad', on: { click: () => setMonth(currentMonth()) } })
+        any ? el('button', { type: 'button', class: 'btn tonal', text: 'Till innevarande månad', on: { click: () => setMonth(activeMonth()) } })
           : el('button', { type: 'button', class: 'btn filled', text: 'Lägg till inkomst', on: { click: () => focusAdd('income') } })));
     return;
   }
@@ -2802,7 +2807,7 @@ function closeLine(t) {
   const stop = (fn) => (e) => { e.preventDefault(); e.stopPropagation(); fn(); };   // knappen ligger i rubriken (summary)
   if (t.closed) return el('p', { class: 'close-line' }, el('span', { text: `✓ Stängd · planerat ${kr(t.planned, true)}` }),
     el('button', { type: 'button', class: 'link', text: 'Ändra', on: { click: stop(openCloseDialog) } }));
-  if (month > currentMonth()) return null;
+  if (month > activeMonth()) return null;
   return el('p', { class: 'close-line' }, el('button', { type: 'button', class: 'link', text: '✓ Stäng månaden – hur mycket blev kvar?', on: { click: stop(openCloseDialog) } }));
 }
 function closeDay() {   // dagen före nästa lön (eller sista dagen i månaden)
@@ -2843,11 +2848,13 @@ $('cd-form').addEventListener('submit', (e) => {
     const a = data.accounts.find((x) => x.id === inp.dataset.acc);
     if (a) a.balances[month] = amt;
   }
+  const closing = month, wasActive = month === activeMonth();
   data.closed[month] = neg ? -ore : ore;
   data = loadData(data);
   $('close-dialog').close();
+  if (wasActive) { month = activeMonth(); overviewStart = month; }   // nästa månad blir den aktuella
   save();
-  snackbar(`${monthLabel(month)} är stängd`, null, null, 3000);
+  snackbar(wasActive ? `${monthLabel(closing)} är stängd – nu gäller ${monthLabel(month).toLowerCase()}` : `${monthLabel(closing)} är stängd`, null, null, 4000);
 });
 $('cd-reopen').addEventListener('click', () => {
   $('close-dialog').close();
@@ -2940,10 +2947,10 @@ function changeMonth(n) { setMonth(addMonths(month, n)); }
 function setMonth(m) { month = m; renderMonth(); renderStats(); }
 $('prev-month').addEventListener('click', () => changeMonth(-1));
 $('next-month').addEventListener('click', () => changeMonth(1));
-$('month-title').addEventListener('click', () => setMonth(currentMonth()));
+$('month-title').addEventListener('click', () => setMonth(activeMonth()));
 $('stats-prev').addEventListener('click', () => changeMonth(-1));
 $('stats-next').addEventListener('click', () => changeMonth(1));
-$('stats-title').addEventListener('click', () => setMonth(currentMonth()));
+$('stats-title').addEventListener('click', () => setMonth(activeMonth()));
 
 // Swipe left/right anywhere on the screen (not the menu, inputs or dialogs), like follow-diet-tracker:
 // Månad and Statistik change month, Översikt changes year.
@@ -3101,7 +3108,7 @@ function ovRows(months, max, anyBal) {
   return el('ul', { class: 'list ov' }, months.map((r) => {
     const barFill = el('div', { class: 'bar-fill' + (r.left < 0 ? ' over' : '') });
     barFill.style.width = Math.round((Math.abs(r.left) / max) * 100) + '%';
-    return el('li', {}, el('button', { type: 'button', class: 'ov-row' + (r.m === currentMonth() ? ' current' : ''),
+    return el('li', {}, el('button', { type: 'button', class: 'ov-row' + (r.m === activeMonth() ? ' current' : ''),
       'aria-label': `${monthLabel(r.m)}: kvar ${kr(r.left, true)}. Öppna månaden`,
       on: { click: () => { showTab('month'); setMonth(r.m); } } },
     el('span', { class: 'ov-m', text: `${monthShortLabel(r.m)}${''}` }),
@@ -4104,13 +4111,13 @@ function render() {
 // ---------- Visas igen (som de andra apparna) ----------
 // Ny månad sedan sist: Månad och Översikt följer med om de visade den gamla "nu"-månaden. Papperskorgen rensas.
 // Tryck på ett filfält öppnar filväljaren, som döljer appen en stund: då ritas inget om (Android kan annars byta ut fältet).
-let shownMonth = currentMonth(), filePick = false;
+let shownMonth = activeMonth(), filePick = false;
 document.addEventListener('click', (e) => { if (e.target.matches?.('input[type=file]')) filePick = true; }, true);
 function purge() { if (purgeTrash(data, isoToday())) store.set(CONFIG.storageKey, data); }
 document.addEventListener('visibilitychange', () => {
   if (document.visibilityState !== 'visible') return;
   if (filePick) { filePick = false; return; }
-  const now = currentMonth();
+  const now = activeMonth();
   if (now !== shownMonth) {
     if (month === shownMonth) month = now;
     if (overviewStart === shownMonth) overviewStart = now;

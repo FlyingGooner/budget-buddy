@@ -44,7 +44,7 @@ function renderMonth() {
           step('2', 'Lägg in räkningarna – hyra, el, försäkringar …'),
           step('3', 'Se vad som blir kvar varje månad – och hur mycket du sparar.')),
       el('div', { class: 'actions' },
-        any ? el('button', { type: 'button', class: 'btn tonal', text: 'Till innevarande månad', on: { click: () => setMonth(currentMonth()) } })
+        any ? el('button', { type: 'button', class: 'btn tonal', text: 'Till innevarande månad', on: { click: () => setMonth(activeMonth()) } })
           : el('button', { type: 'button', class: 'btn filled', text: 'Lägg till inkomst', on: { click: () => focusAdd('income') } })));
     return;
   }
@@ -131,7 +131,7 @@ function closeLine(t) {
   const stop = (fn) => (e) => { e.preventDefault(); e.stopPropagation(); fn(); };   // knappen ligger i rubriken (summary)
   if (t.closed) return el('p', { class: 'close-line' }, el('span', { text: `✓ Stängd · planerat ${kr(t.planned, true)}` }),
     el('button', { type: 'button', class: 'link', text: 'Ändra', on: { click: stop(openCloseDialog) } }));
-  if (month > currentMonth()) return null;
+  if (month > activeMonth()) return null;
   return el('p', { class: 'close-line' }, el('button', { type: 'button', class: 'link', text: '✓ Stäng månaden – hur mycket blev kvar?', on: { click: stop(openCloseDialog) } }));
 }
 function closeDay() {   // dagen före nästa lön (eller sista dagen i månaden)
@@ -172,11 +172,13 @@ $('cd-form').addEventListener('submit', (e) => {
     const a = data.accounts.find((x) => x.id === inp.dataset.acc);
     if (a) a.balances[month] = amt;
   }
+  const closing = month, wasActive = month === activeMonth();
   data.closed[month] = neg ? -ore : ore;
   data = loadData(data);
   $('close-dialog').close();
+  if (wasActive) { month = activeMonth(); overviewStart = month; }   // nästa månad blir den aktuella
   save();
-  snackbar(`${monthLabel(month)} är stängd`, null, null, 3000);
+  snackbar(wasActive ? `${monthLabel(closing)} är stängd – nu gäller ${monthLabel(month).toLowerCase()}` : `${monthLabel(closing)} är stängd`, null, null, 4000);
 });
 $('cd-reopen').addEventListener('click', () => {
   $('close-dialog').close();
@@ -269,10 +271,10 @@ function changeMonth(n) { setMonth(addMonths(month, n)); }
 function setMonth(m) { month = m; renderMonth(); renderStats(); }
 $('prev-month').addEventListener('click', () => changeMonth(-1));
 $('next-month').addEventListener('click', () => changeMonth(1));
-$('month-title').addEventListener('click', () => setMonth(currentMonth()));
+$('month-title').addEventListener('click', () => setMonth(activeMonth()));
 $('stats-prev').addEventListener('click', () => changeMonth(-1));
 $('stats-next').addEventListener('click', () => changeMonth(1));
-$('stats-title').addEventListener('click', () => setMonth(currentMonth()));
+$('stats-title').addEventListener('click', () => setMonth(activeMonth()));
 
 // Swipe left/right anywhere on the screen (not the menu, inputs or dialogs), like follow-diet-tracker:
 // Månad and Statistik change month, Översikt changes year.

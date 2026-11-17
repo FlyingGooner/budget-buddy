@@ -169,6 +169,7 @@ I18N.add({
   [/^Rörligt snitt\/mån \((\d+) stängda\)$/, 'Variable avg/mo ($1 closed)'],
   [/^✓ Stängd · planerat (.+)$/, '✓ Closed · planned $1'],
   [/^Stäng (.+)$/, (g, tr) => `Close ${tr(g[1])}`],
+  [/^(.+) är stängd – nu gäller (.+)$/, (g, tr) => `${tr(g[1])} is closed – now ${tr(g[2])}`],
   [/^(.+) är stängd$/, (g, tr) => `${tr(g[1])} is closed`],
   [/^(.+) är öppen igen$/, (g, tr) => `${tr(g[1])} is open again`],
   [/^Hur mycket fanns kvar på kontot (.+), dagen före lönen\? Planerat kvar: (.+)\.$/, (g, tr) => `How much was left in the account on ${tr(g[1])}, the day before payday? Planned left: ${g[2]}.`],
