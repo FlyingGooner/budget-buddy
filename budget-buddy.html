@@ -611,6 +611,7 @@ body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; 
 .cd-acc-in { display: flex; align-items: center; gap: 6px; }
 .cd-acc-in input { width: 7.5em; min-height: 44px; padding: 0 10px; text-align: right; border-radius: var(--r-sm); border: 1px solid var(--outline); background: var(--surface-container-lowest, transparent); color: inherit; font: inherit; font-variant-numeric: tabular-nums; }
 .cd-acc-in small { min-width: 2em; font-size: .75rem; }
+.cd-feed { margin: -2px 0 6px; color: var(--primary); font-size: .75rem; }
 
 </style>
 </head>
@@ -1668,6 +1669,7 @@ I18N.add({
   [/^Sista vardagen före lönen\. Planerat (.+) – skillnaden blir månadens konsumtion\.$/, 'Last weekday before payday. Planned $1 – the difference becomes the month\'s spending.'],
   [/^Sista vardagen före lönen\. Planerat (.+) – skillnaden blir månadens konsumtion\. Lön en annan dag än den 1:a\? Välj Lönedag under Inställningar\.$/, 'Last weekday before payday. Planned $1 – the difference becomes the month\'s spending. Paid on another day than the 1st? Choose Payday under Settings.'],
   [/^≈ beräknat \+ (.+)$/, '≈ estimated + $1'],
+  [/^\+(.+) från (.+) i (\S+)$/, (g, tr) => `+${g[1]} from ${g[2]} in ${tr(g[3])}`],
   [/^▲▼ mot (.+)$/, (g, tr) => `▲▼ vs ${tr(g[1])}`],
   [/^(\d+) månader hittills · (\d+) prognos$/, '$1 months so far · $2 forecast'],
   [/^Året (\d{4}) · (hittills|prognos|helår)$/, (g) => `${g[1]} · ${{ hittills: 'so far', prognos: 'forecast', helår: 'full year' }[g[2]]}`],
@@ -1740,7 +1742,7 @@ I18N.add({
 </script>
 <script>
 // ---- version.js ----
-﻿self.APP_VERSION = '0.12.110';
+﻿self.APP_VERSION = '0.12.111';
 
 </script>
   <script>
@@ -3024,9 +3026,12 @@ function openCloseDialog() {
       inp.value = est ? krInput(est.amount) : '';
       inp.dataset.orig = inp.value;
       const from = (a.feeds || []).map((id) => data.recurring.find((x) => x.id === id)?.name).filter(Boolean);
-      const note = !est ? 'Inget saldo än' : est.estimated ? `≈ beräknat${from.length ? ' + ' + from.join(', ') : ''}` : `ifyllt ${monthShortLabel(balanceAt(a, month).month).toLowerCase()}`;
+      const note = !est ? 'Inget saldo än' : est.estimated ? '≈ beräknat' : `ifyllt ${monthShortLabel(balanceAt(a, month).month).toLowerCase()}`;
+      // 2026-11-18: vad som fyllde på kontot den här månaden, per sparpost.
+      const feeds = rowsForMonth(data, month).filter((r) => (a.feeds || []).includes(r.id) && r.amount);
       return el('li', {}, el('label', { class: 'cd-acc' }, el('span', { class: 'cd-acc-name' }, el('span', { text: a.name }), el('small', { class: 'muted', text: note })),
-        el('span', { class: 'cd-acc-in' }, inp, el('small', { class: 'muted', text: unit(a.currency) }))));
+        el('span', { class: 'cd-acc-in' }, inp, el('small', { class: 'muted', text: unit(a.currency) }))),
+      feeds.length ? el('p', { class: 'cd-feed small' }, feeds.map((r) => `+${kr(r.amount)} från ${r.name}`).join(' · ') + ` i ${monthLabel(month).toLowerCase().replace(/ \d{4}$/, '')}`) : null);
     }))] : null);
   $('cd-error').textContent = '';
   $('close-dialog').showModal();

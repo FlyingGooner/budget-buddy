@@ -212,6 +212,7 @@ I18N.add({
   [/^Sista vardagen före lönen\. Planerat (.+) – skillnaden blir månadens konsumtion\.$/, 'Last weekday before payday. Planned $1 – the difference becomes the month\'s spending.'],
   [/^Sista vardagen före lönen\. Planerat (.+) – skillnaden blir månadens konsumtion\. Lön en annan dag än den 1:a\? Välj Lönedag under Inställningar\.$/, 'Last weekday before payday. Planned $1 – the difference becomes the month\'s spending. Paid on another day than the 1st? Choose Payday under Settings.'],
   [/^≈ beräknat \+ (.+)$/, '≈ estimated + $1'],
+  [/^\+(.+) från (.+) i (\S+)$/, (g, tr) => `+${g[1]} from ${g[2]} in ${tr(g[3])}`],
   [/^▲▼ mot (.+)$/, (g, tr) => `▲▼ vs ${tr(g[1])}`],
   [/^(\d+) månader hittills · (\d+) prognos$/, '$1 months so far · $2 forecast'],
   [/^Året (\d{4}) · (hittills|prognos|helår)$/, (g) => `${g[1]} · ${{ hittills: 'so far', prognos: 'forecast', helår: 'full year' }[g[2]]}`],

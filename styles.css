@@ -594,3 +594,4 @@ body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; 
 .cd-acc-in { display: flex; align-items: center; gap: 6px; }
 .cd-acc-in input { width: 7.5em; min-height: 44px; padding: 0 10px; text-align: right; border-radius: var(--r-sm); border: 1px solid var(--outline); background: var(--surface-container-lowest, transparent); color: inherit; font: inherit; font-variant-numeric: tabular-nums; }
 .cd-acc-in small { min-width: 2em; font-size: .75rem; }
+.cd-feed { margin: -2px 0 6px; color: var(--primary); font-size: .75rem; }

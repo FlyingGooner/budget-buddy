@@ -198,9 +198,12 @@ function openCloseDialog() {
       inp.value = est ? krInput(est.amount) : '';
       inp.dataset.orig = inp.value;
       const from = (a.feeds || []).map((id) => data.recurring.find((x) => x.id === id)?.name).filter(Boolean);
-      const note = !est ? 'Inget saldo än' : est.estimated ? `≈ beräknat${from.length ? ' + ' + from.join(', ') : ''}` : `ifyllt ${monthShortLabel(balanceAt(a, month).month).toLowerCase()}`;
+      const note = !est ? 'Inget saldo än' : est.estimated ? '≈ beräknat' : `ifyllt ${monthShortLabel(balanceAt(a, month).month).toLowerCase()}`;
+      // 2026-11-18: vad som fyllde på kontot den här månaden, per sparpost.
+      const feeds = rowsForMonth(data, month).filter((r) => (a.feeds || []).includes(r.id) && r.amount);
       return el('li', {}, el('label', { class: 'cd-acc' }, el('span', { class: 'cd-acc-name' }, el('span', { text: a.name }), el('small', { class: 'muted', text: note })),
-        el('span', { class: 'cd-acc-in' }, inp, el('small', { class: 'muted', text: unit(a.currency) }))));
+        el('span', { class: 'cd-acc-in' }, inp, el('small', { class: 'muted', text: unit(a.currency) }))),
+      feeds.length ? el('p', { class: 'cd-feed small' }, feeds.map((r) => `+${kr(r.amount)} från ${r.name}`).join(' · ') + ` i ${monthLabel(month).toLowerCase().replace(/ \d{4}$/, '')}`) : null);
     }))] : null);
   $('cd-error').textContent = '';
   $('close-dialog').showModal();
