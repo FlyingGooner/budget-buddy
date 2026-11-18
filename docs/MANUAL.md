@@ -18,6 +18,7 @@ Samma text finns i appen under **Inställningar → Allmänt → Hjälp och manu
 - Sparande är inte en kostnad, men dras av från det som blir kvar. Lägg till med **+ Sparande**: namn, belopp, hur ofta och gärna **Saldo nu**. Då skapas ett sparkonto som räknas upp av sig självt varje månad.
 - Kortet **🐷 Sparande** i Månad visar månadens sparande och **Totalt sparat** i din valuta. Tryck för att fälla ut en rad per konto: saldo i din valuta, månadssparandet och ändringen sedan förra månaden. Konton i annan valuta visar sitt eget belopp inom parentes, t.ex. (730 USD).
 - Tryck på en rad för att ändra belopp, välja vilket **Sparkonto** pengarna går till eller rätta saldot. Saldot märkt ≈ är beräknat: senast ifyllt plus sparandet.
+- Dras sparandet innan nettolönen betalas ut (t.ex. aktier via jobbet), bocka i **Dras före lönen**. Då räknas det som sparat men minskar inte Kvar.
 - Konton som inte rörs (t.ex. barnens) kan döljas från Månad: tryck på raden i Sparande-kortet och bocka ur **Visa i Månad**. Tryck på namnet under "+ 1 dolt konto" för att visa det igen. Det räknas fortfarande i Totalt sparat.
 - Alla konton, med graf, finns också under **Trend → Sparkonton**. Där lägger du till ett konto utan sparpost, eller tar bort ett (det hamnar i papperskorgen).
 

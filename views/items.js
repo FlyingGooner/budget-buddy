@@ -50,6 +50,7 @@ function renderItems() {
       fill($('sav-list'), savers.map((r) => {
         const li = itemRow(r, now), acc = data.accounts.find((a) => (a.feeds || []).includes(r.id));
         if (acc) li.querySelector('.row-sub')?.append(` → ${acc.name}`);
+        if (r.pre) li.querySelector('.row-sub')?.append(' · före lönen');
         return li;
       }));
     }
@@ -81,10 +82,10 @@ function setupAddForm(form) {
     if (f.balance && f.balance.value.trim() && (bal == null || !isAmount(bal))) { err.textContent = 'Skriv ett saldo, t.ex. 45 000 eller 1250,50.'; f.balance.focus(); return; }
     const id = newId();
     data.recurring.push({ id, name, amount, type, category: f.category.value, person: personValue(f.person),
-      every: type === 'income' ? 1 : Number(f.every.value), start: month, end: null });
+      every: type === 'income' ? 1 : Number(f.every.value), start: month, end: null, ...(f.pre && f.pre.checked ? { pre: true } : {}) });
     if (bal != null && data.accounts.length < MAX_ACCOUNTS)   // sparande med saldo = eget sparkonto som räknas upp
       data.accounts.push({ id: 'a' + newId().slice(-10), name: cleanName(name, 30), currency: f.currency && CURRENCIES.includes(f.currency.value) ? f.currency.value : home(), balances: { [month]: bal }, feeds: [id] });
-    if (f.balance) f.balance.value = '';
+    if (f.balance) f.balance.value = ''; if (f.pre) f.pre.checked = false;
     data = loadData(data);
     save();
     if (f.name) f.name.value = ''; f.amount.value = '';
@@ -116,6 +117,7 @@ function openItemDialog(r) {
   $('f-every-wrap').hidden = r.type === 'income'; // income is always monthly
   fillPersonSelect($('f-person'), r.person);
   fillCategorySelect($('f-cat'), r.category, r.type);
+  $('f-pre-wrap').hidden = r.category !== SAVINGS_CAT; $('f-pre').checked = !!r.pre;
   $('f-start').value = r.start;
   $('f-end').value = r.end || '';
   $('f-error').textContent = '';
@@ -140,7 +142,8 @@ $('id-form').addEventListener('submit', (e) => {
     : !isMonth(start) ? 'Välj från vilken månad.' : end && (!isMonth(end) || end < start) ? 'Till-månaden måste vara efter från-månaden.' : '';
   if (err) { $('f-error').textContent = err; return; }
   const item = { ...r, name, amount, every: r.type === 'income' ? 1 : Number($('f-every').value), start, end,
-    category: $('f-cat').value, person: personValue($('f-person')) };
+    category: $('f-cat').value, person: personValue($('f-person')), pre: $('f-pre').checked };
+  if (!item.pre || item.category !== SAVINGS_CAT) delete item.pre;
   data.recurring = data.recurring.map((x) => (x.id === r.id ? item : x));
   data = loadData(data);
   $('item-dialog').close();

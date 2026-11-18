@@ -97,6 +97,8 @@ I18N.add({
   'Ifyllt': 'Entered',
   'Inte stängd:': 'Not closed:', 'Inte stängda:': 'Not closed:',
   'Visa i Månad': 'Show in Month',
+  'Dras före lönen (minskar inte Kvar)': 'Taken before payday (does not reduce Left)',
+  ' · före lönen': ' · before payday',
   '+ 1 dolt konto: ': '+ 1 hidden account: ',
   'Hemvaluta': 'Home currency', 'Fler val': 'More options', 'CSV, text, egen kod, radera': 'CSV, text, own code, delete', 'Ett okrypterat kalkylark, t.ex. för Excel.': 'An unencrypted spreadsheet, e.g. for Excel.', 'All data finns bara i den här webbläsaren. Läs in backup-filen på en annan enhet för att flytta den.': 'All data is only in this browser. Load the backup file on another device to move it.', 'Backupen låses med koden. Spara den i din lösenordshanterare.': 'The backup is locked with the code. Save it in your password manager.',
   'Valutakurser': 'Exchange rates', 'Allmänt': 'General', 'Inga': 'None', 'Inget': 'None', 'Tom': 'Empty', 'Egna': 'Own', 'Appens': "The app's", 'Importera från text': 'Import from text',

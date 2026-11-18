@@ -681,6 +681,7 @@ body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; 
         <label class="field person-field"><span>Person (valfritt)</span><select name="person"></select></label>
         <label class="field amt"><span>Saldo nu (valfritt)</span><input name="balance" inputmode="decimal" autocomplete="off"></label>
         <label class="field"><span>Kontots valuta</span><select name="currency"></select></label>
+        <label class="check"><input type="checkbox" name="pre"><span>Dras före lönen (minskar inte Kvar)</span></label>
         <p class="muted small hint-row">Sparande dras av från det som blir kvar, men räknas inte som en kostnad. Fyller du i saldot skapas ett sparkonto som räknas upp varje månad – i annan valuta räknas sparandet om med kurserna.</p>
         <button type="submit" class="btn filled">Lägg till</button>
         <p class="error" role="alert"></p>
@@ -840,6 +841,7 @@ body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; 
           <p>Sparande är inte en kostnad, men dras av från det som blir kvar. Lägg till med + Sparande: namn, belopp, hur ofta och gärna Saldo nu. Då skapas ett sparkonto som räknas upp av sig självt varje månad.</p>
           <p>Kortet 🐷 Sparande i Månad visar månadens sparande och Totalt sparat i din valuta. Tryck för att fälla ut en rad per konto: saldo i din valuta, månadssparandet och ändringen sedan förra månaden. Konton i annan valuta visar sitt eget belopp inom parentes, t.ex. (730 USD).</p>
           <p>Tryck på en rad för att ändra belopp, välja vilket Sparkonto pengarna går till eller rätta saldot. Saldot märkt ≈ är beräknat: senast ifyllt plus sparandet.</p>
+          <p>Dras sparandet innan nettolönen betalas ut (t.ex. aktier via jobbet), bocka i Dras före lönen. Då räknas det som sparat men minskar inte Kvar.</p>
           <p>Konton som inte rörs (t.ex. barnens) kan döljas från Månad: tryck på raden i Sparande-kortet och bocka ur Visa i Månad. Tryck på namnet under &quot;+ 1 dolt konto&quot; för att visa det igen. Det räknas fortfarande i Totalt sparat.</p>
           <p>Alla konton, med graf, finns också under Trend → Sparkonton. Där lägger du till ett konto utan sparpost, eller tar bort ett (det hamnar i papperskorgen).</p>
         </details>
@@ -915,6 +917,7 @@ body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; 
           <p>Savings are not a cost, but they are deducted from what is left. Add with + Saving: name, amount, frequency and preferably Balance now. A savings account is then created that counts up by itself every month.</p>
           <p>The 🐷 Savings card in Month shows the month's savings and Total saved in your currency. Tap to unfold one row per account: balance in your currency, the monthly saving and the change since last month. Accounts in another currency show their own amount in brackets, e.g. (730 USD).</p>
           <p>Tap a row to change the amount, choose which Savings account the money goes to, or correct the balance. A balance marked ≈ is estimated: last entered plus the savings.</p>
+          <p>If the saving is taken before your net salary is paid (e.g. shares through work), tick Taken before payday. It then counts as saved but does not reduce Left.</p>
           <p>Accounts you never touch (e.g. the children's) can be hidden from Month: tap the row in the Savings card and untick Show in Month. Tap the name under &quot;+ 1 hidden account&quot; to show it again. It still counts in Total saved.</p>
           <p>All accounts, with a chart, are also under Trend → Savings accounts. There you add an account without a savings item, or delete one (it goes to the trash).</p>
         </details>
@@ -1028,6 +1031,7 @@ body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; 
       <label class="field"><span>Från månad</span><input id="f-start" type="month" min="1900-01" max="2099-12"></label>
       <label class="field"><span>Till månad (valfritt)</span><input id="f-end" type="month" min="1900-01" max="2099-12"></label>
     </div>
+    <label class="check" id="f-pre-wrap"><input type="checkbox" id="f-pre"><span>Dras före lönen (minskar inte Kvar)</span></label>
     <p class="error" id="f-error" role="alert"></p>
     <div class="actions">
       <button type="button" class="btn text danger" id="f-delete">Ta bort</button>
@@ -1487,6 +1491,8 @@ I18N.add({
   'Ifyllt': 'Entered',
   'Inte stängd:': 'Not closed:', 'Inte stängda:': 'Not closed:',
   'Visa i Månad': 'Show in Month',
+  'Dras före lönen (minskar inte Kvar)': 'Taken before payday (does not reduce Left)',
+  ' · före lönen': ' · before payday',
   '+ 1 dolt konto: ': '+ 1 hidden account: ',
   'Hemvaluta': 'Home currency', 'Fler val': 'More options', 'CSV, text, egen kod, radera': 'CSV, text, own code, delete', 'Ett okrypterat kalkylark, t.ex. för Excel.': 'An unencrypted spreadsheet, e.g. for Excel.', 'All data finns bara i den här webbläsaren. Läs in backup-filen på en annan enhet för att flytta den.': 'All data is only in this browser. Load the backup file on another device to move it.', 'Backupen låses med koden. Spara den i din lösenordshanterare.': 'The backup is locked with the code. Save it in your password manager.',
   'Valutakurser': 'Exchange rates', 'Allmänt': 'General', 'Inga': 'None', 'Inget': 'None', 'Tom': 'Empty', 'Egna': 'Own', 'Appens': "The app's", 'Importera från text': 'Import from text',
@@ -1651,7 +1657,7 @@ I18N.add({
 </script>
 <script>
 // ---- version.js ----
-﻿self.APP_VERSION = '0.12.90';
+﻿self.APP_VERSION = '0.12.91';
 
 </script>
   <script>
@@ -2225,7 +2231,8 @@ function loadData(d) {
       const end = isMonth(r.end) && r.end >= r.start ? r.end : null;
       ids.add(r.id);
       out.recurring.push({ id: r.id, name, type: r.type, amount: r.amount, category: cat(r.category, r.type), person: person(r.person),
-        every: r.type === 'income' ? 1 : EVERY.includes(r.every) ? r.every : 1, start: r.start, end }); // income: always monthly
+        every: r.type === 'income' ? 1 : EVERY.includes(r.every) ? r.every : 1, start: r.start, end,
+        ...(r.pre === true && r.type === 'expense' && cat(r.category, r.type) === SAVINGS_CAT ? { pre: true } : {}) }); // income: always monthly; pre (2026-11-18): sparande dras före nettolönen
     }
   }
   const recIds = new Set(out.recurring.map((r) => r.id));
@@ -2472,7 +2479,7 @@ function rowsForMonth(data, m) {
   for (const r of data.recurring) {
     if (!applies(r, m)) continue;
     const adjusted = Object.hasOwn(adj, r.id);
-    rows.push({ id: r.id, kind: 'rec', name: r.name, type: r.type, category: r.category, person: r.person,
+    rows.push({ id: r.id, kind: 'rec', name: r.name, type: r.type, category: r.category, person: r.person, pre: !!r.pre,
       amount: adjusted ? adj[r.id] : r.amount, base: r.amount, adjusted });
   }
   for (const o of data.oneOffs) {
@@ -2484,13 +2491,14 @@ function rowsForMonth(data, m) {
 }
 
 // savings = the part of expense in the "Sparande" category (still counted as expense: it leaves the account).
+// pre (2026-11-18) = sparande som dras innan nettolönen betalas ut: räknas som sparat men minskar inte Kvar.
 function totals(rows) {
-  let income = 0, expense = 0, savings = 0;
+  let income = 0, expense = 0, savings = 0, pre = 0;
   for (const r of rows) {
     if (r.type === 'income') income += r.amount;
-    else { expense += r.amount; if (r.category === SAVINGS_CAT) savings += r.amount; }
+    else { expense += r.amount; if (r.category === SAVINGS_CAT) { savings += r.amount; if (r.pre) pre += r.amount; } }
   }
-  return { income, expense, savings, left: income - expense };
+  return { income, expense, savings, pre, left: income - expense + pre };
 }
 
 // Månadens summor; är månaden stängd ersätts planerat kvar av det faktiska (planned = det planerade, closed = true).
@@ -3543,6 +3551,7 @@ function renderItems() {
       fill($('sav-list'), savers.map((r) => {
         const li = itemRow(r, now), acc = data.accounts.find((a) => (a.feeds || []).includes(r.id));
         if (acc) li.querySelector('.row-sub')?.append(` → ${acc.name}`);
+        if (r.pre) li.querySelector('.row-sub')?.append(' · före lönen');
         return li;
       }));
     }
@@ -3574,10 +3583,10 @@ function setupAddForm(form) {
     if (f.balance && f.balance.value.trim() && (bal == null || !isAmount(bal))) { err.textContent = 'Skriv ett saldo, t.ex. 45 000 eller 1250,50.'; f.balance.focus(); return; }
     const id = newId();
     data.recurring.push({ id, name, amount, type, category: f.category.value, person: personValue(f.person),
-      every: type === 'income' ? 1 : Number(f.every.value), start: month, end: null });
+      every: type === 'income' ? 1 : Number(f.every.value), start: month, end: null, ...(f.pre && f.pre.checked ? { pre: true } : {}) });
     if (bal != null && data.accounts.length < MAX_ACCOUNTS)   // sparande med saldo = eget sparkonto som räknas upp
       data.accounts.push({ id: 'a' + newId().slice(-10), name: cleanName(name, 30), currency: f.currency && CURRENCIES.includes(f.currency.value) ? f.currency.value : home(), balances: { [month]: bal }, feeds: [id] });
-    if (f.balance) f.balance.value = '';
+    if (f.balance) f.balance.value = ''; if (f.pre) f.pre.checked = false;
     data = loadData(data);
     save();
     if (f.name) f.name.value = ''; f.amount.value = '';
@@ -3609,6 +3618,7 @@ function openItemDialog(r) {
   $('f-every-wrap').hidden = r.type === 'income'; // income is always monthly
   fillPersonSelect($('f-person'), r.person);
   fillCategorySelect($('f-cat'), r.category, r.type);
+  $('f-pre-wrap').hidden = r.category !== SAVINGS_CAT; $('f-pre').checked = !!r.pre;
   $('f-start').value = r.start;
   $('f-end').value = r.end || '';
   $('f-error').textContent = '';
@@ -3633,7 +3643,8 @@ $('id-form').addEventListener('submit', (e) => {
     : !isMonth(start) ? 'Välj från vilken månad.' : end && (!isMonth(end) || end < start) ? 'Till-månaden måste vara efter från-månaden.' : '';
   if (err) { $('f-error').textContent = err; return; }
   const item = { ...r, name, amount, every: r.type === 'income' ? 1 : Number($('f-every').value), start, end,
-    category: $('f-cat').value, person: personValue($('f-person')) };
+    category: $('f-cat').value, person: personValue($('f-person')), pre: $('f-pre').checked };
+  if (!item.pre || item.category !== SAVINGS_CAT) delete item.pre;
   data.recurring = data.recurring.map((x) => (x.id === r.id ? item : x));
   data = loadData(data);
   $('item-dialog').close();

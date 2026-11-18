@@ -143,7 +143,8 @@ function loadData(d) {
       const end = isMonth(r.end) && r.end >= r.start ? r.end : null;
       ids.add(r.id);
       out.recurring.push({ id: r.id, name, type: r.type, amount: r.amount, category: cat(r.category, r.type), person: person(r.person),
-        every: r.type === 'income' ? 1 : EVERY.includes(r.every) ? r.every : 1, start: r.start, end }); // income: always monthly
+        every: r.type === 'income' ? 1 : EVERY.includes(r.every) ? r.every : 1, start: r.start, end,
+        ...(r.pre === true && r.type === 'expense' && cat(r.category, r.type) === SAVINGS_CAT ? { pre: true } : {}) }); // income: always monthly; pre (2026-11-18): sparande dras före nettolönen
     }
   }
   const recIds = new Set(out.recurring.map((r) => r.id));
@@ -390,7 +391,7 @@ function rowsForMonth(data, m) {
   for (const r of data.recurring) {
     if (!applies(r, m)) continue;
     const adjusted = Object.hasOwn(adj, r.id);
-    rows.push({ id: r.id, kind: 'rec', name: r.name, type: r.type, category: r.category, person: r.person,
+    rows.push({ id: r.id, kind: 'rec', name: r.name, type: r.type, category: r.category, person: r.person, pre: !!r.pre,
       amount: adjusted ? adj[r.id] : r.amount, base: r.amount, adjusted });
   }
   for (const o of data.oneOffs) {
@@ -402,13 +403,14 @@ function rowsForMonth(data, m) {
 }
 
 // savings = the part of expense in the "Sparande" category (still counted as expense: it leaves the account).
+// pre (2026-11-18) = sparande som dras innan nettolönen betalas ut: räknas som sparat men minskar inte Kvar.
 function totals(rows) {
-  let income = 0, expense = 0, savings = 0;
+  let income = 0, expense = 0, savings = 0, pre = 0;
   for (const r of rows) {
     if (r.type === 'income') income += r.amount;
-    else { expense += r.amount; if (r.category === SAVINGS_CAT) savings += r.amount; }
+    else { expense += r.amount; if (r.category === SAVINGS_CAT) { savings += r.amount; if (r.pre) pre += r.amount; } }
   }
-  return { income, expense, savings, left: income - expense };
+  return { income, expense, savings, pre, left: income - expense + pre };
 }
 
 // Månadens summor; är månaden stängd ersätts planerat kvar av det faktiska (planned = det planerade, closed = true).
