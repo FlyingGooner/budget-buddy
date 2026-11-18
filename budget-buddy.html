@@ -596,6 +596,9 @@ body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; 
 .cd-acc-note { display: block; margin-top: 4px; font-size: .75rem; }
 #all-dialog .all-h { margin: 14px 0 4px; font-size: .8125rem; font-weight: 500; color: var(--on-surface-variant); }
 #all-dialog .list { margin: 0; padding: 0; }
+/* 2026-11-18: Lägg till och Alla poster bredvid varandra */
+.add-pair { display: grid; grid-template-columns: 3fr 2fr; gap: 8px; }
+.add-pair .btn { min-height: 52px; font-size: 1rem; width: 100%; }
 
 </style>
 </head>
@@ -623,8 +626,10 @@ body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; 
       <div class="card" id="income-card"></div>
       <div class="card" id="expense-card"></div>
       <div class="card savings" id="savings-card" hidden></div>
-      <button type="button" class="btn filled add-any" id="add-any">＋ Lägg till</button>
-      <button type="button" class="link all-items" id="all-items">Alla poster ›</button>
+      <div class="add-pair">
+        <button type="button" class="btn filled add-any" id="add-any">＋ Lägg till</button>
+        <button type="button" class="btn tonal add-all" id="all-items">☰ Alla poster</button>
+      </div>
     </div>
   </section>
 
@@ -787,7 +792,7 @@ body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; 
           <p>Inkomster och Kostnader är hopfällda – tryck för att se dem. Kostnaderna är grupperade per kategori, och de tre största syns direkt.</p>
           <p>Tryck på en rad för att ändra beloppet bara den här månaden, hoppa över den eller Ändra posten (namn, belopp, kategori, period). + Lägg till i Boende lägger till en kostnad med samma kategori, person och hur ofta.</p>
           <p>Byt månad med ◀ ▶ eller svep. Tryck på Månad i menyn för att komma tillbaka till aktuell månad.</p>
-          <p>Alla poster › under Lägg till visar alla återkommande poster, även avslutade och kommande. Tryck på en för att ändra den.</p>
+          <p>☰ Alla poster bredvid Lägg till visar alla återkommande poster, även avslutade och kommande. Tryck på en för att ändra den.</p>
           <p>Tryck på en post för att ändra den. Beloppet överst gäller bara månaden du tittar på. Under Ändra posten (alla månader) ändrar du namn, ordinarie belopp, hur ofta, kategori och period. Ta bort posten lägger den i papperskorgen.</p>
           <p>Vill du avsluta en post, fyll i Till månad. Poster som har slutat eller inte börjat syns i de månader de gäller.</p>
         </details>
@@ -866,7 +871,7 @@ body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; 
           <p>Income and Expenses are folded – tap to see them. Expenses are grouped by category, and the three largest are shown right away.</p>
           <p>Tap a row to change the amount for this month only, skip it or Edit item (name, amount, category, period). + Add to Housing adds a cost with the same category, person and frequency.</p>
           <p>Change month with ◀ ▶ or swipe. Tap Month in the menu to return to the current month.</p>
-          <p>All items › below Add shows all recurring items, including ended and upcoming ones. Tap one to change it.</p>
+          <p>☰ All items next to Add shows all recurring items, including ended and upcoming ones. Tap one to change it.</p>
           <p>Tap an item to change it. The amount at the top applies only to the month you are viewing. Under Edit the item (all months) you change name, regular amount, how often, category and period. Delete the item moves it to the trash.</p>
           <p>To end an item, fill in To month. Items that have ended or not started show in the months they apply to.</p>
         </details>
@@ -1542,7 +1547,7 @@ I18N.add({
   'Dras före lönen (minskar inte Kvar)': 'Taken before payday (does not reduce Left)',
   ' · före lönen': ' · before payday',
   '＋ Lägg till': '＋ Add', 'Lön efter skatt, bidrag …': 'Salary after tax, benefits …', 'Hyra, el, lån – varje månad': 'Rent, power, loans – every month', 'Till ett sparkonto': 'To a savings account', 'Bara den här månaden': 'Only this month', 'Avvikelse, t.ex. en resa': 'One-off, e.g. a trip',
-  'Förra månaden': 'Last month', 'Stäng månaden dagen före lön, så ser du här vad du konsumerade och sparade.': 'Close the month the day before payday, and you will see here what you spent and saved.', 'Till Månad': 'To Month', '✓ Stängd': '✓ Closed', 'Konsumtion': 'Spending', 'Inga poster än.': 'No items yet.', 'Alla poster': 'All items', 'Posterna flyttades en månad bakåt': 'The items were moved back one month', '≈ = beräknat av appen: senast ifyllt saldo plus sparandet. Stämmer det med banken behöver du inte ändra något.': '≈ = estimated by the app: last entered balance plus the savings. If it matches the bank you don\'t need to change anything.', 'Skillnaden mot det planerade blir månadens konsumtion (mat, nöjen, oväntat) och syns i Översikt.': 'The difference from the plan becomes the month\'s spending (food, fun, the unexpected) and shows in Overview.', 'Inget saldo än': 'No balance yet', '⏰ Dags att stänga månaden i dag – hur mycket finns kvar?': '⏰ Time to close the month today – how much is left?', '🐷 Totalt sparat': '🐷 Total saved', 'Konsumtion · Sparat': 'Spending · Saved', 'Månad för månad': 'Month by month',
+  'Förra månaden': 'Last month', 'Stäng månaden dagen före lön, så ser du här vad du konsumerade och sparade.': 'Close the month the day before payday, and you will see here what you spent and saved.', 'Till Månad': 'To Month', '✓ Stängd': '✓ Closed', 'Konsumtion': 'Spending', 'Inga poster än.': 'No items yet.', 'Alla poster': 'All items', '☰ Alla poster': '☰ All items', 'Posterna flyttades en månad bakåt': 'The items were moved back one month', '≈ = beräknat av appen: senast ifyllt saldo plus sparandet. Stämmer det med banken behöver du inte ändra något.': '≈ = estimated by the app: last entered balance plus the savings. If it matches the bank you don\'t need to change anything.', 'Skillnaden mot det planerade blir månadens konsumtion (mat, nöjen, oväntat) och syns i Översikt.': 'The difference from the plan becomes the month\'s spending (food, fun, the unexpected) and shows in Overview.', 'Inget saldo än': 'No balance yet', '⏰ Dags att stänga månaden i dag – hur mycket finns kvar?': '⏰ Time to close the month today – how much is left?', '🐷 Totalt sparat': '🐷 Total saved', 'Konsumtion · Sparat': 'Spending · Saved', 'Månad för månad': 'Month by month',
   'Kontot ›': 'Account ›', 'Ändra posten (alla månader)': 'Edit the item (all months)', 'Ordinarie belopp': 'Regular amount', 'Ordinarie belopp (': 'Regular amount (', 'Ta bort posten': 'Delete the item', 'Ny post': 'New item', 'Ny inkomst': 'New income', 'Nytt sparande': 'New saving', 'Gäller från den månad du tittar på.': 'Applies from the month you are viewing.', 'Stäng': 'Close', 'Skriv ett ordinarie belopp, t.ex. 1 250 eller 99,50.': 'Enter a regular amount, e.g. 1 250 or 99.50.', 'Ändra sparkonton i Månad ›': 'Edit savings accounts in Month ›', 'Utveckling ›': 'Progress ›',
   '+ 1 dolt konto: ': '+ 1 hidden account: ',
   'Hemvaluta': 'Home currency', 'Fler val': 'More options', 'CSV, text, egen kod, radera': 'CSV, text, own code, delete', 'Ett okrypterat kalkylark, t.ex. för Excel.': 'An unencrypted spreadsheet, e.g. for Excel.', 'All data finns bara i den här webbläsaren. Läs in backup-filen på en annan enhet för att flytta den.': 'All data is only in this browser. Load the backup file on another device to move it.', 'Backupen låses med koden. Spara den i din lösenordshanterare.': 'The backup is locked with the code. Save it in your password manager.',
@@ -1720,7 +1725,7 @@ I18N.add({
 </script>
 <script>
 // ---- version.js ----
-﻿self.APP_VERSION = '0.12.107';
+﻿self.APP_VERSION = '0.12.108';
 
 </script>
   <script>

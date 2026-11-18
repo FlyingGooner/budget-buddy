@@ -579,3 +579,6 @@ body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; 
 .cd-acc-note { display: block; margin-top: 4px; font-size: .75rem; }
 #all-dialog .all-h { margin: 14px 0 4px; font-size: .8125rem; font-weight: 500; color: var(--on-surface-variant); }
 #all-dialog .list { margin: 0; padding: 0; }
+/* 2026-11-18: Lägg till och Alla poster bredvid varandra */
+.add-pair { display: grid; grid-template-columns: 3fr 2fr; gap: 8px; }
+.add-pair .btn { min-height: 52px; font-size: 1rem; width: 100%; }
