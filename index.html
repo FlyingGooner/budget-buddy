@@ -48,16 +48,7 @@
   <!-- Statistik (follows the month chosen in Månad) -->
   <section class="tab" id="tab-stats" hidden>
     <div class="col">
-      <div class="monthbar">
-        <button type="button" class="icon-btn" id="stats-prev" aria-label="Föregående månad">◀</button>
-        <h1><button type="button" class="step-title" id="stats-title" title="Gå till denna månad"></button></h1>
-        <button type="button" class="icon-btn" id="stats-next" aria-label="Nästa månad">▶</button>
-      </div>
-      <div class="card stats" id="stats-kpi"></div>
-      <div class="card" id="stats-cats"></div>
-    </div>
-    <div class="col">
-      <div class="card" id="stats-trend"></div>
+      <div class="card last-month" id="last-month"></div>
       <div class="card" id="stats-accounts">
         <h2>🐷 Sparkonton</h2>
         <p class="acc-big"><span id="acc-total"></span><span class="acc-total-diff" id="acc-total-diff"></span></p>
@@ -236,10 +227,9 @@
           <p>Med lön den 25:e räcker lönen den 25 november till december. Den månaden heter December, med 25 nov – 24 dec under.</p>
         </details>
         <details><summary>Översikt</summary>
-          <p>Nyckeltal för månaden: kvar av inkomsten, sparkvot, snitt, sparat och största kostnaden. Kostnader per kategori, in och ut de senaste 12 månaderna, och sparkontonas summa med graf.</p>
-          <p>Längre ner: ett år i taget – byt år med ◀ ▶. Överst statistik för året: inkomster, kostnader, sparat, kvar, snitt, bästa och sämsta månad och prognos för helåret.</p>
-          <p>Grafen visar kvar + sparat över tid (eller saldot, om du har Startsaldo under Inställningar → Hushåll). Streckat är prognos.</p>
-          <p>Månader som inte är stängda räknas med snittet av de rörliga utgifterna (≈). ✓ = stängd. Tryck på en månad för att öppna den.</p>
+          <p>Överst förra månaden – den senaste du har stängt: Förbrukat (räkningar plus mat, nöjen och annat), 🐷 Sparat och Kvar. ▲▼ visar skillnaden mot månaden innan.</p>
+          <p>Sedan sparkontonas summa med graf, och Månad för månad: förbrukat och sparat för varje stängd månad. Tryck på en månad för att öppna den.</p>
+          <p>Översikten bygger på stängda månader – stäng månaden dagen före lön (se ovan).</p>
         </details>
         <details><summary>Personer och kategorier</summary>
           <p>Valfritt: lägg till personerna i hushållet under Inställningar → Hushåll. Varje post kan då höra till en person eller vara gemensam, och Kvar visar In, Ut och Kvar per person. Delat lika visar vad som blir kvar per person om det gemensamma delas lika.</p>
@@ -312,10 +302,9 @@
           <p>With payday on the 25th, the salary on 25 November covers December. That month is called December, with 25 Nov – 24 Dec below.</p>
         </details>
         <details><summary>Overview</summary>
-          <p>Key figures for the month: left of income, savings rate, average, saved and the largest cost. Expenses by category, in and out over the last 12 months, and the savings accounts total with a chart.</p>
-          <p>Further down: one year at a time – change year with ◀ ▶. At the top, figures for the year: income, expenses, saved, left, average, best and worst month and a forecast for the full year.</p>
-          <p>The chart shows left + saved over time (or the balance, if you have a Starting balance under Settings → Household). Dashed is forecast.</p>
-          <p>Months that are not closed are counted with the average variable spending (≈). ✓ = closed. Tap a month to open it.</p>
+          <p>At the top last month – the latest one you have closed: Spent (bills plus food, fun and the rest), 🐷 Saved and Left. ▲▼ shows the difference from the month before.</p>
+          <p>Then the savings accounts total with a chart, and Month by month: spent and saved for each closed month. Tap a month to open it.</p>
+          <p>The overview is based on closed months – close the month the day before payday (see above).</p>
         </details>
         <details><summary>People and categories</summary>
           <p>Optional: add the people in the household under Settings → Household. Each item can then belong to a person or be shared, and Left shows In, Out and Left per person. Split evenly shows what is left per person if the shared part is split evenly.</p>

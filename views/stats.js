@@ -12,56 +12,29 @@ function svg(tag, attrs = {}, ...children) {
 }
 const stat = (value, label) => el('div', { class: 'stat' }, el('span', { class: 'stat-n', text: value }), el('span', { text: label }));
 
+// Översikt (2026-11-18, förenklad): förra stängda månaden – förbrukat, sparat, kvar – och jämförelse med månaden innan.
+// Förbrukat = det som gick åt av inkomsten: inkomst − sparat (det som drogs från kontot) − faktiskt kvar.
+function closedSummary(m) {
+  const t = monthTotals(data, m);
+  return { m, spent: t.income - (t.savings - (t.pre || 0)) - t.left, saved: t.savings, left: t.left };
+}
+const closedMonths = () => Object.keys(data.closed).sort().reverse();
 function renderStats() {
-  $('stats-title').replaceChildren(...monthTitle(month));
-  const rows = rowsForMonth(data, month), t = totals(rows);
-  const exp = rows.filter((r) => r.type === 'expense');
-  const last12 = Array.from({ length: 12 }, (_, i) => addMonths(month, i - 11)).map((m) => ({ m, ...monthTotals(data, m) }));
-  const used = last12.filter((x) => x.income || x.expense);
-  const avgLeft = used.length ? Math.round(used.reduce((s, x) => s + x.left, 0) / used.length / 100) * 100 : null; // whole kronor
-  const biggest = exp.filter((r) => r.category !== SAVINGS_CAT).reduce((b, r) => (!b || r.amount > b.amount ? r : b), null);
-
-  // Kompakt (2026-11-17): sex nyckeltal i två rader om tre.
-  fill($('stats-kpi'),
-    el('h2', { text: 'Nyckeltal' }),
-    stat(t.income ? Math.round((t.left / t.income) * 100) + ' %' : '–', 'Kvar av inkomst'),
-    stat(t.income ? Math.round((t.savings / t.income) * 100) + ' %' : '–', '🐷 Sparkvot'),
-    stat(avgLeft == null ? '–' : kr(avgLeft, true), `Snitt kvar (${used.length} mån)`),
-    stat(kr(t.savings), '🐷 Sparat i månaden'),
-    stat(kr(last12.reduce((s, x) => s + x.savings, 0)), '🐷 Sparat 12 mån'),
-    stat(biggest ? kr(biggest.amount) : '–', biggest ? `Största: ${biggest.name}` : 'Största kostnad'));
-
-  // Costs per category this month
-  const byCat = new Map();
-  for (const r of exp) if (r.category !== SAVINGS_CAT) byCat.set(r.category, (byCat.get(r.category) || 0) + r.amount);
-  const cats = [...byCat].sort((a, b) => b[1] - a[1]);
-  const max = cats.length ? cats[0][1] : 1;
-  fill($('stats-cats'), el('h2', { class: 'split' }, el('span', { text: 'Kostnader per kategori' }), el('span', { text: kr(t.expense - t.savings) })),
-    cats.length ? el('ul', { class: 'cat-bars' }, cats.map(([id, sum]) => {
-      const f = el('div', { class: 'bar-fill' });
-      f.style.width = Math.round((sum / max) * 100) + '%';
-      return el('li', {}, el('span', { class: 'lbl', text: catName(id) }), el('span', { class: 'bar' }, f), el('span', { class: 'amount', text: kr(sum) }));
-    })) : el('div', { class: 'empty' }, el('p', { class: 'muted', text: 'Inga kostnader den här månaden.' }),
-      el('button', { type: 'button', class: 'btn tonal', text: 'Gå till kostnader', on: { click: () => focusAdd('expense') } })));
-
-  // Trend: income and costs, the 12 months up to the chosen month
-  const W = 340, H = 180, P = { l: 40, r: 6, t: 8, b: 20 };
-  const top = Math.max(1, ...last12.map((x) => Math.max(x.income, x.expense)));
-  const y = (v) => P.t + (H - P.t - P.b) * (1 - v / top);
-  const cw = (W - P.l - P.r) / 12, bw = Math.max(3, cw * 0.36);
-  const short = (ore) => nf0.format(Math.round(ore / 100000)) + 'k';
-  const kids = [0, 0.5, 1].map((f) => [
-    svg('line', { class: 'grid', x1: P.l, x2: W - P.r, y1: y(top * f), y2: y(top * f) }),
-    svg('text', { class: 'ax', x: P.l - 4, y: y(top * f) + 3, 'text-anchor': 'end' }, short(top * f))]);
-  last12.forEach((x, i) => {
-    const cx = P.l + cw * i + cw / 2, cur = x.m === month ? ' b-cur' : '';
-    kids.push(svg('rect', { class: 'b-in' + cur, x: cx - bw, y: y(x.income), width: bw, height: y(0) - y(x.income), rx: 1 }),
-      svg('rect', { class: 'b-out' + cur, x: cx, y: y(x.expense), width: bw, height: y(0) - y(x.expense), rx: 1 }));
-    if (i % 2 === 1 || i === 11) kids.push(svg('text', { class: 'ax', x: cx, y: H - 6, 'text-anchor': 'middle' }, monthShortLabel(x.m)));
-  });
-  fill($('stats-trend'), el('h2', { text: 'In och ut, 12 månader' }),
-    used.length ? [svg('svg', { class: 'chart', viewBox: `0 0 ${W} ${H}`, role: 'img', 'aria-label': `Inkomster och kostnader per månad, ${monthLabel(last12[0].m)} till ${monthLabel(month)}` }, kids),
-      el('div', { class: 'legend' }, el('span', { class: 'lg lg-in' }), 'Inkomster', el('span', { class: 'lg lg-out' }), 'Kostnader', el('span', { class: 'muted', text: `(tusental ${unit()})` }))]
-      : el('p', { class: 'muted', text: 'Inga poster än – lägg till inkomster och kostnader så syns trenden här.' }));
+  const ms = closedMonths(), box = $('last-month');
+  if (!ms.length) {
+    fill(box, el('h2', { text: 'Förra månaden' }),
+      el('p', { class: 'muted', text: 'Stäng månaden dagen före lön, så ser du här vad du förbrukade och sparade.' }),
+      el('button', { type: 'button', class: 'btn tonal', text: 'Till Månad', on: { click: () => showTab('month') } }));
+  } else {
+    const c = closedSummary(ms[0]), p = ms[1] ? closedSummary(ms[1]) : null;
+    const big = (v, label, key, good) => {
+      const d = p ? v - p[key] : 0;
+      return el('div', { class: 'lm-stat' }, el('span', { class: 'lm-n', text: kr(v, key === 'left') }), el('span', { class: 'lm-l', text: label }),
+        p && d ? el('span', { class: 'lm-d ' + ((d > 0) === good ? 'pos' : 'neg'), text: `${d > 0 ? '▲' : '▼'} ${kr(Math.abs(d))}` }) : null);
+    };
+    fill(box, el('h2', { class: 'split' }, el('span', { text: monthLabel(c.m) }), el('span', { text: '✓ Stängd' })),
+      el('div', { class: 'lm-stats' }, big(c.spent, 'Förbrukat', 'spent', false), big(c.saved, '🐷 Sparat', 'saved', true), big(c.left, 'Kvar', 'left', true)),
+      p ? el('p', { class: 'muted small', text: `▲▼ mot ${monthLabel(p.m).toLowerCase()}` }) : null);
+  }
   renderAccounts();
 }

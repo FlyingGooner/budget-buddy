@@ -35,10 +35,9 @@ The same text is in the app under **Settings → General → Help and manual**. 
 - With payday on the 25th, the salary on 25 November covers December. That month is called **December**, with **25 Nov – 24 Dec** below.
 
 ## Overview
-- Key figures for the month: left of income, savings rate, average, saved and the largest cost. Expenses by category, in and out over the last 12 months, and the savings accounts total with a chart.
-- Further down: one year at a time – change year with **◀ ▶**. At the top, figures for the year: income, expenses, saved, left, average, best and worst month and a forecast for the full year.
-- The chart shows left + saved over time (or the balance, if you have a **Starting balance** under Settings → Household). Dashed is forecast.
-- Months that are not closed are counted with the average variable spending (≈). ✓ = closed. Tap a month to open it.
+- At the top **last month** – the latest one you have closed: **Spent** (bills plus food, fun and the rest), **🐷 Saved** and **Left**. ▲▼ shows the difference from the month before.
+- Then the savings accounts total with a chart, and **Month by month**: spent and saved for each closed month. Tap a month to open it.
+- The overview is based on closed months – close the month the day before payday (see above).
 
 ## People and categories
 - Optional: add the people in the household under **Settings → Household**. Each item can then belong to a person or be shared, and Left shows In, Out and Left per person. **Split evenly** shows what is left per person if the shared part is split evenly.

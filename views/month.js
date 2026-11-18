@@ -297,9 +297,6 @@ function setMonth(m) { month = m; renderMonth(); renderStats(); }
 $('prev-month').addEventListener('click', () => changeMonth(-1));
 $('next-month').addEventListener('click', () => changeMonth(1));
 $('month-title').addEventListener('click', () => setMonth(activeMonth()));
-$('stats-prev').addEventListener('click', () => changeMonth(-1));
-$('stats-next').addEventListener('click', () => changeMonth(1));
-$('stats-title').addEventListener('click', () => setMonth(activeMonth()));
 
 // Swipe left/right anywhere on the screen (not the menu, inputs or dialogs), like follow-diet-tracker:
 // Månad and Statistik change month, Översikt changes year.
@@ -314,7 +311,7 @@ document.addEventListener('touchend', (e) => {
   touchX = null;
   if (Math.abs(dx) < 60 || Math.abs(dx) < Math.abs(dy) * 1.5) return;
   const dir = dx < 0 ? 1 : -1, tab = store.get(CONFIG.tabKey);
-  if (tab === 'month' || tab === 'stats') changeMonth(dir);
+  if (tab === 'month') changeMonth(dir);
 });
 
 // ---------- Row dialog (adjust a recurring item for one month / edit a one-off) ----------

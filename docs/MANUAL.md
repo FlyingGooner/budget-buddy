@@ -35,10 +35,9 @@ Samma text finns i appen under **Inställningar → Allmänt → Hjälp och manu
 - Med lön den 25:e räcker lönen den 25 november till december. Den månaden heter **December**, med **25 nov – 24 dec** under.
 
 ## Översikt
-- Nyckeltal för månaden: kvar av inkomsten, sparkvot, snitt, sparat och största kostnaden. Kostnader per kategori, in och ut de senaste 12 månaderna, och sparkontonas summa med graf.
-- Längre ner: ett år i taget – byt år med **◀ ▶**. Överst statistik för året: inkomster, kostnader, sparat, kvar, snitt, bästa och sämsta månad och prognos för helåret.
-- Grafen visar kvar + sparat över tid (eller saldot, om du har **Startsaldo** under Inställningar → Hushåll). Streckat är prognos.
-- Månader som inte är stängda räknas med snittet av de rörliga utgifterna (≈). ✓ = stängd. Tryck på en månad för att öppna den.
+- Överst **förra månaden** – den senaste du har stängt: **Förbrukat** (räkningar plus mat, nöjen och annat), **🐷 Sparat** och **Kvar**. ▲▼ visar skillnaden mot månaden innan.
+- Sedan sparkontonas summa med graf, och **Månad för månad**: förbrukat och sparat för varje stängd månad. Tryck på en månad för att öppna den.
+- Översikten bygger på stängda månader – stäng månaden dagen före lön (se ovan).
 
 ## Personer och kategorier
 - Valfritt: lägg till personerna i hushållet under **Inställningar → Hushåll**. Varje post kan då höra till en person eller vara gemensam, och Kvar visar In, Ut och Kvar per person. **Delat lika** visar vad som blir kvar per person om det gemensamma delas lika.
