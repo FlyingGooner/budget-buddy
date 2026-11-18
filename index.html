@@ -467,10 +467,9 @@
 <dialog id="close-dialog" aria-labelledby="cd-title">
   <form method="dialog" id="cd-form" novalidate>
     <h2 id="cd-title"></h2>
-    <p class="muted" id="cd-sub"></p>
-    <label class="field"><span>Kvar (<span class="cur-unit">kr</span>)</span><input id="cd-amount" inputmode="decimal" autocomplete="off"></label>
+    <label class="field"><span id="cd-label">Kvar på kontot</span><input id="cd-amount" inputmode="decimal" autocomplete="off"></label>
+    <p class="muted small cd-hint" id="cd-sub"></p>
     <div id="cd-accounts"></div>
-    <p class="muted small">Skillnaden mot det planerade blir månadens konsumtion (mat, nöjen, oväntat) och syns i Översikt.</p>
     <p class="error" id="cd-error" role="alert"></p>
     <div class="actions wrap">
       <button type="button" class="btn text" id="cd-reopen">Öppna igen</button>

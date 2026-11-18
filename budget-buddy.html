@@ -599,6 +599,18 @@ body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; 
 /* 2026-11-18: Lägg till och Alla poster bredvid varandra */
 .add-pair { display: grid; grid-template-columns: 3fr 2fr; gap: 8px; }
 .add-pair .btn { min-height: 52px; font-size: 1rem; width: 100%; }
+/* 2026-11-18: Stäng månaden – kompakt */
+#close-dialog .cd-hint { margin: 4px 0 0; }
+#close-dialog .cd-acc-h { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; margin: 16px 0 4px; }
+#close-dialog .cd-acc-h small { font-weight: 400; font-size: .75rem; }
+.cd-accs { list-style: none; margin: 0; padding: 0; }
+.cd-accs li + li { border-top: 1px solid var(--outline-variant); }
+.cd-acc { display: flex; align-items: center; gap: 10px; padding: 6px 0; }
+.cd-acc-name { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.cd-acc-name small { font-size: .75rem; }
+.cd-acc-in { display: flex; align-items: center; gap: 6px; }
+.cd-acc-in input { width: 7.5em; min-height: 44px; padding: 0 10px; text-align: right; border-radius: var(--r-sm); border: 1px solid var(--outline); background: var(--surface-container-lowest, transparent); color: inherit; font: inherit; font-variant-numeric: tabular-nums; }
+.cd-acc-in small { min-width: 2em; font-size: .75rem; }
 
 </style>
 </head>
@@ -1052,10 +1064,9 @@ body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; 
 <dialog id="close-dialog" aria-labelledby="cd-title">
   <form method="dialog" id="cd-form" novalidate>
     <h2 id="cd-title"></h2>
-    <p class="muted" id="cd-sub"></p>
-    <label class="field"><span>Kvar (<span class="cur-unit">kr</span>)</span><input id="cd-amount" inputmode="decimal" autocomplete="off"></label>
+    <label class="field"><span id="cd-label">Kvar på kontot</span><input id="cd-amount" inputmode="decimal" autocomplete="off"></label>
+    <p class="muted small cd-hint" id="cd-sub"></p>
     <div id="cd-accounts"></div>
-    <p class="muted small">Skillnaden mot det planerade blir månadens konsumtion (mat, nöjen, oväntat) och syns i Översikt.</p>
     <p class="error" id="cd-error" role="alert"></p>
     <div class="actions wrap">
       <button type="button" class="btn text" id="cd-reopen">Öppna igen</button>
@@ -1547,7 +1558,7 @@ I18N.add({
   'Dras före lönen (minskar inte Kvar)': 'Taken before payday (does not reduce Left)',
   ' · före lönen': ' · before payday',
   '＋ Lägg till': '＋ Add', 'Lön efter skatt, bidrag …': 'Salary after tax, benefits …', 'Hyra, el, lån – varje månad': 'Rent, power, loans – every month', 'Till ett sparkonto': 'To a savings account', 'Bara den här månaden': 'Only this month', 'Avvikelse, t.ex. en resa': 'One-off, e.g. a trip',
-  'Förra månaden': 'Last month', 'Stäng månaden dagen före lön, så ser du här vad du konsumerade och sparade.': 'Close the month the day before payday, and you will see here what you spent and saved.', 'Till Månad': 'To Month', '✓ Stängd': '✓ Closed', 'Konsumtion': 'Spending', 'Inga poster än.': 'No items yet.', 'Alla poster': 'All items', '☰ Alla poster': '☰ All items', 'Posterna flyttades en månad bakåt': 'The items were moved back one month', '≈ = beräknat av appen: senast ifyllt saldo plus sparandet. Stämmer det med banken behöver du inte ändra något.': '≈ = estimated by the app: last entered balance plus the savings. If it matches the bank you don\'t need to change anything.', 'Skillnaden mot det planerade blir månadens konsumtion (mat, nöjen, oväntat) och syns i Översikt.': 'The difference from the plan becomes the month\'s spending (food, fun, the unexpected) and shows in Overview.', 'Inget saldo än': 'No balance yet', '⏰ Dags att stänga månaden i dag – hur mycket finns kvar?': '⏰ Time to close the month today – how much is left?', '🐷 Totalt sparat': '🐷 Total saved', 'Konsumtion · Sparat': 'Spending · Saved', 'Månad för månad': 'Month by month',
+  'Förra månaden': 'Last month', 'Stäng månaden dagen före lön, så ser du här vad du konsumerade och sparade.': 'Close the month the day before payday, and you will see here what you spent and saved.', 'Till Månad': 'To Month', '✓ Stängd': '✓ Closed', 'Konsumtion': 'Spending', 'Sparkonton': 'Savings accounts', 'Ändra bara det som skiljer mot banken': 'Only change what differs from the bank', 'Inga poster än.': 'No items yet.', 'Alla poster': 'All items', '☰ Alla poster': '☰ All items', 'Posterna flyttades en månad bakåt': 'The items were moved back one month', '≈ = beräknat av appen: senast ifyllt saldo plus sparandet. Stämmer det med banken behöver du inte ändra något.': '≈ = estimated by the app: last entered balance plus the savings. If it matches the bank you don\'t need to change anything.', 'Skillnaden mot det planerade blir månadens konsumtion (mat, nöjen, oväntat) och syns i Översikt.': 'The difference from the plan becomes the month\'s spending (food, fun, the unexpected) and shows in Overview.', 'Inget saldo än': 'No balance yet', '⏰ Dags att stänga månaden i dag – hur mycket finns kvar?': '⏰ Time to close the month today – how much is left?', '🐷 Totalt sparat': '🐷 Total saved', 'Konsumtion · Sparat': 'Spending · Saved', 'Månad för månad': 'Month by month',
   'Kontot ›': 'Account ›', 'Ändra posten (alla månader)': 'Edit the item (all months)', 'Ordinarie belopp': 'Regular amount', 'Ordinarie belopp (': 'Regular amount (', 'Ta bort posten': 'Delete the item', 'Ny post': 'New item', 'Ny inkomst': 'New income', 'Nytt sparande': 'New saving', 'Gäller från den månad du tittar på.': 'Applies from the month you are viewing.', 'Stäng': 'Close', 'Skriv ett ordinarie belopp, t.ex. 1 250 eller 99,50.': 'Enter a regular amount, e.g. 1 250 or 99.50.', 'Ändra sparkonton i Månad ›': 'Edit savings accounts in Month ›', 'Utveckling ›': 'Progress ›',
   '+ 1 dolt konto: ': '+ 1 hidden account: ',
   'Hemvaluta': 'Home currency', 'Fler val': 'More options', 'CSV, text, egen kod, radera': 'CSV, text, own code, delete', 'Ett okrypterat kalkylark, t.ex. för Excel.': 'An unencrypted spreadsheet, e.g. for Excel.', 'All data finns bara i den här webbläsaren. Läs in backup-filen på en annan enhet för att flytta den.': 'All data is only in this browser. Load the backup file on another device to move it.', 'Backupen låses med koden. Spara den i din lösenordshanterare.': 'The backup is locked with the code. Save it in your password manager.',
@@ -1653,6 +1664,10 @@ I18N.add({
   [/^ifyllt (.+)$/, (g, tr) => `entered ${tr(g[1])}`],
   [/^Börja posterna i (.+)$/, (g, tr) => `Start the items in ${tr(g[1])}`],
   [/^avslutad (.+)$/, (g, tr) => `ended ${tr(g[1])}`],
+  [/^Kvar på kontot (.+) \((.+)\)$/, (g, tr) => `Left in the account ${tr(g[1])} (${g[2]})`],
+  [/^Sista vardagen före lönen\. Planerat (.+) – skillnaden blir månadens konsumtion\.$/, 'Last weekday before payday. Planned $1 – the difference becomes the month\'s spending.'],
+  [/^Sista vardagen före lönen\. Planerat (.+) – skillnaden blir månadens konsumtion\. Lön en annan dag än den 1:a\? Välj Lönedag under Inställningar\.$/, 'Last weekday before payday. Planned $1 – the difference becomes the month\'s spending. Paid on another day than the 1st? Choose Payday under Settings.'],
+  [/^≈ beräknat \+ (.+)$/, '≈ estimated + $1'],
   [/^▲▼ mot (.+)$/, (g, tr) => `▲▼ vs ${tr(g[1])}`],
   [/^(\d+) månader hittills · (\d+) prognos$/, '$1 months so far · $2 forecast'],
   [/^Året (\d{4}) · (hittills|prognos|helår)$/, (g) => `${g[1]} · ${{ hittills: 'so far', prognos: 'forecast', helår: 'full year' }[g[2]]}`],
@@ -1725,7 +1740,7 @@ I18N.add({
 </script>
 <script>
 // ---- version.js ----
-﻿self.APP_VERSION = '0.12.109';
+﻿self.APP_VERSION = '0.12.110';
 
 </script>
   <script>
@@ -2994,22 +3009,24 @@ function closeIso() {   // dagen före nästa lön (eller sista dagen i månaden
 function openCloseDialog() {
   const t = monthTotals(data, month);
   $('cd-title').textContent = `Stäng ${monthLabel(month).toLowerCase()}`;
-  $('cd-sub').textContent = `Hur mycket fanns kvar på kontot ${closeDay()}, sista vardagen före lönen? Planerat kvar: ${kr(t.closed ? t.planned : t.left, true)}.`
-    + (data.settings.payday > 1 ? '' : ' Får du lön en annan dag än den 1:a? Välj Lönedag under Inställningar → Hushåll.');
+  // 2026-11-18: kortare och tydligare – dagen står i fältets rubrik, planerat och konsumtion i en rad under.
+  $('cd-label').textContent = `Kvar på kontot ${closeDay()} (${unit()})`;
+  $('cd-sub').textContent = `Sista vardagen före lönen. Planerat ${kr(t.closed ? t.planned : t.left, true)} – skillnaden blir månadens konsumtion.`
+    + (data.settings.payday > 1 ? '' : ' Lön en annan dag än den 1:a? Välj Lönedag under Inställningar.');
   $('cd-amount').value = t.closed ? (t.left < 0 ? '-' : '') + krInput(Math.abs(t.left)) : '';
   $('cd-reopen').hidden = !t.closed;
   // Sparkonton (2026-11-17): fyll i saldona samtidigt – förifyllt med beräknat/senaste saldo, t.ex. efter en extra överföring.
-  // 2026-11-18: tydligt vad som är beräknat (fylls på av sparposterna) – ändra bara det som inte stämmer med banken.
-  fill($('cd-accounts'), data.accounts.length ? [el('p', { class: 'cd-acc-h', text: 'Saldo på sparkontona' }),
-    el('p', { class: 'muted small', text: '≈ = beräknat av appen: senast ifyllt saldo plus sparandet. Stämmer det med banken behöver du inte ändra något.' }),
-    el('div', { class: 'row2' }, data.accounts.map((a) => {
+  // 2026-11-18: en rad per konto – namn och var siffran kommer ifrån till vänster, saldot till höger.
+  fill($('cd-accounts'), data.accounts.length ? [el('p', { class: 'cd-acc-h' }, el('span', { text: 'Sparkonton' }), el('small', { class: 'muted', text: 'Ändra bara det som skiljer mot banken' })),
+    el('ul', { class: 'cd-accs' }, data.accounts.map((a) => {
       const est = estBalance(data, a, month);
       const inp = el('input', { inputmode: 'decimal', autocomplete: 'off', 'data-acc': a.id, 'aria-label': `Saldo ${a.name}` });
       inp.value = est ? krInput(est.amount) : '';
       inp.dataset.orig = inp.value;
       const from = (a.feeds || []).map((id) => data.recurring.find((x) => x.id === id)?.name).filter(Boolean);
-      const note = !est ? 'Inget saldo än' : est.estimated ? `≈ beräknat${from.length ? ' · fylls på av ' + from.join(', ') : ''}` : `ifyllt ${monthShortLabel(balanceAt(a, month).month).toLowerCase()}`;
-      return el('label', { class: 'field' }, el('span', { text: `${a.name} (${unit(a.currency)})` }), inp, el('small', { class: 'muted cd-acc-note', text: note }));
+      const note = !est ? 'Inget saldo än' : est.estimated ? `≈ beräknat${from.length ? ' + ' + from.join(', ') : ''}` : `ifyllt ${monthShortLabel(balanceAt(a, month).month).toLowerCase()}`;
+      return el('li', {}, el('label', { class: 'cd-acc' }, el('span', { class: 'cd-acc-name' }, el('span', { text: a.name }), el('small', { class: 'muted', text: note })),
+        el('span', { class: 'cd-acc-in' }, inp, el('small', { class: 'muted', text: unit(a.currency) }))));
     }))] : null);
   $('cd-error').textContent = '';
   $('close-dialog').showModal();
