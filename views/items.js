@@ -62,3 +62,27 @@ function focusAdd(type) {
   (els.name || els.category).focus();
 }
 $('nd-cancel').addEventListener('click', () => $('new-dialog').close());
+
+// Alla poster (2026-11-18): en lista över alla återkommande poster, även avslutade och kommande. Tryck = öppna posten
+// i en månad där den gäller (den du tittar på, annars dess första eller sista månad).
+function openAllItems() {
+  const now = month, groups = [['income', 'Inkomster'], ['expense', 'Kostnader'], ['savings', '🐷 Sparande']];
+  const kind = (r) => (r.type === 'income' ? 'income' : r.category === SAVINGS_CAT ? 'savings' : 'expense');
+  const period = (r) => r.end && r.end < now ? `avslutad ${monthShortLabel(r.end).toLowerCase()} ${monthLabel(r.end).slice(-4)}`
+    : r.start > now ? `från ${monthShortLabel(r.start).toLowerCase()} ${monthLabel(r.start).slice(-4)}` : null;
+  const open = (r) => {
+    const m = r.start > now ? r.start : r.end && r.end < now ? r.end : now;
+    $('all-dialog').close();
+    setTimeout(() => { if (m !== month) setMonth(m); const row = rowsForMonth(data, m).find((x) => x.id === r.id); if (row) openRowDialog(row); }, 0);
+  };
+  fill($('all-list'), ...(data.recurring.length ? groups.map(([k, title]) => {
+    const rs = data.recurring.filter((r) => kind(r) === k).sort((a, b) => a.name.localeCompare(b.name, 'sv'));
+    return rs.length ? [el('h3', { class: 'all-h', text: title }), el('ul', { class: 'list' }, rs.map((r) => el('li', { class: 'row' + (period(r)?.startsWith('avslutad') ? ' ended' : '') },
+      el('button', { type: 'button', class: 'row-main', 'aria-label': `${r.name}, ${kr(r.amount)}. Ändra`, on: { click: () => open(r) } },
+        el('span', { class: 'row-name' }, el('span', { text: r.name }), el('span', { class: 'row-sub', text: [k === 'expense' ? catName(r.category) : null, r.type === 'expense' ? everyLabel[r.every] : null, period(r)].filter(Boolean).join(' · ') })),
+        el('span', { class: 'amount', text: kr(r.amount) })))))] : null;
+  }).flat().filter(Boolean) : [el('p', { class: 'muted', text: 'Inga poster än.' })]));
+  $('all-dialog').showModal();
+}
+$('all-items').addEventListener('click', openAllItems);
+$('all-close').addEventListener('click', () => $('all-dialog').close());

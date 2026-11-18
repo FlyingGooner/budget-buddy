@@ -42,6 +42,7 @@
       <div class="card" id="expense-card"></div>
       <div class="card savings" id="savings-card" hidden></div>
       <button type="button" class="btn filled add-any" id="add-any">＋ Lägg till</button>
+      <button type="button" class="link all-items" id="all-items">Alla poster ›</button>
     </div>
   </section>
 
@@ -204,6 +205,7 @@
           <p>Inkomster och Kostnader är hopfällda – tryck för att se dem. Kostnaderna är grupperade per kategori, och de tre största syns direkt.</p>
           <p>Tryck på en rad för att ändra beloppet bara den här månaden, hoppa över den eller Ändra posten (namn, belopp, kategori, period). + Lägg till i Boende lägger till en kostnad med samma kategori, person och hur ofta.</p>
           <p>Byt månad med ◀ ▶ eller svep. Tryck på Månad i menyn för att komma tillbaka till aktuell månad.</p>
+          <p>Alla poster › under Lägg till visar alla återkommande poster, även avslutade och kommande. Tryck på en för att ändra den.</p>
           <p>Tryck på en post för att ändra den. Beloppet överst gäller bara månaden du tittar på. Under Ändra posten (alla månader) ändrar du namn, ordinarie belopp, hur ofta, kategori och period. Ta bort posten lägger den i papperskorgen.</p>
           <p>Vill du avsluta en post, fyll i Till månad. Poster som har slutat eller inte börjat syns i de månader de gäller.</p>
         </details>
@@ -282,6 +284,7 @@
           <p>Income and Expenses are folded – tap to see them. Expenses are grouped by category, and the three largest are shown right away.</p>
           <p>Tap a row to change the amount for this month only, skip it or Edit item (name, amount, category, period). + Add to Housing adds a cost with the same category, person and frequency.</p>
           <p>Change month with ◀ ▶ or swipe. Tap Month in the menu to return to the current month.</p>
+          <p>All items › below Add shows all recurring items, including ended and upcoming ones. Tap one to change it.</p>
           <p>Tap an item to change it. The amount at the top applies only to the month you are viewing. Under Edit the item (all months) you change name, regular amount, how often, category and period. Delete the item moves it to the trash.</p>
           <p>To end an item, fill in To month. Items that have ended or not started show in the months they apply to.</p>
         </details>
@@ -389,6 +392,11 @@
       </form>
   <p class="muted small">Gäller från den månad du tittar på.</p>
   <div class="actions"><span class="spacer"></span><button type="button" class="btn text" id="nd-cancel">Stäng</button></div>
+</dialog>
+<dialog id="all-dialog" aria-labelledby="all-title">
+  <h2 id="all-title">Alla poster</h2>
+  <div id="all-list"></div>
+  <div class="actions"><span class="spacer"></span><button type="button" class="btn text" id="all-close">Stäng</button></div>
 </dialog>
 <dialog id="add-dialog" aria-labelledby="add-title">
   <h2 id="add-title">Lägg till</h2>
