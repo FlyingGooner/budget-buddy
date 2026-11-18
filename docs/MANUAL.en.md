@@ -35,7 +35,7 @@ The same text is in the app under **Settings → General → Help and manual**. 
 - With payday on the 25th, the salary on 25 November covers December. That month is called **December**, with **25 Nov – 24 Dec** below.
 
 ## Overview
-- At the top **last month** – the latest one you have closed: **Spent** (bills plus food, fun and the rest), **🐷 Saved** and **Left**. ▲▼ shows the difference from the month before.
+- At the top **last month** – the latest one you have closed: **Spent** (bills plus food, fun and the rest), **🐷 Total saved** (the total in the savings accounts) and **Left**. ▲▼ shows the difference from the month before.
 - Then the savings accounts total with a chart, and **Month by month**: spent and saved for each closed month. Tap a month to open it.
 - The overview is based on closed months – close the month the day before payday (see above).
 

@@ -18,6 +18,8 @@ function closedSummary(m) {
   const t = monthTotals(data, m);
   return { m, spent: t.income - (t.savings - (t.pre || 0)) - t.left, saved: t.savings, left: t.left };
 }
+// Totalt sparat på kontona i slutet av månad m, i hemvalutan (hela kronor). null utan konton.
+const accTotal = (m) => data.accounts.length ? Math.round(data.accounts.reduce((s, a) => s + toSek(estBalance(data, a, m)?.amount || 0, a.currency), 0) / 100) * 100 : null;
 const closedMonths = () => Object.keys(data.closed).sort().reverse();
 function renderStats() {
   const ms = closedMonths(), box = $('last-month');
@@ -27,14 +29,16 @@ function renderStats() {
       el('button', { type: 'button', class: 'btn tonal', text: 'Till Månad', on: { click: () => showTab('month') } }));
   } else {
     const c = closedSummary(ms[0]), p = ms[1] ? closedSummary(ms[1]) : null;
-    const big = (v, label, key, good) => {
-      const d = p ? v - p[key] : 0;
+    const big = (v, label, key, good, prev = p && p[key]) => {
+      const d = prev != null ? v - prev : 0;
       return el('div', { class: 'lm-stat' }, el('span', { class: 'lm-n', text: kr(v, key === 'left') }), el('span', { class: 'lm-l', text: label }),
-        p && d ? el('span', { class: 'lm-d ' + ((d > 0) === good ? 'pos' : 'neg'), text: `${d > 0 ? '▲' : '▼'} ${kr(Math.abs(d))}` }) : null);
+        d ? el('span', { class: 'lm-d ' + ((d > 0) === good ? 'pos' : 'neg'), text: `${d > 0 ? '▲' : '▼'} ${kr(Math.abs(d))}` }) : null);
     };
     fill(box, el('h2', { class: 'split' }, el('span', { text: monthLabel(c.m) }), el('span', { text: '✓ Stängd' })),
-      el('div', { class: 'lm-stats' }, big(c.spent, 'Förbrukat', 'spent', false), big(c.saved, '🐷 Sparat', 'saved', true), big(c.left, 'Kvar', 'left', true)),
-      p ? el('p', { class: 'muted small', text: `▲▼ mot ${monthLabel(p.m).toLowerCase()}` }) : null);
+      el('div', { class: 'lm-stats' }, big(c.spent, 'Förbrukat', 'spent', false), (accTotal(c.m) != null
+        ? big(accTotal(c.m), '🐷 Totalt sparat', 'total', true, accTotal(addMonths(c.m, -1)))   // 2026-11-18: summan på kontona mot månaden innan
+        : big(c.saved, '🐷 Sparat', 'saved', true)), big(c.left, 'Kvar', 'left', true)),
+      el('p', { class: 'muted small', text: `▲▼ mot ${monthLabel(addMonths(c.m, -1)).toLowerCase()}` }));
   }
   renderAccounts();
 }
