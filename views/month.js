@@ -169,14 +169,17 @@ const closeDay = () => dayLabel(closeIso());
 function closeIso() {   // dagen före nästa lön (eller sista dagen i månaden), som YYYY-MM-DD
   const p = data.settings.payday, n = addMonths(month, 1), [y, mo] = n.split('-').map(Number);
   // 2026-11-18: lönedag på lördag/söndag → lönen kommer fredagen före, så frågan gäller dagen före den.
-  let d = new Date(y, mo - 1, 0);
-  if (p > 1) { const pay = new Date(y, mo - 1, p); while (pay.getDay() === 0 || pay.getDay() === 6) pay.setDate(pay.getDate() - 1); d = new Date(pay); d.setDate(d.getDate() - 1); }
+  // 2026-11-18: även dagen att stänga är en vardag – sista vardagen före lönen (lön den 1:a när lönedag inte är vald).
+  const wk = (x) => { while (x.getDay() === 0 || x.getDay() === 6) x.setDate(x.getDate() - 1); return x; };
+  const pay = wk(new Date(y, mo - 1, p > 1 ? p : 1)), d = new Date(pay);
+  d.setDate(d.getDate() - 1); wk(d);
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
 }
 function openCloseDialog() {
   const t = monthTotals(data, month);
   $('cd-title').textContent = `Stäng ${monthLabel(month).toLowerCase()}`;
-  $('cd-sub').textContent = `Hur mycket fanns kvar på kontot ${closeDay()}, dagen före lönen? Planerat kvar: ${kr(t.closed ? t.planned : t.left, true)}.`;
+  $('cd-sub').textContent = `Hur mycket fanns kvar på kontot ${closeDay()}, sista vardagen före lönen? Planerat kvar: ${kr(t.closed ? t.planned : t.left, true)}.`
+    + (data.settings.payday > 1 ? '' : ' Får du lön en annan dag än den 1:a? Välj Lönedag under Inställningar → Hushåll.');
   $('cd-amount').value = t.closed ? (t.left < 0 ? '-' : '') + krInput(Math.abs(t.left)) : '';
   $('cd-reopen').hidden = !t.closed;
   // Sparkonton (2026-11-17): fyll i saldona samtidigt – förifyllt med beräknat/senaste saldo, t.ex. efter en extra överföring.

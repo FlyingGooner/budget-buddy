@@ -34,7 +34,7 @@ Samma text finns i appen under **Inställningar → Allmänt → Hjälp och manu
 ## Lönedag
 - Under **Inställningar → Hushåll → Lönedag** väljer du vilken dag budgetmånaden börjar. Den 1:a är vanliga kalendermånader.
 - Med lön den 25:e räcker lönen den 25 november till december. Den månaden heter **December**, med **25 nov – 24 dec** under.
-- Infaller lönedagen på en lördag eller söndag räknar appen med att lönen kommer fredagen före. **Stäng månaden** frågar då efter saldot dagen före det, oftast torsdagen.
+- Infaller lönedagen på en lördag eller söndag räknar appen med att lönen kommer fredagen före. **Stäng månaden** frågar alltid efter saldot sista vardagen före lönen, oftast torsdagen när lönen kommer på fredag.
 
 ## Översikt
 - Överst **förra månaden** – den senaste du har stängt: **Konsumtion** (det som blev kvar efter räkningar och sparande minus det som faktiskt blev över – mat, nöjen och annat), **🐷 Totalt sparat** (summan på sparkontona) och **Kvar**. ▲▼ visar skillnaden mot månaden innan.
