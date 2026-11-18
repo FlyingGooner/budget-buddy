@@ -575,6 +575,10 @@ body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; 
 .add-pick .extra { display: flex; flex-direction: column; align-items: flex-start; gap: 2px; padding: 12px 14px; min-height: 56px; text-align: left; }
 .add-pick .extra b { font-weight: 500; }
 .add-pick .extra .muted { font-size: .8125rem; }
+#row-dialog .rd-all { margin-top: 10px; border-top: 1px solid var(--outline-variant); padding-top: 4px; }
+#row-dialog .rd-all > summary { cursor: pointer; padding: 10px 0; color: var(--primary); font-weight: 500; }
+#new-dialog .add-form { display: grid; gap: 8px; }
+#new-dialog .add-form[hidden] { display: none; }
 
 </style>
 </head>
@@ -603,7 +607,6 @@ body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; 
       <div class="card" id="expense-card"></div>
       <div class="card savings" id="savings-card" hidden></div>
       <button type="button" class="btn filled add-any" id="add-any">＋ Lägg till</button>
-      <button type="button" class="link all-items" id="all-items">Alla poster ›</button>
     </div>
   </section>
 
@@ -629,63 +632,6 @@ body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; 
       </div>
     </div>
     <div class="col" id="overview"></div>
-  </section>
-
-  <!-- Poster -->
-  <section class="tab" id="tab-items" hidden>
-    <div class="monthbar items-bar"><button type="button" class="icon-btn" id="items-back" aria-label="Tillbaka till Månad">◀</button><h1>Poster</h1><span class="icon-btn" aria-hidden="true"></span></div>
-    <!-- Inkomster: namn + belopp (alltid per månad, netto) -->
-    <div id="sort-bar"></div>
-    <div class="card scroll" id="inc-card">
-      <h2 class="split"><span>Inkomster <small class="netto">(netto)</small></span><span id="inc-sum"></span></h2>
-      <ul class="list" id="inc-list"></ul>
-      <details class="add-wrap" id="inc-add"><summary>+ Ny inkomst</summary>
-      <form class="add-form" id="inc-form" data-type="income" novalidate>
-        <label class="field"><span>Ny inkomst (per månad)</span><select name="category"></select></label>
-        <label class="field amt"><span>Efter skatt (<span class="cur-unit">kr</span>)</span><input name="amount" inputmode="decimal" autocomplete="off"></label>
-        <label class="field person-field grow"><span>Person (valfritt)</span><select name="person"></select></label>
-        <p class="muted small hint-row">Nettobelopp per månad, efter skatt. Engångsinkomster läggs som avvikelse i Månad.</p>
-        <button type="submit" class="btn filled">Lägg till</button>
-        <p class="error" role="alert"></p>
-      </form>
-      </details>
-    </div>
-    <!-- Kostnader: namn + belopp + kategori + hur ofta -->
-    <div class="card scroll" id="exp-card">
-      <h2 class="split"><span>Kostnader</span><span id="exp-sum"></span></h2>
-      <ul class="list" id="exp-list"></ul>
-      <details class="add-wrap" id="exp-add"><summary>+ Ny kostnad</summary>
-      <form class="add-form" id="exp-form" data-type="expense" novalidate>
-        <label class="field grow"><span>Ny kostnad</span><input name="name" maxlength="60" placeholder="t.ex. Hyra" autocomplete="off"></label>
-        <label class="field amt"><span>Belopp (<span class="cur-unit">kr</span>)</span><input name="amount" inputmode="decimal" autocomplete="off"></label>
-        <label class="field"><span>Kategori</span><select name="category"></select></label>
-        <label class="field"><span>Hur ofta</span><select name="every"></select></label>
-        <label class="field person-field"><span>Person (valfritt)</span><select name="person"></select></label>
-        <button type="submit" class="btn filled">Lägg till</button>
-        <p class="error" role="alert"></p>
-      </form>
-      </details>
-    </div>
-    <div class="card scroll savings" id="sav-card">
-      <h2 class="split"><span>🐷 Sparande</span><span id="sav-sum"></span></h2>
-      <ul class="list" id="sav-list"></ul>
-      <details class="add-wrap" id="sav-addwrap"><summary>+ Nytt sparande</summary>
-      <form class="add-form" id="sav-form" data-type="expense" novalidate>
-        <input type="hidden" name="category" value="savings">
-        <label class="field grow"><span>Namn</span><input name="name" maxlength="60" placeholder="t.ex. Buffert" autocomplete="off"></label>
-        <label class="field amt"><span>Per gång (<span class="cur-unit">kr</span>)</span><input name="amount" inputmode="decimal" autocomplete="off"></label>
-        <label class="field"><span>Hur ofta</span><select name="every"></select></label>
-        <label class="field person-field"><span>Person (valfritt)</span><select name="person"></select></label>
-        <label class="field amt"><span>Saldo nu (valfritt)</span><input name="balance" inputmode="decimal" autocomplete="off"></label>
-        <label class="field"><span>Kontots valuta</span><select name="currency"></select></label>
-        <label class="check"><input type="checkbox" name="pre"><span>Dras före lönen (minskar inte Kvar)</span></label>
-        <p class="muted small hint-row">Sparande dras av från det som blir kvar, men räknas inte som en kostnad. Fyller du i saldot skapas ett sparkonto som räknas upp varje månad – i annan valuta räknas sparandet om med kurserna.</p>
-        <button type="submit" class="btn filled">Lägg till</button>
-        <p class="error" role="alert"></p>
-      </form>
-      </details>
-    </div>
-    <p class="muted small hint">Tryck på en post för att ändra den, håll in för att markera flera. Nya poster gäller från den månad du tittar på.</p>
   </section>
 
   <!-- Inställningar -->
@@ -832,7 +778,8 @@ body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; 
           <p>Inkomster och Kostnader är hopfällda – tryck för att se dem. Kostnaderna är grupperade per kategori, och de tre största syns direkt.</p>
           <p>Tryck på en rad för att ändra beloppet bara den här månaden, hoppa över den eller Ändra posten (namn, belopp, kategori, period). + Lägg till i Boende lägger till en kostnad med samma kategori, person och hur ofta.</p>
           <p>Byt månad med ◀ ▶ eller svep. Tryck på Månad i menyn för att komma tillbaka till aktuell månad.</p>
-          <p>Alla poster › visar alla återkommande poster. Där kan du sortera (↕) och hålla in en post för att markera flera (Avsluta, Ta bort).</p>
+          <p>Tryck på en post för att ändra den. Beloppet överst gäller bara månaden du tittar på. Under Ändra posten (alla månader) ändrar du namn, ordinarie belopp, hur ofta, kategori och period. Ta bort posten lägger den i papperskorgen.</p>
+          <p>Vill du avsluta en post, fyll i Till månad. Poster som har slutat eller inte börjat syns i de månader de gäller.</p>
         </details>
         <details><summary>Sparande</summary>
           <p>Sparande är inte en kostnad, men dras av från det som blir kvar. Lägg till med + Sparande: namn, belopp, hur ofta och gärna Saldo nu. Då skapas ett sparkonto som räknas upp av sig självt varje månad.</p>
@@ -907,7 +854,8 @@ body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; 
           <p>Income and Expenses are folded – tap to see them. Expenses are grouped by category, and the three largest are shown right away.</p>
           <p>Tap a row to change the amount for this month only, skip it or Edit item (name, amount, category, period). + Add to Housing adds a cost with the same category, person and frequency.</p>
           <p>Change month with ◀ ▶ or swipe. Tap Month in the menu to return to the current month.</p>
-          <p>All items › shows all recurring items. There you can sort (↕) and press and hold an item to select several (End, Delete).</p>
+          <p>Tap an item to change it. The amount at the top applies only to the month you are viewing. Under Edit the item (all months) you change name, regular amount, how often, category and period. Delete the item moves it to the trash.</p>
+          <p>To end an item, fill in To month. Items that have ended or not started show in the months they apply to.</p>
         </details>
         <details><summary>Savings</summary>
           <p>Savings are not a cost, but they are deducted from what is left. Add with + Saving: name, amount, frequency and preferably Balance now. A savings account is then created that counts up by itself every month.</p>
@@ -977,6 +925,41 @@ body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; 
 </main>
 
 <!-- Dialog: belopp för en månad / avvikelse -->
+<dialog id="new-dialog" aria-labelledby="nd-title">
+  <h2 id="nd-title">Ny post</h2>
+  <form class="add-form" id="inc-form" data-type="income" novalidate>
+        <label class="field"><span>Ny inkomst (per månad)</span><select name="category"></select></label>
+        <label class="field amt"><span>Efter skatt (<span class="cur-unit">kr</span>)</span><input name="amount" inputmode="decimal" autocomplete="off"></label>
+        <label class="field person-field grow"><span>Person (valfritt)</span><select name="person"></select></label>
+        <p class="muted small hint-row">Nettobelopp per månad, efter skatt. Engångsinkomster läggs som avvikelse i Månad.</p>
+        <button type="submit" class="btn filled">Lägg till</button>
+        <p class="error" role="alert"></p>
+      </form>
+  <form class="add-form" id="exp-form" data-type="expense" novalidate>
+        <label class="field grow"><span>Namn</span><input name="name" maxlength="60" placeholder="t.ex. Hyra" autocomplete="off"></label>
+        <label class="field amt"><span>Belopp (<span class="cur-unit">kr</span>)</span><input name="amount" inputmode="decimal" autocomplete="off"></label>
+        <label class="field"><span>Kategori</span><select name="category"></select></label>
+        <label class="field"><span>Hur ofta</span><select name="every"></select></label>
+        <label class="field person-field"><span>Person (valfritt)</span><select name="person"></select></label>
+        <button type="submit" class="btn filled">Lägg till</button>
+        <p class="error" role="alert"></p>
+      </form>
+  <form class="add-form" id="sav-form" data-type="expense" novalidate>
+        <input type="hidden" name="category" value="savings">
+        <label class="field grow"><span>Namn</span><input name="name" maxlength="60" placeholder="t.ex. Buffert" autocomplete="off"></label>
+        <label class="field amt"><span>Per gång (<span class="cur-unit">kr</span>)</span><input name="amount" inputmode="decimal" autocomplete="off"></label>
+        <label class="field"><span>Hur ofta</span><select name="every"></select></label>
+        <label class="field person-field"><span>Person (valfritt)</span><select name="person"></select></label>
+        <label class="field amt"><span>Saldo nu (valfritt)</span><input name="balance" inputmode="decimal" autocomplete="off"></label>
+        <label class="field"><span>Kontots valuta</span><select name="currency"></select></label>
+        <label class="check"><input type="checkbox" name="pre"><span>Dras före lönen (minskar inte Kvar)</span></label>
+        <p class="muted small hint-row">Sparande dras av från det som blir kvar, men räknas inte som en kostnad. Fyller du i saldot skapas ett sparkonto som räknas upp varje månad – i annan valuta räknas sparandet om med kurserna.</p>
+        <button type="submit" class="btn filled">Lägg till</button>
+        <p class="error" role="alert"></p>
+      </form>
+  <p class="muted small">Gäller från den månad du tittar på.</p>
+  <div class="actions"><span class="spacer"></span><button type="button" class="btn text" id="nd-cancel">Stäng</button></div>
+</dialog>
 <dialog id="add-dialog" aria-labelledby="add-title">
   <h2 id="add-title">Lägg till</h2>
   <div class="add-pick">
@@ -1007,10 +990,24 @@ body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; 
       <p class="muted small" id="rd-acc-note"></p>
       <label class="check" id="rd-show-wrap"><input type="checkbox" id="rd-show"><span>Visa i Månad</span></label>
     </div>
+    <details class="rd-all" id="rd-all"><summary>Ändra posten (alla månader)</summary>
+      <label class="field"><span>Namn</span><input id="f-name" maxlength="60" autocomplete="off"></label>
+      <div class="row2">
+        <label class="field"><span>Ordinarie belopp (<span class="cur-unit">kr</span>)</span><input id="f-amount" inputmode="decimal" autocomplete="off"></label>
+        <label class="field" id="f-every-wrap"><span>Hur ofta</span><select id="f-every"></select></label>
+      </div>
+      <div class="row2">
+        <label class="field"><span>Kategori</span><select id="f-cat"></select></label>
+        <label class="field person-field"><span>Person (valfritt)</span><select id="f-person"></select></label>
+      </div>
+      <div class="row2">
+        <label class="field"><span>Från månad</span><input id="f-start" type="month" min="1900-01" max="2099-12"></label>
+        <label class="field"><span>Till månad (valfritt)</span><input id="f-end" type="month" min="1900-01" max="2099-12"></label>
+      </div>
+    </details>
     <p class="error" id="rd-error" role="alert"></p>
     <div class="actions wrap rd-more">
       <button type="button" class="btn text danger" id="rd-delete">Ta bort</button>
-      <button type="button" class="btn text" id="rd-edit">Ändra posten</button>
       <button type="button" class="btn text" id="rd-reset">Återställ</button>
       <button type="button" class="btn text" id="rd-skip">Hoppa över</button>
       <button type="button" class="btn text" id="rd-account">Kontot ›</button>
@@ -1023,47 +1020,8 @@ body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; 
 </dialog>
 
 <!-- Dialog: ändra återkommande post -->
-<dialog id="item-dialog" aria-labelledby="id-title">
-  <form method="dialog" id="id-form" novalidate>
-    <h2 id="id-title">Ändra post</h2>
-    <label class="field"><span>Namn</span><input id="f-name" maxlength="60" autocomplete="off"></label>
-    <div class="row2">
-      <label class="field"><span>Belopp (<span class="cur-unit">kr</span>)</span><input id="f-amount" inputmode="decimal" autocomplete="off"></label>
-      <label class="field" id="f-every-wrap"><span>Hur ofta</span><select id="f-every"></select></label>
-    </div>
-    <div class="row2">
-      <label class="field"><span>Kategori</span><select id="f-cat"></select></label>
-      <label class="field person-field"><span>Person (valfritt)</span><select id="f-person"></select></label>
-    </div>
-    <div class="row2">
-      <label class="field"><span>Från månad</span><input id="f-start" type="month" min="1900-01" max="2099-12"></label>
-      <label class="field"><span>Till månad (valfritt)</span><input id="f-end" type="month" min="1900-01" max="2099-12"></label>
-    </div>
-    <label class="check" id="f-pre-wrap"><input type="checkbox" id="f-pre"><span>Dras före lönen (minskar inte Kvar)</span></label>
-    <p class="error" id="f-error" role="alert"></p>
-    <div class="actions">
-      <button type="button" class="btn text danger" id="f-delete">Ta bort</button>
-      <span class="spacer"></span>
-      <button type="button" class="btn text" id="f-cancel">Avbryt</button>
-      <button type="submit" class="btn filled">Spara</button>
-    </div>
-  </form>
-</dialog>
 
 <!-- Dialog: avsluta flera markerade poster -->
-<dialog id="end-dialog" aria-labelledby="ed-title">
-  <form method="dialog" id="ed-form">
-    <h2 id="ed-title">Avsluta poster</h2>
-    <p class="muted small" id="ed-text"></p>
-    <label class="field"><span>Sista månad</span><input id="ed-month" type="month" min="1900-01" max="2099-12"></label>
-    <p class="error" id="ed-error" role="alert"></p>
-    <div class="actions">
-      <span class="spacer"></span>
-      <button type="button" class="btn text" id="ed-cancel">Avbryt</button>
-      <button type="submit" class="btn filled">Avsluta</button>
-    </div>
-  </form>
-</dialog>
 
 <!-- Dialog: saldo på sparkonto -->
 <dialog id="close-dialog" aria-labelledby="cd-title">
@@ -1502,7 +1460,7 @@ I18N.add({
   'Dras före lönen (minskar inte Kvar)': 'Taken before payday (does not reduce Left)',
   ' · före lönen': ' · before payday',
   '＋ Lägg till': '＋ Add', 'Lön efter skatt, bidrag …': 'Salary after tax, benefits …', 'Hyra, el, lån – varje månad': 'Rent, power, loans – every month', 'Till ett sparkonto': 'To a savings account', 'Bara den här månaden': 'Only this month', 'Avvikelse, t.ex. en resa': 'One-off, e.g. a trip',
-  'Kontot ›': 'Account ›', 'Ändra sparkonton i Månad ›': 'Edit savings accounts in Month ›', 'Utveckling ›': 'Progress ›',
+  'Kontot ›': 'Account ›', 'Ändra posten (alla månader)': 'Edit the item (all months)', 'Ordinarie belopp': 'Regular amount', 'Ordinarie belopp (': 'Regular amount (', 'Ta bort posten': 'Delete the item', 'Ny post': 'New item', 'Ny inkomst': 'New income', 'Nytt sparande': 'New saving', 'Gäller från den månad du tittar på.': 'Applies from the month you are viewing.', 'Stäng': 'Close', 'Skriv ett ordinarie belopp, t.ex. 1 250 eller 99,50.': 'Enter a regular amount, e.g. 1 250 or 99.50.', 'Ändra sparkonton i Månad ›': 'Edit savings accounts in Month ›', 'Utveckling ›': 'Progress ›',
   '+ 1 dolt konto: ': '+ 1 hidden account: ',
   'Hemvaluta': 'Home currency', 'Fler val': 'More options', 'CSV, text, egen kod, radera': 'CSV, text, own code, delete', 'Ett okrypterat kalkylark, t.ex. för Excel.': 'An unencrypted spreadsheet, e.g. for Excel.', 'All data finns bara i den här webbläsaren. Läs in backup-filen på en annan enhet för att flytta den.': 'All data is only in this browser. Load the backup file on another device to move it.', 'Backupen låses med koden. Spara den i din lösenordshanterare.': 'The backup is locked with the code. Save it in your password manager.',
   'Valutakurser': 'Exchange rates', 'Allmänt': 'General', 'Inga': 'None', 'Inget': 'None', 'Tom': 'Empty', 'Egna': 'Own', 'Appens': "The app's", 'Importera från text': 'Import from text',
@@ -1668,7 +1626,7 @@ I18N.add({
 </script>
 <script>
 // ---- version.js ----
-﻿self.APP_VERSION = '0.12.95';
+﻿self.APP_VERSION = '0.12.96';
 
 </script>
   <script>
@@ -2567,7 +2525,7 @@ function newId() {
 'use strict';
 
 const CONFIG = { storageKey: 'bb.data', tabKey: 'bb.tab', longPressMs: 450 };
-const TABS = ['month', 'stats', 'items', 'settings'];   // 2026-11-18: Historik ingår i Översikt (stats)
+const TABS = ['month', 'stats', 'settings'];   // 2026-11-18: Poster borttagen   // 2026-11-18: Historik ingår i Översikt (stats)
 const $ = (id) => document.getElementById(id);
 
 let data = loadData(store.get(CONFIG.storageKey));
@@ -2575,7 +2533,6 @@ let data = loadData(store.get(CONFIG.storageKey));
 const activeMonth = () => { const c = currentMonth(); return data.closed && Object.hasOwn(data.closed, c) ? addMonths(c, 1) : c; };
 let month = activeMonth();
 let overviewStart = activeMonth();
-let editingId = null;     // recurring item in the form
 let dialogRow = null;     // row in the month dialog (null = new one-off)
 
 // ---------- DOM helper (textContent + setAttribute only) ----------
@@ -2694,6 +2651,7 @@ function withUndo(label, change) {
 // ersätter steget (replaceState), så appen stängs när man backar förbi den.
 function showTab(name, push = true) {
   if (name === 'overview') name = 'stats';
+  if (name === 'items') name = 'month';
   if (!TABS.includes(name)) name = 'month';
   // Leaving Inställningar folds its sections again (as in the other apps).
   // 2026-11-17: varje flikbyte (även tryck på samma flik) fäller ihop allt igen – kategorier, formulär, inställningar.
@@ -3088,9 +3046,23 @@ function openRowDialog(r) {
   fillPersonSelect($('rd-person'), isOne && !isNew ? r.person : null);
   $('rd-pre').checked = !!(r && r.pre); showPre();
   $('rd-amount').value = isNew ? '' : krInput(r.amount);
-  $('rd-delete').hidden = isNew || r.kind !== 'one';
+  $('rd-delete').hidden = isNew;
+  $('rd-delete').textContent = r && r.kind === 'rec' ? 'Ta bort posten' : 'Ta bort';
   $('rd-reset').hidden = isNew || r.kind !== 'rec' || !r.adjusted;
-  $('rd-edit').hidden = isNew || r.kind !== 'rec';
+  // En ruta per post (2026-11-18): det som gäller alla månader ligger hopfällt under beloppet.
+  const rec = r && r.kind === 'rec' ? data.recurring.find((x) => x.id === r.id) : null;
+  $('rd-all').hidden = !rec; $('rd-all').open = false;
+  if (rec) {
+    $('f-name').value = rec.name;
+    $('f-amount').value = krInput(rec.amount);
+    fillEverySelect($('f-every'), rec.every);
+    $('f-every-wrap').hidden = rec.type === 'income';
+    fillCategorySelect($('f-cat'), rec.category, rec.type);
+    fillPersonSelect($('f-person'), rec.person);
+    $('f-start').value = rec.start;
+    $('f-end').value = rec.end || '';
+  }
+  $('rd-amount').dataset.orig = $('rd-amount').value;
   $('rd-skip').hidden = isNew || r.kind !== 'rec' || (r.adjusted && r.amount === 0);
   // 2026-11-18: kontots egna inställningar (valuta, kopplingar, ta bort) nås härifrån – sparkonton hanteras bara i Månad.
   $('rd-account').hidden = !(r && data.accounts.some((a) => (a.feeds || []).includes(r.id)));
@@ -3111,7 +3083,7 @@ function openRowDialog(r) {
   (isOne ? $('rd-name') : $('rd-amount')).focus();
 }
 
-// 2026-11-18: en knapp ＋ Lägg till; rutan frågar vad. Avvikelse öppnar radrutan, resten formuläret i Poster.
+// 2026-11-18: en knapp ＋ Lägg till; rutan frågar vad. Avvikelse öppnar radrutan, resten rutan Ny post.
 $('add-any').addEventListener('click', () => $('add-dialog').showModal());
 $('add-cancel').addEventListener('click', () => $('add-dialog').close());
 $('add-dialog').addEventListener('click', (e) => {
@@ -3120,19 +3092,11 @@ $('add-dialog').addEventListener('click', (e) => {
   $('add-dialog').close();
   setTimeout(() => (kind === 'oneoff' ? openRowDialog(null) : focusAdd(kind)), 0);
 });
-$('all-items').addEventListener('click', () => showTab('items'));
-$('items-back').addEventListener('click', () => history.back());
 $('rd-account').addEventListener('click', () => {
   const acc = dialogRow && data.accounts.find((a) => (a.feeds || []).includes(dialogRow.id));
   if (!acc) return;
   $('row-dialog').close();
   setTimeout(() => openAccDialog(acc), 0);
-});
-$('rd-edit').addEventListener('click', () => {
-  const rec = dialogRow && data.recurring.find((x) => x.id === dialogRow.id);
-  if (!rec) return;
-  $('row-dialog').close();
-  setTimeout(() => openItemDialog(rec), 0);
 });
 function showAccBalance() {
   const pick = $('rd-acc-pick').value, acc = data.accounts.find((a) => a.id === pick), est = acc ? estBalance(data, acc, month) : null;
@@ -3160,6 +3124,17 @@ $('rd-form').addEventListener('submit', (e) => {
   const amount = parseKr($('rd-amount').value);
   if (amount == null) { $('rd-error').textContent = 'Skriv ett belopp, t.ex. 1 250 eller 99,50.'; return; }
   const r = dialogRow;
+  let item = null;
+  if (r && r.kind === 'rec') {   // fälten under "Ändra posten" kontrolleras först, innan något ändras
+    const rec = data.recurring.find((x) => x.id === r.id);
+    const name = cleanName($('f-name').value), base = parseKr($('f-amount').value);
+    const start = $('f-start').value, end = $('f-end').value || null;
+    const err = !name ? 'Skriv ett namn.' : base == null ? 'Skriv ett ordinarie belopp, t.ex. 1 250 eller 99,50.'
+      : !isMonth(start) ? 'Välj från vilken månad.' : end && (!isMonth(end) || end < start) ? 'Till-månaden måste vara efter från-månaden.' : '';
+    if (err) { $('rd-all').open = true; $('rd-error').textContent = err; return; }
+    if (rec) item = { ...rec, name, amount: base, every: rec.type === 'income' ? 1 : Number($('f-every').value), start, end,
+      category: $('f-cat').value, person: personValue($('f-person')) };
+  }
   if (!$('rd-acc').hidden) {
     const pick = $('rd-acc-pick').value, balRaw = $('rd-balance').value.trim();
     const bal = balRaw ? parseKr(balRaw) : null;
@@ -3185,10 +3160,14 @@ $('rd-form').addEventListener('submit', (e) => {
     if (r) data.oneOffs = data.oneOffs.map((x) => (x.id === r.id ? o : x)); else data.oneOffs.push(o);
   } else {
     // Sparpost: "Dras före lönen" gäller posten (alla månader).
-    const item = data.recurring.find((x) => x.id === r.id);
-    if (item && !$('rd-pre-wrap').hidden) { if ($('rd-pre').checked) item.pre = true; else delete item.pre; }
-    if (amount === r.base) clearAdjustment(r.id);
-    else (data.adjustments[month] ||= {})[r.id] = amount;
+    if (item) {
+      if (!$('rd-pre-wrap').hidden && $('rd-pre').checked && item.category === SAVINGS_CAT) item.pre = true; else delete item.pre;
+      data.recurring = data.recurring.map((x) => (x.id === item.id ? item : x));
+      // Månadens belopp: oförändrat fält följer ordinarie (eller behåller en tidigare avvikelse); ändrat = avvikelse.
+      const changed = $('rd-amount').value !== $('rd-amount').dataset.orig;
+      if (changed ? amount === item.amount : !r.adjusted) clearAdjustment(r.id);
+      else if (changed) (data.adjustments[month] ||= {})[r.id] = amount;
+    }
   }
   data = loadData(data);
   $('row-dialog').close();
@@ -3210,7 +3189,7 @@ $('rd-skip').addEventListener('click', () => {
 $('rd-delete').addEventListener('click', () => {
   const r = dialogRow;
   $('row-dialog').close();
-  withUndo(`${r.name} ligger i papperskorgen`, () => trashItems(data, 'one', [r.id], isoToday()));
+  withUndo(`${r.name} ligger i papperskorgen`, () => trashItems(data, r.kind === 'rec' ? 'rec' : 'one', [r.id], isoToday()));
 });
 
 </script>
@@ -3508,7 +3487,7 @@ $('acc-manage').addEventListener('click', () => {
 </script>
 <script>
 // ---- views/items.js ----
-// Budget buddy – Poster (återkommande). Vanligt skript (delar globalt scope med app.js), laddas i ordningen i index.html.
+// Budget buddy – Nya poster (2026-11-18: sidan Poster borttagen, formulären i rutan Ny post). Vanligt skript (delar globalt scope med app.js), laddas i ordningen i index.html.
 // ---------- Items (recurring): separate cards for income and expenses ----------
 const EVERY_OPTIONS = [[1, 'Varje månad'], [2, 'Varannan månad'], [3, 'Varje kvartal'], [12, 'En gång om året']];
 function fillEverySelect(sel, value = 1) {
@@ -3516,55 +3495,8 @@ function fillEverySelect(sel, value = 1) {
   sel.value = String(value);
 }
 
-function itemRow(r, now) {
-  const ended = r.end && r.end < now;
-  const sub = subLine(r, r.type === 'expense' ? everyLabel[r.every] : null,
-    r.start > now ? `från ${monthShortLabel(r.start).toLowerCase()} ${r.start.slice(0, 4)}` : null,
-    r.end ? `till ${monthShortLabel(r.end).toLowerCase()} ${r.end.slice(0, 4)}` : null);
-  const on = sel && sel.has(r.id);
-  return el('li', { class: 'row' + (ended ? ' ended' : '') + (on ? ' marked' : '') }, el('button', { type: 'button', class: 'row-main', 'data-id': r.id,
-    'aria-label': sel ? `${r.name}, ${kr(r.amount)}` : `${r.name}, ${kr(r.amount)}. Ändra`, ...(sel ? { 'aria-pressed': String(on) } : {}),
-    on: { click: () => (sel ? toggleSel(r.id) : openItemDialog(r)) } },
-  sel ? el('span', { class: 'sel-box', 'aria-hidden': 'true', text: on ? '✓' : '' }) : null,
-  el('span', { class: 'row-name' }, el('span', { text: (r.category === SAVINGS_CAT ? '🐷 ' : '') + r.name + (ended ? ' (avslutad)' : '') }), el('span', { class: 'row-sub', text: sub })),
-  el('span', { class: 'amount', text: kr(r.amount) })));
-}
-
+// Fyller formulärens val (kategori, person, valuta); anropas vid varje render.
 function renderItems() {
-  const now = currentMonth();
-  if (sel) for (const id of sel) if (!data.recurring.some((r) => r.id === id)) sel.delete(id);
-  if (sel && !sel.size) { sel = null; layerClosed('sel'); }
-  renderSelBar();
-  renderSortBar();
-  for (const [type, list, sum, empty] of [
-    ['income', 'inc-list', 'inc-sum', 'Inga inkomster än – lägg till din nettolön (efter skatt) nedan.'],
-    ['expense', 'exp-list', 'exp-sum', 'Inga kostnader än – lägg till hyra, el och andra räkningar nedan.'],
-  ]) {
-    const items = sortItems(data.recurring.filter((r) => r.type === type), data.settings.sort, catName);
-    const monthly = items.filter((r) => r.every === 1 && (!r.end || r.end >= now)).reduce((s, r) => s + r.amount, 0);
-    $(sum).textContent = items.length ? `${kr(monthly)}/mån` : '';
-    // Sparande (2026-11-17): i Kostnader en samlad rad (räknas med i summan), de enskilda sparposterna i eget kort.
-    const savers = type === 'expense' ? items.filter((r) => r.category === SAVINGS_CAT) : [];
-    const rest = items.filter((r) => !savers.includes(r));
-    const savMonthly = savers.filter((r) => r.every === 1 && (!r.end || r.end >= now)).reduce((s, r) => s + r.amount, 0);
-    const savRow = savers.length ? el('li', { class: 'row sav-sum' }, el('button', { type: 'button', class: 'row-main',
-      'aria-label': `Sparande ${kr(savMonthly)}/mån`, on: { click: () => $('sav-card').scrollIntoView({ behavior: 'smooth', block: 'start' }) } },
-    el('span', { class: 'row-name' }, el('span', { text: '🐷 Sparande' }), el('span', { class: 'row-sub', text: savers.length === 1 ? '1 sparpost · se nedan' : `${savers.length} sparposter · se nedan` })),
-    el('span', { class: 'amount', text: kr(savMonthly) }))) : null;
-    // 2026-11-17: sparande är inte en kostnad – bara i eget kort, och inte med i Kostnaders summa.
-    if (type === 'expense') $(sum).textContent = rest.length ? `${kr(monthly - savMonthly)}/mån` : '';
-    void savRow;
-    fill($(list), rest.length ? rest.map((r) => itemRow(r, now)) : el('li', { class: 'muted empty-row', text: empty }));
-    if (type === 'expense') {
-      $('sav-sum').textContent = savers.length ? `${kr(savMonthly)}/mån` : '';
-      fill($('sav-list'), savers.map((r) => {
-        const li = itemRow(r, now), acc = data.accounts.find((a) => (a.feeds || []).includes(r.id));
-        if (acc) li.querySelector('.row-sub')?.append(` → ${acc.name}`);
-        if (r.pre) li.querySelector('.row-sub')?.append(' · före lönen');
-        return li;
-      }));
-    }
-  }
   for (const f of [$('inc-form'), $('exp-form')]) {
     fillCategorySelect(f.elements.category, f.elements.category.value, f.dataset.type);
     fillPersonSelect(f.elements.person, f.elements.person.value);
@@ -3599,7 +3531,7 @@ function setupAddForm(form) {
     data = loadData(data);
     save();
     if (f.name) f.name.value = ''; f.amount.value = '';
-    (f.name || f.category).focus();
+    $('new-dialog').close();
     snackbar(`${name} lades till`, null, null, 3000);
   });
 }
@@ -3607,147 +3539,18 @@ setupAddForm($('inc-form'));
 setupAddForm($('exp-form'));
 setupAddForm($('sav-form'));
 
-// Jump from an empty state to the right add form.
+// Öppnar rutan Ny post med rätt formulär.
+const NEW_TITLES = { income: 'Ny inkomst', expense: 'Ny kostnad', savings: 'Nytt sparande' };
 function focusAdd(type) {
-  showTab('items');
-  $({ income: 'inc-add', expense: 'exp-add', savings: 'sav-addwrap' }[type]).open = true;
-  const els = $({ income: 'inc-form', expense: 'exp-form', savings: 'sav-form' }[type]).elements;
-  const input = els.name || els.category;
-  input.scrollIntoView({ block: 'center', behavior: 'smooth' });
-  input.focus({ preventScroll: true });
+  const id = { income: 'inc-form', expense: 'exp-form', savings: 'sav-form' }[type];
+  for (const f of ['inc-form', 'exp-form', 'sav-form']) $(f).hidden = f !== id;
+  $(id).querySelector('.error').textContent = '';
+  $('nd-title').textContent = NEW_TITLES[type];
+  if (!$('new-dialog').open) $('new-dialog').showModal();
+  const els = $(id).elements;
+  (els.name || els.category).focus();
 }
-
-// Edit dialog: all details incl. period.
-function openItemDialog(r) {
-  editingId = r.id;
-  $('id-title').textContent = r.type === 'income' ? 'Ändra inkomst' : 'Ändra kostnad';
-  $('f-name').value = r.name;
-  $('f-amount').value = krInput(r.amount);
-  fillEverySelect($('f-every'), r.every);
-  $('f-every-wrap').hidden = r.type === 'income'; // income is always monthly
-  fillPersonSelect($('f-person'), r.person);
-  fillCategorySelect($('f-cat'), r.category, r.type);
-  $('f-pre-wrap').hidden = r.category !== SAVINGS_CAT; $('f-pre').checked = !!r.pre;
-  $('f-start').value = r.start;
-  $('f-end').value = r.end || '';
-  $('f-error').textContent = '';
-  $('item-dialog').showModal();
-  $('f-amount').focus();
-}
-$('f-cancel').addEventListener('click', () => $('item-dialog').close());
-$('f-delete').addEventListener('click', () => {
-  const r = data.recurring.find((x) => x.id === editingId);
-  $('item-dialog').close();
-  if (!r) return;
-  withUndo(`${r.name} ligger i papperskorgen`, () => trashItems(data, 'rec', [r.id], isoToday()));
-});
-$('id-form').addEventListener('submit', (e) => {
-  e.preventDefault();
-  const r = data.recurring.find((x) => x.id === editingId);
-  if (!r) { $('item-dialog').close(); return; }
-  const name = cleanName($('f-name').value);
-  const amount = parseKr($('f-amount').value);
-  const start = $('f-start').value, end = $('f-end').value || null;
-  const err = !name ? 'Skriv ett namn.' : amount == null ? 'Skriv ett belopp, t.ex. 1 250 eller 99,50.'
-    : !isMonth(start) ? 'Välj från vilken månad.' : end && (!isMonth(end) || end < start) ? 'Till-månaden måste vara efter från-månaden.' : '';
-  if (err) { $('f-error').textContent = err; return; }
-  const item = { ...r, name, amount, every: r.type === 'income' ? 1 : Number($('f-every').value), start, end,
-    category: $('f-cat').value, person: personValue($('f-person')), pre: $('f-pre').checked };
-  if (!item.pre || item.category !== SAVINGS_CAT) delete item.pre;
-  data.recurring = data.recurring.map((x) => (x.id === r.id ? item : x));
-  data = loadData(data);
-  $('item-dialog').close();
-  save();
-  snackbar('Posten är sparad', null, null, 3000);
-});
-
-// ---------- Sortera: ↕ visar kolumnerna; tryck på en kolumn, samma igen vänder ordningen. Gäller båda listorna. ----------
-let sortOpen = false;
-function renderSortBar() {
-  const cur = data.settings.sort, arrow = cur[1] === '+' ? '↑' : '↓', dir = cur[1] === '+' ? 'stigande' : 'fallande';
-  const chip = el('button', { type: 'button', class: 'chip sort-chip' + (sortOpen ? ' on' : ''), 'aria-expanded': String(sortOpen),
-    'aria-label': `Sortering: ${SORTS[cur[0]]}, ${dir}. Tryck för att välja`, text: `↕ ${SORTS[cur[0]]} ${arrow}`, on: { click: () => { sortOpen = !sortOpen; renderSortBar(); } } });
-  const row = sortOpen ? el('div', { class: 'chips sort-cols', role: 'group', 'aria-label': 'Sortera på' }, Object.entries(SORTS).map(([k, l]) => el('button', {
-    type: 'button', class: 'chip' + (k === cur[0] ? ' on' : ''), 'aria-pressed': String(k === cur[0]),
-    'aria-label': k === cur[0] ? `${l}, ${dir} – tryck för att vända` : `Sortera på ${l}`, text: k === cur[0] ? `${l} ${arrow}` : l,
-    on: { click: () => { data.settings.sort = nextSort(cur, k); save(); } } }))) : null;
-  $('sort-bar').hidden = !!sel || !data.recurring.length;
-  fill($('sort-bar'), el('div', { class: 'sort-top' }, chip), row);
-}
-
-// ---------- Markera flera (håll in en post): Avsluta eller Ta bort på en gång ----------
-// sel = Set of marked ids, or null. The mode is a layer (nav.js): Bakåt ends it; ✕ and actions go back one step.
-let sel = null, pressTimer = 0, pressAt = null, pressFired = false;
-function startSel(id) {
-  sel = new Set([id]); navigator.vibrate?.(20);
-  layerOpened('sel', () => { sel = null; renderItems(); });
-  renderItems();
-}
-function endSel() {
-  if (!sel) return;
-  sel = null; renderItems();
-  layerClosed('sel');
-}
-function toggleSel(id) {
-  if (sel.has(id)) sel.delete(id); else sel.add(id);
-  if (!sel.size) endSel(); else renderItems();
-}
-$('nav').addEventListener('click', () => { if (sel) { sel = null; renderItems(); } });
-function renderSelBar() {
-  let bar = $('sel-bar');
-  if (!sel) { bar?.remove(); return; }
-  const n = sel.size, ids = data.recurring.map((r) => r.id), all = ids.every((id) => sel.has(id));
-  const btn = (text, click, cls = '') => el('button', { type: 'button', class: 'btn text ' + cls, text, on: { click } });
-  const next = el('div', { id: 'sel-bar', class: 'sel-bar', role: 'toolbar', 'aria-label': 'Markerade poster' },
-    el('button', { type: 'button', class: 'icon-btn', 'aria-label': 'Avsluta markering', text: '✕', on: { click: endSel } }),
-    el('span', { class: 'sel-n', 'aria-live': 'polite', text: `${n} ${n === 1 ? 'vald' : 'valda'}` }),
-    btn(all ? 'Ingen' : 'Alla', () => { if (all) endSel(); else { sel = new Set(ids); renderItems(); } }),
-    btn('Avsluta', openEndDialog),
-    btn('Ta bort', removeSelected, 'danger'));
-  if (bar) bar.replaceWith(next); else $('inc-card').before(next);
-}
-function removeSelected() {
-  const list = data.recurring.filter((r) => sel.has(r.id)), n = list.length;
-  endSel();
-  withUndo(`${n === 1 ? list[0].name : `${n} poster`} ligger i papperskorgen`, () => trashItems(data, 'rec', list.map((r) => r.id), isoToday()));
-}
-function openEndDialog() {
-  const n = sel.size;
-  $('ed-text').textContent = `${n === 1 ? 'Posten' : `De ${n} posterna`} räknas till och med den månad du väljer och syns sedan som avslutade. Historiken bakåt finns kvar.`;
-  $('ed-month').value = currentMonth();
-  $('ed-error').textContent = '';
-  $('end-dialog').showModal();
-}
-$('ed-cancel').addEventListener('click', () => $('end-dialog').close());
-$('ed-form').addEventListener('submit', (e) => {
-  e.preventDefault();
-  const m = $('ed-month').value;
-  if (!isMonth(m)) { $('ed-error').textContent = 'Välj en månad.'; return; }
-  const list = data.recurring.filter((r) => sel?.has(r.id)), late = list.filter((r) => r.start > m);
-  if (late.length) { $('ed-error').textContent = `${late[0].name} börjar efter den månaden – välj en senare månad eller avmarkera den.`; return; }
-  $('end-dialog').close();
-  endSel();
-  withUndo(list.length === 1 ? `${list[0].name} avslutas efter ${monthLabel(m).toLowerCase()}` : `${list.length} poster avslutas efter ${monthLabel(m).toLowerCase()}`, () => {
-    for (const r of list) r.end = m; data = loadData(data);
-  });
-});
-// Long press on a row in Poster starts the mode; moving the finger (scroll) cancels. The click after it is swallowed.
-const tabItems = $('tab-items');
-const endPress = () => { clearTimeout(pressTimer); pressAt = null; };
-tabItems.addEventListener('pointerdown', (e) => {
-  endPress(); pressFired = false;
-  const b = e.target.closest('#inc-list .row-main, #exp-list .row-main, #sav-list .row-main');
-  if (!b || !b.dataset.id || sel || e.button > 0) return;
-  pressAt = { x: e.clientX, y: e.clientY };
-  pressTimer = setTimeout(() => { pressAt = null; pressFired = true; getSelection()?.removeAllRanges(); startSel(b.dataset.id); }, CONFIG.longPressMs);
-});
-tabItems.addEventListener('pointermove', (e) => { if (pressAt && Math.hypot(e.clientX - pressAt.x, e.clientY - pressAt.y) > 10) endPress(); });
-for (const t of ['pointerup', 'pointercancel', 'scroll']) addEventListener(t, endPress, { passive: true, capture: true });
-tabItems.addEventListener('click', (e) => { if (pressFired) { pressFired = false; e.stopPropagation(); e.preventDefault(); } }, true);
-tabItems.addEventListener('contextmenu', (e) => { if (e.target.closest('.row-main')) e.preventDefault(); });
-
-// Android starts its own text selection on a long press (on the text next to the row too): clear it while marking.
-document.addEventListener('selectionchange', () => { if ((pressAt || sel) && !document.activeElement?.matches?.('input, textarea')) getSelection()?.removeAllRanges(); });
+$('nd-cancel').addEventListener('click', () => $('new-dialog').close());
 
 </script>
 <script>

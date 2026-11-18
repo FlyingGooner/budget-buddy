@@ -12,7 +12,8 @@ Samma text finns i appen under **Inställningar → Allmänt → Hjälp och manu
 - **Inkomster** och **Kostnader** är hopfällda – tryck för att se dem. Kostnaderna är grupperade per kategori, och de tre största syns direkt.
 - Tryck på en rad för att ändra beloppet bara den här månaden, hoppa över den eller **Ändra posten** (namn, belopp, kategori, period). **+ Lägg till i Boende** lägger till en kostnad med samma kategori, person och hur ofta.
 - Byt månad med **◀ ▶** eller svep. Tryck på **Månad** i menyn för att komma tillbaka till aktuell månad.
-- **Alla poster ›** visar alla återkommande poster. Där kan du sortera (↕) och hålla in en post för att markera flera (Avsluta, Ta bort).
+- Tryck på en post för att ändra den. Beloppet överst gäller bara månaden du tittar på. Under **Ändra posten (alla månader)** ändrar du namn, ordinarie belopp, hur ofta, kategori och period. **Ta bort posten** lägger den i papperskorgen.
+- Vill du avsluta en post, fyll i **Till månad**. Poster som har slutat eller inte börjat syns i de månader de gäller.
 
 ## Sparande
 - Sparande är inte en kostnad, men dras av från det som blir kvar. Lägg till med **+ Sparande**: namn, belopp, hur ofta och gärna **Saldo nu**. Då skapas ett sparkonto som räknas upp av sig självt varje månad.

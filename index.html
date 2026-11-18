@@ -42,7 +42,6 @@
       <div class="card" id="expense-card"></div>
       <div class="card savings" id="savings-card" hidden></div>
       <button type="button" class="btn filled add-any" id="add-any">＋ Lägg till</button>
-      <button type="button" class="link all-items" id="all-items">Alla poster ›</button>
     </div>
   </section>
 
@@ -68,63 +67,6 @@
       </div>
     </div>
     <div class="col" id="overview"></div>
-  </section>
-
-  <!-- Poster -->
-  <section class="tab" id="tab-items" hidden>
-    <div class="monthbar items-bar"><button type="button" class="icon-btn" id="items-back" aria-label="Tillbaka till Månad">◀</button><h1>Poster</h1><span class="icon-btn" aria-hidden="true"></span></div>
-    <!-- Inkomster: namn + belopp (alltid per månad, netto) -->
-    <div id="sort-bar"></div>
-    <div class="card scroll" id="inc-card">
-      <h2 class="split"><span>Inkomster <small class="netto">(netto)</small></span><span id="inc-sum"></span></h2>
-      <ul class="list" id="inc-list"></ul>
-      <details class="add-wrap" id="inc-add"><summary>+ Ny inkomst</summary>
-      <form class="add-form" id="inc-form" data-type="income" novalidate>
-        <label class="field"><span>Ny inkomst (per månad)</span><select name="category"></select></label>
-        <label class="field amt"><span>Efter skatt (<span class="cur-unit">kr</span>)</span><input name="amount" inputmode="decimal" autocomplete="off"></label>
-        <label class="field person-field grow"><span>Person (valfritt)</span><select name="person"></select></label>
-        <p class="muted small hint-row">Nettobelopp per månad, efter skatt. Engångsinkomster läggs som avvikelse i Månad.</p>
-        <button type="submit" class="btn filled">Lägg till</button>
-        <p class="error" role="alert"></p>
-      </form>
-      </details>
-    </div>
-    <!-- Kostnader: namn + belopp + kategori + hur ofta -->
-    <div class="card scroll" id="exp-card">
-      <h2 class="split"><span>Kostnader</span><span id="exp-sum"></span></h2>
-      <ul class="list" id="exp-list"></ul>
-      <details class="add-wrap" id="exp-add"><summary>+ Ny kostnad</summary>
-      <form class="add-form" id="exp-form" data-type="expense" novalidate>
-        <label class="field grow"><span>Ny kostnad</span><input name="name" maxlength="60" placeholder="t.ex. Hyra" autocomplete="off"></label>
-        <label class="field amt"><span>Belopp (<span class="cur-unit">kr</span>)</span><input name="amount" inputmode="decimal" autocomplete="off"></label>
-        <label class="field"><span>Kategori</span><select name="category"></select></label>
-        <label class="field"><span>Hur ofta</span><select name="every"></select></label>
-        <label class="field person-field"><span>Person (valfritt)</span><select name="person"></select></label>
-        <button type="submit" class="btn filled">Lägg till</button>
-        <p class="error" role="alert"></p>
-      </form>
-      </details>
-    </div>
-    <div class="card scroll savings" id="sav-card">
-      <h2 class="split"><span>🐷 Sparande</span><span id="sav-sum"></span></h2>
-      <ul class="list" id="sav-list"></ul>
-      <details class="add-wrap" id="sav-addwrap"><summary>+ Nytt sparande</summary>
-      <form class="add-form" id="sav-form" data-type="expense" novalidate>
-        <input type="hidden" name="category" value="savings">
-        <label class="field grow"><span>Namn</span><input name="name" maxlength="60" placeholder="t.ex. Buffert" autocomplete="off"></label>
-        <label class="field amt"><span>Per gång (<span class="cur-unit">kr</span>)</span><input name="amount" inputmode="decimal" autocomplete="off"></label>
-        <label class="field"><span>Hur ofta</span><select name="every"></select></label>
-        <label class="field person-field"><span>Person (valfritt)</span><select name="person"></select></label>
-        <label class="field amt"><span>Saldo nu (valfritt)</span><input name="balance" inputmode="decimal" autocomplete="off"></label>
-        <label class="field"><span>Kontots valuta</span><select name="currency"></select></label>
-        <label class="check"><input type="checkbox" name="pre"><span>Dras före lönen (minskar inte Kvar)</span></label>
-        <p class="muted small hint-row">Sparande dras av från det som blir kvar, men räknas inte som en kostnad. Fyller du i saldot skapas ett sparkonto som räknas upp varje månad – i annan valuta räknas sparandet om med kurserna.</p>
-        <button type="submit" class="btn filled">Lägg till</button>
-        <p class="error" role="alert"></p>
-      </form>
-      </details>
-    </div>
-    <p class="muted small hint">Tryck på en post för att ändra den, håll in för att markera flera. Nya poster gäller från den månad du tittar på.</p>
   </section>
 
   <!-- Inställningar -->
@@ -271,7 +213,8 @@
           <p>Inkomster och Kostnader är hopfällda – tryck för att se dem. Kostnaderna är grupperade per kategori, och de tre största syns direkt.</p>
           <p>Tryck på en rad för att ändra beloppet bara den här månaden, hoppa över den eller Ändra posten (namn, belopp, kategori, period). + Lägg till i Boende lägger till en kostnad med samma kategori, person och hur ofta.</p>
           <p>Byt månad med ◀ ▶ eller svep. Tryck på Månad i menyn för att komma tillbaka till aktuell månad.</p>
-          <p>Alla poster › visar alla återkommande poster. Där kan du sortera (↕) och hålla in en post för att markera flera (Avsluta, Ta bort).</p>
+          <p>Tryck på en post för att ändra den. Beloppet överst gäller bara månaden du tittar på. Under Ändra posten (alla månader) ändrar du namn, ordinarie belopp, hur ofta, kategori och period. Ta bort posten lägger den i papperskorgen.</p>
+          <p>Vill du avsluta en post, fyll i Till månad. Poster som har slutat eller inte börjat syns i de månader de gäller.</p>
         </details>
         <details><summary>Sparande</summary>
           <p>Sparande är inte en kostnad, men dras av från det som blir kvar. Lägg till med + Sparande: namn, belopp, hur ofta och gärna Saldo nu. Då skapas ett sparkonto som räknas upp av sig självt varje månad.</p>
@@ -346,7 +289,8 @@
           <p>Income and Expenses are folded – tap to see them. Expenses are grouped by category, and the three largest are shown right away.</p>
           <p>Tap a row to change the amount for this month only, skip it or Edit item (name, amount, category, period). + Add to Housing adds a cost with the same category, person and frequency.</p>
           <p>Change month with ◀ ▶ or swipe. Tap Month in the menu to return to the current month.</p>
-          <p>All items › shows all recurring items. There you can sort (↕) and press and hold an item to select several (End, Delete).</p>
+          <p>Tap an item to change it. The amount at the top applies only to the month you are viewing. Under Edit the item (all months) you change name, regular amount, how often, category and period. Delete the item moves it to the trash.</p>
+          <p>To end an item, fill in To month. Items that have ended or not started show in the months they apply to.</p>
         </details>
         <details><summary>Savings</summary>
           <p>Savings are not a cost, but they are deducted from what is left. Add with + Saving: name, amount, frequency and preferably Balance now. A savings account is then created that counts up by itself every month.</p>
@@ -416,6 +360,41 @@
 </main>
 
 <!-- Dialog: belopp för en månad / avvikelse -->
+<dialog id="new-dialog" aria-labelledby="nd-title">
+  <h2 id="nd-title">Ny post</h2>
+  <form class="add-form" id="inc-form" data-type="income" novalidate>
+        <label class="field"><span>Ny inkomst (per månad)</span><select name="category"></select></label>
+        <label class="field amt"><span>Efter skatt (<span class="cur-unit">kr</span>)</span><input name="amount" inputmode="decimal" autocomplete="off"></label>
+        <label class="field person-field grow"><span>Person (valfritt)</span><select name="person"></select></label>
+        <p class="muted small hint-row">Nettobelopp per månad, efter skatt. Engångsinkomster läggs som avvikelse i Månad.</p>
+        <button type="submit" class="btn filled">Lägg till</button>
+        <p class="error" role="alert"></p>
+      </form>
+  <form class="add-form" id="exp-form" data-type="expense" novalidate>
+        <label class="field grow"><span>Namn</span><input name="name" maxlength="60" placeholder="t.ex. Hyra" autocomplete="off"></label>
+        <label class="field amt"><span>Belopp (<span class="cur-unit">kr</span>)</span><input name="amount" inputmode="decimal" autocomplete="off"></label>
+        <label class="field"><span>Kategori</span><select name="category"></select></label>
+        <label class="field"><span>Hur ofta</span><select name="every"></select></label>
+        <label class="field person-field"><span>Person (valfritt)</span><select name="person"></select></label>
+        <button type="submit" class="btn filled">Lägg till</button>
+        <p class="error" role="alert"></p>
+      </form>
+  <form class="add-form" id="sav-form" data-type="expense" novalidate>
+        <input type="hidden" name="category" value="savings">
+        <label class="field grow"><span>Namn</span><input name="name" maxlength="60" placeholder="t.ex. Buffert" autocomplete="off"></label>
+        <label class="field amt"><span>Per gång (<span class="cur-unit">kr</span>)</span><input name="amount" inputmode="decimal" autocomplete="off"></label>
+        <label class="field"><span>Hur ofta</span><select name="every"></select></label>
+        <label class="field person-field"><span>Person (valfritt)</span><select name="person"></select></label>
+        <label class="field amt"><span>Saldo nu (valfritt)</span><input name="balance" inputmode="decimal" autocomplete="off"></label>
+        <label class="field"><span>Kontots valuta</span><select name="currency"></select></label>
+        <label class="check"><input type="checkbox" name="pre"><span>Dras före lönen (minskar inte Kvar)</span></label>
+        <p class="muted small hint-row">Sparande dras av från det som blir kvar, men räknas inte som en kostnad. Fyller du i saldot skapas ett sparkonto som räknas upp varje månad – i annan valuta räknas sparandet om med kurserna.</p>
+        <button type="submit" class="btn filled">Lägg till</button>
+        <p class="error" role="alert"></p>
+      </form>
+  <p class="muted small">Gäller från den månad du tittar på.</p>
+  <div class="actions"><span class="spacer"></span><button type="button" class="btn text" id="nd-cancel">Stäng</button></div>
+</dialog>
 <dialog id="add-dialog" aria-labelledby="add-title">
   <h2 id="add-title">Lägg till</h2>
   <div class="add-pick">
@@ -446,10 +425,24 @@
       <p class="muted small" id="rd-acc-note"></p>
       <label class="check" id="rd-show-wrap"><input type="checkbox" id="rd-show"><span>Visa i Månad</span></label>
     </div>
+    <details class="rd-all" id="rd-all"><summary>Ändra posten (alla månader)</summary>
+      <label class="field"><span>Namn</span><input id="f-name" maxlength="60" autocomplete="off"></label>
+      <div class="row2">
+        <label class="field"><span>Ordinarie belopp (<span class="cur-unit">kr</span>)</span><input id="f-amount" inputmode="decimal" autocomplete="off"></label>
+        <label class="field" id="f-every-wrap"><span>Hur ofta</span><select id="f-every"></select></label>
+      </div>
+      <div class="row2">
+        <label class="field"><span>Kategori</span><select id="f-cat"></select></label>
+        <label class="field person-field"><span>Person (valfritt)</span><select id="f-person"></select></label>
+      </div>
+      <div class="row2">
+        <label class="field"><span>Från månad</span><input id="f-start" type="month" min="1900-01" max="2099-12"></label>
+        <label class="field"><span>Till månad (valfritt)</span><input id="f-end" type="month" min="1900-01" max="2099-12"></label>
+      </div>
+    </details>
     <p class="error" id="rd-error" role="alert"></p>
     <div class="actions wrap rd-more">
       <button type="button" class="btn text danger" id="rd-delete">Ta bort</button>
-      <button type="button" class="btn text" id="rd-edit">Ändra posten</button>
       <button type="button" class="btn text" id="rd-reset">Återställ</button>
       <button type="button" class="btn text" id="rd-skip">Hoppa över</button>
       <button type="button" class="btn text" id="rd-account">Kontot ›</button>
@@ -462,47 +455,8 @@
 </dialog>
 
 <!-- Dialog: ändra återkommande post -->
-<dialog id="item-dialog" aria-labelledby="id-title">
-  <form method="dialog" id="id-form" novalidate>
-    <h2 id="id-title">Ändra post</h2>
-    <label class="field"><span>Namn</span><input id="f-name" maxlength="60" autocomplete="off"></label>
-    <div class="row2">
-      <label class="field"><span>Belopp (<span class="cur-unit">kr</span>)</span><input id="f-amount" inputmode="decimal" autocomplete="off"></label>
-      <label class="field" id="f-every-wrap"><span>Hur ofta</span><select id="f-every"></select></label>
-    </div>
-    <div class="row2">
-      <label class="field"><span>Kategori</span><select id="f-cat"></select></label>
-      <label class="field person-field"><span>Person (valfritt)</span><select id="f-person"></select></label>
-    </div>
-    <div class="row2">
-      <label class="field"><span>Från månad</span><input id="f-start" type="month" min="1900-01" max="2099-12"></label>
-      <label class="field"><span>Till månad (valfritt)</span><input id="f-end" type="month" min="1900-01" max="2099-12"></label>
-    </div>
-    <label class="check" id="f-pre-wrap"><input type="checkbox" id="f-pre"><span>Dras före lönen (minskar inte Kvar)</span></label>
-    <p class="error" id="f-error" role="alert"></p>
-    <div class="actions">
-      <button type="button" class="btn text danger" id="f-delete">Ta bort</button>
-      <span class="spacer"></span>
-      <button type="button" class="btn text" id="f-cancel">Avbryt</button>
-      <button type="submit" class="btn filled">Spara</button>
-    </div>
-  </form>
-</dialog>
 
 <!-- Dialog: avsluta flera markerade poster -->
-<dialog id="end-dialog" aria-labelledby="ed-title">
-  <form method="dialog" id="ed-form">
-    <h2 id="ed-title">Avsluta poster</h2>
-    <p class="muted small" id="ed-text"></p>
-    <label class="field"><span>Sista månad</span><input id="ed-month" type="month" min="1900-01" max="2099-12"></label>
-    <p class="error" id="ed-error" role="alert"></p>
-    <div class="actions">
-      <span class="spacer"></span>
-      <button type="button" class="btn text" id="ed-cancel">Avbryt</button>
-      <button type="submit" class="btn filled">Avsluta</button>
-    </div>
-  </form>
-</dialog>
 
 <!-- Dialog: saldo på sparkonto -->
 <dialog id="close-dialog" aria-labelledby="cd-title">

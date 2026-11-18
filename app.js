@@ -4,7 +4,7 @@
 'use strict';
 
 const CONFIG = { storageKey: 'bb.data', tabKey: 'bb.tab', longPressMs: 450 };
-const TABS = ['month', 'stats', 'items', 'settings'];   // 2026-11-18: Historik ingår i Översikt (stats)
+const TABS = ['month', 'stats', 'settings'];   // 2026-11-18: Poster borttagen   // 2026-11-18: Historik ingår i Översikt (stats)
 const $ = (id) => document.getElementById(id);
 
 let data = loadData(store.get(CONFIG.storageKey));
@@ -12,7 +12,6 @@ let data = loadData(store.get(CONFIG.storageKey));
 const activeMonth = () => { const c = currentMonth(); return data.closed && Object.hasOwn(data.closed, c) ? addMonths(c, 1) : c; };
 let month = activeMonth();
 let overviewStart = activeMonth();
-let editingId = null;     // recurring item in the form
 let dialogRow = null;     // row in the month dialog (null = new one-off)
 
 // ---------- DOM helper (textContent + setAttribute only) ----------
@@ -131,6 +130,7 @@ function withUndo(label, change) {
 // ersätter steget (replaceState), så appen stängs när man backar förbi den.
 function showTab(name, push = true) {
   if (name === 'overview') name = 'stats';
+  if (name === 'items') name = 'month';
   if (!TABS.includes(name)) name = 'month';
   // Leaving Inställningar folds its sections again (as in the other apps).
   // 2026-11-17: varje flikbyte (även tryck på samma flik) fäller ihop allt igen – kategorier, formulär, inställningar.

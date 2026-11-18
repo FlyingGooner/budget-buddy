@@ -346,9 +346,23 @@ function openRowDialog(r) {
   fillPersonSelect($('rd-person'), isOne && !isNew ? r.person : null);
   $('rd-pre').checked = !!(r && r.pre); showPre();
   $('rd-amount').value = isNew ? '' : krInput(r.amount);
-  $('rd-delete').hidden = isNew || r.kind !== 'one';
+  $('rd-delete').hidden = isNew;
+  $('rd-delete').textContent = r && r.kind === 'rec' ? 'Ta bort posten' : 'Ta bort';
   $('rd-reset').hidden = isNew || r.kind !== 'rec' || !r.adjusted;
-  $('rd-edit').hidden = isNew || r.kind !== 'rec';
+  // En ruta per post (2026-11-18): det som gäller alla månader ligger hopfällt under beloppet.
+  const rec = r && r.kind === 'rec' ? data.recurring.find((x) => x.id === r.id) : null;
+  $('rd-all').hidden = !rec; $('rd-all').open = false;
+  if (rec) {
+    $('f-name').value = rec.name;
+    $('f-amount').value = krInput(rec.amount);
+    fillEverySelect($('f-every'), rec.every);
+    $('f-every-wrap').hidden = rec.type === 'income';
+    fillCategorySelect($('f-cat'), rec.category, rec.type);
+    fillPersonSelect($('f-person'), rec.person);
+    $('f-start').value = rec.start;
+    $('f-end').value = rec.end || '';
+  }
+  $('rd-amount').dataset.orig = $('rd-amount').value;
   $('rd-skip').hidden = isNew || r.kind !== 'rec' || (r.adjusted && r.amount === 0);
   // 2026-11-18: kontots egna inställningar (valuta, kopplingar, ta bort) nås härifrån – sparkonton hanteras bara i Månad.
   $('rd-account').hidden = !(r && data.accounts.some((a) => (a.feeds || []).includes(r.id)));
@@ -369,7 +383,7 @@ function openRowDialog(r) {
   (isOne ? $('rd-name') : $('rd-amount')).focus();
 }
 
-// 2026-11-18: en knapp ＋ Lägg till; rutan frågar vad. Avvikelse öppnar radrutan, resten formuläret i Poster.
+// 2026-11-18: en knapp ＋ Lägg till; rutan frågar vad. Avvikelse öppnar radrutan, resten rutan Ny post.
 $('add-any').addEventListener('click', () => $('add-dialog').showModal());
 $('add-cancel').addEventListener('click', () => $('add-dialog').close());
 $('add-dialog').addEventListener('click', (e) => {
@@ -378,19 +392,11 @@ $('add-dialog').addEventListener('click', (e) => {
   $('add-dialog').close();
   setTimeout(() => (kind === 'oneoff' ? openRowDialog(null) : focusAdd(kind)), 0);
 });
-$('all-items').addEventListener('click', () => showTab('items'));
-$('items-back').addEventListener('click', () => history.back());
 $('rd-account').addEventListener('click', () => {
   const acc = dialogRow && data.accounts.find((a) => (a.feeds || []).includes(dialogRow.id));
   if (!acc) return;
   $('row-dialog').close();
   setTimeout(() => openAccDialog(acc), 0);
-});
-$('rd-edit').addEventListener('click', () => {
-  const rec = dialogRow && data.recurring.find((x) => x.id === dialogRow.id);
-  if (!rec) return;
-  $('row-dialog').close();
-  setTimeout(() => openItemDialog(rec), 0);
 });
 function showAccBalance() {
   const pick = $('rd-acc-pick').value, acc = data.accounts.find((a) => a.id === pick), est = acc ? estBalance(data, acc, month) : null;
@@ -418,6 +424,17 @@ $('rd-form').addEventListener('submit', (e) => {
   const amount = parseKr($('rd-amount').value);
   if (amount == null) { $('rd-error').textContent = 'Skriv ett belopp, t.ex. 1 250 eller 99,50.'; return; }
   const r = dialogRow;
+  let item = null;
+  if (r && r.kind === 'rec') {   // fälten under "Ändra posten" kontrolleras först, innan något ändras
+    const rec = data.recurring.find((x) => x.id === r.id);
+    const name = cleanName($('f-name').value), base = parseKr($('f-amount').value);
+    const start = $('f-start').value, end = $('f-end').value || null;
+    const err = !name ? 'Skriv ett namn.' : base == null ? 'Skriv ett ordinarie belopp, t.ex. 1 250 eller 99,50.'
+      : !isMonth(start) ? 'Välj från vilken månad.' : end && (!isMonth(end) || end < start) ? 'Till-månaden måste vara efter från-månaden.' : '';
+    if (err) { $('rd-all').open = true; $('rd-error').textContent = err; return; }
+    if (rec) item = { ...rec, name, amount: base, every: rec.type === 'income' ? 1 : Number($('f-every').value), start, end,
+      category: $('f-cat').value, person: personValue($('f-person')) };
+  }
   if (!$('rd-acc').hidden) {
     const pick = $('rd-acc-pick').value, balRaw = $('rd-balance').value.trim();
     const bal = balRaw ? parseKr(balRaw) : null;
@@ -443,10 +460,14 @@ $('rd-form').addEventListener('submit', (e) => {
     if (r) data.oneOffs = data.oneOffs.map((x) => (x.id === r.id ? o : x)); else data.oneOffs.push(o);
   } else {
     // Sparpost: "Dras före lönen" gäller posten (alla månader).
-    const item = data.recurring.find((x) => x.id === r.id);
-    if (item && !$('rd-pre-wrap').hidden) { if ($('rd-pre').checked) item.pre = true; else delete item.pre; }
-    if (amount === r.base) clearAdjustment(r.id);
-    else (data.adjustments[month] ||= {})[r.id] = amount;
+    if (item) {
+      if (!$('rd-pre-wrap').hidden && $('rd-pre').checked && item.category === SAVINGS_CAT) item.pre = true; else delete item.pre;
+      data.recurring = data.recurring.map((x) => (x.id === item.id ? item : x));
+      // Månadens belopp: oförändrat fält följer ordinarie (eller behåller en tidigare avvikelse); ändrat = avvikelse.
+      const changed = $('rd-amount').value !== $('rd-amount').dataset.orig;
+      if (changed ? amount === item.amount : !r.adjusted) clearAdjustment(r.id);
+      else if (changed) (data.adjustments[month] ||= {})[r.id] = amount;
+    }
   }
   data = loadData(data);
   $('row-dialog').close();
@@ -468,5 +489,5 @@ $('rd-skip').addEventListener('click', () => {
 $('rd-delete').addEventListener('click', () => {
   const r = dialogRow;
   $('row-dialog').close();
-  withUndo(`${r.name} ligger i papperskorgen`, () => trashItems(data, 'one', [r.id], isoToday()));
+  withUndo(`${r.name} ligger i papperskorgen`, () => trashItems(data, r.kind === 'rec' ? 'rec' : 'one', [r.id], isoToday()));
 });

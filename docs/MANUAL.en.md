@@ -12,7 +12,8 @@ The same text is in the app under **Settings → General → Help and manual**. 
 - **Income** and **Expenses** are folded – tap to see them. Expenses are grouped by category, and the three largest are shown right away.
 - Tap a row to change the amount for this month only, skip it or **Edit item** (name, amount, category, period). **+ Add to Housing** adds a cost with the same category, person and frequency.
 - Change month with **◀ ▶** or swipe. Tap **Month** in the menu to return to the current month.
-- **All items ›** shows all recurring items. There you can sort (↕) and press and hold an item to select several (End, Delete).
+- Tap an item to change it. The amount at the top applies only to the month you are viewing. Under **Edit the item (all months)** you change name, regular amount, how often, category and period. **Delete the item** moves it to the trash.
+- To end an item, fill in **To month**. Items that have ended or not started show in the months they apply to.
 
 ## Savings
 - Savings are not a cost, but they are deducted from what is left. Add with **+ Saving**: name, amount, frequency and preferably **Balance now**. A savings account is then created that counts up by itself every month.

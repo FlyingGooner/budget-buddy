@@ -1,4 +1,4 @@
-// Budget buddy – Poster (återkommande). Vanligt skript (delar globalt scope med app.js), laddas i ordningen i index.html.
+// Budget buddy – Nya poster (2026-11-18: sidan Poster borttagen, formulären i rutan Ny post). Vanligt skript (delar globalt scope med app.js), laddas i ordningen i index.html.
 // ---------- Items (recurring): separate cards for income and expenses ----------
 const EVERY_OPTIONS = [[1, 'Varje månad'], [2, 'Varannan månad'], [3, 'Varje kvartal'], [12, 'En gång om året']];
 function fillEverySelect(sel, value = 1) {
@@ -6,55 +6,8 @@ function fillEverySelect(sel, value = 1) {
   sel.value = String(value);
 }
 
-function itemRow(r, now) {
-  const ended = r.end && r.end < now;
-  const sub = subLine(r, r.type === 'expense' ? everyLabel[r.every] : null,
-    r.start > now ? `från ${monthShortLabel(r.start).toLowerCase()} ${r.start.slice(0, 4)}` : null,
-    r.end ? `till ${monthShortLabel(r.end).toLowerCase()} ${r.end.slice(0, 4)}` : null);
-  const on = sel && sel.has(r.id);
-  return el('li', { class: 'row' + (ended ? ' ended' : '') + (on ? ' marked' : '') }, el('button', { type: 'button', class: 'row-main', 'data-id': r.id,
-    'aria-label': sel ? `${r.name}, ${kr(r.amount)}` : `${r.name}, ${kr(r.amount)}. Ändra`, ...(sel ? { 'aria-pressed': String(on) } : {}),
-    on: { click: () => (sel ? toggleSel(r.id) : openItemDialog(r)) } },
-  sel ? el('span', { class: 'sel-box', 'aria-hidden': 'true', text: on ? '✓' : '' }) : null,
-  el('span', { class: 'row-name' }, el('span', { text: (r.category === SAVINGS_CAT ? '🐷 ' : '') + r.name + (ended ? ' (avslutad)' : '') }), el('span', { class: 'row-sub', text: sub })),
-  el('span', { class: 'amount', text: kr(r.amount) })));
-}
-
+// Fyller formulärens val (kategori, person, valuta); anropas vid varje render.
 function renderItems() {
-  const now = currentMonth();
-  if (sel) for (const id of sel) if (!data.recurring.some((r) => r.id === id)) sel.delete(id);
-  if (sel && !sel.size) { sel = null; layerClosed('sel'); }
-  renderSelBar();
-  renderSortBar();
-  for (const [type, list, sum, empty] of [
-    ['income', 'inc-list', 'inc-sum', 'Inga inkomster än – lägg till din nettolön (efter skatt) nedan.'],
-    ['expense', 'exp-list', 'exp-sum', 'Inga kostnader än – lägg till hyra, el och andra räkningar nedan.'],
-  ]) {
-    const items = sortItems(data.recurring.filter((r) => r.type === type), data.settings.sort, catName);
-    const monthly = items.filter((r) => r.every === 1 && (!r.end || r.end >= now)).reduce((s, r) => s + r.amount, 0);
-    $(sum).textContent = items.length ? `${kr(monthly)}/mån` : '';
-    // Sparande (2026-11-17): i Kostnader en samlad rad (räknas med i summan), de enskilda sparposterna i eget kort.
-    const savers = type === 'expense' ? items.filter((r) => r.category === SAVINGS_CAT) : [];
-    const rest = items.filter((r) => !savers.includes(r));
-    const savMonthly = savers.filter((r) => r.every === 1 && (!r.end || r.end >= now)).reduce((s, r) => s + r.amount, 0);
-    const savRow = savers.length ? el('li', { class: 'row sav-sum' }, el('button', { type: 'button', class: 'row-main',
-      'aria-label': `Sparande ${kr(savMonthly)}/mån`, on: { click: () => $('sav-card').scrollIntoView({ behavior: 'smooth', block: 'start' }) } },
-    el('span', { class: 'row-name' }, el('span', { text: '🐷 Sparande' }), el('span', { class: 'row-sub', text: savers.length === 1 ? '1 sparpost · se nedan' : `${savers.length} sparposter · se nedan` })),
-    el('span', { class: 'amount', text: kr(savMonthly) }))) : null;
-    // 2026-11-17: sparande är inte en kostnad – bara i eget kort, och inte med i Kostnaders summa.
-    if (type === 'expense') $(sum).textContent = rest.length ? `${kr(monthly - savMonthly)}/mån` : '';
-    void savRow;
-    fill($(list), rest.length ? rest.map((r) => itemRow(r, now)) : el('li', { class: 'muted empty-row', text: empty }));
-    if (type === 'expense') {
-      $('sav-sum').textContent = savers.length ? `${kr(savMonthly)}/mån` : '';
-      fill($('sav-list'), savers.map((r) => {
-        const li = itemRow(r, now), acc = data.accounts.find((a) => (a.feeds || []).includes(r.id));
-        if (acc) li.querySelector('.row-sub')?.append(` → ${acc.name}`);
-        if (r.pre) li.querySelector('.row-sub')?.append(' · före lönen');
-        return li;
-      }));
-    }
-  }
   for (const f of [$('inc-form'), $('exp-form')]) {
     fillCategorySelect(f.elements.category, f.elements.category.value, f.dataset.type);
     fillPersonSelect(f.elements.person, f.elements.person.value);
@@ -89,7 +42,7 @@ function setupAddForm(form) {
     data = loadData(data);
     save();
     if (f.name) f.name.value = ''; f.amount.value = '';
-    (f.name || f.category).focus();
+    $('new-dialog').close();
     snackbar(`${name} lades till`, null, null, 3000);
   });
 }
@@ -97,144 +50,15 @@ setupAddForm($('inc-form'));
 setupAddForm($('exp-form'));
 setupAddForm($('sav-form'));
 
-// Jump from an empty state to the right add form.
+// Öppnar rutan Ny post med rätt formulär.
+const NEW_TITLES = { income: 'Ny inkomst', expense: 'Ny kostnad', savings: 'Nytt sparande' };
 function focusAdd(type) {
-  showTab('items');
-  $({ income: 'inc-add', expense: 'exp-add', savings: 'sav-addwrap' }[type]).open = true;
-  const els = $({ income: 'inc-form', expense: 'exp-form', savings: 'sav-form' }[type]).elements;
-  const input = els.name || els.category;
-  input.scrollIntoView({ block: 'center', behavior: 'smooth' });
-  input.focus({ preventScroll: true });
+  const id = { income: 'inc-form', expense: 'exp-form', savings: 'sav-form' }[type];
+  for (const f of ['inc-form', 'exp-form', 'sav-form']) $(f).hidden = f !== id;
+  $(id).querySelector('.error').textContent = '';
+  $('nd-title').textContent = NEW_TITLES[type];
+  if (!$('new-dialog').open) $('new-dialog').showModal();
+  const els = $(id).elements;
+  (els.name || els.category).focus();
 }
-
-// Edit dialog: all details incl. period.
-function openItemDialog(r) {
-  editingId = r.id;
-  $('id-title').textContent = r.type === 'income' ? 'Ändra inkomst' : 'Ändra kostnad';
-  $('f-name').value = r.name;
-  $('f-amount').value = krInput(r.amount);
-  fillEverySelect($('f-every'), r.every);
-  $('f-every-wrap').hidden = r.type === 'income'; // income is always monthly
-  fillPersonSelect($('f-person'), r.person);
-  fillCategorySelect($('f-cat'), r.category, r.type);
-  $('f-pre-wrap').hidden = r.category !== SAVINGS_CAT; $('f-pre').checked = !!r.pre;
-  $('f-start').value = r.start;
-  $('f-end').value = r.end || '';
-  $('f-error').textContent = '';
-  $('item-dialog').showModal();
-  $('f-amount').focus();
-}
-$('f-cancel').addEventListener('click', () => $('item-dialog').close());
-$('f-delete').addEventListener('click', () => {
-  const r = data.recurring.find((x) => x.id === editingId);
-  $('item-dialog').close();
-  if (!r) return;
-  withUndo(`${r.name} ligger i papperskorgen`, () => trashItems(data, 'rec', [r.id], isoToday()));
-});
-$('id-form').addEventListener('submit', (e) => {
-  e.preventDefault();
-  const r = data.recurring.find((x) => x.id === editingId);
-  if (!r) { $('item-dialog').close(); return; }
-  const name = cleanName($('f-name').value);
-  const amount = parseKr($('f-amount').value);
-  const start = $('f-start').value, end = $('f-end').value || null;
-  const err = !name ? 'Skriv ett namn.' : amount == null ? 'Skriv ett belopp, t.ex. 1 250 eller 99,50.'
-    : !isMonth(start) ? 'Välj från vilken månad.' : end && (!isMonth(end) || end < start) ? 'Till-månaden måste vara efter från-månaden.' : '';
-  if (err) { $('f-error').textContent = err; return; }
-  const item = { ...r, name, amount, every: r.type === 'income' ? 1 : Number($('f-every').value), start, end,
-    category: $('f-cat').value, person: personValue($('f-person')), pre: $('f-pre').checked };
-  if (!item.pre || item.category !== SAVINGS_CAT) delete item.pre;
-  data.recurring = data.recurring.map((x) => (x.id === r.id ? item : x));
-  data = loadData(data);
-  $('item-dialog').close();
-  save();
-  snackbar('Posten är sparad', null, null, 3000);
-});
-
-// ---------- Sortera: ↕ visar kolumnerna; tryck på en kolumn, samma igen vänder ordningen. Gäller båda listorna. ----------
-let sortOpen = false;
-function renderSortBar() {
-  const cur = data.settings.sort, arrow = cur[1] === '+' ? '↑' : '↓', dir = cur[1] === '+' ? 'stigande' : 'fallande';
-  const chip = el('button', { type: 'button', class: 'chip sort-chip' + (sortOpen ? ' on' : ''), 'aria-expanded': String(sortOpen),
-    'aria-label': `Sortering: ${SORTS[cur[0]]}, ${dir}. Tryck för att välja`, text: `↕ ${SORTS[cur[0]]} ${arrow}`, on: { click: () => { sortOpen = !sortOpen; renderSortBar(); } } });
-  const row = sortOpen ? el('div', { class: 'chips sort-cols', role: 'group', 'aria-label': 'Sortera på' }, Object.entries(SORTS).map(([k, l]) => el('button', {
-    type: 'button', class: 'chip' + (k === cur[0] ? ' on' : ''), 'aria-pressed': String(k === cur[0]),
-    'aria-label': k === cur[0] ? `${l}, ${dir} – tryck för att vända` : `Sortera på ${l}`, text: k === cur[0] ? `${l} ${arrow}` : l,
-    on: { click: () => { data.settings.sort = nextSort(cur, k); save(); } } }))) : null;
-  $('sort-bar').hidden = !!sel || !data.recurring.length;
-  fill($('sort-bar'), el('div', { class: 'sort-top' }, chip), row);
-}
-
-// ---------- Markera flera (håll in en post): Avsluta eller Ta bort på en gång ----------
-// sel = Set of marked ids, or null. The mode is a layer (nav.js): Bakåt ends it; ✕ and actions go back one step.
-let sel = null, pressTimer = 0, pressAt = null, pressFired = false;
-function startSel(id) {
-  sel = new Set([id]); navigator.vibrate?.(20);
-  layerOpened('sel', () => { sel = null; renderItems(); });
-  renderItems();
-}
-function endSel() {
-  if (!sel) return;
-  sel = null; renderItems();
-  layerClosed('sel');
-}
-function toggleSel(id) {
-  if (sel.has(id)) sel.delete(id); else sel.add(id);
-  if (!sel.size) endSel(); else renderItems();
-}
-$('nav').addEventListener('click', () => { if (sel) { sel = null; renderItems(); } });
-function renderSelBar() {
-  let bar = $('sel-bar');
-  if (!sel) { bar?.remove(); return; }
-  const n = sel.size, ids = data.recurring.map((r) => r.id), all = ids.every((id) => sel.has(id));
-  const btn = (text, click, cls = '') => el('button', { type: 'button', class: 'btn text ' + cls, text, on: { click } });
-  const next = el('div', { id: 'sel-bar', class: 'sel-bar', role: 'toolbar', 'aria-label': 'Markerade poster' },
-    el('button', { type: 'button', class: 'icon-btn', 'aria-label': 'Avsluta markering', text: '✕', on: { click: endSel } }),
-    el('span', { class: 'sel-n', 'aria-live': 'polite', text: `${n} ${n === 1 ? 'vald' : 'valda'}` }),
-    btn(all ? 'Ingen' : 'Alla', () => { if (all) endSel(); else { sel = new Set(ids); renderItems(); } }),
-    btn('Avsluta', openEndDialog),
-    btn('Ta bort', removeSelected, 'danger'));
-  if (bar) bar.replaceWith(next); else $('inc-card').before(next);
-}
-function removeSelected() {
-  const list = data.recurring.filter((r) => sel.has(r.id)), n = list.length;
-  endSel();
-  withUndo(`${n === 1 ? list[0].name : `${n} poster`} ligger i papperskorgen`, () => trashItems(data, 'rec', list.map((r) => r.id), isoToday()));
-}
-function openEndDialog() {
-  const n = sel.size;
-  $('ed-text').textContent = `${n === 1 ? 'Posten' : `De ${n} posterna`} räknas till och med den månad du väljer och syns sedan som avslutade. Historiken bakåt finns kvar.`;
-  $('ed-month').value = currentMonth();
-  $('ed-error').textContent = '';
-  $('end-dialog').showModal();
-}
-$('ed-cancel').addEventListener('click', () => $('end-dialog').close());
-$('ed-form').addEventListener('submit', (e) => {
-  e.preventDefault();
-  const m = $('ed-month').value;
-  if (!isMonth(m)) { $('ed-error').textContent = 'Välj en månad.'; return; }
-  const list = data.recurring.filter((r) => sel?.has(r.id)), late = list.filter((r) => r.start > m);
-  if (late.length) { $('ed-error').textContent = `${late[0].name} börjar efter den månaden – välj en senare månad eller avmarkera den.`; return; }
-  $('end-dialog').close();
-  endSel();
-  withUndo(list.length === 1 ? `${list[0].name} avslutas efter ${monthLabel(m).toLowerCase()}` : `${list.length} poster avslutas efter ${monthLabel(m).toLowerCase()}`, () => {
-    for (const r of list) r.end = m; data = loadData(data);
-  });
-});
-// Long press on a row in Poster starts the mode; moving the finger (scroll) cancels. The click after it is swallowed.
-const tabItems = $('tab-items');
-const endPress = () => { clearTimeout(pressTimer); pressAt = null; };
-tabItems.addEventListener('pointerdown', (e) => {
-  endPress(); pressFired = false;
-  const b = e.target.closest('#inc-list .row-main, #exp-list .row-main, #sav-list .row-main');
-  if (!b || !b.dataset.id || sel || e.button > 0) return;
-  pressAt = { x: e.clientX, y: e.clientY };
-  pressTimer = setTimeout(() => { pressAt = null; pressFired = true; getSelection()?.removeAllRanges(); startSel(b.dataset.id); }, CONFIG.longPressMs);
-});
-tabItems.addEventListener('pointermove', (e) => { if (pressAt && Math.hypot(e.clientX - pressAt.x, e.clientY - pressAt.y) > 10) endPress(); });
-for (const t of ['pointerup', 'pointercancel', 'scroll']) addEventListener(t, endPress, { passive: true, capture: true });
-tabItems.addEventListener('click', (e) => { if (pressFired) { pressFired = false; e.stopPropagation(); e.preventDefault(); } }, true);
-tabItems.addEventListener('contextmenu', (e) => { if (e.target.closest('.row-main')) e.preventDefault(); });
-
-// Android starts its own text selection on a long press (on the text next to the row too): clear it while marking.
-document.addEventListener('selectionchange', () => { if ((pressAt || sel) && !document.activeElement?.matches?.('input, textarea')) getSelection()?.removeAllRanges(); });
+$('nd-cancel').addEventListener('click', () => $('new-dialog').close());
