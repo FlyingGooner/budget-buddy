@@ -38,7 +38,7 @@ body {
 
 #status { padding: calc(env(safe-area-inset-top) + 8px) 16px 0; font-size: 12px; color: var(--on-surface-variant); min-height: 24px; }
 #status.offline { color: var(--error); font-weight: 500; }
-#version { position: fixed; top: calc(env(safe-area-inset-top) + 6px); right: 12px; z-index: 50; font: 500 11px/1 var(--font); padding: 4px 10px; border-radius: var(--r-sm); background: var(--primary-container); color: var(--on-primary-container); pointer-events: none; }
+#version { position: absolute; top: calc(env(safe-area-inset-top) + 6px); right: 12px; z-index: 50; font: 500 11px/1 var(--font); padding: 4px 10px; border-radius: var(--r-sm); background: var(--primary-container); color: var(--on-primary-container); pointer-events: none; }
 
 main { padding: 8px 16px 24px; max-width: 640px; margin: 0 auto; }
 .tab { display: grid; gap: 10px; }
@@ -551,3 +551,10 @@ body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; 
 .sv-hidden { margin: 2px 0 0; font-size: .75rem; color: var(--on-surface-variant); }
 #savings-card .fold[open] > summary { margin-bottom: 4px; }
 .sv-hidden .link { border: 0; background: none; padding: 4px 0; color: var(--primary); font: inherit; cursor: pointer; }
+
+/* 2026-11-18: en knapp Lägg till + val i en ruta */
+.add-any { width: 100%; min-height: 52px; font-size: 1rem; }
+.add-pick { display: grid; gap: 8px; }
+.add-pick .extra { display: flex; flex-direction: column; align-items: flex-start; gap: 2px; padding: 12px 14px; min-height: 56px; text-align: left; }
+.add-pick .extra b { font-weight: 500; }
+.add-pick .extra .muted { font-size: .8125rem; }

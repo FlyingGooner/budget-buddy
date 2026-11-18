@@ -55,7 +55,7 @@ body {
 
 #status { padding: calc(env(safe-area-inset-top) + 8px) 16px 0; font-size: 12px; color: var(--on-surface-variant); min-height: 24px; }
 #status.offline { color: var(--error); font-weight: 500; }
-#version { position: fixed; top: calc(env(safe-area-inset-top) + 6px); right: 12px; z-index: 50; font: 500 11px/1 var(--font); padding: 4px 10px; border-radius: var(--r-sm); background: var(--primary-container); color: var(--on-primary-container); pointer-events: none; }
+#version { position: absolute; top: calc(env(safe-area-inset-top) + 6px); right: 12px; z-index: 50; font: 500 11px/1 var(--font); padding: 4px 10px; border-radius: var(--r-sm); background: var(--primary-container); color: var(--on-primary-container); pointer-events: none; }
 
 main { padding: 8px 16px 24px; max-width: 640px; margin: 0 auto; }
 .tab { display: grid; gap: 10px; }
@@ -569,6 +569,13 @@ body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; 
 #savings-card .fold[open] > summary { margin-bottom: 4px; }
 .sv-hidden .link { border: 0; background: none; padding: 4px 0; color: var(--primary); font: inherit; cursor: pointer; }
 
+/* 2026-11-18: en knapp Lägg till + val i en ruta */
+.add-any { width: 100%; min-height: 52px; font-size: 1rem; }
+.add-pick { display: grid; gap: 8px; }
+.add-pick .extra { display: flex; flex-direction: column; align-items: flex-start; gap: 2px; padding: 12px 14px; min-height: 56px; text-align: left; }
+.add-pick .extra b { font-weight: 500; }
+.add-pick .extra .muted { font-size: .8125rem; }
+
 </style>
 </head>
 <body>
@@ -595,12 +602,7 @@ body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; 
       <div class="card" id="income-card"></div>
       <div class="card" id="expense-card"></div>
       <div class="card savings" id="savings-card" hidden></div>
-      <div class="add-row">
-        <button type="button" class="extra" id="add-income">+ Inkomst</button>
-        <button type="button" class="extra" id="add-expense">+ Kostnad</button>
-        <button type="button" class="extra" id="add-saving">+ Sparande</button>
-        <button type="button" class="extra" id="add-oneoff">+ Avvikelse</button>
-      </div>
+      <button type="button" class="btn filled add-any" id="add-any">＋ Lägg till</button>
       <button type="button" class="link all-items" id="all-items">Alla poster ›</button>
     </div>
   </section>
@@ -821,12 +823,12 @@ body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; 
       <div class="card help" lang="sv" data-no-tr>
         <h2>Hjälp</h2>
         <details><summary>Kom igång</summary>
-          <p>Under Månad finns fyra knappar: + Inkomst (lön efter skatt), + Kostnad (hyra, el, lån …), + Sparande och + Avvikelse (något som bara gäller en månad).</p>
+          <p>Under Månad finns knappen ＋ Lägg till. Välj Inkomst (lön efter skatt), Kostnad (hyra, el, lån …), Sparande eller Bara den här månaden (en avvikelse).</p>
           <p>Allt läggs in en gång och gäller sedan varje månad. Appen räknar ut vad som blir kvar.</p>
           <p>Får du lön en annan dag än den 1:a: välj Lönedag under Inställningar → Hushåll.</p>
         </details>
         <details><summary>Månad</summary>
-          <p>Kvar överst är det som blir över efter kostnader och sparande. Raden under visar In · Ut · Sparat, och jämförelsen med förra månaden. Stapeln visar vart inkomsten går.</p>
+          <p>Kvar överst är det som blir över efter kostnader och sparande. Under det jämförelsen med förra månaden, och stapeln visar vart inkomsten går. Beloppen finns i korten nedanför.</p>
           <p>Inkomster och Kostnader är hopfällda – tryck för att se dem. Kostnaderna är grupperade per kategori, och de tre största syns direkt.</p>
           <p>Tryck på en rad för att ändra beloppet bara den här månaden, hoppa över den eller Ändra posten (namn, belopp, kategori, period). + Lägg till i Boende lägger till en kostnad med samma kategori, person och hur ofta.</p>
           <p>Byt månad med ◀ ▶ eller svep. Tryck på Månad i menyn för att komma tillbaka till aktuell månad.</p>
@@ -896,12 +898,12 @@ body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; 
       <div class="card help" lang="en" data-no-tr>
         <h2>Help</h2>
         <details><summary>Get started</summary>
-          <p>Under Month there are four buttons: + Income (salary after tax), + Cost (rent, electricity, loans …), + Saving and + Deviation (something that only applies to one month).</p>
+          <p>Under Month there is the ＋ Add button. Choose Income (salary after tax), Cost (rent, electricity, loans …), Saving or Only this month (a one-off).</p>
           <p>Everything is entered once and then applies every month. The app works out what is left.</p>
           <p>Paid on another day than the 1st? Choose Payday under Settings → Household.</p>
         </details>
         <details><summary>Month</summary>
-          <p>Left at the top is what remains after costs and savings. The line below shows In · Out · Saved and the comparison with last month. The bar shows where the income goes.</p>
+          <p>Left at the top is what remains after costs and savings. Below it the comparison with last month, and the bar shows where the income goes. The amounts are in the cards below.</p>
           <p>Income and Expenses are folded – tap to see them. Expenses are grouped by category, and the three largest are shown right away.</p>
           <p>Tap a row to change the amount for this month only, skip it or Edit item (name, amount, category, period). + Add to Housing adds a cost with the same category, person and frequency.</p>
           <p>Change month with ◀ ▶ or swipe. Tap Month in the menu to return to the current month.</p>
@@ -975,6 +977,16 @@ body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; 
 </main>
 
 <!-- Dialog: belopp för en månad / avvikelse -->
+<dialog id="add-dialog" aria-labelledby="add-title">
+  <h2 id="add-title">Lägg till</h2>
+  <div class="add-pick">
+    <button type="button" class="extra" data-add="income"><b>Inkomst</b><span class="muted">Lön efter skatt, bidrag …</span></button>
+    <button type="button" class="extra" data-add="expense"><b>Kostnad</b><span class="muted">Hyra, el, lån – varje månad</span></button>
+    <button type="button" class="extra" data-add="savings"><b>🐷 Sparande</b><span class="muted">Till ett sparkonto</span></button>
+    <button type="button" class="extra" data-add="oneoff"><b>Bara den här månaden</b><span class="muted">Avvikelse, t.ex. en resa</span></button>
+  </div>
+  <div class="actions"><span class="spacer"></span><button type="button" class="btn text" id="add-cancel">Avbryt</button></div>
+</dialog>
 <dialog id="row-dialog" aria-labelledby="rd-title">
   <form method="dialog" id="rd-form" novalidate>
     <h2 id="rd-title"></h2>
@@ -1489,6 +1501,7 @@ I18N.add({
   'Visa i Månad': 'Show in Month',
   'Dras före lönen (minskar inte Kvar)': 'Taken before payday (does not reduce Left)',
   ' · före lönen': ' · before payday',
+  '＋ Lägg till': '＋ Add', 'Lön efter skatt, bidrag …': 'Salary after tax, benefits …', 'Hyra, el, lån – varje månad': 'Rent, power, loans – every month', 'Till ett sparkonto': 'To a savings account', 'Bara den här månaden': 'Only this month', 'Avvikelse, t.ex. en resa': 'One-off, e.g. a trip',
   'Kontot ›': 'Account ›', 'Ändra sparkonton i Månad ›': 'Edit savings accounts in Month ›', 'Utveckling ›': 'Progress ›',
   '+ 1 dolt konto: ': '+ 1 hidden account: ',
   'Hemvaluta': 'Home currency', 'Fler val': 'More options', 'CSV, text, egen kod, radera': 'CSV, text, own code, delete', 'Ett okrypterat kalkylark, t.ex. för Excel.': 'An unencrypted spreadsheet, e.g. for Excel.', 'All data finns bara i den här webbläsaren. Läs in backup-filen på en annan enhet för att flytta den.': 'All data is only in this browser. Load the backup file on another device to move it.', 'Backupen låses med koden. Spara den i din lösenordshanterare.': 'The backup is locked with the code. Save it in your password manager.',
@@ -1655,7 +1668,7 @@ I18N.add({
 </script>
 <script>
 // ---- version.js ----
-﻿self.APP_VERSION = '0.12.94';
+﻿self.APP_VERSION = '0.12.95';
 
 </script>
   <script>
@@ -2808,16 +2821,16 @@ function renderMonth() {
   const delta = t.left - prevT.left, hasPrev = prevT.income || prevT.expense;
   const base = Math.max(t.income, t.expense + varSpend, 1);
   const seg = (cls, v, label) => { const x = el('span', { class: 'seg ' + cls, title: label }); x.style.width = Math.max(0, (v / base) * 100) + '%'; return x; };
-  const legend = (cls, label, v) => el('span', { class: 'lgd' }, el('span', { class: 'dot ' + cls }), `${label} ${kr(v)}`);
+  const legend = (cls, label) => el('span', { class: 'lgd' }, el('span', { class: 'dot ' + cls }), label);
   fill($('summary'), fold('kvar', [el('h2', { text: 'Kvar' }),
     el('p', { class: 'big ' + (t.left < 0 ? 'neg' : 'pos'), text: kr(t.left, true) }),
     closeLine(t),
-    el('p', { class: 'muted' }, `In ${kr(t.income)} · Ut ${kr(t.expense - t.savings)}` + (t.savings ? ` · Sparat ${kr(t.savings)}` : ''),
-      hasPrev && delta ? el('span', { class: 'delta ' + (delta < 0 ? 'neg' : 'pos'), text: `${delta > 0 ? '▲' : '▼'} ${kr(Math.abs(delta))} mot ${monthShortLabel(addMonths(month, -1)).toLowerCase()}` }) : null),
+    // 2026-11-18: beloppen står i korten nedan – här bara jämförelsen, stapeln och färgernas namn.
+    hasPrev && delta ? el('p', { class: 'delta ' + (delta < 0 ? 'neg' : 'pos'), text: `${delta > 0 ? '▲' : '▼'} ${kr(Math.abs(delta))} mot ${monthShortLabel(addMonths(month, -1)).toLowerCase()}` }) : null,
     el('div', { class: 'segbar', role: 'img', 'aria-label': `Av inkomsten: kostnader ${kr(t.expense - t.savings)}, sparande ${kr(t.savings)}, kvar ${kr(Math.max(0, t.left))}` },
       seg('s-exp', t.expense - t.savings, 'Kostnader'), seg('s-sav', t.savings, 'Sparande'), seg('s-var', varSpend, 'Rörligt'), seg('s-left', Math.max(0, t.left), 'Kvar')),
-    el('div', { class: 'lgds' }, legend('s-exp', 'Kostnader', t.expense - t.savings), t.savings ? legend('s-sav', 'Sparande', t.savings) : null, varSpend ? legend('s-var', 'Rörligt', varSpend) : null,
-      t.left > 0 ? legend('s-left', 'Kvar', t.left) : null),
+    el('div', { class: 'lgds' }, legend('s-exp', 'Kostnader'), t.savings ? legend('s-sav', 'Sparande') : null, varSpend ? legend('s-var', 'Rörligt') : null,
+      t.left > 0 ? legend('s-left', 'Kvar') : null),
     bal == null ? null : el('p', { class: 'muted small', text: `Saldo efter månaden: ${kr(bal)}` })],
     perPerson(rows)));
 
@@ -3098,11 +3111,15 @@ function openRowDialog(r) {
   (isOne ? $('rd-name') : $('rd-amount')).focus();
 }
 
-$('add-oneoff').addEventListener('click', () => openRowDialog(null));
-// Lägg till som i Fitness buddy (2026-11-17): knappar under Månad öppnar Poster med rätt formulär; Poster har ingen egen flik.
-$('add-income').addEventListener('click', () => focusAdd('income'));
-$('add-expense').addEventListener('click', () => focusAdd('expense'));
-$('add-saving').addEventListener('click', () => focusAdd('savings'));
+// 2026-11-18: en knapp ＋ Lägg till; rutan frågar vad. Avvikelse öppnar radrutan, resten formuläret i Poster.
+$('add-any').addEventListener('click', () => $('add-dialog').showModal());
+$('add-cancel').addEventListener('click', () => $('add-dialog').close());
+$('add-dialog').addEventListener('click', (e) => {
+  const kind = e.target.closest('button[data-add]')?.dataset.add;
+  if (!kind) return;
+  $('add-dialog').close();
+  setTimeout(() => (kind === 'oneoff' ? openRowDialog(null) : focusAdd(kind)), 0);
+});
 $('all-items').addEventListener('click', () => showTab('items'));
 $('items-back').addEventListener('click', () => history.back());
 $('rd-account').addEventListener('click', () => {

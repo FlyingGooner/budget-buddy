@@ -41,12 +41,7 @@
       <div class="card" id="income-card"></div>
       <div class="card" id="expense-card"></div>
       <div class="card savings" id="savings-card" hidden></div>
-      <div class="add-row">
-        <button type="button" class="extra" id="add-income">+ Inkomst</button>
-        <button type="button" class="extra" id="add-expense">+ Kostnad</button>
-        <button type="button" class="extra" id="add-saving">+ Sparande</button>
-        <button type="button" class="extra" id="add-oneoff">+ Avvikelse</button>
-      </div>
+      <button type="button" class="btn filled add-any" id="add-any">＋ Lägg till</button>
       <button type="button" class="link all-items" id="all-items">Alla poster ›</button>
     </div>
   </section>
@@ -267,12 +262,12 @@
       <div class="card help" lang="sv" data-no-tr>
         <h2>Hjälp</h2>
         <details><summary>Kom igång</summary>
-          <p>Under Månad finns fyra knappar: + Inkomst (lön efter skatt), + Kostnad (hyra, el, lån …), + Sparande och + Avvikelse (något som bara gäller en månad).</p>
+          <p>Under Månad finns knappen ＋ Lägg till. Välj Inkomst (lön efter skatt), Kostnad (hyra, el, lån …), Sparande eller Bara den här månaden (en avvikelse).</p>
           <p>Allt läggs in en gång och gäller sedan varje månad. Appen räknar ut vad som blir kvar.</p>
           <p>Får du lön en annan dag än den 1:a: välj Lönedag under Inställningar → Hushåll.</p>
         </details>
         <details><summary>Månad</summary>
-          <p>Kvar överst är det som blir över efter kostnader och sparande. Raden under visar In · Ut · Sparat, och jämförelsen med förra månaden. Stapeln visar vart inkomsten går.</p>
+          <p>Kvar överst är det som blir över efter kostnader och sparande. Under det jämförelsen med förra månaden, och stapeln visar vart inkomsten går. Beloppen finns i korten nedanför.</p>
           <p>Inkomster och Kostnader är hopfällda – tryck för att se dem. Kostnaderna är grupperade per kategori, och de tre största syns direkt.</p>
           <p>Tryck på en rad för att ändra beloppet bara den här månaden, hoppa över den eller Ändra posten (namn, belopp, kategori, period). + Lägg till i Boende lägger till en kostnad med samma kategori, person och hur ofta.</p>
           <p>Byt månad med ◀ ▶ eller svep. Tryck på Månad i menyn för att komma tillbaka till aktuell månad.</p>
@@ -342,12 +337,12 @@
       <div class="card help" lang="en" data-no-tr>
         <h2>Help</h2>
         <details><summary>Get started</summary>
-          <p>Under Month there are four buttons: + Income (salary after tax), + Cost (rent, electricity, loans …), + Saving and + Deviation (something that only applies to one month).</p>
+          <p>Under Month there is the ＋ Add button. Choose Income (salary after tax), Cost (rent, electricity, loans …), Saving or Only this month (a one-off).</p>
           <p>Everything is entered once and then applies every month. The app works out what is left.</p>
           <p>Paid on another day than the 1st? Choose Payday under Settings → Household.</p>
         </details>
         <details><summary>Month</summary>
-          <p>Left at the top is what remains after costs and savings. The line below shows In · Out · Saved and the comparison with last month. The bar shows where the income goes.</p>
+          <p>Left at the top is what remains after costs and savings. Below it the comparison with last month, and the bar shows where the income goes. The amounts are in the cards below.</p>
           <p>Income and Expenses are folded – tap to see them. Expenses are grouped by category, and the three largest are shown right away.</p>
           <p>Tap a row to change the amount for this month only, skip it or Edit item (name, amount, category, period). + Add to Housing adds a cost with the same category, person and frequency.</p>
           <p>Change month with ◀ ▶ or swipe. Tap Month in the menu to return to the current month.</p>
@@ -421,6 +416,16 @@
 </main>
 
 <!-- Dialog: belopp för en månad / avvikelse -->
+<dialog id="add-dialog" aria-labelledby="add-title">
+  <h2 id="add-title">Lägg till</h2>
+  <div class="add-pick">
+    <button type="button" class="extra" data-add="income"><b>Inkomst</b><span class="muted">Lön efter skatt, bidrag …</span></button>
+    <button type="button" class="extra" data-add="expense"><b>Kostnad</b><span class="muted">Hyra, el, lån – varje månad</span></button>
+    <button type="button" class="extra" data-add="savings"><b>🐷 Sparande</b><span class="muted">Till ett sparkonto</span></button>
+    <button type="button" class="extra" data-add="oneoff"><b>Bara den här månaden</b><span class="muted">Avvikelse, t.ex. en resa</span></button>
+  </div>
+  <div class="actions"><span class="spacer"></span><button type="button" class="btn text" id="add-cancel">Avbryt</button></div>
+</dialog>
 <dialog id="row-dialog" aria-labelledby="rd-title">
   <form method="dialog" id="rd-form" novalidate>
     <h2 id="rd-title"></h2>

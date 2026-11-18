@@ -79,16 +79,16 @@ function renderMonth() {
   const delta = t.left - prevT.left, hasPrev = prevT.income || prevT.expense;
   const base = Math.max(t.income, t.expense + varSpend, 1);
   const seg = (cls, v, label) => { const x = el('span', { class: 'seg ' + cls, title: label }); x.style.width = Math.max(0, (v / base) * 100) + '%'; return x; };
-  const legend = (cls, label, v) => el('span', { class: 'lgd' }, el('span', { class: 'dot ' + cls }), `${label} ${kr(v)}`);
+  const legend = (cls, label) => el('span', { class: 'lgd' }, el('span', { class: 'dot ' + cls }), label);
   fill($('summary'), fold('kvar', [el('h2', { text: 'Kvar' }),
     el('p', { class: 'big ' + (t.left < 0 ? 'neg' : 'pos'), text: kr(t.left, true) }),
     closeLine(t),
-    el('p', { class: 'muted' }, `In ${kr(t.income)} · Ut ${kr(t.expense - t.savings)}` + (t.savings ? ` · Sparat ${kr(t.savings)}` : ''),
-      hasPrev && delta ? el('span', { class: 'delta ' + (delta < 0 ? 'neg' : 'pos'), text: `${delta > 0 ? '▲' : '▼'} ${kr(Math.abs(delta))} mot ${monthShortLabel(addMonths(month, -1)).toLowerCase()}` }) : null),
+    // 2026-11-18: beloppen står i korten nedan – här bara jämförelsen, stapeln och färgernas namn.
+    hasPrev && delta ? el('p', { class: 'delta ' + (delta < 0 ? 'neg' : 'pos'), text: `${delta > 0 ? '▲' : '▼'} ${kr(Math.abs(delta))} mot ${monthShortLabel(addMonths(month, -1)).toLowerCase()}` }) : null,
     el('div', { class: 'segbar', role: 'img', 'aria-label': `Av inkomsten: kostnader ${kr(t.expense - t.savings)}, sparande ${kr(t.savings)}, kvar ${kr(Math.max(0, t.left))}` },
       seg('s-exp', t.expense - t.savings, 'Kostnader'), seg('s-sav', t.savings, 'Sparande'), seg('s-var', varSpend, 'Rörligt'), seg('s-left', Math.max(0, t.left), 'Kvar')),
-    el('div', { class: 'lgds' }, legend('s-exp', 'Kostnader', t.expense - t.savings), t.savings ? legend('s-sav', 'Sparande', t.savings) : null, varSpend ? legend('s-var', 'Rörligt', varSpend) : null,
-      t.left > 0 ? legend('s-left', 'Kvar', t.left) : null),
+    el('div', { class: 'lgds' }, legend('s-exp', 'Kostnader'), t.savings ? legend('s-sav', 'Sparande') : null, varSpend ? legend('s-var', 'Rörligt') : null,
+      t.left > 0 ? legend('s-left', 'Kvar') : null),
     bal == null ? null : el('p', { class: 'muted small', text: `Saldo efter månaden: ${kr(bal)}` })],
     perPerson(rows)));
 
@@ -369,11 +369,15 @@ function openRowDialog(r) {
   (isOne ? $('rd-name') : $('rd-amount')).focus();
 }
 
-$('add-oneoff').addEventListener('click', () => openRowDialog(null));
-// Lägg till som i Fitness buddy (2026-11-17): knappar under Månad öppnar Poster med rätt formulär; Poster har ingen egen flik.
-$('add-income').addEventListener('click', () => focusAdd('income'));
-$('add-expense').addEventListener('click', () => focusAdd('expense'));
-$('add-saving').addEventListener('click', () => focusAdd('savings'));
+// 2026-11-18: en knapp ＋ Lägg till; rutan frågar vad. Avvikelse öppnar radrutan, resten formuläret i Poster.
+$('add-any').addEventListener('click', () => $('add-dialog').showModal());
+$('add-cancel').addEventListener('click', () => $('add-dialog').close());
+$('add-dialog').addEventListener('click', (e) => {
+  const kind = e.target.closest('button[data-add]')?.dataset.add;
+  if (!kind) return;
+  $('add-dialog').close();
+  setTimeout(() => (kind === 'oneoff' ? openRowDialog(null) : focusAdd(kind)), 0);
+});
 $('all-items').addEventListener('click', () => showTab('items'));
 $('items-back').addEventListener('click', () => history.back());
 $('rd-account').addEventListener('click', () => {

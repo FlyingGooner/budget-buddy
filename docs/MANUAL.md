@@ -3,12 +3,12 @@
 Samma text finns i appen under **Inställningar → Allmänt → Hjälp och manual**. Skriv bara här: Hjälp i `index.html` byggs från den här filen med `node tools/build-help.mjs` (eller `tools/build-help.ps1`).
 
 ## Kom igång
-- Under **Månad** finns fyra knappar: **+ Inkomst** (lön efter skatt), **+ Kostnad** (hyra, el, lån …), **+ Sparande** och **+ Avvikelse** (något som bara gäller en månad).
+- Under **Månad** finns knappen **＋ Lägg till**. Välj **Inkomst** (lön efter skatt), **Kostnad** (hyra, el, lån …), **Sparande** eller **Bara den här månaden** (en avvikelse).
 - Allt läggs in en gång och gäller sedan varje månad. Appen räknar ut vad som blir kvar.
 - Får du lön en annan dag än den 1:a: välj **Lönedag** under Inställningar → Hushåll.
 
 ## Månad
-- **Kvar** överst är det som blir över efter kostnader och sparande. Raden under visar In · Ut · Sparat, och jämförelsen med förra månaden. Stapeln visar vart inkomsten går.
+- **Kvar** överst är det som blir över efter kostnader och sparande. Under det jämförelsen med förra månaden, och stapeln visar vart inkomsten går. Beloppen finns i korten nedanför.
 - **Inkomster** och **Kostnader** är hopfällda – tryck för att se dem. Kostnaderna är grupperade per kategori, och de tre största syns direkt.
 - Tryck på en rad för att ändra beloppet bara den här månaden, hoppa över den eller **Ändra posten** (namn, belopp, kategori, period). **+ Lägg till i Boende** lägger till en kostnad med samma kategori, person och hur ofta.
 - Byt månad med **◀ ▶** eller svep. Tryck på **Månad** i menyn för att komma tillbaka till aktuell månad.

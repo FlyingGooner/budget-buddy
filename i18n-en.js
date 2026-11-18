@@ -99,6 +99,7 @@ I18N.add({
   'Visa i Månad': 'Show in Month',
   'Dras före lönen (minskar inte Kvar)': 'Taken before payday (does not reduce Left)',
   ' · före lönen': ' · before payday',
+  '＋ Lägg till': '＋ Add', 'Lön efter skatt, bidrag …': 'Salary after tax, benefits …', 'Hyra, el, lån – varje månad': 'Rent, power, loans – every month', 'Till ett sparkonto': 'To a savings account', 'Bara den här månaden': 'Only this month', 'Avvikelse, t.ex. en resa': 'One-off, e.g. a trip',
   'Kontot ›': 'Account ›', 'Ändra sparkonton i Månad ›': 'Edit savings accounts in Month ›', 'Utveckling ›': 'Progress ›',
   '+ 1 dolt konto: ': '+ 1 hidden account: ',
   'Hemvaluta': 'Home currency', 'Fler val': 'More options', 'CSV, text, egen kod, radera': 'CSV, text, own code, delete', 'Ett okrypterat kalkylark, t.ex. för Excel.': 'An unencrypted spreadsheet, e.g. for Excel.', 'All data finns bara i den här webbläsaren. Läs in backup-filen på en annan enhet för att flytta den.': 'All data is only in this browser. Load the backup file on another device to move it.', 'Backupen låses med koden. Spara den i din lösenordshanterare.': 'The backup is locked with the code. Save it in your password manager.',

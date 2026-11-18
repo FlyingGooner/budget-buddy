@@ -3,12 +3,12 @@
 The same text is in the app under **Settings → General → Help and manual**. Write only here: Help in `index.html` is built from this file with `node tools/build-help.mjs` (or `tools/build-help.ps1`).
 
 ## Get started
-- Under **Month** there are four buttons: **+ Income** (salary after tax), **+ Cost** (rent, electricity, loans …), **+ Saving** and **+ Deviation** (something that only applies to one month).
+- Under **Month** there is the **＋ Add** button. Choose **Income** (salary after tax), **Cost** (rent, electricity, loans …), **Saving** or **Only this month** (a one-off).
 - Everything is entered once and then applies every month. The app works out what is left.
 - Paid on another day than the 1st? Choose **Payday** under Settings → Household.
 
 ## Month
-- **Left** at the top is what remains after costs and savings. The line below shows In · Out · Saved and the comparison with last month. The bar shows where the income goes.
+- **Left** at the top is what remains after costs and savings. Below it the comparison with last month, and the bar shows where the income goes. The amounts are in the cards below.
 - **Income** and **Expenses** are folded – tap to see them. Expenses are grouped by category, and the three largest are shown right away.
 - Tap a row to change the amount for this month only, skip it or **Edit item** (name, amount, category, period). **+ Add to Housing** adds a cost with the same category, person and frequency.
 - Change month with **◀ ▶** or swipe. Tap **Month** in the menu to return to the current month.
