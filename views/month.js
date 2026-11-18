@@ -157,14 +157,21 @@ function closeLine(t) {
   if (t.closed) return el('p', { class: 'close-line' }, el('span', { text: `✓ Stängd · planerat ${kr(t.planned, true)}` }),
     el('button', { type: 'button', class: 'link', text: 'Ändra', on: { click: stop(openCloseDialog) } }));
   if (month > activeMonth()) return null;
-  return el('p', { class: 'close-line' }, el('button', { type: 'button', class: 'link', text: '✓ Stäng månaden – hur mycket blev kvar?', on: { click: stop(openCloseDialog) } }));
+  // 2026-11-18: när ska månaden stängas? Lugn text långt innan, färg 3 dagar innan, tydlig påminnelse när dagen har kommit.
+  const iso = closeIso(), days = Math.round((new Date(iso + 'T12:00') - new Date(isoToday() + 'T12:00')) / 864e5);
+  const lvl = days <= 0 ? 'due' : days <= 3 ? 'soon' : 'later';
+  const when = days === 0 ? 'i dag' : days === 1 ? 'i morgon' : days > 0 ? `om ${days} dagar` : null;
+  const text = lvl === 'due' ? (days === 0 ? 'Dags att stänga månaden i dag – hur mycket finns kvar?' : `Dags att stänga månaden – hur mycket fanns kvar ${dayLabel(iso)}?`)
+    : lvl === 'soon' ? `Snart dags: stäng månaden ${dayLabel(iso)} (${when})` : `Stäng månaden ${dayLabel(iso)} · ${when}`;
+  return el('p', { class: 'close-line cl-' + lvl }, el('button', { type: 'button', class: 'link', text: (lvl === 'later' ? '✓ ' : '⏰ ') + text, on: { click: stop(openCloseDialog) } }));
 }
-function closeDay() {   // dagen före nästa lön (eller sista dagen i månaden)
+const closeDay = () => dayLabel(closeIso());
+function closeIso() {   // dagen före nästa lön (eller sista dagen i månaden), som YYYY-MM-DD
   const p = data.settings.payday, n = addMonths(month, 1), [y, mo] = n.split('-').map(Number);
   // 2026-11-18: lönedag på lördag/söndag → lönen kommer fredagen före, så frågan gäller dagen före den.
   let d = new Date(y, mo - 1, 0);
   if (p > 1) { const pay = new Date(y, mo - 1, p); while (pay.getDay() === 0 || pay.getDay() === 6) pay.setDate(pay.getDate() - 1); d = new Date(pay); d.setDate(d.getDate() - 1); }
-  return dayLabel(`${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`);
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
 }
 function openCloseDialog() {
   const t = monthTotals(data, month);

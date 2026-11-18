@@ -26,6 +26,7 @@ Samma text finns i appen under **Inställningar → Allmänt → Hjälp och manu
 
 ## Stäng månaden
 - Det som står under Kvar är planerat. Mat, nöjen och oväntade utgifter syns inte där.
+- Under Kvar står när det är dags att stänga (t.ex. *Stäng månaden tis 24 nov · om 6 dagar*). Tre dagar innan blir raden färgad, och när dagen har kommit står det **Dags att stänga månaden**.
 - Dagen före lön trycker du **✓ Stäng månaden** under Kvar och skriver in vad som faktiskt fanns kvar på kontot. I samma ruta stämmer du av sparkontona (förifyllda – ändra bara det som skiljer).
 - Kvar visar då det faktiska beloppet, och skillnaden visas som **Rörligt** i stapeln. Nästa månad blir den aktuella direkt.
 - Har du börjat stänga månader visas överst i Månad de som inte är stängda (**Inte stängd: Okt**) – tryck för att gå dit. **Ändra** rättar beloppet, **Öppna igen** tar bort stängningen.

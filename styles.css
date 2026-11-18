@@ -570,3 +570,9 @@ body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; 
 .lm-l { font-size: .8125rem; color: var(--on-surface-variant); }
 .lm-d { font-size: .75rem; font-variant-numeric: tabular-nums; }
 .last-month .btn { margin-top: 8px; }
+
+/* 2026-11-18: påminnelse om att stänga månaden */
+.close-line.cl-later .link { color: var(--on-surface-variant); font-weight: 400; }
+.close-line.cl-soon .link, .close-line.cl-due .link { padding: 8px 12px; border-radius: var(--r-md); text-align: left; }
+.close-line.cl-soon .link { background: var(--surface-container-high); color: var(--primary); }
+.close-line.cl-due .link { background: var(--primary-container); color: var(--on-primary-container); font-weight: 600; }

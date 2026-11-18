@@ -26,6 +26,7 @@ The same text is in the app under **Settings → General → Help and manual**. 
 
 ## Close the month
 - What is shown under Left is planned. Food, fun and unexpected spending do not show there.
+- Below Left it says when it is time to close (e.g. *Close the month Tue 24 Nov · in 6 days*). Three days before, the line gets a colour, and when the day has come it says **Time to close the month**.
 - The day before payday, tap **✓ Close the month** under Left and enter what was actually left in the account. In the same dialog you reconcile the savings accounts (prefilled – only change what differs).
 - Left then shows the actual amount, and the difference is shown as **Variable** in the bar. The next month becomes the current one right away.
 - Once you have started closing months, months that are not closed are shown at the top of Month (**Not closed: Oct**) – tap to go there. **Edit** corrects the amount, **Reopen** removes the closing.
