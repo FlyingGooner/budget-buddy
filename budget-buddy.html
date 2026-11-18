@@ -41,7 +41,7 @@
   }
 }
 * { box-sizing: border-box; }
-html { -webkit-text-size-adjust: 100%; }
+html { -webkit-text-size-adjust: 100%; -webkit-tap-highlight-color: transparent; } /* 2026-11-18: ingen blå ruta vid tryck */
 body {
   margin: 0;
   background: var(--surface);
@@ -841,7 +841,7 @@ body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; 
           <p>Sparande är inte en kostnad, men dras av från det som blir kvar. Lägg till med + Sparande: namn, belopp, hur ofta och gärna Saldo nu. Då skapas ett sparkonto som räknas upp av sig självt varje månad.</p>
           <p>Kortet 🐷 Sparande i Månad visar månadens sparande och Totalt sparat i din valuta. Tryck för att fälla ut en rad per konto: saldo i din valuta, månadssparandet och ändringen sedan förra månaden. Konton i annan valuta visar sitt eget belopp inom parentes, t.ex. (730 USD).</p>
           <p>Tryck på en rad för att ändra belopp, välja vilket Sparkonto pengarna går till eller rätta saldot. Saldot märkt ≈ är beräknat: senast ifyllt plus sparandet.</p>
-          <p>Dras sparandet innan nettolönen betalas ut (t.ex. aktier via jobbet), bocka i Dras före lönen. Då räknas det som sparat men minskar inte Kvar.</p>
+          <p>Dras sparandet innan nettolönen betalas ut (t.ex. aktier via jobbet), bocka i Dras före lönen. Då räknas det som sparat men minskar inte Kvar. Samma val finns på en avvikelse i kategorin Sparande.</p>
           <p>Konton som inte rörs (t.ex. barnens) kan döljas från Månad: tryck på raden i Sparande-kortet och bocka ur Visa i Månad. Tryck på namnet under &quot;+ 1 dolt konto&quot; för att visa det igen. Det räknas fortfarande i Totalt sparat.</p>
           <p>Alla konton, med graf, finns också under Trend → Sparkonton. Där lägger du till ett konto utan sparpost, eller tar bort ett (det hamnar i papperskorgen).</p>
         </details>
@@ -917,7 +917,7 @@ body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; 
           <p>Savings are not a cost, but they are deducted from what is left. Add with + Saving: name, amount, frequency and preferably Balance now. A savings account is then created that counts up by itself every month.</p>
           <p>The 🐷 Savings card in Month shows the month's savings and Total saved in your currency. Tap to unfold one row per account: balance in your currency, the monthly saving and the change since last month. Accounts in another currency show their own amount in brackets, e.g. (730 USD).</p>
           <p>Tap a row to change the amount, choose which Savings account the money goes to, or correct the balance. A balance marked ≈ is estimated: last entered plus the savings.</p>
-          <p>If the saving is taken before your net salary is paid (e.g. shares through work), tick Taken before payday. It then counts as saved but does not reduce Left.</p>
+          <p>If the saving is taken before your net salary is paid (e.g. shares through work), tick Taken before payday. It then counts as saved but does not reduce Left. The same option is available on a one-off in the Savings category.</p>
           <p>Accounts you never touch (e.g. the children's) can be hidden from Month: tap the row in the Savings card and untick Show in Month. Tap the name under &quot;+ 1 hidden account&quot; to show it again. It still counts in Total saved.</p>
           <p>All accounts, with a chart, are also under Trend → Savings accounts. There you add an account without a savings item, or delete one (it goes to the trash).</p>
         </details>
@@ -993,6 +993,7 @@ body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; 
         <label class="field"><span>Kategori</span><select id="rd-cat"></select></label>
       </div>
       <label class="field person-field"><span>Person (valfritt)</span><select id="rd-person"></select></label>
+      <label class="check" id="rd-pre-wrap" hidden><input type="checkbox" id="rd-pre"><span>Dras före lönen (minskar inte Kvar)</span></label>
     </div>
     <label class="field"><span>Belopp (<span class="cur-unit">kr</span>)</span><input id="rd-amount" inputmode="decimal" autocomplete="off"></label>
     <div id="rd-acc" hidden>
@@ -1657,7 +1658,7 @@ I18N.add({
 </script>
 <script>
 // ---- version.js ----
-﻿self.APP_VERSION = '0.12.91';
+﻿self.APP_VERSION = '0.12.92';
 
 </script>
   <script>
@@ -2244,7 +2245,8 @@ function loadData(d) {
       const name = cleanName(o.name);
       if (!name) continue;
       ids.add(o.id);
-      out.oneOffs.push({ id: o.id, month: o.month, name, type: o.type, amount: o.amount, category: cat(o.category, o.type), person: person(o.person) });
+      out.oneOffs.push({ id: o.id, month: o.month, name, type: o.type, amount: o.amount, category: cat(o.category, o.type), person: person(o.person),
+        ...(o.pre === true && o.type === 'expense' && cat(o.category, o.type) === SAVINGS_CAT ? { pre: true } : {}) });
     }
   }
 
@@ -2484,7 +2486,7 @@ function rowsForMonth(data, m) {
   }
   for (const o of data.oneOffs) {
     if (o.month !== m) continue;
-    rows.push({ id: o.id, kind: 'one', name: o.name, type: o.type, category: o.category, person: o.person,
+    rows.push({ id: o.id, kind: 'one', name: o.name, type: o.type, category: o.category, person: o.person, pre: !!o.pre,
       amount: o.amount, base: o.amount, adjusted: false });
   }
   return rows;
@@ -3074,6 +3076,7 @@ function openRowDialog(r) {
   $('rd-type').value = isOne && !isNew ? r.type : 'expense';
   fillCategorySelect($('rd-cat'), isOne && !isNew ? r.category : null, $('rd-type').value);
   fillPersonSelect($('rd-person'), isOne && !isNew ? r.person : null);
+  $('rd-pre').checked = !!(isOne && !isNew && r.pre); showPre();
   $('rd-amount').value = isNew ? '' : krInput(r.amount);
   $('rd-delete').hidden = isNew || r.kind !== 'one';
   $('rd-reset').hidden = isNew || r.kind !== 'rec' || !r.adjusted;
@@ -3121,7 +3124,10 @@ function showAccBalance() {
     : est && est.estimated ? 'Beräknat från senaste saldot + sparandet – ändra om det inte stämmer.' : 'Räknas upp med sparandet varje månad.';
 }
 $('rd-acc-pick').addEventListener('change', showAccBalance);
-$('rd-type').addEventListener('change', () => fillCategorySelect($('rd-cat'), null, $('rd-type').value));
+// Sparande före lönen (2026-11-18): bara för avvikelser i kategorin Sparande.
+function showPre() { $('rd-pre-wrap').hidden = $('rd-type').value !== 'expense' || $('rd-cat').value !== SAVINGS_CAT; }
+$('rd-type').addEventListener('change', () => { fillCategorySelect($('rd-cat'), null, $('rd-type').value); showPre(); });
+$('rd-cat').addEventListener('change', showPre);
 $('rd-cancel').addEventListener('click', () => $('row-dialog').close());
 
 $('rd-form').addEventListener('submit', (e) => {
@@ -3150,7 +3156,7 @@ $('rd-form').addEventListener('submit', (e) => {
     const name = cleanName($('rd-name').value);
     if (!name) { $('rd-error').textContent = 'Skriv ett namn.'; return; }
     const o = { id: r ? r.id : newId(), month, name, type: $('rd-type').value === 'income' ? 'income' : 'expense',
-      amount, category: $('rd-cat').value, person: personValue($('rd-person')) };
+      amount, category: $('rd-cat').value, person: personValue($('rd-person')), ...(!$('rd-pre-wrap').hidden && $('rd-pre').checked ? { pre: true } : {}) };
     if (r) data.oneOffs = data.oneOffs.map((x) => (x.id === r.id ? o : x)); else data.oneOffs.push(o);
   } else if (amount === r.base) {
     clearAdjustment(r.id);

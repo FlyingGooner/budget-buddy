@@ -24,7 +24,7 @@
   }
 }
 * { box-sizing: border-box; }
-html { -webkit-text-size-adjust: 100%; }
+html { -webkit-text-size-adjust: 100%; -webkit-tap-highlight-color: transparent; } /* 2026-11-18: ingen blå ruta vid tryck */
 body {
   margin: 0;
   background: var(--surface);

@@ -345,6 +345,7 @@ function openRowDialog(r) {
   $('rd-type').value = isOne && !isNew ? r.type : 'expense';
   fillCategorySelect($('rd-cat'), isOne && !isNew ? r.category : null, $('rd-type').value);
   fillPersonSelect($('rd-person'), isOne && !isNew ? r.person : null);
+  $('rd-pre').checked = !!(isOne && !isNew && r.pre); showPre();
   $('rd-amount').value = isNew ? '' : krInput(r.amount);
   $('rd-delete').hidden = isNew || r.kind !== 'one';
   $('rd-reset').hidden = isNew || r.kind !== 'rec' || !r.adjusted;
@@ -392,7 +393,10 @@ function showAccBalance() {
     : est && est.estimated ? 'Beräknat från senaste saldot + sparandet – ändra om det inte stämmer.' : 'Räknas upp med sparandet varje månad.';
 }
 $('rd-acc-pick').addEventListener('change', showAccBalance);
-$('rd-type').addEventListener('change', () => fillCategorySelect($('rd-cat'), null, $('rd-type').value));
+// Sparande före lönen (2026-11-18): bara för avvikelser i kategorin Sparande.
+function showPre() { $('rd-pre-wrap').hidden = $('rd-type').value !== 'expense' || $('rd-cat').value !== SAVINGS_CAT; }
+$('rd-type').addEventListener('change', () => { fillCategorySelect($('rd-cat'), null, $('rd-type').value); showPre(); });
+$('rd-cat').addEventListener('change', showPre);
 $('rd-cancel').addEventListener('click', () => $('row-dialog').close());
 
 $('rd-form').addEventListener('submit', (e) => {
@@ -421,7 +425,7 @@ $('rd-form').addEventListener('submit', (e) => {
     const name = cleanName($('rd-name').value);
     if (!name) { $('rd-error').textContent = 'Skriv ett namn.'; return; }
     const o = { id: r ? r.id : newId(), month, name, type: $('rd-type').value === 'income' ? 'income' : 'expense',
-      amount, category: $('rd-cat').value, person: personValue($('rd-person')) };
+      amount, category: $('rd-cat').value, person: personValue($('rd-person')), ...(!$('rd-pre-wrap').hidden && $('rd-pre').checked ? { pre: true } : {}) };
     if (r) data.oneOffs = data.oneOffs.map((x) => (x.id === r.id ? o : x)); else data.oneOffs.push(o);
   } else if (amount === r.base) {
     clearAdjustment(r.id);

@@ -51,6 +51,8 @@ T.test('rowsForMonth + totals: avvikelse, engångspost och sparande', () => {
   T.eq(t, { income: 3200000, expense: 250000 + 400000 + 95000, savings: 400000, pre: 0, left: 3200000 - 745000 });
   { const d = loadData({ recurring: [{ id: 'p1', name: 'Aktier', type: 'expense', amount: 100000, category: 'savings', every: 1, start: '2026-01', pre: true }] });
     T.eq(totals(rowsForMonth(d, '2026-03')).left, 0); }
+  { const d = loadData({ oneOffs: [{ id: 'p2', month: '2026-03', name: 'Aktier', type: 'expense', amount: 50000, category: 'savings', pre: true }] });
+    T.eq(totals(rowsForMonth(d, '2026-03')).left, 0); }
 });
 T.test('balanceAfter: startsaldo + kvar per månad', () => {
   const d = loadData(rich());

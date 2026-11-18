@@ -156,7 +156,8 @@ function loadData(d) {
       const name = cleanName(o.name);
       if (!name) continue;
       ids.add(o.id);
-      out.oneOffs.push({ id: o.id, month: o.month, name, type: o.type, amount: o.amount, category: cat(o.category, o.type), person: person(o.person) });
+      out.oneOffs.push({ id: o.id, month: o.month, name, type: o.type, amount: o.amount, category: cat(o.category, o.type), person: person(o.person),
+        ...(o.pre === true && o.type === 'expense' && cat(o.category, o.type) === SAVINGS_CAT ? { pre: true } : {}) });
     }
   }
 
@@ -396,7 +397,7 @@ function rowsForMonth(data, m) {
   }
   for (const o of data.oneOffs) {
     if (o.month !== m) continue;
-    rows.push({ id: o.id, kind: 'one', name: o.name, type: o.type, category: o.category, person: o.person,
+    rows.push({ id: o.id, kind: 'one', name: o.name, type: o.type, category: o.category, person: o.person, pre: !!o.pre,
       amount: o.amount, base: o.amount, adjusted: false });
   }
   return rows;
