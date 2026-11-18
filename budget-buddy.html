@@ -181,6 +181,12 @@ dialog::backdrop { background: rgba(0,0,0,.4); }
 .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 .actions { display: flex; align-items: center; gap: 8px; margin-top: 12px; }
 .actions.wrap { flex-wrap: wrap; }
+/* 2026-11-18: radrutan – extra val i egen rad, Avbryt/Spara till höger */
+#row-dialog .rd-more { margin-top: 4px; gap: 4px; }
+#row-dialog .rd-more:not(:has(button:not([hidden]))) { display: none; }
+#row-dialog .rd-main { justify-content: flex-end; }
+#row-dialog .error:empty { display: none; }
+#row-dialog .check { margin-top: 8px; }
 .inline { display: flex; align-items: end; gap: 8px; }
 .grow { flex: 1; }
 .btn.danger { color: var(--error); }
@@ -993,9 +999,9 @@ body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; 
         <label class="field"><span>Kategori</span><select id="rd-cat"></select></label>
       </div>
       <label class="field person-field"><span>Person (valfritt)</span><select id="rd-person"></select></label>
-      <label class="check" id="rd-pre-wrap" hidden><input type="checkbox" id="rd-pre"><span>Dras före lönen (minskar inte Kvar)</span></label>
     </div>
     <label class="field"><span>Belopp (<span class="cur-unit">kr</span>)</span><input id="rd-amount" inputmode="decimal" autocomplete="off"></label>
+    <label class="check" id="rd-pre-wrap" hidden><input type="checkbox" id="rd-pre"><span>Dras före lönen (minskar inte Kvar)</span></label>
     <div id="rd-acc" hidden>
       <label class="field"><span>Sparkonto</span><select id="rd-acc-pick"></select></label>
       <label class="field"><span id="rd-bal-label">Saldo på kontot nu</span><input id="rd-balance" inputmode="decimal" autocomplete="off"></label>
@@ -1003,12 +1009,13 @@ body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; 
       <label class="check" id="rd-show-wrap"><input type="checkbox" id="rd-show"><span>Visa i Månad</span></label>
     </div>
     <p class="error" id="rd-error" role="alert"></p>
-    <div class="actions wrap">
+    <div class="actions wrap rd-more">
       <button type="button" class="btn text danger" id="rd-delete">Ta bort</button>
       <button type="button" class="btn text" id="rd-edit">Ändra posten</button>
       <button type="button" class="btn text" id="rd-reset">Återställ</button>
       <button type="button" class="btn text" id="rd-skip">Hoppa över</button>
-      <span class="spacer"></span>
+    </div>
+    <div class="actions rd-main">
       <button type="button" class="btn text" id="rd-cancel">Avbryt</button>
       <button type="submit" class="btn filled" id="rd-save">Spara</button>
     </div>
@@ -1658,7 +1665,7 @@ I18N.add({
 </script>
 <script>
 // ---- version.js ----
-﻿self.APP_VERSION = '0.12.92';
+﻿self.APP_VERSION = '0.12.93';
 
 </script>
   <script>
@@ -3076,7 +3083,7 @@ function openRowDialog(r) {
   $('rd-type').value = isOne && !isNew ? r.type : 'expense';
   fillCategorySelect($('rd-cat'), isOne && !isNew ? r.category : null, $('rd-type').value);
   fillPersonSelect($('rd-person'), isOne && !isNew ? r.person : null);
-  $('rd-pre').checked = !!(isOne && !isNew && r.pre); showPre();
+  $('rd-pre').checked = !!(r && r.pre); showPre();
   $('rd-amount').value = isNew ? '' : krInput(r.amount);
   $('rd-delete').hidden = isNew || r.kind !== 'one';
   $('rd-reset').hidden = isNew || r.kind !== 'rec' || !r.adjusted;
@@ -3125,7 +3132,10 @@ function showAccBalance() {
 }
 $('rd-acc-pick').addEventListener('change', showAccBalance);
 // Sparande före lönen (2026-11-18): bara för avvikelser i kategorin Sparande.
-function showPre() { $('rd-pre-wrap').hidden = $('rd-type').value !== 'expense' || $('rd-cat').value !== SAVINGS_CAT; }
+function showPre() {
+  const r = dialogRow;
+  $('rd-pre-wrap').hidden = r && r.kind === 'rec' ? r.category !== SAVINGS_CAT : $('rd-type').value !== 'expense' || $('rd-cat').value !== SAVINGS_CAT;
+}
 $('rd-type').addEventListener('change', () => { fillCategorySelect($('rd-cat'), null, $('rd-type').value); showPre(); });
 $('rd-cat').addEventListener('change', showPre);
 $('rd-cancel').addEventListener('click', () => $('row-dialog').close());
@@ -3158,10 +3168,12 @@ $('rd-form').addEventListener('submit', (e) => {
     const o = { id: r ? r.id : newId(), month, name, type: $('rd-type').value === 'income' ? 'income' : 'expense',
       amount, category: $('rd-cat').value, person: personValue($('rd-person')), ...(!$('rd-pre-wrap').hidden && $('rd-pre').checked ? { pre: true } : {}) };
     if (r) data.oneOffs = data.oneOffs.map((x) => (x.id === r.id ? o : x)); else data.oneOffs.push(o);
-  } else if (amount === r.base) {
-    clearAdjustment(r.id);
   } else {
-    (data.adjustments[month] ||= {})[r.id] = amount;
+    // Sparpost: "Dras före lönen" gäller posten (alla månader).
+    const item = data.recurring.find((x) => x.id === r.id);
+    if (item && !$('rd-pre-wrap').hidden) { if ($('rd-pre').checked) item.pre = true; else delete item.pre; }
+    if (amount === r.base) clearAdjustment(r.id);
+    else (data.adjustments[month] ||= {})[r.id] = amount;
   }
   data = loadData(data);
   $('row-dialog').close();
