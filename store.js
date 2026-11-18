@@ -388,7 +388,12 @@ function currentMonth() {
   const m = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
   let pay = 1;
   try { if (data?.settings?.payday > 1) pay = data.settings.payday; } catch { /* data finns inte än (start, tester) */ }
-  return d.getDate() < pay ? addMonths(m, -1) : m;   // före lönedagen hör dagen till förra lönemånaden
+  if (pay === 1) return m;
+  // 2026-11-18: lönedag på lördag/söndag → lönen kommer fredagen före, och då börjar också den nya månaden. Bara datumräkning, inget nät.
+  const payDate = (k) => { const [y, mo] = k.split('-').map(Number), x = new Date(y, mo - 1, pay); while (x.getDay() === 0 || x.getDay() === 6) x.setDate(x.getDate() - 1); return x; };
+  const day = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+  if (day >= payDate(addMonths(m, 1))) return addMonths(m, 1);
+  return day < payDate(m) ? addMonths(m, -1) : m;   // före lönedagen hör dagen till förra lönemånaden
 }
 
 // Does a recurring item apply in month m?
