@@ -42,7 +42,8 @@ function renderOpenMonths() {
 function renderMonth() {
   renderOpenMonths();
   $('month-title').replaceChildren(...monthTitle(month));
-  const rows = rowsForMonth(data, month);
+  // 2026-11-18: störst belopp först, lika belopp i bokstavsordning – samma ordning i alla kort och i Alla poster.
+  const rows = rowsForMonth(data, month).sort((a, b) => b.amount - a.amount || a.name.localeCompare(b.name, 'sv'));
   const t = monthTotals(data, month);   // stängd månad: left = faktiskt kvar
   const bal = balanceAfter(data, month);
 

@@ -76,7 +76,7 @@ function openAllItems() {
     setTimeout(() => { if (m !== month) setMonth(m); const row = rowsForMonth(data, m).find((x) => x.id === r.id); if (row) openRowDialog(row); }, 0);
   };
   fill($('all-list'), ...(data.recurring.length ? groups.map(([k, title]) => {
-    const rs = data.recurring.filter((r) => kind(r) === k).sort((a, b) => a.name.localeCompare(b.name, 'sv'));
+    const rs = data.recurring.filter((r) => kind(r) === k).sort((a, b) => b.amount - a.amount || a.name.localeCompare(b.name, 'sv'));
     return rs.length ? [el('h3', { class: 'all-h', text: title }), el('ul', { class: 'list' }, rs.map((r) => el('li', { class: 'row' + (period(r)?.startsWith('avslutad') ? ' ended' : '') },
       el('button', { type: 'button', class: 'row-main', 'aria-label': `${r.name}, ${kr(r.amount)}. Ändra`, on: { click: () => open(r) } },
         el('span', { class: 'row-name' }, el('span', { text: r.name }), el('span', { class: 'row-sub', text: [k === 'expense' ? catName(r.category) : null, r.type === 'expense' ? everyLabel[r.every] : null, period(r)].filter(Boolean).join(' · ') })),
