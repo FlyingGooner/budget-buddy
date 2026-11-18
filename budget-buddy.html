@@ -800,8 +800,8 @@ body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; 
           <p>Med lön den 25:e räcker lönen den 25 november till december. Den månaden heter December, med 25 nov – 24 dec under.</p>
         </details>
         <details><summary>Översikt</summary>
-          <p>Överst förra månaden – den senaste du har stängt: Förbrukat (räkningar plus mat, nöjen och annat), 🐷 Totalt sparat (summan på sparkontona) och Kvar. ▲▼ visar skillnaden mot månaden innan.</p>
-          <p>Sedan sparkontonas summa med graf, och Månad för månad: förbrukat och sparat för varje stängd månad. Tryck på en månad för att öppna den.</p>
+          <p>Överst förra månaden – den senaste du har stängt: Konsumtion (det som blev kvar efter räkningar och sparande minus det som faktiskt blev över – mat, nöjen och annat), 🐷 Totalt sparat (summan på sparkontona) och Kvar. ▲▼ visar skillnaden mot månaden innan.</p>
+          <p>Sedan sparkontonas summa med graf, och Månad för månad: konsumtion och sparat för varje stängd månad. Tryck på en månad för att öppna den.</p>
           <p>Översikten bygger på stängda månader – stäng månaden dagen före lön (se ovan).</p>
         </details>
         <details><summary>Personer och kategorier</summary>
@@ -875,8 +875,8 @@ body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; 
           <p>With payday on the 25th, the salary on 25 November covers December. That month is called December, with 25 Nov – 24 Dec below.</p>
         </details>
         <details><summary>Overview</summary>
-          <p>At the top last month – the latest one you have closed: Spent (bills plus food, fun and the rest), 🐷 Total saved (the total in the savings accounts) and Left. ▲▼ shows the difference from the month before.</p>
-          <p>Then the savings accounts total with a chart, and Month by month: spent and saved for each closed month. Tap a month to open it.</p>
+          <p>At the top last month – the latest one you have closed: Spending (what was left after bills and savings minus what was actually left over – food, fun and the rest), 🐷 Total saved (the total in the savings accounts) and Left. ▲▼ shows the difference from the month before.</p>
+          <p>Then the savings accounts total with a chart, and Month by month: spending and saved for each closed month. Tap a month to open it.</p>
           <p>The overview is based on closed months – close the month the day before payday (see above).</p>
         </details>
         <details><summary>People and categories</summary>
@@ -1457,7 +1457,7 @@ I18N.add({
   'Dras före lönen (minskar inte Kvar)': 'Taken before payday (does not reduce Left)',
   ' · före lönen': ' · before payday',
   '＋ Lägg till': '＋ Add', 'Lön efter skatt, bidrag …': 'Salary after tax, benefits …', 'Hyra, el, lån – varje månad': 'Rent, power, loans – every month', 'Till ett sparkonto': 'To a savings account', 'Bara den här månaden': 'Only this month', 'Avvikelse, t.ex. en resa': 'One-off, e.g. a trip',
-  'Förra månaden': 'Last month', 'Stäng månaden dagen före lön, så ser du här vad du förbrukade och sparade.': 'Close the month the day before payday, and you will see here what you spent and saved.', 'Till Månad': 'To Month', '✓ Stängd': '✓ Closed', 'Förbrukat': 'Spent', '🐷 Totalt sparat': '🐷 Total saved', 'Förbrukat · Sparat': 'Spent · Saved', 'Månad för månad': 'Month by month',
+  'Förra månaden': 'Last month', 'Stäng månaden dagen före lön, så ser du här vad du konsumerade och sparade.': 'Close the month the day before payday, and you will see here what you spent and saved.', 'Till Månad': 'To Month', '✓ Stängd': '✓ Closed', 'Konsumtion': 'Spending', '🐷 Totalt sparat': '🐷 Total saved', 'Konsumtion · Sparat': 'Spending · Saved', 'Månad för månad': 'Month by month',
   'Kontot ›': 'Account ›', 'Ändra posten (alla månader)': 'Edit the item (all months)', 'Ordinarie belopp': 'Regular amount', 'Ordinarie belopp (': 'Regular amount (', 'Ta bort posten': 'Delete the item', 'Ny post': 'New item', 'Ny inkomst': 'New income', 'Nytt sparande': 'New saving', 'Gäller från den månad du tittar på.': 'Applies from the month you are viewing.', 'Stäng': 'Close', 'Skriv ett ordinarie belopp, t.ex. 1 250 eller 99,50.': 'Enter a regular amount, e.g. 1 250 or 99.50.', 'Ändra sparkonton i Månad ›': 'Edit savings accounts in Month ›', 'Utveckling ›': 'Progress ›',
   '+ 1 dolt konto: ': '+ 1 hidden account: ',
   'Hemvaluta': 'Home currency', 'Fler val': 'More options', 'CSV, text, egen kod, radera': 'CSV, text, own code, delete', 'Ett okrypterat kalkylark, t.ex. för Excel.': 'An unencrypted spreadsheet, e.g. for Excel.', 'All data finns bara i den här webbläsaren. Läs in backup-filen på en annan enhet för att flytta den.': 'All data is only in this browser. Load the backup file on another device to move it.', 'Backupen låses med koden. Spara den i din lösenordshanterare.': 'The backup is locked with the code. Save it in your password manager.',
@@ -3192,15 +3192,15 @@ $('rd-delete').addEventListener('click', () => {
 <script>
 // ---- views/overview.js ----
 // Budget buddy – Månad för månad (2026-11-18, del av Översikt). Vanligt skript (delar globalt scope med app.js), laddas i ordningen i index.html.
-// En rad per stängd månad, nyast först: förbrukat och sparat. Tryck för att öppna månaden.
+// En rad per stängd månad, nyast först: konsumtion och sparat. Tryck för att öppna månaden.
 function renderOverview() {
   const ms = closedMonths().slice(0, 24);
   if (!ms.length) { fill($('overview')); return; }
   const rows = ms.map(closedSummary), max = Math.max(1, ...rows.map((r) => r.spent));
-  fill($('overview'), el('div', { class: 'card' }, el('h2', { class: 'split' }, el('span', { text: 'Månad för månad' }), el('span', { class: 'muted', text: 'Förbrukat · Sparat' })),
+  fill($('overview'), el('div', { class: 'card' }, el('h2', { class: 'split' }, el('span', { text: 'Månad för månad' }), el('span', { class: 'muted', text: 'Konsumtion · Sparat' })),
     el('ul', { class: 'list ov' }, rows.map((r) => {
       const f = el('div', { class: 'bar-fill' }); f.style.width = Math.round((Math.max(0, r.spent) / max) * 100) + '%';
-      return el('li', {}, el('button', { type: 'button', class: 'ov-row', 'aria-label': `${monthLabel(r.m)}: förbrukat ${kr(r.spent)}, sparat ${kr(r.saved)}. Öppna månaden`,
+      return el('li', {}, el('button', { type: 'button', class: 'ov-row', 'aria-label': `${monthLabel(r.m)}: konsumtion ${kr(r.spent)}, sparat ${kr(r.saved)}. Öppna månaden`,
         on: { click: () => { showTab('month'); setMonth(r.m); } } },
       el('span', { class: 'ov-m', text: `${monthShortLabel(r.m)} ${r.m.slice(2, 4)}` }),
       el('span', { class: 'bar' }, f),
@@ -3227,10 +3227,10 @@ function svg(tag, attrs = {}, ...children) {
 const stat = (value, label) => el('div', { class: 'stat' }, el('span', { class: 'stat-n', text: value }), el('span', { text: label }));
 
 // Översikt (2026-11-18, förenklad): förra stängda månaden – förbrukat, sparat, kvar – och jämförelse med månaden innan.
-// Förbrukat = det som gick åt av inkomsten: inkomst − sparat (det som drogs från kontot) − faktiskt kvar.
+// Konsumtion (2026-11-18) = kvar efter räkningar och sparande (planerat) − det som faktiskt blev över.
 function closedSummary(m) {
   const t = monthTotals(data, m);
-  return { m, spent: t.income - (t.savings - (t.pre || 0)) - t.left, saved: t.savings, left: t.left };
+  return { m, spent: t.planned - t.left, saved: t.savings, left: t.left };
 }
 // Totalt sparat på kontona i slutet av månad m, i hemvalutan (hela kronor). null utan konton.
 const accTotal = (m) => data.accounts.length ? Math.round(data.accounts.reduce((s, a) => s + toSek(estBalance(data, a, m)?.amount || 0, a.currency), 0) / 100) * 100 : null;
@@ -3239,7 +3239,7 @@ function renderStats() {
   const ms = closedMonths(), box = $('last-month');
   if (!ms.length) {
     fill(box, el('h2', { text: 'Förra månaden' }),
-      el('p', { class: 'muted', text: 'Stäng månaden dagen före lön, så ser du här vad du förbrukade och sparade.' }),
+      el('p', { class: 'muted', text: 'Stäng månaden dagen före lön, så ser du här vad du konsumerade och sparade.' }),
       el('button', { type: 'button', class: 'btn tonal', text: 'Till Månad', on: { click: () => showTab('month') } }));
   } else {
     const c = closedSummary(ms[0]), p = ms[1] ? closedSummary(ms[1]) : null;
@@ -3249,7 +3249,7 @@ function renderStats() {
         d ? el('span', { class: 'lm-d ' + ((d > 0) === good ? 'pos' : 'neg'), text: `${d > 0 ? '▲' : '▼'} ${kr(Math.abs(d))}` }) : null);
     };
     fill(box, el('h2', { class: 'split' }, el('span', { text: monthLabel(c.m) }), el('span', { text: '✓ Stängd' })),
-      el('div', { class: 'lm-stats' }, big(c.spent, 'Förbrukat', 'spent', false), (accTotal(c.m) != null
+      el('div', { class: 'lm-stats' }, big(c.spent, 'Konsumtion', 'spent', false), (accTotal(c.m) != null
         ? big(accTotal(c.m), '🐷 Totalt sparat', 'total', true, accTotal(addMonths(c.m, -1)))   // 2026-11-18: summan på kontona mot månaden innan
         : big(c.saved, '🐷 Sparat', 'saved', true)), big(c.left, 'Kvar', 'left', true)),
       el('p', { class: 'muted small', text: `▲▼ mot ${monthLabel(addMonths(c.m, -1)).toLowerCase()}` }));
