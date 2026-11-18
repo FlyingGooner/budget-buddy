@@ -161,7 +161,9 @@ function closeLine(t) {
 }
 function closeDay() {   // dagen före nästa lön (eller sista dagen i månaden)
   const p = data.settings.payday, n = addMonths(month, 1), [y, mo] = n.split('-').map(Number);
-  const d = p > 1 ? new Date(y, mo - 1, p - 1) : new Date(y, mo - 1, 0);
+  // 2026-11-18: lönedag på lördag/söndag → lönen kommer fredagen före, så frågan gäller dagen före den.
+  let d = new Date(y, mo - 1, 0);
+  if (p > 1) { const pay = new Date(y, mo - 1, p); while (pay.getDay() === 0 || pay.getDay() === 6) pay.setDate(pay.getDate() - 1); d = new Date(pay); d.setDate(d.getDate() - 1); }
   return dayLabel(`${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`);
 }
 function openCloseDialog() {

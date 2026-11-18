@@ -33,6 +33,7 @@ The same text is in the app under **Settings → General → Help and manual**. 
 ## Payday
 - Under **Settings → Household → Payday** you choose which day the budget month starts. The 1st means normal calendar months.
 - With payday on the 25th, the salary on 25 November covers December. That month is called **December**, with **25 Nov – 24 Dec** below.
+- If payday falls on a Saturday or Sunday, the app assumes the salary arrives the Friday before. **Close month** then asks for the balance the day before that, usually the Thursday.
 
 ## Overview
 - At the top **last month** – the latest one you have closed: **Spending** (what was left after bills and savings minus what was actually left over – food, fun and the rest), **🐷 Total saved** (the total in the savings accounts) and **Left**. ▲▼ shows the difference from the month before.

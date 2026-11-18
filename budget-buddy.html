@@ -798,6 +798,7 @@ body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; 
         <details><summary>Lönedag</summary>
           <p>Under Inställningar → Hushåll → Lönedag väljer du vilken dag budgetmånaden börjar. Den 1:a är vanliga kalendermånader.</p>
           <p>Med lön den 25:e räcker lönen den 25 november till december. Den månaden heter December, med 25 nov – 24 dec under.</p>
+          <p>Infaller lönedagen på en lördag eller söndag räknar appen med att lönen kommer fredagen före. Stäng månaden frågar då efter saldot dagen före det, oftast torsdagen.</p>
         </details>
         <details><summary>Översikt</summary>
           <p>Överst förra månaden – den senaste du har stängt: Konsumtion (det som blev kvar efter räkningar och sparande minus det som faktiskt blev över – mat, nöjen och annat), 🐷 Totalt sparat (summan på sparkontona) och Kvar. ▲▼ visar skillnaden mot månaden innan.</p>
@@ -873,6 +874,7 @@ body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; 
         <details><summary>Payday</summary>
           <p>Under Settings → Household → Payday you choose which day the budget month starts. The 1st means normal calendar months.</p>
           <p>With payday on the 25th, the salary on 25 November covers December. That month is called December, with 25 Nov – 24 Dec below.</p>
+          <p>If payday falls on a Saturday or Sunday, the app assumes the salary arrives the Friday before. Close month then asks for the balance the day before that, usually the Thursday.</p>
         </details>
         <details><summary>Overview</summary>
           <p>At the top last month – the latest one you have closed: Spending (what was left after bills and savings minus what was actually left over – food, fun and the rest), 🐷 Total saved (the total in the savings accounts) and Left. ▲▼ shows the difference from the month before.</p>
@@ -1625,7 +1627,7 @@ I18N.add({
 </script>
 <script>
 // ---- version.js ----
-﻿self.APP_VERSION = '0.12.99';
+﻿self.APP_VERSION = '0.12.100';
 
 </script>
   <script>
@@ -2860,7 +2862,9 @@ function closeLine(t) {
 }
 function closeDay() {   // dagen före nästa lön (eller sista dagen i månaden)
   const p = data.settings.payday, n = addMonths(month, 1), [y, mo] = n.split('-').map(Number);
-  const d = p > 1 ? new Date(y, mo - 1, p - 1) : new Date(y, mo - 1, 0);
+  // 2026-11-18: lönedag på lördag/söndag → lönen kommer fredagen före, så frågan gäller dagen före den.
+  let d = new Date(y, mo - 1, 0);
+  if (p > 1) { const pay = new Date(y, mo - 1, p); while (pay.getDay() === 0 || pay.getDay() === 6) pay.setDate(pay.getDate() - 1); d = new Date(pay); d.setDate(d.getDate() - 1); }
   return dayLabel(`${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`);
 }
 function openCloseDialog() {
