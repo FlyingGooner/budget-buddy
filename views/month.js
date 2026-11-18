@@ -64,6 +64,10 @@ function renderMonth() {
           step('1', 'Lägg in nettolönen och andra inkomster.'),
           step('2', 'Lägg in räkningarna – hyra, el, försäkringar …'),
           step('3', 'Se vad som blir kvar varje månad – och hur mycket du sparar.')),
+      // 2026-11-18: posterna börjar först nästa månad (t.ex. efter att lönedag valts) – erbjud att flytta dem hit.
+      any && month === activeMonth() && rowsForMonth(data, addMonths(month, 1)).length ? el('div', { class: 'actions' },
+        el('button', { type: 'button', class: 'btn filled', text: `Börja posterna i ${monthLabel(month).toLowerCase()}`,
+          on: { click: () => withUndo('Posterna flyttades en månad bakåt', () => { shiftMonths(data, -1); data = loadData(data); }) } })) : null,
       el('div', { class: 'actions' },
         any ? el('button', { type: 'button', class: 'btn tonal', text: 'Till innevarande månad', on: { click: () => setMonth(activeMonth()) } })
           : el('button', { type: 'button', class: 'btn filled', text: 'Lägg till inkomst', on: { click: () => focusAdd('income') } })));

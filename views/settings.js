@@ -161,10 +161,13 @@ $('s-save').addEventListener('click', () => {
 // Lönedag (2026-11-17): budgetmånad från lönedag till dagen före nästa. Byter bara namn och vilken månad som är "nu".
 $('s-payday').replaceChildren(...Array.from({ length: 28 }, (_, i) => el('option', { value: String(i + 1), text: i ? `Den ${i + 1}:e (lönedag)` : 'Den 1:a (kalendermånad)' })));
 $('s-payday').addEventListener('change', (e) => {
-  const was = currentMonth();
-  data.settings.payday = Number(e.target.value);
+  const was = currentMonth(), split = data.settings.payday > 1, to = Number(e.target.value);
+  const msg = to > 1 ? `Budgetmånaden börjar den ${to}:e` : 'Budgetmånaden följer kalendern';
+  // 2026-11-18: lönedag på/av – flytta posterna en månad så att "November" fortfarande är november (Ångra finns).
+  if (split !== to > 1 && (data.recurring.length || data.oneOffs.length)) {
+    withUndo(msg, () => { shiftMonths(data, to > 1 ? -1 : 1); data.settings.payday = to; data = loadData(data); });
+  } else { data.settings.payday = to; save(); snackbar(msg, null, null, 3000); }
   if (month === was) month = currentMonth();
   overviewStart = currentMonth();
-  save();
-  snackbar(data.settings.payday > 1 ? `Budgetmånaden börjar den ${data.settings.payday}:e` : 'Budgetmånaden följer kalendern', null, null, 3000);
+  render();
 });

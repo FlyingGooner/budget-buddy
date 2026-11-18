@@ -806,6 +806,7 @@ body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; 
         <details><summary>Lönedag</summary>
           <p>Under Inställningar → Hushåll → Lönedag väljer du vilken dag budgetmånaden börjar. Den 1:a är vanliga kalendermånader.</p>
           <p>Med lön den 25:e räcker lönen den 25 november till december. Den månaden heter December, med 25 nov – 24 dec under.</p>
+          <p>Byter du lönedag flyttas posterna med, så att november fortfarande är november (Ångra finns). Står den aktuella månaden tom men nästa har poster visas Börja posterna i … – tryck för att flytta allt en månad bakåt.</p>
           <p>Infaller lönedagen på en lördag eller söndag räknar appen med att lönen kommer fredagen före. Stäng månaden frågar alltid efter saldot sista vardagen före lönen, oftast torsdagen när lönen kommer på fredag.</p>
         </details>
         <details><summary>Översikt</summary>
@@ -883,6 +884,7 @@ body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; 
         <details><summary>Payday</summary>
           <p>Under Settings → Household → Payday you choose which day the budget month starts. The 1st means normal calendar months.</p>
           <p>With payday on the 25th, the salary on 25 November covers December. That month is called December, with 25 Nov – 24 Dec below.</p>
+          <p>If you change payday the items move along, so November is still November (Undo is available). If the current month is empty but the next has items, Start the items in … is shown – tap it to move everything back one month.</p>
           <p>If payday falls on a Saturday or Sunday, the app assumes the salary arrives the Friday before. Close month always asks for the balance on the last weekday before payday, usually the Thursday when the salary comes on Friday.</p>
         </details>
         <details><summary>Overview</summary>
@@ -1530,7 +1532,7 @@ I18N.add({
   'Dras före lönen (minskar inte Kvar)': 'Taken before payday (does not reduce Left)',
   ' · före lönen': ' · before payday',
   '＋ Lägg till': '＋ Add', 'Lön efter skatt, bidrag …': 'Salary after tax, benefits …', 'Hyra, el, lån – varje månad': 'Rent, power, loans – every month', 'Till ett sparkonto': 'To a savings account', 'Bara den här månaden': 'Only this month', 'Avvikelse, t.ex. en resa': 'One-off, e.g. a trip',
-  'Förra månaden': 'Last month', 'Stäng månaden dagen före lön, så ser du här vad du konsumerade och sparade.': 'Close the month the day before payday, and you will see here what you spent and saved.', 'Till Månad': 'To Month', '✓ Stängd': '✓ Closed', 'Konsumtion': 'Spending', '≈ = beräknat av appen: senast ifyllt saldo plus sparandet. Stämmer det med banken behöver du inte ändra något.': '≈ = estimated by the app: last entered balance plus the savings. If it matches the bank you don\'t need to change anything.', 'Skillnaden mot det planerade blir månadens konsumtion (mat, nöjen, oväntat) och syns i Översikt.': 'The difference from the plan becomes the month\'s spending (food, fun, the unexpected) and shows in Overview.', 'Inget saldo än': 'No balance yet', '⏰ Dags att stänga månaden i dag – hur mycket finns kvar?': '⏰ Time to close the month today – how much is left?', '🐷 Totalt sparat': '🐷 Total saved', 'Konsumtion · Sparat': 'Spending · Saved', 'Månad för månad': 'Month by month',
+  'Förra månaden': 'Last month', 'Stäng månaden dagen före lön, så ser du här vad du konsumerade och sparade.': 'Close the month the day before payday, and you will see here what you spent and saved.', 'Till Månad': 'To Month', '✓ Stängd': '✓ Closed', 'Konsumtion': 'Spending', 'Posterna flyttades en månad bakåt': 'The items were moved back one month', '≈ = beräknat av appen: senast ifyllt saldo plus sparandet. Stämmer det med banken behöver du inte ändra något.': '≈ = estimated by the app: last entered balance plus the savings. If it matches the bank you don\'t need to change anything.', 'Skillnaden mot det planerade blir månadens konsumtion (mat, nöjen, oväntat) och syns i Översikt.': 'The difference from the plan becomes the month\'s spending (food, fun, the unexpected) and shows in Overview.', 'Inget saldo än': 'No balance yet', '⏰ Dags att stänga månaden i dag – hur mycket finns kvar?': '⏰ Time to close the month today – how much is left?', '🐷 Totalt sparat': '🐷 Total saved', 'Konsumtion · Sparat': 'Spending · Saved', 'Månad för månad': 'Month by month',
   'Kontot ›': 'Account ›', 'Ändra posten (alla månader)': 'Edit the item (all months)', 'Ordinarie belopp': 'Regular amount', 'Ordinarie belopp (': 'Regular amount (', 'Ta bort posten': 'Delete the item', 'Ny post': 'New item', 'Ny inkomst': 'New income', 'Nytt sparande': 'New saving', 'Gäller från den månad du tittar på.': 'Applies from the month you are viewing.', 'Stäng': 'Close', 'Skriv ett ordinarie belopp, t.ex. 1 250 eller 99,50.': 'Enter a regular amount, e.g. 1 250 or 99.50.', 'Ändra sparkonton i Månad ›': 'Edit savings accounts in Month ›', 'Utveckling ›': 'Progress ›',
   '+ 1 dolt konto: ': '+ 1 hidden account: ',
   'Hemvaluta': 'Home currency', 'Fler val': 'More options', 'CSV, text, egen kod, radera': 'CSV, text, own code, delete', 'Ett okrypterat kalkylark, t.ex. för Excel.': 'An unencrypted spreadsheet, e.g. for Excel.', 'All data finns bara i den här webbläsaren. Läs in backup-filen på en annan enhet för att flytta den.': 'All data is only in this browser. Load the backup file on another device to move it.', 'Backupen låses med koden. Spara den i din lösenordshanterare.': 'The backup is locked with the code. Save it in your password manager.',
@@ -1634,6 +1636,7 @@ I18N.add({
   [/^⏰ Dags att stänga månaden – hur mycket fanns kvar (.+)\?$/, (g, tr) => `⏰ Time to close the month – how much was left ${tr(g[1])}?`],
   [/^≈ beräknat · fylls på av (.+)$/, '≈ estimated · topped up by $1'],
   [/^ifyllt (.+)$/, (g, tr) => `entered ${tr(g[1])}`],
+  [/^Börja posterna i (.+)$/, (g, tr) => `Start the items in ${tr(g[1])}`],
   [/^▲▼ mot (.+)$/, (g, tr) => `▲▼ vs ${tr(g[1])}`],
   [/^(\d+) månader hittills · (\d+) prognos$/, '$1 months so far · $2 forecast'],
   [/^Året (\d{4}) · (hittills|prognos|helår)$/, (g) => `${g[1]} · ${{ hittills: 'so far', prognos: 'forecast', helår: 'full year' }[g[2]]}`],
@@ -1706,7 +1709,7 @@ I18N.add({
 </script>
 <script>
 // ---- version.js ----
-﻿self.APP_VERSION = '0.12.105';
+﻿self.APP_VERSION = '0.12.106';
 
 </script>
   <script>
@@ -2489,6 +2492,18 @@ const rateOf = (d, c) => (c === 'SEK' ? 100 : d.settings.rates[c]);
 const convert = (d, v, from, to) => (from === to ? v : Math.round((v * rateOf(d, from)) / rateOf(d, to)));
 // Byter hemvaluta och räknar om alla budgetbelopp (poster, avvikelser, justeringar, startsaldo, papperskorg) med kurserna.
 // Belopp som blir för stora begränsas till MAX_AMOUNT. Sparkonton ändras inte. Returnerar ny, validerad data.
+// Flytta alla månader n steg (2026-11-18): när lönedag slås på/av byter budgetmånaderna namn ("November" = 25 okt–24 nov
+// har nyckeln 2026-10). Flyttas datan med behåller posterna sina månadsnamn. Muterar d.
+function shiftMonths(d, n) {
+  const sh = (m) => (isMonth(m) ? addMonths(m, n) : m);
+  const keys = (o) => Object.fromEntries(Object.entries(o || {}).map(([k, v]) => [sh(k), v]));
+  for (const r of d.recurring) { r.start = sh(r.start); if (r.end) r.end = sh(r.end); }
+  for (const o of d.oneOffs) o.month = sh(o.month);
+  d.adjustments = keys(d.adjustments);
+  d.closed = keys(d.closed);
+  for (const a of d.accounts) a.balances = keys(a.balances);
+  if (d.settings.startMonth) d.settings.startMonth = sh(d.settings.startMonth);
+}
 function changeHome(d, to) {
   if (!CURRENCIES.includes(to) || d.settings.home === to) return d;
   const from = d.settings.home, c = (v) => Math.max(-MAX_AMOUNT, Math.min(MAX_AMOUNT, convert(d, v, from, to)));
@@ -2844,6 +2859,10 @@ function renderMonth() {
           step('1', 'Lägg in nettolönen och andra inkomster.'),
           step('2', 'Lägg in räkningarna – hyra, el, försäkringar …'),
           step('3', 'Se vad som blir kvar varje månad – och hur mycket du sparar.')),
+      // 2026-11-18: posterna börjar först nästa månad (t.ex. efter att lönedag valts) – erbjud att flytta dem hit.
+      any && month === activeMonth() && rowsForMonth(data, addMonths(month, 1)).length ? el('div', { class: 'actions' },
+        el('button', { type: 'button', class: 'btn filled', text: `Börja posterna i ${monthLabel(month).toLowerCase()}`,
+          on: { click: () => withUndo('Posterna flyttades en månad bakåt', () => { shiftMonths(data, -1); data = loadData(data); }) } })) : null,
       el('div', { class: 'actions' },
         any ? el('button', { type: 'button', class: 'btn tonal', text: 'Till innevarande månad', on: { click: () => setMonth(activeMonth()) } })
           : el('button', { type: 'button', class: 'btn filled', text: 'Lägg till inkomst', on: { click: () => focusAdd('income') } })));
@@ -3682,12 +3701,15 @@ $('s-save').addEventListener('click', () => {
 // Lönedag (2026-11-17): budgetmånad från lönedag till dagen före nästa. Byter bara namn och vilken månad som är "nu".
 $('s-payday').replaceChildren(...Array.from({ length: 28 }, (_, i) => el('option', { value: String(i + 1), text: i ? `Den ${i + 1}:e (lönedag)` : 'Den 1:a (kalendermånad)' })));
 $('s-payday').addEventListener('change', (e) => {
-  const was = currentMonth();
-  data.settings.payday = Number(e.target.value);
+  const was = currentMonth(), split = data.settings.payday > 1, to = Number(e.target.value);
+  const msg = to > 1 ? `Budgetmånaden börjar den ${to}:e` : 'Budgetmånaden följer kalendern';
+  // 2026-11-18: lönedag på/av – flytta posterna en månad så att "November" fortfarande är november (Ångra finns).
+  if (split !== to > 1 && (data.recurring.length || data.oneOffs.length)) {
+    withUndo(msg, () => { shiftMonths(data, to > 1 ? -1 : 1); data.settings.payday = to; data = loadData(data); });
+  } else { data.settings.payday = to; save(); snackbar(msg, null, null, 3000); }
   if (month === was) month = currentMonth();
   overviewStart = currentMonth();
-  save();
-  snackbar(data.settings.payday > 1 ? `Budgetmånaden börjar den ${data.settings.payday}:e` : 'Budgetmånaden följer kalendern', null, null, 3000);
+  render();
 });
 
 </script>

@@ -352,6 +352,18 @@ const rateOf = (d, c) => (c === 'SEK' ? 100 : d.settings.rates[c]);
 const convert = (d, v, from, to) => (from === to ? v : Math.round((v * rateOf(d, from)) / rateOf(d, to)));
 // Byter hemvaluta och räknar om alla budgetbelopp (poster, avvikelser, justeringar, startsaldo, papperskorg) med kurserna.
 // Belopp som blir för stora begränsas till MAX_AMOUNT. Sparkonton ändras inte. Returnerar ny, validerad data.
+// Flytta alla månader n steg (2026-11-18): när lönedag slås på/av byter budgetmånaderna namn ("November" = 25 okt–24 nov
+// har nyckeln 2026-10). Flyttas datan med behåller posterna sina månadsnamn. Muterar d.
+function shiftMonths(d, n) {
+  const sh = (m) => (isMonth(m) ? addMonths(m, n) : m);
+  const keys = (o) => Object.fromEntries(Object.entries(o || {}).map(([k, v]) => [sh(k), v]));
+  for (const r of d.recurring) { r.start = sh(r.start); if (r.end) r.end = sh(r.end); }
+  for (const o of d.oneOffs) o.month = sh(o.month);
+  d.adjustments = keys(d.adjustments);
+  d.closed = keys(d.closed);
+  for (const a of d.accounts) a.balances = keys(a.balances);
+  if (d.settings.startMonth) d.settings.startMonth = sh(d.settings.startMonth);
+}
 function changeHome(d, to) {
   if (!CURRENCIES.includes(to) || d.settings.home === to) return d;
   const from = d.settings.home, c = (v) => Math.max(-MAX_AMOUNT, Math.min(MAX_AMOUNT, convert(d, v, from, to)));

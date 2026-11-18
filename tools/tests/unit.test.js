@@ -219,3 +219,11 @@ T.test('sparkonto: dold i Månad följer med i exporten', () => {
   T.eq(d.accounts.map((a) => a.hidden), [true, false]);
   T.eq(importText(exportText(d, '2026-11-17')).data.accounts.map((a) => a.hidden), [true, false]);
 });
+
+T.test('shiftMonths: lönedag på flyttar alla månader ett steg bakåt (2026-11-18)', () => {
+  const d = loadData({ recurring: [{ id: 'r1abcdef', name: 'Hyra', type: 'expense', amount: 100, category: 'housing', every: 1, start: '2026-11', end: '2027-02' }],
+    oneOffs: [{ id: 'o1abcdef', month: '2026-12', name: 'Resa', type: 'expense', amount: 5, category: 'other' }],
+    adjustments: { '2026-12': { r1abcdef: 50 } }, closed: { '2026-11': 7 } });
+  shiftMonths(d, -1);
+  T.eq([d.recurring[0].start, d.recurring[0].end, d.oneOffs[0].month, Object.keys(d.adjustments)[0], Object.keys(d.closed)[0]], ['2026-10', '2027-01', '2026-11', '2026-11', '2026-10']);
+});
