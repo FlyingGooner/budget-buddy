@@ -20,7 +20,8 @@ The same text is in the app under **Settings → General → Help and manual**. 
 - Tap a row to change the amount, choose which **Savings account** the money goes to, or correct the balance. A balance marked ≈ is estimated: last entered plus the savings.
 - If the saving is taken before your net salary is paid (e.g. shares through work), tick **Taken before payday**. It then counts as saved but does not reduce Left. The same option is available on a one-off in the Savings category.
 - Accounts you never touch (e.g. the children's) can be hidden from Month: tap the row in the Savings card and untick **Show in Month**. Tap the name under "+ 1 hidden account" to show it again. It still counts in Total saved.
-- All accounts, with a chart, are also under **Trend → Savings accounts**. There you add an account without a savings item, or delete one (it goes to the trash).
+- Savings accounts are managed only here. **Account ›** in the box for a savings item changes the account's currency, which savings items go there, or deletes the account (it goes to the trash).
+- The total and a chart of all accounts are under **Overview → Savings accounts**.
 
 ## Close the month
 - What is shown under Left is planned. Food, fun and unexpected spending do not show there.
@@ -32,11 +33,9 @@ The same text is in the app under **Settings → General → Help and manual**. 
 - Under **Settings → Household → Payday** you choose which day the budget month starts. The 1st means normal calendar months.
 - With payday on the 25th, the salary on 25 November covers December. That month is called **December**, with **25 Nov – 24 Dec** below.
 
-## Trend
-- Key figures for the month: left of income, savings rate, average, saved and the largest cost. Expenses by category, in and out over the last 12 months, and the savings accounts.
-
-## History
-- One year at a time – change year with **◀ ▶**. At the top, figures for the year: income, expenses, saved, left, average, best and worst month and a forecast for the full year.
+## Overview
+- Key figures for the month: left of income, savings rate, average, saved and the largest cost. Expenses by category, in and out over the last 12 months, and the savings accounts total with a chart.
+- Further down: one year at a time – change year with **◀ ▶**. At the top, figures for the year: income, expenses, saved, left, average, best and worst month and a forecast for the full year.
 - The chart shows left + saved over time (or the balance, if you have a **Starting balance** under Settings → Household). Dashed is forecast.
 - Months that are not closed are counted with the average variable spending (≈). ✓ = closed. Tap a month to open it.
 

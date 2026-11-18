@@ -11,25 +11,7 @@ function renderAccounts() {
   $('acc-total-diff').textContent = tDiff ? `${tDiff > 0 ? '+' : '−'}${kr(Math.abs(tDiff))} sedan ${monthShortLabel(addMonths(month, -1)).toLowerCase()}` : '';
   $('acc-total-diff').className = 'acc-total-diff ' + (tDiff < 0 ? 'neg' : 'pos');
   $('acc-rates').textContent = foreign ? `Utländsk valuta räknas om: ${ratesNote()} (ändras under Inställningar).` : '';
-  fill($('acc-list'), accs.length ? accs.map((a) => {
-    const cur = estBalance(data, a, month), real = balanceAt(a, month);
-    const prev = cur ? estBalance(data, a, addMonths(month, -1)) : null;
-    const diff = cur && prev ? cur.amount - prev.amount : null;
-    const feedNames = (a.feeds || []).map((id) => data.recurring.find((r) => r.id === id)?.name).filter(Boolean);
-    const foreignA = a.currency !== home();
-    const subBits = [foreignA && cur ? `(${money(cur.amount, a.currency)})` : null,
-      !cur ? 'Inget saldo än – tryck för att fylla i'
-        : cur.estimated ? `beräknat + ${feedNames.join(', ')}`
-        : real && real.month !== month ? `ifyllt ${monthShortLabel(real.month).toLowerCase()}` : null].filter(Boolean);
-    const sub = subBits.join(' · ');
-    const homeAmt = cur ? Math.round(toSek(cur.amount, a.currency) / 100) * 100 : null;
-    const homeDiff = diff != null ? Math.round(toSek(diff, a.currency) / 100) * 100 : null;
-    return el('li', { class: 'row' }, el('button', { type: 'button', class: 'row-main',
-      'aria-label': `${a.name}, ${cur ? money(cur.amount, a.currency) : 'inget saldo'}. Fyll i saldo`, on: { click: () => openAccDialog(a) } },
-    el('span', { class: 'row-name' }, el('span', { text: a.name }), sub ? el('span', { class: 'row-sub', text: sub }) : null),
-    el('span', { class: 'acc-amt amount' }, el('span', { text: cur ? ((cur.estimated || foreignA) ? '≈ ' : '') + kr(homeAmt) : '–' }),
-      homeDiff ? el('span', { class: 'row-sub ' + (homeDiff < 0 ? 'neg' : 'pos'), text: kr(homeDiff, true) }) : null)));
-  }) : el('li', { class: 'muted empty-row', text: 'Inga sparkonton än – lägg till det första nedan.' }));
+  $('stats-accounts').hidden = !accs.length;   // 2026-11-18: bara summa och graf här, kontona ändras i Månad
 
   // Total savings balance, the 12 months up to the chosen month
   // Grafen börjar vid första månaden med saldo (minst 4 månader), så att staplarna inte blir tunna streck.
@@ -101,15 +83,9 @@ $('ad-delete').addEventListener('click', () => {
   $('acc-dialog').close();
   withUndo(`${a.name} ligger i papperskorgen`, () => trashItems(data, 'acc', [a.id], isoToday()));
 });
-$('acc-form').addEventListener('submit', (e) => {
-  e.preventDefault();
-  const n = cleanName($('acc-name').value, 30);
-  if (!n) return;
-  if (data.accounts.length >= MAX_ACCOUNTS) { snackbar(`Max ${MAX_ACCOUNTS} sparkonton.`, null, null, 3000); return; }
-  const a = { id: 'a' + newId().slice(-10), name: n, currency: home(), balances: {} };   // nytt konto i hemvalutan
-  data.accounts.push(a);
-  data = loadData(data);
-  $('acc-name').value = '';
-  save();
-  openAccDialog(data.accounts.find((x) => x.id === a.id));
+$('acc-manage').addEventListener('click', () => {
+  showTab('month');
+  const c = $('savings-card'), d = c.querySelector('details');
+  if (d) d.open = true;
+  c.scrollIntoView({ behavior: 'smooth', block: 'start' });
 });

@@ -577,8 +577,7 @@ body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; 
 
 <nav id="nav" aria-label="Huvudmeny">
   <button type="button" data-tab="month" aria-current="page"><span class="pill" aria-hidden="true">📅</span><span>Månad</span></button>
-  <button type="button" data-tab="stats"><span class="pill" aria-hidden="true">📈</span><span>Trend</span></button>
-  <button type="button" data-tab="overview"><span class="pill" aria-hidden="true">🗓️</span><span>Historik</span></button>
+  <button type="button" data-tab="stats"><span class="pill" aria-hidden="true">📊</span><span>Översikt</span></button>
   <button type="button" data-tab="settings"><span class="pill" aria-hidden="true">⚙️</span><span>Inst.</span></button>
 </nav>
 
@@ -606,11 +605,6 @@ body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; 
     </div>
   </section>
 
-  <!-- Översikt -->
-  <section class="tab" id="tab-overview" hidden>
-    <div class="col" id="overview"></div>
-  </section>
-
   <!-- Statistik (follows the month chosen in Månad) -->
   <section class="tab" id="tab-stats" hidden>
     <div class="col">
@@ -627,17 +621,12 @@ body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; 
       <div class="card" id="stats-accounts">
         <h2>🐷 Sparkonton</h2>
         <p class="acc-big"><span id="acc-total"></span><span class="acc-total-diff" id="acc-total-diff"></span></p>
-        <ul class="list" id="acc-list"></ul>
-        <p class="muted small" id="acc-rates"></p>
         <div id="acc-chart"></div>
-        <details class="add-wrap" id="acc-add"><summary>+ Nytt sparkonto</summary>
-        <form class="inline" id="acc-form" novalidate>
-          <label class="field grow"><span>Namn</span><input id="acc-name" maxlength="30" autocomplete="off" placeholder="t.ex. Buffert"></label>
-          <button type="submit" class="btn tonal">Lägg till</button>
-        </form>
-        </details>
+        <p class="muted small" id="acc-rates"></p>
+        <button type="button" class="link" id="acc-manage">Ändra sparkonton i Månad ›</button>
       </div>
     </div>
+    <div class="col" id="overview"></div>
   </section>
 
   <!-- Poster -->
@@ -849,7 +838,8 @@ body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; 
           <p>Tryck på en rad för att ändra belopp, välja vilket Sparkonto pengarna går till eller rätta saldot. Saldot märkt ≈ är beräknat: senast ifyllt plus sparandet.</p>
           <p>Dras sparandet innan nettolönen betalas ut (t.ex. aktier via jobbet), bocka i Dras före lönen. Då räknas det som sparat men minskar inte Kvar. Samma val finns på en avvikelse i kategorin Sparande.</p>
           <p>Konton som inte rörs (t.ex. barnens) kan döljas från Månad: tryck på raden i Sparande-kortet och bocka ur Visa i Månad. Tryck på namnet under &quot;+ 1 dolt konto&quot; för att visa det igen. Det räknas fortfarande i Totalt sparat.</p>
-          <p>Alla konton, med graf, finns också under Trend → Sparkonton. Där lägger du till ett konto utan sparpost, eller tar bort ett (det hamnar i papperskorgen).</p>
+          <p>Sparkonton hanteras bara här. Kontot › i rutan för en sparpost ändrar kontots valuta, vilka sparposter som går dit, eller tar bort kontot (det hamnar i papperskorgen).</p>
+          <p>Summan och en graf över alla konton finns under Översikt → Sparkonton.</p>
         </details>
         <details><summary>Stäng månaden</summary>
           <p>Det som står under Kvar är planerat. Mat, nöjen och oväntade utgifter syns inte där.</p>
@@ -861,11 +851,9 @@ body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; 
           <p>Under Inställningar → Hushåll → Lönedag väljer du vilken dag budgetmånaden börjar. Den 1:a är vanliga kalendermånader.</p>
           <p>Med lön den 25:e räcker lönen den 25 november till december. Den månaden heter December, med 25 nov – 24 dec under.</p>
         </details>
-        <details><summary>Trend</summary>
-          <p>Nyckeltal för månaden: kvar av inkomsten, sparkvot, snitt, sparat och största kostnaden. Kostnader per kategori, in och ut de senaste 12 månaderna, och sparkontona.</p>
-        </details>
-        <details><summary>Historik</summary>
-          <p>Ett år i taget – byt år med ◀ ▶. Överst statistik för året: inkomster, kostnader, sparat, kvar, snitt, bästa och sämsta månad och prognos för helåret.</p>
+        <details><summary>Översikt</summary>
+          <p>Nyckeltal för månaden: kvar av inkomsten, sparkvot, snitt, sparat och största kostnaden. Kostnader per kategori, in och ut de senaste 12 månaderna, och sparkontonas summa med graf.</p>
+          <p>Längre ner: ett år i taget – byt år med ◀ ▶. Överst statistik för året: inkomster, kostnader, sparat, kvar, snitt, bästa och sämsta månad och prognos för helåret.</p>
           <p>Grafen visar kvar + sparat över tid (eller saldot, om du har Startsaldo under Inställningar → Hushåll). Streckat är prognos.</p>
           <p>Månader som inte är stängda räknas med snittet av de rörliga utgifterna (≈). ✓ = stängd. Tryck på en månad för att öppna den.</p>
         </details>
@@ -925,7 +913,8 @@ body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; 
           <p>Tap a row to change the amount, choose which Savings account the money goes to, or correct the balance. A balance marked ≈ is estimated: last entered plus the savings.</p>
           <p>If the saving is taken before your net salary is paid (e.g. shares through work), tick Taken before payday. It then counts as saved but does not reduce Left. The same option is available on a one-off in the Savings category.</p>
           <p>Accounts you never touch (e.g. the children's) can be hidden from Month: tap the row in the Savings card and untick Show in Month. Tap the name under &quot;+ 1 hidden account&quot; to show it again. It still counts in Total saved.</p>
-          <p>All accounts, with a chart, are also under Trend → Savings accounts. There you add an account without a savings item, or delete one (it goes to the trash).</p>
+          <p>Savings accounts are managed only here. Account › in the box for a savings item changes the account's currency, which savings items go there, or deletes the account (it goes to the trash).</p>
+          <p>The total and a chart of all accounts are under Overview → Savings accounts.</p>
         </details>
         <details><summary>Close the month</summary>
           <p>What is shown under Left is planned. Food, fun and unexpected spending do not show there.</p>
@@ -937,11 +926,9 @@ body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; 
           <p>Under Settings → Household → Payday you choose which day the budget month starts. The 1st means normal calendar months.</p>
           <p>With payday on the 25th, the salary on 25 November covers December. That month is called December, with 25 Nov – 24 Dec below.</p>
         </details>
-        <details><summary>Trend</summary>
-          <p>Key figures for the month: left of income, savings rate, average, saved and the largest cost. Expenses by category, in and out over the last 12 months, and the savings accounts.</p>
-        </details>
-        <details><summary>History</summary>
-          <p>One year at a time – change year with ◀ ▶. At the top, figures for the year: income, expenses, saved, left, average, best and worst month and a forecast for the full year.</p>
+        <details><summary>Overview</summary>
+          <p>Key figures for the month: left of income, savings rate, average, saved and the largest cost. Expenses by category, in and out over the last 12 months, and the savings accounts total with a chart.</p>
+          <p>Further down: one year at a time – change year with ◀ ▶. At the top, figures for the year: income, expenses, saved, left, average, best and worst month and a forecast for the full year.</p>
           <p>The chart shows left + saved over time (or the balance, if you have a Starting balance under Settings → Household). Dashed is forecast.</p>
           <p>Months that are not closed are counted with the average variable spending (≈). ✓ = closed. Tap a month to open it.</p>
         </details>
@@ -1014,6 +1001,7 @@ body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; 
       <button type="button" class="btn text" id="rd-edit">Ändra posten</button>
       <button type="button" class="btn text" id="rd-reset">Återställ</button>
       <button type="button" class="btn text" id="rd-skip">Hoppa över</button>
+      <button type="button" class="btn text" id="rd-account">Kontot ›</button>
     </div>
     <div class="actions rd-main">
       <button type="button" class="btn text" id="rd-cancel">Avbryt</button>
@@ -1501,6 +1489,7 @@ I18N.add({
   'Visa i Månad': 'Show in Month',
   'Dras före lönen (minskar inte Kvar)': 'Taken before payday (does not reduce Left)',
   ' · före lönen': ' · before payday',
+  'Kontot ›': 'Account ›', 'Ändra sparkonton i Månad ›': 'Edit savings accounts in Month ›', 'Utveckling ›': 'Progress ›',
   '+ 1 dolt konto: ': '+ 1 hidden account: ',
   'Hemvaluta': 'Home currency', 'Fler val': 'More options', 'CSV, text, egen kod, radera': 'CSV, text, own code, delete', 'Ett okrypterat kalkylark, t.ex. för Excel.': 'An unencrypted spreadsheet, e.g. for Excel.', 'All data finns bara i den här webbläsaren. Läs in backup-filen på en annan enhet för att flytta den.': 'All data is only in this browser. Load the backup file on another device to move it.', 'Backupen låses med koden. Spara den i din lösenordshanterare.': 'The backup is locked with the code. Save it in your password manager.',
   'Valutakurser': 'Exchange rates', 'Allmänt': 'General', 'Inga': 'None', 'Inget': 'None', 'Tom': 'Empty', 'Egna': 'Own', 'Appens': "The app's", 'Importera från text': 'Import from text',
@@ -1594,6 +1583,7 @@ I18N.add({
   [/^(.+) är öppen igen$/, (g, tr) => `${tr(g[1])} is open again`],
   [/^Hur mycket fanns kvar på kontot (.+), dagen före lönen\? Planerat kvar: (.+)\.$/, (g, tr) => `How much was left in the account on ${tr(g[1])}, the day before payday? Planned left: ${g[2]}.`],
   [/^Historik (\d{4})$/, 'History $1'],
+  [/^År (\d{4})$/, 'Year $1'],
   [/^(\d+) månader hittills · (\d+) prognos$/, '$1 months so far · $2 forecast'],
   [/^Året (\d{4}) · (hittills|prognos|helår)$/, (g) => `${g[1]} · ${{ hittills: 'so far', prognos: 'forecast', helår: 'full year' }[g[2]]}`],
   [/^Sämst: (.+)$/, 'Worst: $1'],
@@ -1665,7 +1655,7 @@ I18N.add({
 </script>
 <script>
 // ---- version.js ----
-﻿self.APP_VERSION = '0.12.93';
+﻿self.APP_VERSION = '0.12.94';
 
 </script>
   <script>
@@ -2564,7 +2554,7 @@ function newId() {
 'use strict';
 
 const CONFIG = { storageKey: 'bb.data', tabKey: 'bb.tab', longPressMs: 450 };
-const TABS = ['month', 'stats', 'overview', 'items', 'settings'];
+const TABS = ['month', 'stats', 'items', 'settings'];   // 2026-11-18: Historik ingår i Översikt (stats)
 const $ = (id) => document.getElementById(id);
 
 let data = loadData(store.get(CONFIG.storageKey));
@@ -2690,6 +2680,7 @@ function withUndo(label, change) {
 // Bakåt (som fns v0.16.8 och sn v0.14): flikbyte = pushState, popstate visar fliken ur hashen. Första fliken vid start
 // ersätter steget (replaceState), så appen stängs när man backar förbi den.
 function showTab(name, push = true) {
+  if (name === 'overview') name = 'stats';
   if (!TABS.includes(name)) name = 'month';
   // Leaving Inställningar folds its sections again (as in the other apps).
   // 2026-11-17: varje flikbyte (även tryck på samma flik) fäller ihop allt igen – kategorier, formulär, inställningar.
@@ -2886,7 +2877,7 @@ function renderSavingsCard(saving, t) {
       ...hiddenAcc.map((a, i) => el('button', { type: 'button', class: 'link', text: (i ? ', ' : '') + a.name, on: { click: () => openAccDialog(a) } }))) : null,
     el('div', { class: 'sv-foot' },
       el('button', { type: 'button', class: 'link', text: '+ Nytt sparande', on: { click: () => focusAdd('savings') } }),
-      data.accounts.length ? el('button', { type: 'button', class: 'link', text: 'Sparkonton ›', on: { click: () => { showTab('stats'); $('stats-accounts').scrollIntoView({ block: 'start' }); } } }) : null)));
+      data.accounts.length ? el('button', { type: 'button', class: 'link', text: 'Utveckling ›', on: { click: () => { showTab('stats'); $('stats-accounts').scrollIntoView({ block: 'start' }); } } }) : null)));
 }
 
 // Stäng månaden (2026-11-17): skriv in vad som faktiskt var kvar dagen före nästa lön. Ersätter planerat kvar i Historik och saldo.
@@ -3053,7 +3044,6 @@ document.addEventListener('touchend', (e) => {
   if (Math.abs(dx) < 60 || Math.abs(dx) < Math.abs(dy) * 1.5) return;
   const dir = dx < 0 ? 1 : -1, tab = store.get(CONFIG.tabKey);
   if (tab === 'month' || tab === 'stats') changeMonth(dir);
-  else if (tab === 'overview') { overviewStart = addMonths(overviewStart, 12 * dir); renderOverview(); }
 });
 
 // ---------- Row dialog (adjust a recurring item for one month / edit a one-off) ----------
@@ -3089,6 +3079,8 @@ function openRowDialog(r) {
   $('rd-reset').hidden = isNew || r.kind !== 'rec' || !r.adjusted;
   $('rd-edit').hidden = isNew || r.kind !== 'rec';
   $('rd-skip').hidden = isNew || r.kind !== 'rec' || (r.adjusted && r.amount === 0);
+  // 2026-11-18: kontots egna inställningar (valuta, kopplingar, ta bort) nås härifrån – sparkonton hanteras bara i Månad.
+  $('rd-account').hidden = !(r && data.accounts.some((a) => (a.feeds || []).includes(r.id)));
   // Sparpost = konto (2026-11-17): visa kontots saldo direkt i rutan. Saknas konto skapas ett med samma namn när du fyller i saldot.
   const isSave = r && r.kind === 'rec' && r.category === SAVINGS_CAT;
   $('rd-acc').hidden = !isSave;
@@ -3113,6 +3105,12 @@ $('add-expense').addEventListener('click', () => focusAdd('expense'));
 $('add-saving').addEventListener('click', () => focusAdd('savings'));
 $('all-items').addEventListener('click', () => showTab('items'));
 $('items-back').addEventListener('click', () => history.back());
+$('rd-account').addEventListener('click', () => {
+  const acc = dialogRow && data.accounts.find((a) => (a.feeds || []).includes(dialogRow.id));
+  if (!acc) return;
+  $('row-dialog').close();
+  setTimeout(() => openAccDialog(acc), 0);
+});
 $('rd-edit').addEventListener('click', () => {
   const rec = dialogRow && data.recurring.find((x) => x.id === dialogRow.id);
   if (!rec) return;
@@ -3201,7 +3199,7 @@ $('rd-delete').addEventListener('click', () => {
 </script>
 <script>
 // ---- views/overview.js ----
-// Budget buddy – Historik (tidigare Översikt, 2026-11-17). Vanligt skript (delar globalt scope med app.js), laddas i ordningen i index.html.
+// Budget buddy – År (Historik, 2026-11-18 en del av fliken Översikt). Vanligt skript (delar globalt scope med app.js), laddas i ordningen i index.html.
 // Visar de 12 månaderna fram till vald månad (bakåt) och de 12 kommande. Pilarna och svep flyttar ett år.
 function ovRows(months, max, anyBal) {
   return el('ul', { class: 'list ov' }, months.map((r) => {
@@ -3281,7 +3279,7 @@ function renderOverview() {
   const go = (n) => { overviewStart = addMonths(overviewStart, 12 * n); renderOverview(); };
   const head = el('div', { class: 'monthbar' },
     el('button', { type: 'button', class: 'icon-btn', 'aria-label': 'Föregående år', on: { click: () => go(-1) } }, '◀'),
-    el('h1', { class: 'ov-title' }, `Historik ${year}`,
+    el('h1', { class: 'ov-title' }, `År ${year}`,
       el('small', { text: rest.length === 12 ? 'Prognos' : rest.length ? `${done.length === 1 ? '1 månad' : `${done.length} månader`} hittills · ${rest.length} prognos` : 'Hela året' })),
     el('button', { type: 'button', class: 'icon-btn', 'aria-label': 'Nästa år', on: { click: () => go(1) } }, '▶'));
 
@@ -3411,25 +3409,7 @@ function renderAccounts() {
   $('acc-total-diff').textContent = tDiff ? `${tDiff > 0 ? '+' : '−'}${kr(Math.abs(tDiff))} sedan ${monthShortLabel(addMonths(month, -1)).toLowerCase()}` : '';
   $('acc-total-diff').className = 'acc-total-diff ' + (tDiff < 0 ? 'neg' : 'pos');
   $('acc-rates').textContent = foreign ? `Utländsk valuta räknas om: ${ratesNote()} (ändras under Inställningar).` : '';
-  fill($('acc-list'), accs.length ? accs.map((a) => {
-    const cur = estBalance(data, a, month), real = balanceAt(a, month);
-    const prev = cur ? estBalance(data, a, addMonths(month, -1)) : null;
-    const diff = cur && prev ? cur.amount - prev.amount : null;
-    const feedNames = (a.feeds || []).map((id) => data.recurring.find((r) => r.id === id)?.name).filter(Boolean);
-    const foreignA = a.currency !== home();
-    const subBits = [foreignA && cur ? `(${money(cur.amount, a.currency)})` : null,
-      !cur ? 'Inget saldo än – tryck för att fylla i'
-        : cur.estimated ? `beräknat + ${feedNames.join(', ')}`
-        : real && real.month !== month ? `ifyllt ${monthShortLabel(real.month).toLowerCase()}` : null].filter(Boolean);
-    const sub = subBits.join(' · ');
-    const homeAmt = cur ? Math.round(toSek(cur.amount, a.currency) / 100) * 100 : null;
-    const homeDiff = diff != null ? Math.round(toSek(diff, a.currency) / 100) * 100 : null;
-    return el('li', { class: 'row' }, el('button', { type: 'button', class: 'row-main',
-      'aria-label': `${a.name}, ${cur ? money(cur.amount, a.currency) : 'inget saldo'}. Fyll i saldo`, on: { click: () => openAccDialog(a) } },
-    el('span', { class: 'row-name' }, el('span', { text: a.name }), sub ? el('span', { class: 'row-sub', text: sub }) : null),
-    el('span', { class: 'acc-amt amount' }, el('span', { text: cur ? ((cur.estimated || foreignA) ? '≈ ' : '') + kr(homeAmt) : '–' }),
-      homeDiff ? el('span', { class: 'row-sub ' + (homeDiff < 0 ? 'neg' : 'pos'), text: kr(homeDiff, true) }) : null)));
-  }) : el('li', { class: 'muted empty-row', text: 'Inga sparkonton än – lägg till det första nedan.' }));
+  $('stats-accounts').hidden = !accs.length;   // 2026-11-18: bara summa och graf här, kontona ändras i Månad
 
   // Total savings balance, the 12 months up to the chosen month
   // Grafen börjar vid första månaden med saldo (minst 4 månader), så att staplarna inte blir tunna streck.
@@ -3501,17 +3481,11 @@ $('ad-delete').addEventListener('click', () => {
   $('acc-dialog').close();
   withUndo(`${a.name} ligger i papperskorgen`, () => trashItems(data, 'acc', [a.id], isoToday()));
 });
-$('acc-form').addEventListener('submit', (e) => {
-  e.preventDefault();
-  const n = cleanName($('acc-name').value, 30);
-  if (!n) return;
-  if (data.accounts.length >= MAX_ACCOUNTS) { snackbar(`Max ${MAX_ACCOUNTS} sparkonton.`, null, null, 3000); return; }
-  const a = { id: 'a' + newId().slice(-10), name: n, currency: home(), balances: {} };   // nytt konto i hemvalutan
-  data.accounts.push(a);
-  data = loadData(data);
-  $('acc-name').value = '';
-  save();
-  openAccDialog(data.accounts.find((x) => x.id === a.id));
+$('acc-manage').addEventListener('click', () => {
+  showTab('month');
+  const c = $('savings-card'), d = c.querySelector('details');
+  if (d) d.open = true;
+  c.scrollIntoView({ behavior: 'smooth', block: 'start' });
 });
 
 </script>
@@ -4241,7 +4215,7 @@ document.addEventListener('visibilitychange', () => {
 // ---------- Start ----------
 $('version').textContent = 'v' + self.APP_VERSION;
 const savedTab = store.get(CONFIG.tabKey);
-showTab(TABS.includes(location.hash.slice(1)) ? location.hash.slice(1) : TABS.includes(savedTab) ? savedTab : 'month', false);
+showTab(location.hash.slice(1) || savedTab || 'month', false);   // okänd flik → Månad, gamla 'overview' → Översikt
 updateOnline();
 purge();
 render();

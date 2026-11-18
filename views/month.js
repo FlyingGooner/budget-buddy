@@ -148,7 +148,7 @@ function renderSavingsCard(saving, t) {
       ...hiddenAcc.map((a, i) => el('button', { type: 'button', class: 'link', text: (i ? ', ' : '') + a.name, on: { click: () => openAccDialog(a) } }))) : null,
     el('div', { class: 'sv-foot' },
       el('button', { type: 'button', class: 'link', text: '+ Nytt sparande', on: { click: () => focusAdd('savings') } }),
-      data.accounts.length ? el('button', { type: 'button', class: 'link', text: 'Sparkonton ›', on: { click: () => { showTab('stats'); $('stats-accounts').scrollIntoView({ block: 'start' }); } } }) : null)));
+      data.accounts.length ? el('button', { type: 'button', class: 'link', text: 'Utveckling ›', on: { click: () => { showTab('stats'); $('stats-accounts').scrollIntoView({ block: 'start' }); } } }) : null)));
 }
 
 // Stäng månaden (2026-11-17): skriv in vad som faktiskt var kvar dagen före nästa lön. Ersätter planerat kvar i Historik och saldo.
@@ -315,7 +315,6 @@ document.addEventListener('touchend', (e) => {
   if (Math.abs(dx) < 60 || Math.abs(dx) < Math.abs(dy) * 1.5) return;
   const dir = dx < 0 ? 1 : -1, tab = store.get(CONFIG.tabKey);
   if (tab === 'month' || tab === 'stats') changeMonth(dir);
-  else if (tab === 'overview') { overviewStart = addMonths(overviewStart, 12 * dir); renderOverview(); }
 });
 
 // ---------- Row dialog (adjust a recurring item for one month / edit a one-off) ----------
@@ -351,6 +350,8 @@ function openRowDialog(r) {
   $('rd-reset').hidden = isNew || r.kind !== 'rec' || !r.adjusted;
   $('rd-edit').hidden = isNew || r.kind !== 'rec';
   $('rd-skip').hidden = isNew || r.kind !== 'rec' || (r.adjusted && r.amount === 0);
+  // 2026-11-18: kontots egna inställningar (valuta, kopplingar, ta bort) nås härifrån – sparkonton hanteras bara i Månad.
+  $('rd-account').hidden = !(r && data.accounts.some((a) => (a.feeds || []).includes(r.id)));
   // Sparpost = konto (2026-11-17): visa kontots saldo direkt i rutan. Saknas konto skapas ett med samma namn när du fyller i saldot.
   const isSave = r && r.kind === 'rec' && r.category === SAVINGS_CAT;
   $('rd-acc').hidden = !isSave;
@@ -375,6 +376,12 @@ $('add-expense').addEventListener('click', () => focusAdd('expense'));
 $('add-saving').addEventListener('click', () => focusAdd('savings'));
 $('all-items').addEventListener('click', () => showTab('items'));
 $('items-back').addEventListener('click', () => history.back());
+$('rd-account').addEventListener('click', () => {
+  const acc = dialogRow && data.accounts.find((a) => (a.feeds || []).includes(dialogRow.id));
+  if (!acc) return;
+  $('row-dialog').close();
+  setTimeout(() => openAccDialog(acc), 0);
+});
 $('rd-edit').addEventListener('click', () => {
   const rec = dialogRow && data.recurring.find((x) => x.id === dialogRow.id);
   if (!rec) return;

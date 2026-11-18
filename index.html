@@ -23,8 +23,7 @@
 
 <nav id="nav" aria-label="Huvudmeny">
   <button type="button" data-tab="month" aria-current="page"><span class="pill" aria-hidden="true">📅</span><span>Månad</span></button>
-  <button type="button" data-tab="stats"><span class="pill" aria-hidden="true">📈</span><span>Trend</span></button>
-  <button type="button" data-tab="overview"><span class="pill" aria-hidden="true">🗓️</span><span>Historik</span></button>
+  <button type="button" data-tab="stats"><span class="pill" aria-hidden="true">📊</span><span>Översikt</span></button>
   <button type="button" data-tab="settings"><span class="pill" aria-hidden="true">⚙️</span><span>Inst.</span></button>
 </nav>
 
@@ -52,11 +51,6 @@
     </div>
   </section>
 
-  <!-- Översikt -->
-  <section class="tab" id="tab-overview" hidden>
-    <div class="col" id="overview"></div>
-  </section>
-
   <!-- Statistik (follows the month chosen in Månad) -->
   <section class="tab" id="tab-stats" hidden>
     <div class="col">
@@ -73,17 +67,12 @@
       <div class="card" id="stats-accounts">
         <h2>🐷 Sparkonton</h2>
         <p class="acc-big"><span id="acc-total"></span><span class="acc-total-diff" id="acc-total-diff"></span></p>
-        <ul class="list" id="acc-list"></ul>
-        <p class="muted small" id="acc-rates"></p>
         <div id="acc-chart"></div>
-        <details class="add-wrap" id="acc-add"><summary>+ Nytt sparkonto</summary>
-        <form class="inline" id="acc-form" novalidate>
-          <label class="field grow"><span>Namn</span><input id="acc-name" maxlength="30" autocomplete="off" placeholder="t.ex. Buffert"></label>
-          <button type="submit" class="btn tonal">Lägg till</button>
-        </form>
-        </details>
+        <p class="muted small" id="acc-rates"></p>
+        <button type="button" class="link" id="acc-manage">Ändra sparkonton i Månad ›</button>
       </div>
     </div>
+    <div class="col" id="overview"></div>
   </section>
 
   <!-- Poster -->
@@ -295,7 +284,8 @@
           <p>Tryck på en rad för att ändra belopp, välja vilket Sparkonto pengarna går till eller rätta saldot. Saldot märkt ≈ är beräknat: senast ifyllt plus sparandet.</p>
           <p>Dras sparandet innan nettolönen betalas ut (t.ex. aktier via jobbet), bocka i Dras före lönen. Då räknas det som sparat men minskar inte Kvar. Samma val finns på en avvikelse i kategorin Sparande.</p>
           <p>Konton som inte rörs (t.ex. barnens) kan döljas från Månad: tryck på raden i Sparande-kortet och bocka ur Visa i Månad. Tryck på namnet under &quot;+ 1 dolt konto&quot; för att visa det igen. Det räknas fortfarande i Totalt sparat.</p>
-          <p>Alla konton, med graf, finns också under Trend → Sparkonton. Där lägger du till ett konto utan sparpost, eller tar bort ett (det hamnar i papperskorgen).</p>
+          <p>Sparkonton hanteras bara här. Kontot › i rutan för en sparpost ändrar kontots valuta, vilka sparposter som går dit, eller tar bort kontot (det hamnar i papperskorgen).</p>
+          <p>Summan och en graf över alla konton finns under Översikt → Sparkonton.</p>
         </details>
         <details><summary>Stäng månaden</summary>
           <p>Det som står under Kvar är planerat. Mat, nöjen och oväntade utgifter syns inte där.</p>
@@ -307,11 +297,9 @@
           <p>Under Inställningar → Hushåll → Lönedag väljer du vilken dag budgetmånaden börjar. Den 1:a är vanliga kalendermånader.</p>
           <p>Med lön den 25:e räcker lönen den 25 november till december. Den månaden heter December, med 25 nov – 24 dec under.</p>
         </details>
-        <details><summary>Trend</summary>
-          <p>Nyckeltal för månaden: kvar av inkomsten, sparkvot, snitt, sparat och största kostnaden. Kostnader per kategori, in och ut de senaste 12 månaderna, och sparkontona.</p>
-        </details>
-        <details><summary>Historik</summary>
-          <p>Ett år i taget – byt år med ◀ ▶. Överst statistik för året: inkomster, kostnader, sparat, kvar, snitt, bästa och sämsta månad och prognos för helåret.</p>
+        <details><summary>Översikt</summary>
+          <p>Nyckeltal för månaden: kvar av inkomsten, sparkvot, snitt, sparat och största kostnaden. Kostnader per kategori, in och ut de senaste 12 månaderna, och sparkontonas summa med graf.</p>
+          <p>Längre ner: ett år i taget – byt år med ◀ ▶. Överst statistik för året: inkomster, kostnader, sparat, kvar, snitt, bästa och sämsta månad och prognos för helåret.</p>
           <p>Grafen visar kvar + sparat över tid (eller saldot, om du har Startsaldo under Inställningar → Hushåll). Streckat är prognos.</p>
           <p>Månader som inte är stängda räknas med snittet av de rörliga utgifterna (≈). ✓ = stängd. Tryck på en månad för att öppna den.</p>
         </details>
@@ -371,7 +359,8 @@
           <p>Tap a row to change the amount, choose which Savings account the money goes to, or correct the balance. A balance marked ≈ is estimated: last entered plus the savings.</p>
           <p>If the saving is taken before your net salary is paid (e.g. shares through work), tick Taken before payday. It then counts as saved but does not reduce Left. The same option is available on a one-off in the Savings category.</p>
           <p>Accounts you never touch (e.g. the children's) can be hidden from Month: tap the row in the Savings card and untick Show in Month. Tap the name under &quot;+ 1 hidden account&quot; to show it again. It still counts in Total saved.</p>
-          <p>All accounts, with a chart, are also under Trend → Savings accounts. There you add an account without a savings item, or delete one (it goes to the trash).</p>
+          <p>Savings accounts are managed only here. Account › in the box for a savings item changes the account's currency, which savings items go there, or deletes the account (it goes to the trash).</p>
+          <p>The total and a chart of all accounts are under Overview → Savings accounts.</p>
         </details>
         <details><summary>Close the month</summary>
           <p>What is shown under Left is planned. Food, fun and unexpected spending do not show there.</p>
@@ -383,11 +372,9 @@
           <p>Under Settings → Household → Payday you choose which day the budget month starts. The 1st means normal calendar months.</p>
           <p>With payday on the 25th, the salary on 25 November covers December. That month is called December, with 25 Nov – 24 Dec below.</p>
         </details>
-        <details><summary>Trend</summary>
-          <p>Key figures for the month: left of income, savings rate, average, saved and the largest cost. Expenses by category, in and out over the last 12 months, and the savings accounts.</p>
-        </details>
-        <details><summary>History</summary>
-          <p>One year at a time – change year with ◀ ▶. At the top, figures for the year: income, expenses, saved, left, average, best and worst month and a forecast for the full year.</p>
+        <details><summary>Overview</summary>
+          <p>Key figures for the month: left of income, savings rate, average, saved and the largest cost. Expenses by category, in and out over the last 12 months, and the savings accounts total with a chart.</p>
+          <p>Further down: one year at a time – change year with ◀ ▶. At the top, figures for the year: income, expenses, saved, left, average, best and worst month and a forecast for the full year.</p>
           <p>The chart shows left + saved over time (or the balance, if you have a Starting balance under Settings → Household). Dashed is forecast.</p>
           <p>Months that are not closed are counted with the average variable spending (≈). ✓ = closed. Tap a month to open it.</p>
         </details>
@@ -460,6 +447,7 @@
       <button type="button" class="btn text" id="rd-edit">Ändra posten</button>
       <button type="button" class="btn text" id="rd-reset">Återställ</button>
       <button type="button" class="btn text" id="rd-skip">Hoppa över</button>
+      <button type="button" class="btn text" id="rd-account">Kontot ›</button>
     </div>
     <div class="actions rd-main">
       <button type="button" class="btn text" id="rd-cancel">Avbryt</button>

@@ -1,4 +1,4 @@
-// Budget buddy – Historik (tidigare Översikt, 2026-11-17). Vanligt skript (delar globalt scope med app.js), laddas i ordningen i index.html.
+// Budget buddy – År (Historik, 2026-11-18 en del av fliken Översikt). Vanligt skript (delar globalt scope med app.js), laddas i ordningen i index.html.
 // Visar de 12 månaderna fram till vald månad (bakåt) och de 12 kommande. Pilarna och svep flyttar ett år.
 function ovRows(months, max, anyBal) {
   return el('ul', { class: 'list ov' }, months.map((r) => {
@@ -78,7 +78,7 @@ function renderOverview() {
   const go = (n) => { overviewStart = addMonths(overviewStart, 12 * n); renderOverview(); };
   const head = el('div', { class: 'monthbar' },
     el('button', { type: 'button', class: 'icon-btn', 'aria-label': 'Föregående år', on: { click: () => go(-1) } }, '◀'),
-    el('h1', { class: 'ov-title' }, `Historik ${year}`,
+    el('h1', { class: 'ov-title' }, `År ${year}`,
       el('small', { text: rest.length === 12 ? 'Prognos' : rest.length ? `${done.length === 1 ? '1 månad' : `${done.length} månader`} hittills · ${rest.length} prognos` : 'Hela året' })),
     el('button', { type: 'button', class: 'icon-btn', 'aria-label': 'Nästa år', on: { click: () => go(1) } }, '▶'));
 

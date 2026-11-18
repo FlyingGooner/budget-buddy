@@ -20,7 +20,8 @@ Samma text finns i appen under **Inställningar → Allmänt → Hjälp och manu
 - Tryck på en rad för att ändra belopp, välja vilket **Sparkonto** pengarna går till eller rätta saldot. Saldot märkt ≈ är beräknat: senast ifyllt plus sparandet.
 - Dras sparandet innan nettolönen betalas ut (t.ex. aktier via jobbet), bocka i **Dras före lönen**. Då räknas det som sparat men minskar inte Kvar. Samma val finns på en avvikelse i kategorin Sparande.
 - Konton som inte rörs (t.ex. barnens) kan döljas från Månad: tryck på raden i Sparande-kortet och bocka ur **Visa i Månad**. Tryck på namnet under "+ 1 dolt konto" för att visa det igen. Det räknas fortfarande i Totalt sparat.
-- Alla konton, med graf, finns också under **Trend → Sparkonton**. Där lägger du till ett konto utan sparpost, eller tar bort ett (det hamnar i papperskorgen).
+- Sparkonton hanteras bara här. **Kontot ›** i rutan för en sparpost ändrar kontots valuta, vilka sparposter som går dit, eller tar bort kontot (det hamnar i papperskorgen).
+- Summan och en graf över alla konton finns under **Översikt → Sparkonton**.
 
 ## Stäng månaden
 - Det som står under Kvar är planerat. Mat, nöjen och oväntade utgifter syns inte där.
@@ -32,11 +33,9 @@ Samma text finns i appen under **Inställningar → Allmänt → Hjälp och manu
 - Under **Inställningar → Hushåll → Lönedag** väljer du vilken dag budgetmånaden börjar. Den 1:a är vanliga kalendermånader.
 - Med lön den 25:e räcker lönen den 25 november till december. Den månaden heter **December**, med **25 nov – 24 dec** under.
 
-## Trend
-- Nyckeltal för månaden: kvar av inkomsten, sparkvot, snitt, sparat och största kostnaden. Kostnader per kategori, in och ut de senaste 12 månaderna, och sparkontona.
-
-## Historik
-- Ett år i taget – byt år med **◀ ▶**. Överst statistik för året: inkomster, kostnader, sparat, kvar, snitt, bästa och sämsta månad och prognos för helåret.
+## Översikt
+- Nyckeltal för månaden: kvar av inkomsten, sparkvot, snitt, sparat och största kostnaden. Kostnader per kategori, in och ut de senaste 12 månaderna, och sparkontonas summa med graf.
+- Längre ner: ett år i taget – byt år med **◀ ▶**. Överst statistik för året: inkomster, kostnader, sparat, kvar, snitt, bästa och sämsta månad och prognos för helåret.
 - Grafen visar kvar + sparat över tid (eller saldot, om du har **Startsaldo** under Inställningar → Hushåll). Streckat är prognos.
 - Månader som inte är stängda räknas med snittet av de rörliga utgifterna (≈). ✓ = stängd. Tryck på en månad för att öppna den.
 

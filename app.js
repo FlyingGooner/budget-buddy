@@ -4,7 +4,7 @@
 'use strict';
 
 const CONFIG = { storageKey: 'bb.data', tabKey: 'bb.tab', longPressMs: 450 };
-const TABS = ['month', 'stats', 'overview', 'items', 'settings'];
+const TABS = ['month', 'stats', 'items', 'settings'];   // 2026-11-18: Historik ingår i Översikt (stats)
 const $ = (id) => document.getElementById(id);
 
 let data = loadData(store.get(CONFIG.storageKey));
@@ -130,6 +130,7 @@ function withUndo(label, change) {
 // Bakåt (som fns v0.16.8 och sn v0.14): flikbyte = pushState, popstate visar fliken ur hashen. Första fliken vid start
 // ersätter steget (replaceState), så appen stängs när man backar förbi den.
 function showTab(name, push = true) {
+  if (name === 'overview') name = 'stats';
   if (!TABS.includes(name)) name = 'month';
   // Leaving Inställningar folds its sections again (as in the other apps).
   // 2026-11-17: varje flikbyte (även tryck på samma flik) fäller ihop allt igen – kategorier, formulär, inställningar.

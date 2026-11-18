@@ -7,17 +7,16 @@ T.test('sparkonto i USD räknas om till kronor', () => {
   T.ok($id('acc-total').textContent.includes('≈'), 'summan ska ha ≈');
   T.ok($id('acc-rates').textContent.includes('referenskurser'), 'kursrad');
 });
-T.test('nytt sparkonto via formuläret öppnar saldodialogen', async () => {
-  $id('acc-name').value = 'Test <b>konto</b>';
-  $id('acc-form').requestSubmit();
-  await T.until(() => $id('acc-dialog').open, 'dialogen öppnades inte');
-  T.eq($id('ad-title').textContent, 'Test <b>konto</b>');
-  $id('ad-amount').value = '1 250,50';
-  $id('ad-form').requestSubmit();
+T.test('sparpost med konto: Kontot › öppnar kontots ruta (2026-11-18)', async () => {
+  const a = data.accounts.find((x) => (x.feeds || []).length);
+  if (!a) return;
+  openRowDialog(rowsForMonth(data, month).find((r) => r.id === a.feeds[0]));
+  T.ok(!$id('rd-account').hidden, 'knappen Kontot › syns');
+  $id('rd-account').click();
+  await T.until(() => $id('acc-dialog').open, 'kontots ruta öppnades inte');
+  T.eq($id('ad-title').textContent, a.name);
+  $id('ad-cancel').click();
   await T.until(() => !$id('acc-dialog').open);
-  const a = stored().accounts.find((x) => x.name === 'Test <b>konto</b>');
-  T.ok(a, 'kontot sparades');
-  T.eq(Object.values(a.balances)[0], 125050);
 });
 T.test('ingen okrypterad export, inklistrad text importeras, med ångra', async () => {
   T.ok(!$id('export-text') && !$id('export-btn'), 'textexporten finns kvar');
@@ -183,10 +182,10 @@ T.test('Lösenordsgenerator: fyller båda fälten, Kopiera bara för genererat l
 T.test('bakåt går tillbaka genom besökta flikar (v0.13)', async () => {
   const nav = (t) => document.querySelector(`#nav button[data-tab="${t}"]`).click();
   const shown = () => document.querySelector('.tab:not([hidden])')?.id;
-  nav('month'); nav('overview'); nav('stats');
-  T.eq([shown(), location.hash], ['tab-stats', '#stats']);
+  nav('month'); nav('stats'); nav('settings');
+  T.eq([shown(), location.hash], ['tab-settings', '#settings']);
   history.back();
-  await T.until(() => shown() === 'tab-overview', 'bakåt visar Översikt');
+  await T.until(() => shown() === 'tab-stats', 'bakåt visar Översikt');
   history.back();
   await T.until(() => shown() === 'tab-month', 'bakåt igen visar Månad');
 });
