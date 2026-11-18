@@ -61,6 +61,15 @@ The same text is in the app under **Settings → General → Help and manual**. 
 - **Locked backup.** The backup file is encrypted with AES-256 and your code.
 - **Open source** on GitHub. Lock your phone with a code and keep it updated.
 
-## Back, install and offline
+## Install as an app
+
+![Android: Chrome menu ⋮ → Install app](manual/install-android-en.png)
+- **Android (Chrome):** open the app link, tap ⋮ at the top right and choose **Install app**.
+
+![iPhone: Safari → Share → Add to Home Screen](manual/install-ios-en.png)
+- **iPhone (Safari):** open the link in Safari, tap **Share** (the box with the arrow) and choose **Add to Home Screen** → **Add**.
+- Installed, the app works like a normal app, even offline.
+- If you clear site data, everything is gone – save a backup file now and then.
+
+## Back
 - The back button first closes the open dialog, then selection mode, then goes back through the tabs.
-- **Android (Chrome):** menu ⋮ → Install app. **iPhone (Safari):** Share → Add to Home Screen. Installed, the app works offline. If you clear site data, everything is gone – save a backup now and then.

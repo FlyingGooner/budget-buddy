@@ -61,6 +61,15 @@ Samma text finns i appen under **Inställningar → Allmänt → Hjälp och manu
 - **Låst backup.** Backup-filen krypteras med AES-256 och din kod.
 - **Öppen kod** på GitHub. Lås telefonen med kod och håll den uppdaterad.
 
-## Bakåt, installera och offline
+## Installera som app
+
+![Android: Chrome-menyn ⋮ → Installera app](manual/install-android.png)
+- **Android (Chrome):** öppna appens länk, tryck ⋮ uppe till höger och välj **Installera app**.
+
+![iPhone: Safari → Dela → Lägg till på hemskärmen](manual/install-ios.png)
+- **iPhone (Safari):** öppna länken i Safari, tryck **Dela** (rutan med pilen) och välj **Lägg till på hemskärmen** → **Lägg till**.
+- Installerad fungerar appen som en vanlig app, även utan nät.
+- Rensar du webbplatsdata försvinner allt – spara en backup-fil då och då.
+
+## Bakåt
 - Bakåtknappen stänger först den öppna rutan, sedan markeringsläget, sedan går den tillbaka genom flikarna.
-- **Android (Chrome):** menyn ⋮ → Installera app. **iPhone (Safari):** Dela → Lägg till på hemskärmen. Installerad fungerar appen utan nät. Rensar du webbplatsdata försvinner allt – spara backup då och då.

@@ -4,7 +4,7 @@ importScripts('version.js');
 const CACHE_VERSION = 'bb-' + self.APP_VERSION;
 const ASSETS = ['./', 'index.html', 'styles.css', 'app.js', 'views/month.js', 'views/overview.js', 'views/stats.js', 'views/accounts.js', 'views/items.js',
   'views/settings.js', 'main.js', 'nav.js', 'store.js', 'i18n.js', 'i18n-en.js', 'version.js', 'backup.js', 'csv.js', 'manifest.webmanifest',
-  'icons/icon.svg', 'icons/icon-180.png', 'icons/icon-192.png', 'icons/icon-512.png',
+  'icons/icon.svg', 'docs/manual/install-android.png', 'docs/manual/install-ios.png', 'docs/manual/install-android-en.png', 'docs/manual/install-ios-en.png', 'icons/icon-180.png', 'icons/icon-192.png', 'icons/icon-512.png',
   'docs/manual/manad.png', 'docs/manual/poster.png', 'docs/manual/oversikt.png', 'docs/manual/sparkonton.png', 'docs/manual/data.png'];
 
 self.addEventListener('install', (e) => {
