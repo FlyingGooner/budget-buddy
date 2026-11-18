@@ -180,14 +180,17 @@ function openCloseDialog() {
   $('cd-amount').value = t.closed ? (t.left < 0 ? '-' : '') + krInput(Math.abs(t.left)) : '';
   $('cd-reopen').hidden = !t.closed;
   // Sparkonton (2026-11-17): fyll i saldona samtidigt – förifyllt med beräknat/senaste saldo, t.ex. efter en extra överföring.
+  // 2026-11-18: tydligt vad som är beräknat (fylls på av sparposterna) – ändra bara det som inte stämmer med banken.
   fill($('cd-accounts'), data.accounts.length ? [el('p', { class: 'cd-acc-h', text: 'Saldo på sparkontona' }),
+    el('p', { class: 'muted small', text: '≈ = beräknat av appen: senast ifyllt saldo plus sparandet. Stämmer det med banken behöver du inte ändra något.' }),
     el('div', { class: 'row2' }, data.accounts.map((a) => {
       const est = estBalance(data, a, month);
       const inp = el('input', { inputmode: 'decimal', autocomplete: 'off', 'data-acc': a.id, 'aria-label': `Saldo ${a.name}` });
       inp.value = est ? krInput(est.amount) : '';
       inp.dataset.orig = inp.value;
       const from = (a.feeds || []).map((id) => data.recurring.find((x) => x.id === id)?.name).filter(Boolean);
-      return el('label', { class: 'field' }, el('span', { text: `${a.name} (${unit(a.currency)})` + (from.length ? ` ← ${from.join(', ')}` : '') }), inp);
+      const note = !est ? 'Inget saldo än' : est.estimated ? `≈ beräknat${from.length ? ' · fylls på av ' + from.join(', ') : ''}` : `ifyllt ${monthShortLabel(balanceAt(a, month).month).toLowerCase()}`;
+      return el('label', { class: 'field' }, el('span', { text: `${a.name} (${unit(a.currency)})` }), inp, el('small', { class: 'muted cd-acc-note', text: note }));
     }))] : null);
   $('cd-error').textContent = '';
   $('close-dialog').showModal();

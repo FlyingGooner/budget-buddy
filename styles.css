@@ -576,3 +576,4 @@ body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; 
 .close-line.cl-soon .link, .close-line.cl-due .link { padding: 8px 12px; border-radius: var(--r-md); text-align: left; }
 .close-line.cl-soon .link { background: var(--surface-container-high); color: var(--primary); }
 .close-line.cl-due .link { background: var(--primary-container); color: var(--on-primary-container); font-weight: 600; }
+.cd-acc-note { display: block; margin-top: 4px; font-size: .75rem; }
