@@ -589,8 +589,9 @@ body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; 
 .last-month .btn { margin-top: 8px; }
 
 /* 2026-11-18: påminnelse om att stänga månaden */
-.close-line.cl-later .link { color: var(--on-surface-variant); font-weight: 400; }
-.close-line.cl-soon .link, .close-line.cl-due .link { padding: 8px 12px; border-radius: var(--r-md); text-align: left; }
+/* 2026-11-21: alltid en tydlig knapp – lugn färg långt innan, starkare när dagen närmar sig */
+.close-line.cl-later .link, .close-line.cl-soon .link, .close-line.cl-due .link { padding: 10px 14px; min-height: 44px; border-radius: var(--r-md); text-align: left; }
+.close-line.cl-later .link { background: var(--surface-container-high); color: var(--primary); }
 .close-line.cl-soon .link { background: var(--surface-container-high); color: var(--primary); }
 .close-line.cl-due .link { background: var(--primary-container); color: var(--on-primary-container); font-weight: 600; }
 .cd-acc-note { display: block; margin-top: 4px; font-size: .75rem; }
@@ -631,6 +632,8 @@ body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; 
 .ahead tfoot td { font-weight: 600; border-top: 1px solid var(--outline-variant, #e0e0e0); }
 .per-person td { white-space: nowrap; } .per-person thead th { vertical-align: bottom; }
 .ahead-more { margin-top: 8px; }
+.prev-fc { display: flex; flex-direction: column; align-items: flex-start; gap: 2px; margin: 8px 0 0; }
+.prev-fc .link { padding: 4px 0; font-size: inherit; text-align: left; }
 
 </style>
 </head>
@@ -1792,7 +1795,7 @@ I18N.add({
 </script>
 <script>
 // ---- version.js ----
-﻿self.APP_VERSION = '0.12.126';
+﻿self.APP_VERSION = '0.12.127';
 
 </script>
   <script>
@@ -3050,9 +3053,9 @@ function renderMonth() {
       t.left > 0 ? legend('s-left', leftWord) : null),
     // 2026-11-21: förra månadens kvar (faktiskt om den är stängd) – för att följa ekonomin över tid.
     // 2026-11-21: prognos på samma rad; tryck för förklaringen.
-    hasPrev || fc ? el('p', { class: 'muted small' },
+    // 2026-11-21: en rad var – " · " mellan dem bröts fult på telefonen.
+    hasPrev || fc ? el('div', { class: 'muted small prev-fc' },
       hasPrev ? el('span', { text: `${prevT.closed ? 'Kvar på kontot' : 'Efter räkningar'} i ${monthShortLabel(addMonths(month, -1)).toLowerCase()}: ${kr(prevT.left, true)}` }) : null,
-      hasPrev && fc ? ' · ' : null,
       fc ? el('button', { type: 'button', class: 'link', 'aria-expanded': String(fcOpen), text: `Kvar vid stängning: ≈ ${kr(fc.left, true)}`,
         on: { click: (e) => { e.preventDefault(); e.stopPropagation(); fcOpen = !fcOpen; renderMonth(); } } }) : null) : null,
     fc && fcOpen ? el('p', { class: 'muted small', text: fcText(fc) }) : null,

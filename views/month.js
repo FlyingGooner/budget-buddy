@@ -102,9 +102,9 @@ function renderMonth() {
       t.left > 0 ? legend('s-left', leftWord) : null),
     // 2026-11-21: förra månadens kvar (faktiskt om den är stängd) – för att följa ekonomin över tid.
     // 2026-11-21: prognos på samma rad; tryck för förklaringen.
-    hasPrev || fc ? el('p', { class: 'muted small' },
+    // 2026-11-21: en rad var – " · " mellan dem bröts fult på telefonen.
+    hasPrev || fc ? el('div', { class: 'muted small prev-fc' },
       hasPrev ? el('span', { text: `${prevT.closed ? 'Kvar på kontot' : 'Efter räkningar'} i ${monthShortLabel(addMonths(month, -1)).toLowerCase()}: ${kr(prevT.left, true)}` }) : null,
-      hasPrev && fc ? ' · ' : null,
       fc ? el('button', { type: 'button', class: 'link', 'aria-expanded': String(fcOpen), text: `Kvar vid stängning: ≈ ${kr(fc.left, true)}`,
         on: { click: (e) => { e.preventDefault(); e.stopPropagation(); fcOpen = !fcOpen; renderMonth(); } } }) : null) : null,
     fc && fcOpen ? el('p', { class: 'muted small', text: fcText(fc) }) : null,
