@@ -135,7 +135,7 @@ function renderMonth() {
         el('span', { text: kr(t.savings) + (t.income ? ` (${Math.round((t.savings / t.income) * 100)} %)` : '') })) : null));
   $('expense-card').hidden = true;
   const cb = $('close-month');   // 2026-11-21: Stäng månad som knapp bredvid Lägg till / Alla poster
-  if (cb) { cb.hidden = t.closed || month > activeMonth(); cb.onclick = openCloseDialog; $('add-pair').classList.toggle('three', !cb.hidden); }
+  if (cb) { cb.hidden = month > activeMonth() && !t.closed; cb.textContent = t.closed ? '🔓 Ändra' : '🔒 Stäng'; cb.setAttribute('aria-label', t.closed ? 'Ändra / öppna igen' : 'Stäng månad'); cb.onclick = openCloseDialog; $('add-pair').classList.toggle('three', !cb.hidden); }
   renderSavingsCard(saving, t);
 }
 
@@ -200,8 +200,7 @@ function goalLine(a) {
 // Stäng månaden (2026-11-17): skriv in vad som faktiskt var kvar dagen före nästa lön. Ersätter planerat kvar i Historik och saldo.
 function closeLine(t) {
   const stop = (fn) => (e) => { e.preventDefault(); e.stopPropagation(); fn(); };   // knappen ligger i rubriken (summary)
-  if (t.closed) return el('p', { class: 'close-line' }, el('span', { text: `✓ Stängd · efter räkningar ${kr(t.planned, true)}` }),
-    el('button', { type: 'button', class: 'link cl-btn', text: 'Ändra / öppna igen', on: { click: stop(openCloseDialog) } }));
+  if (t.closed) return el('p', { class: 'close-line' }, el('span', { text: `✓ Stängd · efter räkningar ${kr(t.planned, true)}` }));   // knappen ligger bredvid Lägg till (2026-11-21)
   if (month > activeMonth()) return null;
   // 2026-11-18: när ska månaden stängas? Lugn text långt innan, färg 3 dagar innan, tydlig påminnelse när dagen har kommit.
   const iso = closeIso(), days = Math.round((new Date(iso + 'T12:00') - new Date(isoToday() + 'T12:00')) / 864e5);
