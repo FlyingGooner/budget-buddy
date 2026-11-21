@@ -76,6 +76,7 @@ function emptyData() {
     accounts: [],
     trash: [],
     closed: {},
+    carry: [],
   };
 }
 
@@ -177,6 +178,8 @@ function loadData(d) {
       if (Number.isInteger(v) && Math.abs(v) <= MAX_AMOUNT) out.closed[m] = v;
     }
   }
+  // Kvar som följer med (2026-11-21): stängda månader vars kvar ligger kvar på kontot och blir en rad i nästa månad.
+  if (Array.isArray(d.carry)) out.carry = [...new Set(d.carry.filter((m) => isMonth(m) && Object.hasOwn(out.closed, m)))].sort();
   // Savings accounts (v0.7.0): { id, name, balances: { 'YYYY-MM': öre } }. New objects with only month keys
   // that pass MONTH_RE – never copies untrusted keys such as __proto__.
   if (Array.isArray(d.accounts)) {
@@ -300,6 +303,7 @@ function packData(d) {
   if (d.oneOffs.length) out.oneOffs = d.oneOffs.map((o) => ({ month: o.month, ...item(o) }));
   if (Object.keys(d.adjustments).length) out.adjustments = d.adjustments;
   if (Object.keys(d.closed || {}).length) out.closed = d.closed;
+  if ((d.carry || []).length) out.carry = d.carry;
   if (d.accounts.length) out.accounts = d.accounts.map((a) => Object.assign({ id: a.id, name: a.name },
     a.currency !== 'SEK' ? { currency: a.currency } : {}, Object.keys(a.balances).length ? { balances: a.balances } : {},
     a.feeds && a.feeds.length ? { feeds: a.feeds } : {}, a.hidden ? { hidden: true } : {}, a.goal ? { goal: a.goal } : {}));
@@ -324,6 +328,7 @@ function unpackData(p) {
     oneOffs: list(p.oneOffs).map((o) => ({ ...item(o), month: o.month })),
     adjustments: isObj(p.adjustments) ? p.adjustments : {},
     closed: isObj(p.closed) ? p.closed : {},
+    carry: Array.isArray(p.carry) ? p.carry : [],
     accounts: list(p.accounts).map((a) => ({ id: a.id, name: a.name, currency: a.currency ?? 'SEK', balances: isObj(a.balances) ? a.balances : {}, feeds: Array.isArray(a.feeds) ? a.feeds : [], hidden: a.hidden === true, goal: a.goal })),
   };
 }
@@ -364,6 +369,7 @@ function shiftMonths(d, n) {
   for (const o of d.oneOffs) o.month = sh(o.month);
   d.adjustments = keys(d.adjustments);
   d.closed = keys(d.closed);
+  d.carry = (d.carry || []).map(sh);
   for (const a of d.accounts) a.balances = keys(a.balances);
   if (d.settings.startMonth) d.settings.startMonth = sh(d.settings.startMonth);
 }
@@ -420,7 +426,15 @@ function rowsForMonth(data, m) {
     rows.push({ id: o.id, kind: 'one', name: o.name, type: o.type, category: o.category, person: o.person, pre: !!o.pre,
       amount: o.amount, base: o.amount, adjusted: false });
   }
+  const c = carryIn(data, m);
+  if (c) rows.push({ id: 'carry', kind: 'carry', name: 'Kvar från förra månaden', type: c > 0 ? 'income' : 'expense', category: c > 0 ? 'income-other' : 'other',
+    person: null, pre: false, amount: Math.abs(c), base: Math.abs(c), adjusted: false });
   return rows;
+}
+// Kvar från förra månaden (2026-11-21): stängt belopp i m−1 om det följer med (data.carry), annars 0. Negativt = underskott.
+function carryIn(data, m) {
+  const p = addMonths(m, -1);
+  return (data.carry || []).includes(p) ? data.closed[p] || 0 : 0;
 }
 
 // savings = the part of expense in the "Sparande" category (still counted as expense: it leaves the account).
@@ -445,7 +459,7 @@ function balanceAfter(data, m) {
   const start = data.settings.startMonth;
   if (!start || m < start) return null;
   let bal = data.settings.startBalance;
-  for (let x = start; x <= m; x = addMonths(x, 1)) bal += monthTotals(data, x).left;
+  for (let x = start; x <= m; x = addMonths(x, 1)) bal += monthTotals(data, x).left - (x > start ? carryIn(data, x) : 0);   // det som följer med finns redan i saldot
   return bal;
 }
 

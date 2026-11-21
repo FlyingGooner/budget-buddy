@@ -852,7 +852,7 @@ body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; 
         <details><summary>Stäng månaden</summary>
           <p>Efter räkningar är planerat. Mat, nöjen och oväntade utgifter syns inte där.</p>
           <p>Under beloppet står när det är dags att stänga (t.ex. *Stäng månaden tis 24 nov · om 6 dagar*). Tre dagar innan blir raden färgad, och när dagen har kommit står det Dags att stänga månaden.</p>
-          <p>Dagen före lön trycker du ✓ Stäng månaden under beloppet och skriver in vad som faktiskt fanns kvar på kontot. I samma ruta stämmer du av sparkontona (förifyllda – ändra bara det som skiljer).</p>
+          <p>Dagen före lön trycker du ✓ Stäng månaden under beloppet och skriver in vad som faktiskt fanns kvar på kontot. Ligger pengarna kvar på kontot låter du Pengarna ligger kvar och följer med vara ibockad – då blir beloppet raden Kvar från förra månaden (⇢) i nästa månad. Flyttar du dem, t.ex. till sparkontot, bockar du ur. I samma ruta stämmer du av sparkontona (förifyllda – ändra bara det som skiljer).</p>
           <p>Rubriken blir då Kvar på kontot med det faktiska beloppet, och skillnaden visas som Rörligt i stapeln. Nästa månad blir den aktuella direkt.</p>
           <p>Har du börjat stänga månader visas överst i Månad de som inte är stängda (Inte stängd: Okt) – tryck för att gå dit. I en stängd månad trycker du Ändra / öppna igen: där rättar du beloppet eller tar bort stängningen med Öppna igen.</p>
         </details>
@@ -935,7 +935,7 @@ body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; 
         <details><summary>Close the month</summary>
           <p>After bills is planned. Food, fun and unexpected spending do not show there.</p>
           <p>Below Left it says when it is time to close (e.g. *Close the month Tue 24 Nov · in 6 days*). Three days before, the line gets a colour, and when the day has come it says Time to close the month.</p>
-          <p>The day before payday, tap ✓ Close the month under the amount and enter what was actually left in the account. In the same dialog you reconcile the savings accounts (prefilled – only change what differs).</p>
+          <p>The day before payday, tap ✓ Close the month under the amount and enter what was actually left in the account. If the money stays in the account, leave The money stays and carries over ticked – the amount then becomes the row Left over from last month (⇢) in the next month. If you move it, e.g. to the savings account, untick it. In the same dialog you reconcile the savings accounts (prefilled – only change what differs).</p>
           <p>The heading then becomes Left in the account with the actual amount, and the difference is shown as Variable in the bar. The next month becomes the current one right away.</p>
           <p>Once you have started closing months, months that are not closed are shown at the top of Month (Not closed: Oct) – tap to go there. In a closed month, tap Edit / reopen: correct the amount there, or remove the closing with Reopen.</p>
         </details>
@@ -1102,6 +1102,8 @@ body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; 
     <h2 id="cd-title"></h2>
     <label class="field"><span id="cd-label">Kvar på kontot</span><input id="cd-amount" inputmode="decimal" autocomplete="off"></label>
     <p class="muted small cd-hint" id="cd-sub"></p>
+    <label class="check"><input type="checkbox" id="cd-carry"><span id="cd-carry-label">Pengarna ligger kvar och följer med till nästa månad</span></label>
+    <p class="muted small cd-hint">Bocka ur om du flyttar dem, t.ex. till sparkontot.</p>
     <div id="cd-accounts"></div>
     <p class="error" id="cd-error" role="alert"></p>
     <div class="actions wrap">
@@ -1645,7 +1647,7 @@ I18N.add({
   'Gemensamt (lägg till personer under Inställningar)': 'Shared (add people under Settings)', 'Gemensamt': 'Shared', 'Person': 'Person',
   'Ny avvikelse': 'New deviation', 'Avvikelser': 'Deviations', 'Föregående år': 'Previous year', 'Nästa år': 'Next year',
   'Inga poster än – lägg till inkomster och räkningar så syns månaderna här.': 'No items yet – add income and bills and the months show here.',
-  'Lägg till inkomster och kostnader': 'Add income and expenses', 'Summa 12 mån': 'Total 12 mo', 'Senaste och kommande månader': 'Recent and upcoming months', 'Kvar = kvar på kontot för stängda månader, annars prognos: efter räkningar minus rörliga utgifter (snittet av de senaste stängda månaderna, med säsong).': 'Left = left in the account for closed months, otherwise forecast: after bills minus variable spending (average of the latest closed months, with season).', 'Högra kolumnen: saldo efter månaden.': 'Right column: balance after the month.',
+  'Lägg till inkomster och kostnader': 'Add income and expenses', 'Summa 12 mån': 'Total 12 mo', 'Kvar från förra månaden': 'Left over from last month', 'Bocka ur om du flyttar dem, t.ex. till sparkontot.': 'Untick if you move it, e.g. to the savings account.', 'Pengarna ligger kvar och följer med till nästa månad': 'The money stays and carries over to next month', 'Senaste och kommande månader': 'Recent and upcoming months', 'Kvar = kvar på kontot för stängda månader, annars prognos: efter räkningar minus rörliga utgifter (snittet av de senaste stängda månaderna, med säsong).': 'Left = left in the account for closed months, otherwise forecast: after bills minus variable spending (average of the latest closed months, with season).', 'Högra kolumnen: saldo efter månaden.': 'Right column: balance after the month.',
   'Inga personer – allt räknas som gemensamt.': 'No people – everything counts as shared.', 'Papperskorgen är tom.': 'The trash is empty.',
   'Appens kurser används igen': "The app's rates are used again", 'Fyll i både saldo och månad.': 'Fill in both balance and month.',
   'Kvar av inkomst': 'Left of income', '🐷 Sparkvot (sparande av inkomst)': '🐷 Savings rate (savings of income)', 'Största kostnad': 'Largest expense',
@@ -1774,6 +1776,7 @@ I18N.add({
   [/^Belopp för (.+?)(?: \(lönen (\d+) (\S+)\))?\. Ordinarie (.+)\.$/, (g, tr) => `Amount for ${tr(g[1])}${g[2] ? ` (the pay of ${g[2]} ${tr(g[3])})` : ''}. Usual ${g[4]}.`],
   [/^(.+) hoppas över i (.+)$/, '$1 is skipped in $2'],
   [/^Kommande 12 månader$/, 'Next 12 months'],
+  [/^Pengarna ligger kvar och följer med till (.+)$/, (g, tr) => `The money stays and carries over to ${tr(g[1])}`],
   [/^(.+): kvar (.+)\. Öppna månaden$/, '$1: left $2. Open the month'],
   [/^Namn på kategori (.+)$/, (g) => `Name of category ${g[1]}`],
   [/^Poster flyttas till (.+)$/, 'Items move to $1'],
@@ -1799,7 +1802,7 @@ I18N.add({
 </script>
 <script>
 // ---- version.js ----
-﻿self.APP_VERSION = '0.12.131';
+﻿self.APP_VERSION = '0.12.132';
 
 </script>
   <script>
@@ -2330,6 +2333,7 @@ function emptyData() {
     accounts: [],
     trash: [],
     closed: {},
+    carry: [],
   };
 }
 
@@ -2431,6 +2435,8 @@ function loadData(d) {
       if (Number.isInteger(v) && Math.abs(v) <= MAX_AMOUNT) out.closed[m] = v;
     }
   }
+  // Kvar som följer med (2026-11-21): stängda månader vars kvar ligger kvar på kontot och blir en rad i nästa månad.
+  if (Array.isArray(d.carry)) out.carry = [...new Set(d.carry.filter((m) => isMonth(m) && Object.hasOwn(out.closed, m)))].sort();
   // Savings accounts (v0.7.0): { id, name, balances: { 'YYYY-MM': öre } }. New objects with only month keys
   // that pass MONTH_RE – never copies untrusted keys such as __proto__.
   if (Array.isArray(d.accounts)) {
@@ -2554,6 +2560,7 @@ function packData(d) {
   if (d.oneOffs.length) out.oneOffs = d.oneOffs.map((o) => ({ month: o.month, ...item(o) }));
   if (Object.keys(d.adjustments).length) out.adjustments = d.adjustments;
   if (Object.keys(d.closed || {}).length) out.closed = d.closed;
+  if ((d.carry || []).length) out.carry = d.carry;
   if (d.accounts.length) out.accounts = d.accounts.map((a) => Object.assign({ id: a.id, name: a.name },
     a.currency !== 'SEK' ? { currency: a.currency } : {}, Object.keys(a.balances).length ? { balances: a.balances } : {},
     a.feeds && a.feeds.length ? { feeds: a.feeds } : {}, a.hidden ? { hidden: true } : {}, a.goal ? { goal: a.goal } : {}));
@@ -2578,6 +2585,7 @@ function unpackData(p) {
     oneOffs: list(p.oneOffs).map((o) => ({ ...item(o), month: o.month })),
     adjustments: isObj(p.adjustments) ? p.adjustments : {},
     closed: isObj(p.closed) ? p.closed : {},
+    carry: Array.isArray(p.carry) ? p.carry : [],
     accounts: list(p.accounts).map((a) => ({ id: a.id, name: a.name, currency: a.currency ?? 'SEK', balances: isObj(a.balances) ? a.balances : {}, feeds: Array.isArray(a.feeds) ? a.feeds : [], hidden: a.hidden === true, goal: a.goal })),
   };
 }
@@ -2618,6 +2626,7 @@ function shiftMonths(d, n) {
   for (const o of d.oneOffs) o.month = sh(o.month);
   d.adjustments = keys(d.adjustments);
   d.closed = keys(d.closed);
+  d.carry = (d.carry || []).map(sh);
   for (const a of d.accounts) a.balances = keys(a.balances);
   if (d.settings.startMonth) d.settings.startMonth = sh(d.settings.startMonth);
 }
@@ -2674,7 +2683,15 @@ function rowsForMonth(data, m) {
     rows.push({ id: o.id, kind: 'one', name: o.name, type: o.type, category: o.category, person: o.person, pre: !!o.pre,
       amount: o.amount, base: o.amount, adjusted: false });
   }
+  const c = carryIn(data, m);
+  if (c) rows.push({ id: 'carry', kind: 'carry', name: 'Kvar från förra månaden', type: c > 0 ? 'income' : 'expense', category: c > 0 ? 'income-other' : 'other',
+    person: null, pre: false, amount: Math.abs(c), base: Math.abs(c), adjusted: false });
   return rows;
+}
+// Kvar från förra månaden (2026-11-21): stängt belopp i m−1 om det följer med (data.carry), annars 0. Negativt = underskott.
+function carryIn(data, m) {
+  const p = addMonths(m, -1);
+  return (data.carry || []).includes(p) ? data.closed[p] || 0 : 0;
 }
 
 // savings = the part of expense in the "Sparande" category (still counted as expense: it leaves the account).
@@ -2699,7 +2716,7 @@ function balanceAfter(data, m) {
   const start = data.settings.startMonth;
   if (!start || m < start) return null;
   let bal = data.settings.startBalance;
-  for (let x = start; x <= m; x = addMonths(x, 1)) bal += monthTotals(data, x).left;
+  for (let x = start; x <= m; x = addMonths(x, 1)) bal += monthTotals(data, x).left - (x > start ? carryIn(data, x) : 0);   // det som följer med finns redan i saldot
   return bal;
 }
 
@@ -2957,10 +2974,10 @@ $('nav').addEventListener('click', () => Nav.reset(nav), true);
 // ---------- Month view ----------
 function markers(r) {
   return el('span', { class: 'markers', 'aria-hidden': 'true' },
-    r.kind === 'rec' ? '↻' : '★', r.adjusted ? '✎' : null);
+    r.kind === 'rec' ? '↻' : r.kind === 'carry' ? '⇢' : '★', r.adjusted ? '✎' : null);
 }
 function rowLabel(r) {
-  const bits = [r.kind === 'rec' ? 'återkommande' : 'avvikelse'];
+  const bits = [r.kind === 'rec' ? 'återkommande' : r.kind === 'carry' ? 'från stängningen av förra månaden' : 'avvikelse'];
   if (r.adjusted) bits.push('justerad denna månad');
   return bits.join(', ');
 }
@@ -2968,7 +2985,7 @@ function rowLabel(r) {
 function monthRow(r) {
   const li = el('li', { class: 'row' });
   li.append(el('button', { type: 'button', class: 'row-main', 'aria-label': `${r.name}, ${kr(r.amount)}, ${rowLabel(r)}. Ändra`,
-    on: { click: () => openRowDialog(r) } },
+    on: { click: () => (r.kind === 'carry' ? setMonth(addMonths(month, -1)) : openRowDialog(r)) } },
     el('span', { class: 'row-name' }, el('span', { text: r.name }), el('span', { class: 'row-sub', text: subLine(r) })),
     el('span', { class: 'amount', text: kr(r.amount) }), markers(r)));
   return li;
@@ -3203,6 +3220,8 @@ function openCloseDialog() {
     + (data.settings.payday > 1 ? '' : ' Lön en annan dag än den 1:a? Välj Lönedag under Inställningar.');
   $('cd-amount').value = t.closed ? (t.left < 0 ? '-' : '') + krInput(Math.abs(t.left)) : '';
   $('cd-reopen').hidden = !t.closed;
+  $('cd-carry-label').textContent = `Pengarna ligger kvar och följer med till ${monthLabel(addMonths(month, 1)).toLowerCase()}`;
+  $('cd-carry').checked = t.closed ? data.carry.includes(month) : true;
   // Sparkonton (2026-11-17): fyll i saldona samtidigt – förifyllt med beräknat/senaste saldo, t.ex. efter en extra överföring.
   // 2026-11-18: en rad per konto – namn och var siffran kommer ifrån till vänster, saldot till höger.
   fill($('cd-accounts'), data.accounts.length ? [el('p', { class: 'cd-acc-h' }, el('span', { text: 'Sparkonton' }), el('small', { class: 'muted', text: 'Ändra bara det som skiljer mot banken' })),
@@ -3238,6 +3257,7 @@ $('cd-form').addEventListener('submit', (e) => {
   }
   const closing = month, wasActive = month === activeMonth();
   data.closed[month] = neg ? -ore : ore;
+  data.carry = data.carry.filter((x) => x !== month).concat($('cd-carry').checked ? [month] : []);
   data = loadData(data);
   $('close-dialog').close();
   if (wasActive) { month = activeMonth(); overviewStart = month; }   // nästa månad blir den aktuella

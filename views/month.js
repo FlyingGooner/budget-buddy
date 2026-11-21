@@ -2,10 +2,10 @@
 // ---------- Month view ----------
 function markers(r) {
   return el('span', { class: 'markers', 'aria-hidden': 'true' },
-    r.kind === 'rec' ? '↻' : '★', r.adjusted ? '✎' : null);
+    r.kind === 'rec' ? '↻' : r.kind === 'carry' ? '⇢' : '★', r.adjusted ? '✎' : null);
 }
 function rowLabel(r) {
-  const bits = [r.kind === 'rec' ? 'återkommande' : 'avvikelse'];
+  const bits = [r.kind === 'rec' ? 'återkommande' : r.kind === 'carry' ? 'från stängningen av förra månaden' : 'avvikelse'];
   if (r.adjusted) bits.push('justerad denna månad');
   return bits.join(', ');
 }
@@ -13,7 +13,7 @@ function rowLabel(r) {
 function monthRow(r) {
   const li = el('li', { class: 'row' });
   li.append(el('button', { type: 'button', class: 'row-main', 'aria-label': `${r.name}, ${kr(r.amount)}, ${rowLabel(r)}. Ändra`,
-    on: { click: () => openRowDialog(r) } },
+    on: { click: () => (r.kind === 'carry' ? setMonth(addMonths(month, -1)) : openRowDialog(r)) } },
     el('span', { class: 'row-name' }, el('span', { text: r.name }), el('span', { class: 'row-sub', text: subLine(r) })),
     el('span', { class: 'amount', text: kr(r.amount) }), markers(r)));
   return li;
@@ -248,6 +248,8 @@ function openCloseDialog() {
     + (data.settings.payday > 1 ? '' : ' Lön en annan dag än den 1:a? Välj Lönedag under Inställningar.');
   $('cd-amount').value = t.closed ? (t.left < 0 ? '-' : '') + krInput(Math.abs(t.left)) : '';
   $('cd-reopen').hidden = !t.closed;
+  $('cd-carry-label').textContent = `Pengarna ligger kvar och följer med till ${monthLabel(addMonths(month, 1)).toLowerCase()}`;
+  $('cd-carry').checked = t.closed ? data.carry.includes(month) : true;
   // Sparkonton (2026-11-17): fyll i saldona samtidigt – förifyllt med beräknat/senaste saldo, t.ex. efter en extra överföring.
   // 2026-11-18: en rad per konto – namn och var siffran kommer ifrån till vänster, saldot till höger.
   fill($('cd-accounts'), data.accounts.length ? [el('p', { class: 'cd-acc-h' }, el('span', { text: 'Sparkonton' }), el('small', { class: 'muted', text: 'Ändra bara det som skiljer mot banken' })),
@@ -283,6 +285,7 @@ $('cd-form').addEventListener('submit', (e) => {
   }
   const closing = month, wasActive = month === activeMonth();
   data.closed[month] = neg ? -ore : ore;
+  data.carry = data.carry.filter((x) => x !== month).concat($('cd-carry').checked ? [month] : []);
   data = loadData(data);
   $('close-dialog').close();
   if (wasActive) { month = activeMonth(); overviewStart = month; }   // nästa månad blir den aktuella

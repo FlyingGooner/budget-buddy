@@ -264,3 +264,18 @@ T.test('sparmål: andel, takt och behov', () => {
   T.eq(goalStatus(d, d.accounts[0], '2026-11').reached, true);
   T.eq(goalStatus(d, d.accounts[1], '2026-11'), null);
 });
+
+T.test('kvar följer med: rad i nästa månad, exporteras, saldot räknas inte dubbelt', () => {
+  const d = loadData({ ...rich(), closed: { '2026-10': 300000, '2026-11': 400000 }, carry: ['2026-10', '2026-09', 'x'] });
+  T.eq(d.carry, ['2026-10']);
+  const c = rowsForMonth(d, '2026-11').find((r) => r.kind === 'carry');
+  T.eq([c.type, c.amount, c.name], ['income', 300000, 'Kvar från förra månaden']);
+  T.ok(!rowsForMonth(d, '2026-12').some((r) => r.kind === 'carry'), 'november följer inte med');
+  T.eq(importText(exportText(d, '2026-11-21')).data.carry, ['2026-10']);
+  const without = loadData({ ...d, carry: [] });
+  T.eq(balanceAfter(without, '2026-11') - balanceAfter(d, '2026-11'), 300000);   // oktobers kvar finns redan i novembers stängda saldo
+  const neg = loadData({ ...rich(), closed: { '2026-10': -50000 }, carry: ['2026-10'] });
+  const n = rowsForMonth(neg, '2026-11').find((r) => r.kind === 'carry');
+  T.eq([n.type, n.amount], ['expense', 50000]);
+  T.eq(loadData({ ...d, closed: {} }).carry, []);
+});

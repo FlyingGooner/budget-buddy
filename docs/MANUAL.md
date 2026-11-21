@@ -32,7 +32,7 @@ Samma text finns i appen under **Inställningar → Allmänt → Hjälp och manu
 ## Stäng månaden
 - Efter räkningar är planerat. Mat, nöjen och oväntade utgifter syns inte där.
 - Under beloppet står när det är dags att stänga (t.ex. *Stäng månaden tis 24 nov · om 6 dagar*). Tre dagar innan blir raden färgad, och när dagen har kommit står det **Dags att stänga månaden**.
-- Dagen före lön trycker du **✓ Stäng månaden** under beloppet och skriver in vad som faktiskt fanns kvar på kontot. I samma ruta stämmer du av sparkontona (förifyllda – ändra bara det som skiljer).
+- Dagen före lön trycker du **✓ Stäng månaden** under beloppet och skriver in vad som faktiskt fanns kvar på kontot. Ligger pengarna kvar på kontot låter du **Pengarna ligger kvar och följer med** vara ibockad – då blir beloppet raden **Kvar från förra månaden** (⇢) i nästa månad. Flyttar du dem, t.ex. till sparkontot, bockar du ur. I samma ruta stämmer du av sparkontona (förifyllda – ändra bara det som skiljer).
 - Rubriken blir då **Kvar på kontot** med det faktiska beloppet, och skillnaden visas som **Rörligt** i stapeln. Nästa månad blir den aktuella direkt.
 - Har du börjat stänga månader visas överst i Månad de som inte är stängda (**Inte stängd: Okt**) – tryck för att gå dit. I en stängd månad trycker du **Ändra / öppna igen**: där rättar du beloppet eller tar bort stängningen med **Öppna igen**.
 
