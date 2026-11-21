@@ -21,13 +21,12 @@ The same text is in the app under **Settings → General → Help and manual**. 
 - To end an item, fill in **To month**. Items that have ended or not started show in the months they apply to.
 
 ## Savings
-- Saving from pay is a cost: the money leaves your account. Add with **+ Saving**: name, amount, frequency and preferably **Balance now**. A savings account is then created that counts up by itself every month.
-- The **Total saved** row in Month shows the sum of your savings accounts in your currency. Tap to unfold one row per account: balance in your currency, the monthly saving and the change since last month. Accounts in another currency show their own amount in brackets, e.g. (730 USD).
-- Tap a row to change the amount, choose which **Savings account** the money goes to, or correct the balance. A balance marked ≈ is estimated: last entered plus the savings.
-- Savings and savings accounts are the same thing. **＋ Add → 🐷 Savings** picks or creates a savings account, where you enter **Balance**, **From pay / mo** (a cost – listed under Expenses → Savings and reduces After bills), **Before pay / mo** (e.g. shares through work) and **Deposit** this month (e.g. a gift). Before pay and deposits count as saved but don't affect the budget. Tap an account under Expenses → Savings or Total saved to change it. **Saved this month** shows all saving and how it splits.
-- Accounts you never touch (e.g. the children's) can be hidden from Month: tap the account and untick **Show in Month**. Tap the name under "+ 1 hidden account" to show it again. It still counts in Total saved.
-- Tap an account under **Total saved** (or under Expenses → Savings) to change it: **Value**, **From pay / mo** and **Before pay / mo** at the top; under **More settings** name, currency, savings goal, Show in Month and Delete account (it goes to the trash). **+ New saving** under Total saved creates a new account. Two accounts can't have the same name. When you save, **Undo** is shown for a moment.
-- The total and a chart of all accounts are under **Overview → Savings accounts**.
+- Savings and savings accounts are the same thing. **＋ Add → 🐷 Savings** picks or creates an account with **Value**, **From pay / mo** and **Before pay / mo**.
+- **From pay** is a cost: it is listed under Expenses → Savings and reduces After bills. **Before pay** (e.g. shares through work) never reaches your pay account and does not affect the budget. Both count in **Saved this month**.
+- The value goes up with the saving every month (marked ≈). When you **close the month** the suggestion (last value + saving) is prefilled – enter the real value from the bank, and next month counts up from there. Funds move, so the suggestion is only a help.
+- The **Total saved** row in Month shows the sum in your currency; tap to see each account. Accounts in another currency show their own amount in brackets, e.g. (730 USD).
+- Tap an account (under Total saved, Expenses → Savings or All items) to change it. Under **More settings**: name, currency, savings goal, Show in Month and Delete account (it goes to the trash). A hidden account still counts in Total saved. When you save, **Undo** is shown for a moment.
+- The total and a chart of all accounts are in **Overview**.
 
 ## Close the month
 - After bills is planned. Food, fun and unexpected spending do not show there.

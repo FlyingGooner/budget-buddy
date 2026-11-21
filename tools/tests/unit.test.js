@@ -292,3 +292,32 @@ T.test('kvar ifyllt för hand går före det som följer med', () => {
   const rs = rowsForMonth(d, '2026-11').filter((r) => r.name === 'Kvar från förra månaden');
   T.eq(rs.map((r) => [r.kind, r.amount]), [['one', 120000]]);
 });
+
+// v5 (2026-11-21): sparande och sparkonto är samma sak.
+T.test('v5: sparpost från lönen flyttas till kontot, Efter räkningar oförändrat', () => {
+  const raw = { version: 4, recurring: [
+    { id: 'l1', name: 'Lön', type: 'income', amount: 6000000, category: 'salary', every: 1, start: '2026-01' },
+    { id: 's1', name: 'Avanza', type: 'expense', amount: 200000, category: 'savings', every: 1, start: '2026-01' },
+    { id: 's2', name: 'Barnen', type: 'expense', amount: 100000, category: 'savings', every: 1, start: '2026-01' }],
+    accounts: [{ id: 'a1', name: 'Avanza', balances: { '2026-10': 700000 }, feeds: ['s1'] }] };
+  const before = monthTotals(loadData({ ...raw, version: DATA_VERSION }), '2026-11').left;   // utan flytt
+  const d = loadData(raw);
+  T.eq(d.version, DATA_VERSION);
+  T.eq(d.recurring.map((r) => r.id), ['l1']);
+  T.eq(d.accounts.map((a) => [a.name, a.pay?.amount]), [['Avanza', 200000], ['Barnen', 100000]]);
+  T.eq(monthTotals(d, '2026-11').left, before);
+  T.eq(rowsForMonth(d, '2026-11').filter((r) => r.kind === 'acc').length, 2);
+});
+T.test('v5: värdet räknas upp med från lönen och före lön, och följer med i exporten', () => {
+  const d = loadData({ version: DATA_VERSION, accounts: [{ id: 'a1', name: 'Fond', balances: { '2026-11': 700000 },
+    pay: { amount: 200000, from: '2026-01' }, pre: { amount: 50000, from: '2026-01' } }] });
+  T.eq(estBalance(d, d.accounts[0], '2026-11').amount, 700000);
+  T.eq(estBalance(d, d.accounts[0], '2026-12').amount, 950000);
+  const t = monthTotals(d, '2026-12'); T.eq([t.costs, t.savings, t.pre, t.left], [200000, 250000, 50000, -200000]);
+  const r = loadData(unpackData(JSON.parse(JSON.stringify(packData(d))))); T.eq(r.accounts[0].pay, d.accounts[0].pay); T.eq(r.accounts[0].pre, d.accounts[0].pre);
+});
+T.test('v5: export utan version uppgraderas vid import', () => {
+  const p = { recurring: [{ id: 's1', name: 'Spar', type: 'e', amount: 100000, category: 'savings', start: '2026-01' }] };
+  const d = loadData(unpackData(p));
+  T.eq(d.recurring.length, 0); T.eq(d.accounts[0].pay.amount, 100000);
+});

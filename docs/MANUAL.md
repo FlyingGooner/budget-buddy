@@ -21,13 +21,12 @@ Samma text finns i appen under **Inställningar → Allmänt → Hjälp och manu
 - Vill du avsluta en post, fyll i **Till månad**. Poster som har slutat eller inte börjat syns i de månader de gäller.
 
 ## Sparande
-- Sparande från lönen är en kostnad: pengarna lämnar kontot. Lägg till med **+ Sparande**: namn, belopp, hur ofta och gärna **Saldo nu**. Då skapas ett sparkonto som räknas upp av sig självt varje månad.
-- Raden **Totalt sparat** i Månad visar summan på sparkontona i din valuta. Tryck för att fälla ut en rad per konto: saldo i din valuta, månadssparandet och ändringen sedan förra månaden. Konton i annan valuta visar sitt eget belopp inom parentes, t.ex. (730 USD).
-- Tryck på en rad för att ändra belopp, välja vilket **Sparkonto** pengarna går till eller rätta saldot. Saldot märkt ≈ är beräknat: senast ifyllt plus sparandet.
-- Sparande och sparkonto är samma sak. **＋ Lägg till → 🐷 Sparande** väljer eller skapar ett sparkonto, där du fyller i **Saldo**, **Från lönen / mån** (en kostnad – står under Kostnader → Sparande och minskar Efter räkningar), **Före lön / mån** (t.ex. aktier via jobbet) och **Insättning** den här månaden (t.ex. en gåva). Före lön och insättningar räknas som sparat men påverkar inte budgeten. Tryck på ett konto under Kostnader → Sparande eller Totalt sparat för att ändra det. **Sparat i månaden** visar allt sparande och hur det fördelar sig.
-- Konton som inte rörs (t.ex. barnens) kan döljas från Månad: tryck på kontot och bocka ur **Visa i Månad**. Tryck på namnet under "+ 1 dolt konto" för att visa det igen. Det räknas fortfarande i Totalt sparat.
-- Tryck på ett konto under **Totalt sparat** (eller under Kostnader → Sparande) för att ändra det: **Värde**, **Från lönen / mån** och **Före lön / mån** överst; under **Fler inställningar** namn, valuta, sparmål, Visa i Månad och Ta bort konto (det hamnar i papperskorgen). **+ Nytt sparande** under Totalt sparat skapar ett nytt konto. Två konton kan inte heta likadant. När du sparar visas **Ångra** en stund.
-- Summan och en graf över alla konton finns under **Översikt → Sparkonton**.
+- Sparande och sparkonto är samma sak. **＋ Lägg till → 🐷 Sparande** väljer eller skapar ett konto med **Värde**, **Från lönen / mån** och **Före lön / mån**.
+- **Från lönen** är en kostnad: den står under Kostnader → Sparande och minskar Efter räkningar. **Före lön** (t.ex. aktier via jobbet) kommer aldrig in på lönekontot och påverkar inte budgeten. Båda räknas i **Sparat i månaden**.
+- Värdet räknas upp med sparandet varje månad (märkt ≈). När du **stänger månaden** står förslaget (förra värdet + sparandet) förifyllt – skriv in det verkliga värdet från banken, så räknas nästa månad upp därifrån. Fonder rör sig, så förslaget är bara en hjälp.
+- Raden **Totalt sparat** i Månad visar summan i din valuta; tryck för att se varje konto. Konton i annan valuta visar sitt eget belopp inom parentes, t.ex. (730 USD).
+- Tryck på ett konto (under Totalt sparat, Kostnader → Sparande eller Alla poster) för att ändra det. Under **Fler inställningar**: namn, valuta, sparmål, Visa i Månad och Ta bort konto (det hamnar i papperskorgen). Ett dolt konto räknas fortfarande i Totalt sparat. När du sparar visas **Ångra** en stund.
+- Summan och en graf över alla konton finns i **Översikt**.
 
 ## Stäng månaden
 - Efter räkningar är planerat. Mat, nöjen och oväntade utgifter syns inte där.
