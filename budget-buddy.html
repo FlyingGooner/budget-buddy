@@ -641,6 +641,9 @@ body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; 
 
 .carry-add { margin: 4px 0 0; }
 
+/* Inkomster + kostnader i ett kort (2026-11-21) */
+#income-card > .fold + .fold { border-top: 1px solid var(--line, rgba(0,0,0,.08)); margin-top: 8px; padding-top: 8px; }
+
 </style>
 </head>
 <body>
@@ -1806,7 +1809,7 @@ I18N.add({
 </script>
 <script>
 // ---- version.js ----
-﻿self.APP_VERSION = '0.12.134';
+﻿self.APP_VERSION = '0.12.135';
 
 </script>
   <script>
@@ -3091,19 +3094,20 @@ function renderMonth() {
   const emptyMsg = (text, label, type) => el('p', { class: 'empty-line muted' }, text + ' ',
     el('button', { type: 'button', class: 'link', text: label, on: { click: () => focusAdd(type) } }));
 
+  // 2026-11-21: inkomster och kostnader i samma kort, två rader som fälls ut var för sig.
   fill($('income-card'), fold('inc',
     el('h2', { class: 'split' }, el('span', {}, 'Inkomster ', el('small', { class: 'netto', text: '(netto)' }), payNote() ? el('small', { class: 'netto', text: ' · ' }) : null, payNote() ? el('small', { class: 'netto', text: payNote() }) : null), el('span', { text: kr(t.income) })),
     income.length ? el('ul', { class: 'list' }, income.map(monthRow))
       : emptyMsg('Inga inkomster den här månaden.', 'Lägg till', 'income'),
     // 2026-11-21: kvar från förra månaden kan fyllas i för hand (t.ex. första månaden, före någon stängning).
     income.some((r) => r.kind === 'carry' || r.name === CARRY_NAME) ? null
-      : el('p', { class: 'carry-add' }, el('button', { type: 'button', class: 'link', text: '+ Kvar från förra månaden', on: { click: openCarryDialog } }))));
-  fill($('expense-card'), fold('exp', [
+      : el('p', { class: 'carry-add' }, el('button', { type: 'button', class: 'link', text: '+ Kvar från förra månaden', on: { click: openCarryDialog } }))),
+    fold('exp',
     el('h2', { class: 'split' }, el('span', { text: 'Kostnader' }),
       el('span', { text: kr(t.expense - t.savings) })),
-    expense.length ? topCats(expense) : null],
     expense.length ? expenseGroups(expense)
       : emptyMsg('Inga kostnader den här månaden.', 'Lägg till', 'expense')));
+  $('expense-card').hidden = true;
   renderSavingsCard(saving, t);
 }
 

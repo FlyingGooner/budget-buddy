@@ -115,19 +115,20 @@ function renderMonth() {
   const emptyMsg = (text, label, type) => el('p', { class: 'empty-line muted' }, text + ' ',
     el('button', { type: 'button', class: 'link', text: label, on: { click: () => focusAdd(type) } }));
 
+  // 2026-11-21: inkomster och kostnader i samma kort, två rader som fälls ut var för sig.
   fill($('income-card'), fold('inc',
     el('h2', { class: 'split' }, el('span', {}, 'Inkomster ', el('small', { class: 'netto', text: '(netto)' }), payNote() ? el('small', { class: 'netto', text: ' · ' }) : null, payNote() ? el('small', { class: 'netto', text: payNote() }) : null), el('span', { text: kr(t.income) })),
     income.length ? el('ul', { class: 'list' }, income.map(monthRow))
       : emptyMsg('Inga inkomster den här månaden.', 'Lägg till', 'income'),
     // 2026-11-21: kvar från förra månaden kan fyllas i för hand (t.ex. första månaden, före någon stängning).
     income.some((r) => r.kind === 'carry' || r.name === CARRY_NAME) ? null
-      : el('p', { class: 'carry-add' }, el('button', { type: 'button', class: 'link', text: '+ Kvar från förra månaden', on: { click: openCarryDialog } }))));
-  fill($('expense-card'), fold('exp', [
+      : el('p', { class: 'carry-add' }, el('button', { type: 'button', class: 'link', text: '+ Kvar från förra månaden', on: { click: openCarryDialog } }))),
+    fold('exp',
     el('h2', { class: 'split' }, el('span', { text: 'Kostnader' }),
       el('span', { text: kr(t.expense - t.savings) })),
-    expense.length ? topCats(expense) : null],
     expense.length ? expenseGroups(expense)
       : emptyMsg('Inga kostnader den här månaden.', 'Lägg till', 'expense')));
+  $('expense-card').hidden = true;
   renderSavingsCard(saving, t);
 }
 

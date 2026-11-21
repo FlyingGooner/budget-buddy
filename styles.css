@@ -623,3 +623,6 @@ body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; 
 .close-line .link.cl-btn { padding: 10px 14px; min-height: 44px; border-radius: var(--r-md); background: var(--surface-container-high); color: var(--primary); }
 
 .carry-add { margin: 4px 0 0; }
+
+/* Inkomster + kostnader i ett kort (2026-11-21) */
+#income-card > .fold + .fold { border-top: 1px solid var(--line, rgba(0,0,0,.08)); margin-top: 8px; padding-top: 8px; }
