@@ -72,6 +72,7 @@ const shortOf = (m) => monthShort.format(toDate(m)).replace('.', '');
 const named = (m) => (paySplit() ? addMonths(m, 1) : m);
 const monthLabel = (m) => cap(monthFmt.format(toDate(named(m))));
 const monthShortLabel = (m) => cap(shortOf(named(m)));
+const monthShortYear = (m) => `${monthShortLabel(m)} ${named(m).slice(2, 4)}`;   // 2026-11-21: året följer namnet (nyckel 2026-12 = Jan 27)
 const monthSpan = (m) => { const p = data.settings.payday; return `${p} ${shortOf(m)} – ${p - 1} ${shortOf(addMonths(m, 1))}`; };
 // Rubrik med datumspann under (bara med lönedag).
 const monthTitle = (m) => (paySplit() ? [monthLabel(m), el('small', { class: 'm-span', text: monthSpan(m) })] : [monthLabel(m)]);

@@ -599,3 +599,16 @@ body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; 
 /* 2026-11-21: rader under Lägg till / Alla poster */
 .month-hints { text-align: center; margin-top: 4px; }
 .month-hints p { margin: 4px 0; }
+/* 2026-11-21: sparmål under kontot */
+.sv-goal { display: flex; flex-direction: column; gap: 4px; padding: 0 0 8px; }
+.sv-goal .bar { height: 6px; margin: 0; }
+.sv-goal small { font-size: .75rem; color: var(--on-surface-variant); }
+.sv-goal.done small { color: var(--primary); }
+/* 2026-11-21: kommande 12 månader, plan och prognos */
+.ahead { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+.ahead th, .ahead td { padding: 6px 0; text-align: right; font-weight: 400; }
+.ahead th:first-child, .ahead td:first-child { text-align: left; }
+.ahead thead th { font-size: .75rem; color: var(--on-surface-variant); }
+.ahead tbody tr { cursor: pointer; border-top: 1px solid var(--outline-variant, #e0e0e0); }
+.ahead .neg { color: var(--error); } .ahead .fc { color: var(--on-surface-variant); }
+.ahead tfoot td { font-weight: 600; border-top: 1px solid var(--outline-variant, #e0e0e0); }

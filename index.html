@@ -211,6 +211,8 @@
           <p>☰ Alla poster bredvid Lägg till visar alla återkommande poster, även avslutade och kommande. Posterna står med störst belopp först, både där och i Månad. Tryck på en för att ändra den.</p>
           <p>Under knapparna står hur många dagar det är kvar till nästa lön (innevarande månad) och vilken kategori som ändrats mest mot förra månaden. I kortet Kvar står också vad som blev kvar förra månaden – det faktiska beloppet om den månaden är stängd.</p>
           <p>Prognos står på samma rad som förra månadens kvar, när minst en tidigare månad är stängd: planerat kvar minus de rörliga utgifterna (snittet av de tre senaste stängda månaderna). Är samma månad förra året stängd räknas den med i procent – är december 65 % dyrare än vanligt, räknas det in. Tryck på prognosen för förklaringen.</p>
+          <p>Kommande 12 månader (Översikt): planerat kvar för varje månad framåt och, när någon månad är stängd, prognosen bredvid. Med startsaldo visas också saldot om ett år. Tryck på en månad för att öppna den.</p>
+          <p>Sparmål (valfritt): öppna ett sparkonto och tryck + Sparmål. Skriv ett belopp och, om du vill, en månad det ska vara klart. Under kontot visas hur långt du har kommit, när du når målet i nuvarande takt och – med datum – vad som behövs per månad för att hinna. Töm fältet för att ta bort målet.</p>
           <p>Tryck på en post för att ändra den. Beloppet överst gäller bara månaden du tittar på. Under Ändra posten (alla månader) ändrar du namn, ordinarie belopp, hur ofta, kategori och period. Ta bort posten lägger den i papperskorgen.</p>
           <p>Vill du avsluta en post, fyll i Till månad. Poster som har slutat eller inte börjat syns i de månader de gäller.</p>
         </details>
@@ -292,6 +294,8 @@
           <p>☰ All items next to Add shows all recurring items, including ended and upcoming ones. Items are listed largest amount first, there and in Month. Tap one to change it.</p>
           <p>Below the buttons you see how many days are left until the next payday (current month) and which category changed the most since last month. The Left card also shows what was left last month – the actual amount if that month is closed.</p>
           <p>Forecast is on the same line as last month's left, once at least one earlier month is closed: planned left minus variable spending (average of the three latest closed months). If the same month last year is closed it is included as a percentage – if December was 65 % more expensive than usual, that is included. Tap the forecast for the explanation.</p>
+          <p>Next 12 months (Overview): planned left for each month ahead and, once a month is closed, the forecast next to it. With a starting balance you also see the balance in a year. Tap a month to open it.</p>
+          <p>Savings goal (optional): open a savings account and tap + Savings goal. Enter an amount and, if you like, a month it should be done by. Below the account you see how far you have come, when you reach the goal at the current pace and – with a date – what is needed per month to make it. Empty the field to remove the goal.</p>
           <p>Tap an item to change it. The amount at the top applies only to the month you are viewing. Under Edit the item (all months) you change name, regular amount, how often, category and period. Delete the item moves it to the trash.</p>
           <p>To end an item, fill in To month. Items that have ended or not started show in the months they apply to.</p>
         </details>
@@ -493,6 +497,11 @@
       <label class="field"><span id="ad-amount-label">Saldo (kr)</span><input id="ad-amount" inputmode="decimal" autocomplete="off"></label>
     </div>
     <div class="ad-feeds" id="ad-feeds"></div>
+    <button type="button" class="link" id="ad-goal-add">+ Sparmål</button>
+    <div class="row2" id="ad-goal" hidden>
+      <label class="field"><span id="ad-goal-label">Sparmål (kr)</span><input id="ad-goal-amount" inputmode="decimal" autocomplete="off"></label>
+      <label class="field"><span>Klart till (valfritt)</span><select id="ad-goal-month"></select></label>
+    </div>
     <label class="check"><input type="checkbox" id="ad-show"><span>Visa i Månad</span></label>
     <p class="error" id="ad-error" role="alert"></p>
     <div class="actions wrap">
@@ -505,9 +514,9 @@
 </dialog>
 
 <!-- Dialog: bekräfta -->
-<dialog id="confirm-dialog" aria-labelledby="cd-title">
+<dialog id="confirm-dialog" aria-labelledby="rs-title">
   <form method="dialog">
-    <h2 id="cd-title">Radera all data?</h2>
+    <h2 id="rs-title">Radera all data?</h2>
     <p class="muted">Alla poster, avvikelser och inställningar tas bort från den här enheten. Det går inte att ångra – spara en backup-fil först om du vill kunna få tillbaka den.</p>
     <div class="actions"><span class="spacer"></span>
       <button type="submit" class="btn text" value="cancel">Avbryt</button>

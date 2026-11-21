@@ -15,6 +15,8 @@ Samma text finns i appen under **Inställningar → Allmänt → Hjälp och manu
 - **☰ Alla poster** bredvid Lägg till visar alla återkommande poster, även avslutade och kommande. Posterna står med störst belopp först, både där och i Månad. Tryck på en för att ändra den.
 - Under knapparna står hur många dagar det är kvar till nästa lön (innevarande månad) och vilken kategori som ändrats mest mot förra månaden. I kortet Kvar står också vad som blev kvar förra månaden – det faktiska beloppet om den månaden är stängd.
 - **Prognos** står på samma rad som förra månadens kvar, när minst en tidigare månad är stängd: planerat kvar minus de rörliga utgifterna (snittet av de tre senaste stängda månaderna). Är samma månad förra året stängd räknas den med i procent – är december 65 % dyrare än vanligt, räknas det in. Tryck på prognosen för förklaringen.
+- **Kommande 12 månader** (Översikt): planerat kvar för varje månad framåt och, när någon månad är stängd, prognosen bredvid. Med startsaldo visas också saldot om ett år. Tryck på en månad för att öppna den.
+- **Sparmål** (valfritt): öppna ett sparkonto och tryck **+ Sparmål**. Skriv ett belopp och, om du vill, en månad det ska vara klart. Under kontot visas hur långt du har kommit, när du når målet i nuvarande takt och – med datum – vad som behövs per månad för att hinna. Töm fältet för att ta bort målet.
 - Tryck på en post för att ändra den. Beloppet överst gäller bara månaden du tittar på. Under **Ändra posten (alla månader)** ändrar du namn, ordinarie belopp, hur ofta, kategori och period. **Ta bort posten** lägger den i papperskorgen.
 - Vill du avsluta en post, fyll i **Till månad**. Poster som har slutat eller inte börjat syns i de månader de gäller.
 

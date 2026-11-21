@@ -195,7 +195,10 @@ function loadData(d) {
       const currency = CURRENCIES.includes(a.currency) ? a.currency : 'SEK'; // v0.8.0; balances in minor units of it
       // feeds (2026-11-17): återkommande sparposter som fyller på kontot varje månad (beräknat saldo, se estBalance).
       const feeds = Array.isArray(a.feeds) ? [...new Set(a.feeds.filter((x) => recIds.has(x)))].slice(0, 20) : [];
-      out.accounts.push({ id: a.id, name, currency, balances, feeds, hidden: a.hidden === true });   // hidden: visas inte i Månad
+      // goal (2026-11-21, valfritt): { amount, month? } – sparmål i kontots valuta, ev. klart till en månad. Finns bara när det är satt.
+      const goal = isObj(a.goal) && isAmount(a.goal.amount) && a.goal.amount > 0
+        ? { amount: a.goal.amount, ...(isMonth(a.goal.month) ? { month: a.goal.month } : {}) } : null;
+      out.accounts.push({ id: a.id, name, currency, balances, feeds, hidden: a.hidden === true, ...(goal ? { goal } : {}) });   // hidden: visas inte i Månad
     }
   }
   // Papperskorg (v0.13): [{ d: removed date, rec | one | acc: the item, adj?: { month: amount } for rec }]. Each entry is
@@ -299,7 +302,7 @@ function packData(d) {
   if (Object.keys(d.closed || {}).length) out.closed = d.closed;
   if (d.accounts.length) out.accounts = d.accounts.map((a) => Object.assign({ id: a.id, name: a.name },
     a.currency !== 'SEK' ? { currency: a.currency } : {}, Object.keys(a.balances).length ? { balances: a.balances } : {},
-    a.feeds && a.feeds.length ? { feeds: a.feeds } : {}, a.hidden ? { hidden: true } : {}));
+    a.feeds && a.feeds.length ? { feeds: a.feeds } : {}, a.hidden ? { hidden: true } : {}, a.goal ? { goal: a.goal } : {}));
   return out;
 }
 
@@ -321,7 +324,7 @@ function unpackData(p) {
     oneOffs: list(p.oneOffs).map((o) => ({ ...item(o), month: o.month })),
     adjustments: isObj(p.adjustments) ? p.adjustments : {},
     closed: isObj(p.closed) ? p.closed : {},
-    accounts: list(p.accounts).map((a) => ({ id: a.id, name: a.name, currency: a.currency ?? 'SEK', balances: isObj(a.balances) ? a.balances : {}, feeds: Array.isArray(a.feeds) ? a.feeds : [], hidden: a.hidden === true })),
+    accounts: list(p.accounts).map((a) => ({ id: a.id, name: a.name, currency: a.currency ?? 'SEK', balances: isObj(a.balances) ? a.balances : {}, feeds: Array.isArray(a.feeds) ? a.feeds : [], hidden: a.hidden === true, goal: a.goal })),
   };
 }
 
@@ -487,6 +490,22 @@ function estBalance(d, acc, m) {
     for (const r of rowsForMonth(d, x)) if (feeds.includes(r.id)) amount += convert(d, r.amount, homeCur, acc.currency);
   }
   return { month: m, amount, estimated: amount !== cur.amount, from: cur.month };
+}
+// Sparmål (2026-11-21): hur långt kontot har kommit i månad m. eta = månaden målet nås i nuvarande takt (kopplade
+// sparposter i m), need = belopp per månad som behövs för att hinna till goal.month (bara med datum, månader kvar > 0).
+function goalStatus(d, acc, m) {
+  if (!acc.goal) return null;
+  const goal = acc.goal.amount, cur = estBalance(d, acc, m)?.amount ?? 0, left = goal - cur;
+  const pct = Math.max(0, Math.min(100, Math.floor((cur / goal) * 100)));
+  if (left <= 0) return { goal, cur, pct: 100, reached: true };
+  const homeCur = d.settings.home || 'SEK', feeds = acc.feeds || [];
+  const rate = rowsForMonth(d, m).filter((r) => feeds.includes(r.id)).reduce((x, r) => x + convert(d, r.amount, homeCur, acc.currency), 0);
+  const eta = rate > 0 ? addMonths(m, Math.ceil(left / rate)) : null;
+  const target = acc.goal.month || null;
+  let n = 0;
+  if (target) for (let x = m; x < target && n < 600; x = addMonths(x, 1)) n++;
+  const need = target && n > 0 ? Math.ceil(left / n / 100) * 100 : null;
+  return { goal, cur, pct, reached: false, eta, target, need, rate };
 }
 function prevBalance(acc, m) {
   const cur = balanceAt(acc, m);

@@ -616,6 +616,19 @@ body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; 
 /* 2026-11-21: rader under Lägg till / Alla poster */
 .month-hints { text-align: center; margin-top: 4px; }
 .month-hints p { margin: 4px 0; }
+/* 2026-11-21: sparmål under kontot */
+.sv-goal { display: flex; flex-direction: column; gap: 4px; padding: 0 0 8px; }
+.sv-goal .bar { height: 6px; margin: 0; }
+.sv-goal small { font-size: .75rem; color: var(--on-surface-variant); }
+.sv-goal.done small { color: var(--primary); }
+/* 2026-11-21: kommande 12 månader, plan och prognos */
+.ahead { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+.ahead th, .ahead td { padding: 6px 0; text-align: right; font-weight: 400; }
+.ahead th:first-child, .ahead td:first-child { text-align: left; }
+.ahead thead th { font-size: .75rem; color: var(--on-surface-variant); }
+.ahead tbody tr { cursor: pointer; border-top: 1px solid var(--outline-variant, #e0e0e0); }
+.ahead .neg { color: var(--error); } .ahead .fc { color: var(--on-surface-variant); }
+.ahead tfoot td { font-weight: 600; border-top: 1px solid var(--outline-variant, #e0e0e0); }
 
 </style>
 </head>
@@ -813,6 +826,8 @@ body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; 
           <p>☰ Alla poster bredvid Lägg till visar alla återkommande poster, även avslutade och kommande. Posterna står med störst belopp först, både där och i Månad. Tryck på en för att ändra den.</p>
           <p>Under knapparna står hur många dagar det är kvar till nästa lön (innevarande månad) och vilken kategori som ändrats mest mot förra månaden. I kortet Kvar står också vad som blev kvar förra månaden – det faktiska beloppet om den månaden är stängd.</p>
           <p>Prognos står på samma rad som förra månadens kvar, när minst en tidigare månad är stängd: planerat kvar minus de rörliga utgifterna (snittet av de tre senaste stängda månaderna). Är samma månad förra året stängd räknas den med i procent – är december 65 % dyrare än vanligt, räknas det in. Tryck på prognosen för förklaringen.</p>
+          <p>Kommande 12 månader (Översikt): planerat kvar för varje månad framåt och, när någon månad är stängd, prognosen bredvid. Med startsaldo visas också saldot om ett år. Tryck på en månad för att öppna den.</p>
+          <p>Sparmål (valfritt): öppna ett sparkonto och tryck + Sparmål. Skriv ett belopp och, om du vill, en månad det ska vara klart. Under kontot visas hur långt du har kommit, när du når målet i nuvarande takt och – med datum – vad som behövs per månad för att hinna. Töm fältet för att ta bort målet.</p>
           <p>Tryck på en post för att ändra den. Beloppet överst gäller bara månaden du tittar på. Under Ändra posten (alla månader) ändrar du namn, ordinarie belopp, hur ofta, kategori och period. Ta bort posten lägger den i papperskorgen.</p>
           <p>Vill du avsluta en post, fyll i Till månad. Poster som har slutat eller inte börjat syns i de månader de gäller.</p>
         </details>
@@ -894,6 +909,8 @@ body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; 
           <p>☰ All items next to Add shows all recurring items, including ended and upcoming ones. Items are listed largest amount first, there and in Month. Tap one to change it.</p>
           <p>Below the buttons you see how many days are left until the next payday (current month) and which category changed the most since last month. The Left card also shows what was left last month – the actual amount if that month is closed.</p>
           <p>Forecast is on the same line as last month's left, once at least one earlier month is closed: planned left minus variable spending (average of the three latest closed months). If the same month last year is closed it is included as a percentage – if December was 65 % more expensive than usual, that is included. Tap the forecast for the explanation.</p>
+          <p>Next 12 months (Overview): planned left for each month ahead and, once a month is closed, the forecast next to it. With a starting balance you also see the balance in a year. Tap a month to open it.</p>
+          <p>Savings goal (optional): open a savings account and tap + Savings goal. Enter an amount and, if you like, a month it should be done by. Below the account you see how far you have come, when you reach the goal at the current pace and – with a date – what is needed per month to make it. Empty the field to remove the goal.</p>
           <p>Tap an item to change it. The amount at the top applies only to the month you are viewing. Under Edit the item (all months) you change name, regular amount, how often, category and period. Delete the item moves it to the trash.</p>
           <p>To end an item, fill in To month. Items that have ended or not started show in the months they apply to.</p>
         </details>
@@ -1095,6 +1112,11 @@ body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; 
       <label class="field"><span id="ad-amount-label">Saldo (kr)</span><input id="ad-amount" inputmode="decimal" autocomplete="off"></label>
     </div>
     <div class="ad-feeds" id="ad-feeds"></div>
+    <button type="button" class="link" id="ad-goal-add">+ Sparmål</button>
+    <div class="row2" id="ad-goal" hidden>
+      <label class="field"><span id="ad-goal-label">Sparmål (kr)</span><input id="ad-goal-amount" inputmode="decimal" autocomplete="off"></label>
+      <label class="field"><span>Klart till (valfritt)</span><select id="ad-goal-month"></select></label>
+    </div>
     <label class="check"><input type="checkbox" id="ad-show"><span>Visa i Månad</span></label>
     <p class="error" id="ad-error" role="alert"></p>
     <div class="actions wrap">
@@ -1107,9 +1129,9 @@ body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; 
 </dialog>
 
 <!-- Dialog: bekräfta -->
-<dialog id="confirm-dialog" aria-labelledby="cd-title">
+<dialog id="confirm-dialog" aria-labelledby="rs-title">
   <form method="dialog">
-    <h2 id="cd-title">Radera all data?</h2>
+    <h2 id="rs-title">Radera all data?</h2>
     <p class="muted">Alla poster, avvikelser och inställningar tas bort från den här enheten. Det går inte att ångra – spara en backup-fil först om du vill kunna få tillbaka den.</p>
     <div class="actions"><span class="spacer"></span>
       <button type="submit" class="btn text" value="cancel">Avbryt</button>
@@ -1564,7 +1586,9 @@ I18N.add({
   'Totalt sparat': 'Total saved', 'Sparkonton ›': 'Savings accounts ›',
   'Ifyllt': 'Entered',
   'Inte stängd:': 'Not closed:', 'Inte stängda:': 'Not closed:',
-  'Visa i Månad': 'Show in Month',
+  'Visa i Månad': 'Show in Month', '+ Sparmål': '+ Savings goal', 'Klart till (valfritt)': 'Done by (optional)', 'Skriv ett sparmål, t.ex. 15 000 – eller lämna fältet tomt.': 'Enter a savings goal, e.g. 15 000 – or leave it empty.',
+  'Planerat': 'Planned', 'Prognos': 'Forecast', 'Saldo om ett år': 'Balance in a year',
+  'Prognos = planerat kvar minus rörliga utgifter (snittet av de senaste stängda månaderna, med säsong).': 'Forecast = planned left minus variable spending (average of the latest closed months, with season).',
   'Dras före lönen (minskar inte Kvar)': 'Taken before payday (does not reduce Left)',
   ' · före lönen': ' · before payday',
   '＋ Lägg till': '＋ Add', 'Lön efter skatt, bidrag …': 'Salary after tax, benefits …', 'Hyra, el, lån – varje månad': 'Rent, power, loans – every month', 'Till ett sparkonto': 'To a savings account', 'Bara den här månaden': 'Only this month', 'Avvikelse, t.ex. en resa': 'One-off, e.g. a trip',
@@ -1722,6 +1746,10 @@ I18N.add({
   [/^(.+) börjar efter den månaden – välj en senare månad eller avmarkera den\.$/, '$1 starts after that month – choose a later month or deselect it.'],
   [/^(\d+) procent av inkomsterna går till kostnader$/, '$1 percent of the income goes to expenses'],
   [/^Saldo efter månaden: (.+)$/, 'Balance after the month: $1'],
+  [/^Sparmål \((.+)\)$/, 'Savings goal ($1)'],
+  [/^✓ Målet (.+) är nått$/, '✓ Goal $1 reached'],
+  [/^(\d+) % av (.+?)((?: · .+)?)$/, (g, tr) => `${g[1]} % of ${g[2]}` + g[3].replace(/klart ≈ (\S+) (\d+)/, (x, mo, y) => `done ≈ ${tr(mo)} ${y}`)
+    .replace(/(\S+ \S+)\/mån för att hinna till (\S+) (\d+)/, (x, v, mo, y) => `${v}/mo to make it by ${tr(mo)} ${y}`)],
   [/^Prognos: ≈ (.+)$/, 'Forecast: ≈ $1'],
   [/^Planerat kvar minus rörliga utgifter ≈ (.+?) \(snitt för de senaste stängda månaderna\)\.(?: (\S+) brukar kosta (\d+) % (mer|mindre)\.)?$/,
     (g, tr) => `Planned left minus variable spending ≈ ${g[1]} (average of the latest closed months).` + (g[2] ? ` ${tr(g[2].toLowerCase())} usually costs ${g[3]} % ${g[4] === 'mer' ? 'more' : 'less'}.` : '')],
@@ -1758,7 +1786,7 @@ I18N.add({
 </script>
 <script>
 // ---- version.js ----
-﻿self.APP_VERSION = '0.12.120';
+﻿self.APP_VERSION = '0.12.121';
 
 </script>
   <script>
@@ -2408,7 +2436,10 @@ function loadData(d) {
       const currency = CURRENCIES.includes(a.currency) ? a.currency : 'SEK'; // v0.8.0; balances in minor units of it
       // feeds (2026-11-17): återkommande sparposter som fyller på kontot varje månad (beräknat saldo, se estBalance).
       const feeds = Array.isArray(a.feeds) ? [...new Set(a.feeds.filter((x) => recIds.has(x)))].slice(0, 20) : [];
-      out.accounts.push({ id: a.id, name, currency, balances, feeds, hidden: a.hidden === true });   // hidden: visas inte i Månad
+      // goal (2026-11-21, valfritt): { amount, month? } – sparmål i kontots valuta, ev. klart till en månad. Finns bara när det är satt.
+      const goal = isObj(a.goal) && isAmount(a.goal.amount) && a.goal.amount > 0
+        ? { amount: a.goal.amount, ...(isMonth(a.goal.month) ? { month: a.goal.month } : {}) } : null;
+      out.accounts.push({ id: a.id, name, currency, balances, feeds, hidden: a.hidden === true, ...(goal ? { goal } : {}) });   // hidden: visas inte i Månad
     }
   }
   // Papperskorg (v0.13): [{ d: removed date, rec | one | acc: the item, adj?: { month: amount } for rec }]. Each entry is
@@ -2512,7 +2543,7 @@ function packData(d) {
   if (Object.keys(d.closed || {}).length) out.closed = d.closed;
   if (d.accounts.length) out.accounts = d.accounts.map((a) => Object.assign({ id: a.id, name: a.name },
     a.currency !== 'SEK' ? { currency: a.currency } : {}, Object.keys(a.balances).length ? { balances: a.balances } : {},
-    a.feeds && a.feeds.length ? { feeds: a.feeds } : {}, a.hidden ? { hidden: true } : {}));
+    a.feeds && a.feeds.length ? { feeds: a.feeds } : {}, a.hidden ? { hidden: true } : {}, a.goal ? { goal: a.goal } : {}));
   return out;
 }
 
@@ -2534,7 +2565,7 @@ function unpackData(p) {
     oneOffs: list(p.oneOffs).map((o) => ({ ...item(o), month: o.month })),
     adjustments: isObj(p.adjustments) ? p.adjustments : {},
     closed: isObj(p.closed) ? p.closed : {},
-    accounts: list(p.accounts).map((a) => ({ id: a.id, name: a.name, currency: a.currency ?? 'SEK', balances: isObj(a.balances) ? a.balances : {}, feeds: Array.isArray(a.feeds) ? a.feeds : [], hidden: a.hidden === true })),
+    accounts: list(p.accounts).map((a) => ({ id: a.id, name: a.name, currency: a.currency ?? 'SEK', balances: isObj(a.balances) ? a.balances : {}, feeds: Array.isArray(a.feeds) ? a.feeds : [], hidden: a.hidden === true, goal: a.goal })),
   };
 }
 
@@ -2701,6 +2732,22 @@ function estBalance(d, acc, m) {
   }
   return { month: m, amount, estimated: amount !== cur.amount, from: cur.month };
 }
+// Sparmål (2026-11-21): hur långt kontot har kommit i månad m. eta = månaden målet nås i nuvarande takt (kopplade
+// sparposter i m), need = belopp per månad som behövs för att hinna till goal.month (bara med datum, månader kvar > 0).
+function goalStatus(d, acc, m) {
+  if (!acc.goal) return null;
+  const goal = acc.goal.amount, cur = estBalance(d, acc, m)?.amount ?? 0, left = goal - cur;
+  const pct = Math.max(0, Math.min(100, Math.floor((cur / goal) * 100)));
+  if (left <= 0) return { goal, cur, pct: 100, reached: true };
+  const homeCur = d.settings.home || 'SEK', feeds = acc.feeds || [];
+  const rate = rowsForMonth(d, m).filter((r) => feeds.includes(r.id)).reduce((x, r) => x + convert(d, r.amount, homeCur, acc.currency), 0);
+  const eta = rate > 0 ? addMonths(m, Math.ceil(left / rate)) : null;
+  const target = acc.goal.month || null;
+  let n = 0;
+  if (target) for (let x = m; x < target && n < 600; x = addMonths(x, 1)) n++;
+  const need = target && n > 0 ? Math.ceil(left / n / 100) * 100 : null;
+  return { goal, cur, pct, reached: false, eta, target, need, rate };
+}
 function prevBalance(acc, m) {
   const cur = balanceAt(acc, m);
   return cur ? balanceAt(acc, addMonths(cur.month, -1)) : null;
@@ -2787,6 +2834,7 @@ const shortOf = (m) => monthShort.format(toDate(m)).replace('.', '');
 const named = (m) => (paySplit() ? addMonths(m, 1) : m);
 const monthLabel = (m) => cap(monthFmt.format(toDate(named(m))));
 const monthShortLabel = (m) => cap(shortOf(named(m)));
+const monthShortYear = (m) => `${monthShortLabel(m)} ${named(m).slice(2, 4)}`;   // 2026-11-21: året följer namnet (nyckel 2026-12 = Jan 27)
 const monthSpan = (m) => { const p = data.settings.payday; return `${p} ${shortOf(m)} – ${p - 1} ${shortOf(addMonths(m, 1))}`; };
 // Rubrik med datumspann under (bara med lönedag).
 const monthTitle = (m) => (paySplit() ? [monthLabel(m), el('small', { class: 'm-span', text: monthSpan(m) })] : [monthLabel(m)]);
@@ -2929,7 +2977,7 @@ function renderOpenMonths() {
   const open = unclosedMonths().filter((m) => m !== month);
   $('open-months').hidden = !open.length;
   fill($('open-months'), open.length ? [el('span', { text: open.length === 1 ? 'Inte stängd:' : 'Inte stängda:' }),
-    ...open.slice(-4).map((m) => el('button', { type: 'button', class: 'om-chip', text: monthShortLabel(m) + (m.slice(0, 4) !== activeMonth().slice(0, 4) ? ' ' + m.slice(2, 4) : ''),
+    ...open.slice(-4).map((m) => el('button', { type: 'button', class: 'om-chip', text: (named(m).slice(0, 4) !== named(activeMonth()).slice(0, 4) ? monthShortYear(m) : monthShortLabel(m)),
       'aria-label': `Gå till ${monthLabel(m)} och stäng den`, on: { click: () => setMonth(m) } }))] : null);
 }
 
@@ -3051,13 +3099,26 @@ function renderSavingsCard(saving, t) {
       return el('li', {}, el('button', { type: 'button', class: 'sv-row', 'aria-label': `${r.name}. Ändra`, on: { click: () => open(r) } },
         el('span', { class: 'sv-name' }, el('span', { text: r.name }), sub ? el('small', { text: sub }) : null),
         el('span', { class: 'sv-val' }, el('span', { text: r.a ? (r.cur ? ((r.cur.estimated || foreign) ? '≈ ' : '') + kr(r.now) : '–') : '' }),
-          r.diff ? el('small', { class: r.diff < 0 ? 'neg' : 'pos', text: `${r.diff > 0 ? '+' : '−'}${kr(Math.abs(r.diff))}` }) : null)));
+          r.diff ? el('small', { class: r.diff < 0 ? 'neg' : 'pos', text: `${r.diff > 0 ? '+' : '−'}${kr(Math.abs(r.diff))}` }) : null)),
+        r.a ? goalLine(r.a) : null);
     })),
     hiddenAcc.length ? el('p', { class: 'sv-hidden' }, hiddenAcc.length === 1 ? '+ 1 dolt konto: ' : `+ ${hiddenAcc.length} dolda konton: `,   // tryck för att visa igen
       ...hiddenAcc.map((a, i) => el('button', { type: 'button', class: 'link', text: (i ? ', ' : '') + a.name, on: { click: () => openAccDialog(a) } }))) : null,
     el('div', { class: 'sv-foot' },
       el('button', { type: 'button', class: 'link', text: '+ Nytt sparande', on: { click: () => focusAdd('savings') } }),
       data.accounts.length ? el('button', { type: 'button', class: 'link', text: 'Utveckling ›', on: { click: () => { showTab('stats'); $('stats-accounts').scrollIntoView({ block: 'start' }); } } }) : null)));
+}
+
+// Sparmål (2026-11-21, valfritt): stapel och en rad under kontot – bara information, aldrig varning.
+function goalLine(a) {
+  const g = goalStatus(data, a, month);
+  if (!g) return null;
+  const m = (v) => money(v, a.currency), ml = (x) => monthShortYear(x).toLowerCase();
+  const f = el('div', { class: 'bar-fill' }); f.style.width = g.pct + '%';
+  const text = g.reached ? `✓ Målet ${m(g.goal)} är nått`
+    : [`${g.pct} % av ${m(g.goal)}`, g.eta ? `klart ≈ ${ml(g.eta)}` : null,
+      g.need && (!g.eta || g.eta > g.target) ? `${m(g.need)}/mån för att hinna till ${ml(g.target)}` : null].filter(Boolean).join(' · ');
+  return el('div', { class: 'sv-goal' + (g.reached ? ' done' : '') }, el('span', { class: 'bar' }, f), el('small', { text }));
 }
 
 // Stäng månaden (2026-11-17): skriv in vad som faktiskt var kvar dagen före nästa lön. Ersätter planerat kvar i Historik och saldo.
@@ -3457,18 +3518,43 @@ function fcText(fc) {
 // En rad per stängd månad, nyast först: konsumtion och sparat. Tryck för att öppna månaden.
 function renderOverview() {
   const ms = closedMonths().slice(0, 24);
-  if (!ms.length) { fill($('overview')); return; }
+  const ahead = aheadCard();
+  if (!ms.length) { fill($('overview'), ahead); return; }
   const rows = ms.map(closedSummary), max = Math.max(1, ...rows.map((r) => r.spent));
-  fill($('overview'), el('div', { class: 'card' }, el('h2', { class: 'split' }, el('span', { text: 'Månad för månad' }), el('span', { class: 'muted', text: 'Konsumtion · Sparat' })),
+  fill($('overview'), ahead, el('div', { class: 'card' }, el('h2', { class: 'split' }, el('span', { text: 'Månad för månad' }), el('span', { class: 'muted', text: 'Konsumtion · Sparat' })),
     el('ul', { class: 'list ov' }, rows.map((r) => {
       const f = el('div', { class: 'bar-fill' }); f.style.width = Math.round((Math.max(0, r.spent) / max) * 100) + '%';
       return el('li', {}, el('button', { type: 'button', class: 'ov-row', 'aria-label': `${monthLabel(r.m)}: konsumtion ${kr(r.spent)}, sparat ${kr(r.saved)}. Öppna månaden`,
         on: { click: () => { showTab('month'); setMonth(r.m); } } },
-      el('span', { class: 'ov-m', text: `${monthShortLabel(r.m)} ${r.m.slice(2, 4)}` }),
+      el('span', { class: 'ov-m', text: monthShortYear(r.m) }),
       el('span', { class: 'bar' }, f),
       el('span', { class: 'amount', text: kr(r.spent) }),
       el('span', { class: 'amount muted small', text: kr(r.saved) })));
     }))));
+}
+
+// Kommande 12 månader (2026-11-21): planerat kvar och prognos (planerat minus rörligt, se forecast() i store.js).
+// Prognoskolumnen visas först när minst en månad är stängd. Tryck på en rad → öppnar månaden.
+function aheadCard() {
+  const start = activeMonth(), ms = Array.from({ length: 12 }, (_, i) => addMonths(start, i));
+  const rows = ms.map((m) => ({ m, plan: monthTotals(data, m).left, fc: forecast(data, m) }));
+  if (!rows.some((r) => r.plan)) return null;
+  const hasFc = rows.some((r) => r.fc), sum = (k) => rows.reduce((x, r) => x + (k === 'plan' ? r.plan : r.fc ? r.fc.left : r.plan), 0);
+  const cell = (v, cls = '') => el('td', { class: (cls + (v < 0 ? ' neg' : '')).trim(), text: kr(v, true) });
+  const bal = balanceAfter(data, addMonths(start, -1));
+  const endBal = (k) => (bal == null ? null : bal + sum(k));
+  return el('div', { class: 'card' },
+    el('h2', { text: 'Kommande 12 månader' }),
+    el('table', { class: 'ahead' },
+      el('thead', {}, el('tr', {}, el('th', { scope: 'col', text: 'Månad' }), el('th', { scope: 'col', text: 'Planerat' }),
+        hasFc ? el('th', { scope: 'col', text: 'Prognos' }) : null)),
+      el('tbody', {}, rows.map((r) => el('tr', { on: { click: () => { showTab('month'); setMonth(r.m); } } },
+        el('td', { text: monthShortYear(r.m) }), cell(r.plan),
+        hasFc ? (r.fc ? cell(r.fc.left, 'fc') : el('td', { class: 'fc', text: '–' })) : null))),
+      el('tfoot', {}, el('tr', {}, el('td', { text: 'Summa' }), cell(sum('plan')), hasFc ? cell(sum('fc'), 'fc') : null),
+        bal == null ? null : el('tr', {}, el('td', { text: 'Saldo om ett år' }), el('td', { text: kr(endBal('plan')) }),
+          hasFc ? el('td', { class: 'fc', text: '≈ ' + kr(endBal('fc')) }) : null))),
+    hasFc ? el('p', { class: 'muted small', text: 'Prognos = planerat kvar minus rörliga utgifter (snittet av de senaste stängda månaderna, med säsong).' }) : null);
 }
 
 </script>
@@ -3578,6 +3664,16 @@ function openAccDialog(a) {
     ...savers.map((r) => el('label', { class: 'check' }, el('input', { type: 'checkbox', value: r.id, checked: (a.feeds || []).includes(r.id) }),
       el('span', { text: `${r.name} · ${kr(r.amount)}` })))]
     : el('p', { class: 'muted small', text: 'Lägg en återkommande kostnad i kategorin Sparande, så kan den kopplas hit och saldot räknas upp själv.' }));
+  // Sparmål (2026-11-21): valfritt – fälten visas först efter + Sparmål, eller när kontot redan har ett mål.
+  const g = a.goal;
+  $('ad-goal').hidden = !g; $('ad-goal-add').hidden = !!g;
+  $('ad-goal-amount').value = g ? krInput(g.amount) : '';
+  { // appens månadsnamn (lönedag), 3 år framåt från vald månad
+    const ms = Array.from({ length: 36 }, (_, i) => addMonths(month, i + 1));
+    if (g?.month && !ms.includes(g.month)) ms.unshift(g.month);
+    $('ad-goal-month').replaceChildren(el('option', { value: '', text: '–' }), ...ms.map((m) => el('option', { value: m, text: monthLabel(m) })));
+  }
+  $('ad-goal-month').value = g?.month || '';
   $('ad-error').textContent = '';
   $('acc-dialog').showModal();
   $('ad-amount').focus();
@@ -3585,19 +3681,26 @@ function openAccDialog(a) {
 function setAccCurrencyLabel() {
   const c = $('ad-currency').value;
   $('ad-amount-label').textContent = `Saldo (${unit(c)})`;
+  $('ad-goal-label').textContent = `Sparmål (${unit(c)})`;
 }
 $('ad-currency').replaceChildren(...CURRENCIES.map((c) => el('option', { value: c, text: CUR_NAMES[c] })));
 $('ad-currency').addEventListener('change', setAccCurrencyLabel);
+$('ad-goal-add').addEventListener('click', () => { $('ad-goal-add').hidden = true; $('ad-goal').hidden = false; $('ad-goal-amount').focus(); });
 $('ad-cancel').addEventListener('click', () => $('acc-dialog').close());
 $('ad-form').addEventListener('submit', (e) => {
   e.preventDefault();
   const raw = $('ad-amount').value.trim();
   const amount = raw ? parseKr(raw) : null;
   if (raw && (amount == null || !isAmount(amount))) { $('ad-error').textContent = 'Skriv ett saldo, t.ex. 45 000 eller 1250,50.'; return; }
+  // Tomt mål = inget mål (tas bort). Månad utan belopp ignoreras.
+  const gRaw = $('ad-goal-amount').value.trim(), gAmount = gRaw ? parseKr(gRaw) : null;
+  if (gRaw && (gAmount == null || !isAmount(gAmount) || gAmount <= 0)) { $('ad-error').textContent = 'Skriv ett sparmål, t.ex. 15 000 – eller lämna fältet tomt.'; return; }
+  const gMonth = $('ad-goal-month').value;
   const a = data.accounts.find((x) => x.id === dialogAcc.id);
   const feeds = [...$('ad-feeds').querySelectorAll('input:checked')].map((i) => i.value);
   if (!raw && !a?.feeds?.length && !feeds.length && !Object.keys(a?.balances || {}).length) { $('ad-error').textContent = 'Skriv ett saldo, t.ex. 45 000 eller 1250,50.'; return; }
-  if (a) { if (raw) a.balances[month] = amount; a.currency = $('ad-currency').value; a.feeds = feeds; a.hidden = !$('ad-show').checked; }
+  if (a) { if (raw) a.balances[month] = amount; a.currency = $('ad-currency').value; a.feeds = feeds; a.hidden = !$('ad-show').checked;
+    if (gAmount) a.goal = { amount: gAmount, ...(isMonth(gMonth) ? { month: gMonth } : {}) }; else delete a.goal; }
   data = loadData(data);
   $('acc-dialog').close();
   save();

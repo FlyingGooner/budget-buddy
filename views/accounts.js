@@ -54,6 +54,16 @@ function openAccDialog(a) {
     ...savers.map((r) => el('label', { class: 'check' }, el('input', { type: 'checkbox', value: r.id, checked: (a.feeds || []).includes(r.id) }),
       el('span', { text: `${r.name} · ${kr(r.amount)}` })))]
     : el('p', { class: 'muted small', text: 'Lägg en återkommande kostnad i kategorin Sparande, så kan den kopplas hit och saldot räknas upp själv.' }));
+  // Sparmål (2026-11-21): valfritt – fälten visas först efter + Sparmål, eller när kontot redan har ett mål.
+  const g = a.goal;
+  $('ad-goal').hidden = !g; $('ad-goal-add').hidden = !!g;
+  $('ad-goal-amount').value = g ? krInput(g.amount) : '';
+  { // appens månadsnamn (lönedag), 3 år framåt från vald månad
+    const ms = Array.from({ length: 36 }, (_, i) => addMonths(month, i + 1));
+    if (g?.month && !ms.includes(g.month)) ms.unshift(g.month);
+    $('ad-goal-month').replaceChildren(el('option', { value: '', text: '–' }), ...ms.map((m) => el('option', { value: m, text: monthLabel(m) })));
+  }
+  $('ad-goal-month').value = g?.month || '';
   $('ad-error').textContent = '';
   $('acc-dialog').showModal();
   $('ad-amount').focus();
@@ -61,19 +71,26 @@ function openAccDialog(a) {
 function setAccCurrencyLabel() {
   const c = $('ad-currency').value;
   $('ad-amount-label').textContent = `Saldo (${unit(c)})`;
+  $('ad-goal-label').textContent = `Sparmål (${unit(c)})`;
 }
 $('ad-currency').replaceChildren(...CURRENCIES.map((c) => el('option', { value: c, text: CUR_NAMES[c] })));
 $('ad-currency').addEventListener('change', setAccCurrencyLabel);
+$('ad-goal-add').addEventListener('click', () => { $('ad-goal-add').hidden = true; $('ad-goal').hidden = false; $('ad-goal-amount').focus(); });
 $('ad-cancel').addEventListener('click', () => $('acc-dialog').close());
 $('ad-form').addEventListener('submit', (e) => {
   e.preventDefault();
   const raw = $('ad-amount').value.trim();
   const amount = raw ? parseKr(raw) : null;
   if (raw && (amount == null || !isAmount(amount))) { $('ad-error').textContent = 'Skriv ett saldo, t.ex. 45 000 eller 1250,50.'; return; }
+  // Tomt mål = inget mål (tas bort). Månad utan belopp ignoreras.
+  const gRaw = $('ad-goal-amount').value.trim(), gAmount = gRaw ? parseKr(gRaw) : null;
+  if (gRaw && (gAmount == null || !isAmount(gAmount) || gAmount <= 0)) { $('ad-error').textContent = 'Skriv ett sparmål, t.ex. 15 000 – eller lämna fältet tomt.'; return; }
+  const gMonth = $('ad-goal-month').value;
   const a = data.accounts.find((x) => x.id === dialogAcc.id);
   const feeds = [...$('ad-feeds').querySelectorAll('input:checked')].map((i) => i.value);
   if (!raw && !a?.feeds?.length && !feeds.length && !Object.keys(a?.balances || {}).length) { $('ad-error').textContent = 'Skriv ett saldo, t.ex. 45 000 eller 1250,50.'; return; }
-  if (a) { if (raw) a.balances[month] = amount; a.currency = $('ad-currency').value; a.feeds = feeds; a.hidden = !$('ad-show').checked; }
+  if (a) { if (raw) a.balances[month] = amount; a.currency = $('ad-currency').value; a.feeds = feeds; a.hidden = !$('ad-show').checked;
+    if (gAmount) a.goal = { amount: gAmount, ...(isMonth(gMonth) ? { month: gMonth } : {}) }; else delete a.goal; }
   data = loadData(data);
   $('acc-dialog').close();
   save();

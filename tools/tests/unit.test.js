@@ -244,3 +244,23 @@ T.test('forecast: rullande snitt och säsong i procent', () => {
   d.closed = { '2026-03': 3200000, '2026-04': 2800000 - 500000 };   // snitt före april = −400 000 < 1 000 kr → ingen säsong
   T.eq(forecast(d, '2027-04').factor, 1);
 });
+
+T.test('sparmål: valfritt, valideras och följer med i exporten', () => {
+  const d = rich();
+  T.eq('goal' in loadData(d).accounts[0], false);                       // inget mål → inget fält
+  d.accounts[0].goal = { amount: 6000000, month: '2027-02' }; d.accounts[1].goal = { amount: -5 };
+  const x = loadData(d);
+  T.eq(x.accounts[0].goal, { amount: 6000000, month: '2027-02' }); T.eq('goal' in x.accounts[1], false);
+  T.eq(loadData(unpackData(packData(x))).accounts[0].goal, x.accounts[0].goal);
+  x.accounts[0].goal = { amount: 6000000, month: 'nej' };
+  T.eq(loadData(x).accounts[0].goal, { amount: 6000000 });
+});
+T.test('sparmål: andel, takt och behov', () => {
+  const d = loadData(rich());
+  d.accounts[0].feeds = ['r3']; d.accounts[0].goal = { amount: 6000000, month: '2027-01' };   // 50 000 kr i nov, +4 000/mån
+  const g = goalStatus(d, d.accounts[0], '2026-11');
+  T.eq([g.pct, g.reached, g.eta, g.need], [83, false, '2027-02', 500000]);   // 10 000 kvar: 3 mån i takt, 2 mån till jan
+  d.accounts[0].goal = { amount: 5000000 };
+  T.eq(goalStatus(d, d.accounts[0], '2026-11').reached, true);
+  T.eq(goalStatus(d, d.accounts[1], '2026-11'), null);
+});

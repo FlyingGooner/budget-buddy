@@ -35,7 +35,7 @@ function renderOpenMonths() {
   const open = unclosedMonths().filter((m) => m !== month);
   $('open-months').hidden = !open.length;
   fill($('open-months'), open.length ? [el('span', { text: open.length === 1 ? 'Inte stängd:' : 'Inte stängda:' }),
-    ...open.slice(-4).map((m) => el('button', { type: 'button', class: 'om-chip', text: monthShortLabel(m) + (m.slice(0, 4) !== activeMonth().slice(0, 4) ? ' ' + m.slice(2, 4) : ''),
+    ...open.slice(-4).map((m) => el('button', { type: 'button', class: 'om-chip', text: (named(m).slice(0, 4) !== named(activeMonth()).slice(0, 4) ? monthShortYear(m) : monthShortLabel(m)),
       'aria-label': `Gå till ${monthLabel(m)} och stäng den`, on: { click: () => setMonth(m) } }))] : null);
 }
 
@@ -157,13 +157,26 @@ function renderSavingsCard(saving, t) {
       return el('li', {}, el('button', { type: 'button', class: 'sv-row', 'aria-label': `${r.name}. Ändra`, on: { click: () => open(r) } },
         el('span', { class: 'sv-name' }, el('span', { text: r.name }), sub ? el('small', { text: sub }) : null),
         el('span', { class: 'sv-val' }, el('span', { text: r.a ? (r.cur ? ((r.cur.estimated || foreign) ? '≈ ' : '') + kr(r.now) : '–') : '' }),
-          r.diff ? el('small', { class: r.diff < 0 ? 'neg' : 'pos', text: `${r.diff > 0 ? '+' : '−'}${kr(Math.abs(r.diff))}` }) : null)));
+          r.diff ? el('small', { class: r.diff < 0 ? 'neg' : 'pos', text: `${r.diff > 0 ? '+' : '−'}${kr(Math.abs(r.diff))}` }) : null)),
+        r.a ? goalLine(r.a) : null);
     })),
     hiddenAcc.length ? el('p', { class: 'sv-hidden' }, hiddenAcc.length === 1 ? '+ 1 dolt konto: ' : `+ ${hiddenAcc.length} dolda konton: `,   // tryck för att visa igen
       ...hiddenAcc.map((a, i) => el('button', { type: 'button', class: 'link', text: (i ? ', ' : '') + a.name, on: { click: () => openAccDialog(a) } }))) : null,
     el('div', { class: 'sv-foot' },
       el('button', { type: 'button', class: 'link', text: '+ Nytt sparande', on: { click: () => focusAdd('savings') } }),
       data.accounts.length ? el('button', { type: 'button', class: 'link', text: 'Utveckling ›', on: { click: () => { showTab('stats'); $('stats-accounts').scrollIntoView({ block: 'start' }); } } }) : null)));
+}
+
+// Sparmål (2026-11-21, valfritt): stapel och en rad under kontot – bara information, aldrig varning.
+function goalLine(a) {
+  const g = goalStatus(data, a, month);
+  if (!g) return null;
+  const m = (v) => money(v, a.currency), ml = (x) => monthShortYear(x).toLowerCase();
+  const f = el('div', { class: 'bar-fill' }); f.style.width = g.pct + '%';
+  const text = g.reached ? `✓ Målet ${m(g.goal)} är nått`
+    : [`${g.pct} % av ${m(g.goal)}`, g.eta ? `klart ≈ ${ml(g.eta)}` : null,
+      g.need && (!g.eta || g.eta > g.target) ? `${m(g.need)}/mån för att hinna till ${ml(g.target)}` : null].filter(Boolean).join(' · ');
+  return el('div', { class: 'sv-goal' + (g.reached ? ' done' : '') }, el('span', { class: 'bar' }, f), el('small', { text }));
 }
 
 // Stäng månaden (2026-11-17): skriv in vad som faktiskt var kvar dagen före nästa lön. Ersätter planerat kvar i Historik och saldo.
