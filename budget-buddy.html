@@ -630,6 +630,7 @@ body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; 
 .ahead .neg { color: var(--error); } .ahead .fc { color: var(--on-surface-variant); }
 .ahead tfoot td { font-weight: 600; border-top: 1px solid var(--outline-variant, #e0e0e0); }
 .per-person td { white-space: nowrap; } .per-person thead th { vertical-align: bottom; }
+.ahead-more { margin-top: 8px; }
 
 </style>
 </head>
@@ -827,7 +828,7 @@ body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; 
           <p>☰ Alla poster bredvid Lägg till visar alla återkommande poster, även avslutade och kommande. Posterna står med störst belopp först, både där och i Månad. Tryck på en för att ändra den.</p>
           <p>Under knapparna står hur många dagar det är kvar till nästa lön (innevarande månad) och vilken kategori som ändrats mest mot förra månaden. I kortet står också förra månaden: kvar på kontot om den är stängd, annars efter räkningar.</p>
           <p>Kvar vid stängning (prognos) står på samma rad, när minst en tidigare månad är stängd: efter räkningar minus de rörliga utgifterna (snittet av de tre senaste stängda månaderna). Är samma månad förra året stängd räknas den med i procent – är december 65 % dyrare än vanligt, räknas det in. Tryck på prognosen för förklaringen.</p>
-          <p>Kommande 12 månader (Översikt): planerat kvar för varje månad framåt och, när någon månad är stängd, prognosen bredvid. Med startsaldo visas också saldot om ett år. Tryck på en månad för att öppna den.</p>
+          <p>Kommande 12 månader (Översikt): efter räkningar för de tre närmaste månaderna (tryck Visa alla 12 månader för resten) och, när någon månad är stängd, kvar enligt prognosen bredvid. Med startsaldo visas också saldot om ett år. Tryck på en månad för att öppna den.</p>
           <p>Sparmål (valfritt): öppna ett sparkonto och tryck + Sparmål. Skriv ett belopp och, om du vill, en månad det ska vara klart. Under kontot visas hur långt du har kommit, när du når målet i nuvarande takt och – med datum – vad som behövs per månad för att hinna. Töm fältet för att ta bort målet.</p>
           <p>Tryck på en post för att ändra den. Beloppet överst gäller bara månaden du tittar på. Under Ändra posten (alla månader) ändrar du namn, ordinarie belopp, hur ofta, kategori och period. Ta bort posten lägger den i papperskorgen.</p>
           <p>Vill du avsluta en post, fyll i Till månad. Poster som har slutat eller inte börjat syns i de månader de gäller.</p>
@@ -910,7 +911,7 @@ body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; 
           <p>☰ All items next to Add shows all recurring items, including ended and upcoming ones. Items are listed largest amount first, there and in Month. Tap one to change it.</p>
           <p>Below the buttons you see how many days are left until the next payday (current month) and which category changed the most since last month. The card also shows last month: left in the account if it is closed, otherwise after bills.</p>
           <p>Left at close (forecast) is on the same line, once at least one earlier month is closed: after bills minus variable spending (average of the three latest closed months). If the same month last year is closed it is included as a percentage – if December was 65 % more expensive than usual, that is included. Tap the forecast for the explanation.</p>
-          <p>Next 12 months (Overview): planned left for each month ahead and, once a month is closed, the forecast next to it. With a starting balance you also see the balance in a year. Tap a month to open it.</p>
+          <p>Next 12 months (Overview): after bills for the next three months (tap Show all 12 months for the rest) and, once a month is closed, the forecast next to it. With a starting balance you also see the balance in a year. Tap a month to open it.</p>
           <p>Savings goal (optional): open a savings account and tap + Savings goal. Enter an amount and, if you like, a month it should be done by. Below the account you see how far you have come, when you reach the goal at the current pace and – with a date – what is needed per month to make it. Empty the field to remove the goal.</p>
           <p>Tap an item to change it. The amount at the top applies only to the month you are viewing. Under Edit the item (all months) you change name, regular amount, how often, category and period. Delete the item moves it to the trash.</p>
           <p>To end an item, fill in To month. Items that have ended or not started show in the months they apply to.</p>
@@ -1588,7 +1589,7 @@ I18N.add({
   'Ifyllt': 'Entered',
   'Inte stängd:': 'Not closed:', 'Inte stängda:': 'Not closed:',
   'Visa i Månad': 'Show in Month', '+ Sparmål': '+ Savings goal', 'Klart till (valfritt)': 'Done by (optional)', 'Skriv ett sparmål, t.ex. 15 000 – eller lämna fältet tomt.': 'Enter a savings goal, e.g. 15 000 – or leave it empty.',
-  'Efter räkningar': 'After bills', 'Kvar på kontot': 'Left in the account', 'Kvar (prognos)': 'Left (forecast)', 'Saldo om ett år': 'Balance in a year',
+  'Efter räkningar': 'After bills', 'Kvar på kontot': 'Left in the account', 'Kvar (prognos)': 'Left (forecast)', 'Visa färre': 'Show fewer', 'Visa alla 12 månader ›': 'Show all 12 months ›', 'Saldo om ett år': 'Balance in a year',
   'Kvar (prognos) = efter räkningar minus rörliga utgifter (snittet av de senaste stängda månaderna, med säsong).': 'Left (forecast) = after bills minus variable spending (average of the latest closed months, with season).',
   'Dras före lönen (minskar inte Kvar)': 'Taken before payday (does not reduce Left)',
   ' · före lönen': ' · before payday',
@@ -1791,7 +1792,7 @@ I18N.add({
 </script>
 <script>
 // ---- version.js ----
-﻿self.APP_VERSION = '0.12.125';
+﻿self.APP_VERSION = '0.12.126';
 
 </script>
   <script>
@@ -3552,6 +3553,9 @@ function renderOverview() {
 
 // Kommande 12 månader (2026-11-21): planerat kvar och prognos (planerat minus rörligt, se forecast() i store.js).
 // Prognoskolumnen visas först när minst en månad är stängd. Tryck på en rad → öppnar månaden.
+// 2026-11-21: tre månader syns, resten fälls ut (Summa gäller alltid alla 12).
+const AHEAD_SHOWN = 3;
+let aheadOpen = false;
 function aheadCard() {
   const start = activeMonth(), ms = Array.from({ length: 12 }, (_, i) => addMonths(start, i));
   const rows = ms.map((m) => ({ m, plan: monthTotals(data, m).left, fc: forecast(data, m) }));
@@ -3565,12 +3569,14 @@ function aheadCard() {
     el('table', { class: 'ahead' },
       el('thead', {}, el('tr', {}, el('th', { scope: 'col', text: 'Månad' }), el('th', { scope: 'col', text: 'Efter räkningar' }),
         hasFc ? el('th', { scope: 'col', text: 'Kvar (prognos)' }) : null)),
-      el('tbody', {}, rows.map((r) => el('tr', { on: { click: () => { showTab('month'); setMonth(r.m); } } },
+      el('tbody', {}, rows.slice(0, aheadOpen ? 12 : AHEAD_SHOWN).map((r) => el('tr', { on: { click: () => { showTab('month'); setMonth(r.m); } } },
         el('td', { text: monthShortYear(r.m) }), cell(r.plan),
         hasFc ? (r.fc ? cell(r.fc.left, 'fc') : el('td', { class: 'fc', text: '–' })) : null))),
-      el('tfoot', {}, el('tr', {}, el('td', { text: 'Summa' }), cell(sum('plan')), hasFc ? cell(sum('fc'), 'fc') : null),
+      el('tfoot', {}, el('tr', {}, el('td', { text: 'Summa 12 mån' }), cell(sum('plan')), hasFc ? cell(sum('fc'), 'fc') : null),
         bal == null ? null : el('tr', {}, el('td', { text: 'Saldo om ett år' }), el('td', { text: kr(endBal('plan')) }),
           hasFc ? el('td', { class: 'fc', text: '≈ ' + kr(endBal('fc')) }) : null))),
+    el('button', { type: 'button', class: 'link ahead-more', 'aria-expanded': String(aheadOpen), text: aheadOpen ? 'Visa färre' : `Visa alla 12 månader ›`,
+      on: { click: () => { aheadOpen = !aheadOpen; renderOverview(); } } }),
     hasFc ? el('p', { class: 'muted small', text: 'Kvar (prognos) = efter räkningar minus rörliga utgifter (snittet av de senaste stängda månaderna, med säsong).' }) : null);
 }
 

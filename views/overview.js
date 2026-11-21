@@ -19,6 +19,9 @@ function renderOverview() {
 
 // Kommande 12 månader (2026-11-21): planerat kvar och prognos (planerat minus rörligt, se forecast() i store.js).
 // Prognoskolumnen visas först när minst en månad är stängd. Tryck på en rad → öppnar månaden.
+// 2026-11-21: tre månader syns, resten fälls ut (Summa gäller alltid alla 12).
+const AHEAD_SHOWN = 3;
+let aheadOpen = false;
 function aheadCard() {
   const start = activeMonth(), ms = Array.from({ length: 12 }, (_, i) => addMonths(start, i));
   const rows = ms.map((m) => ({ m, plan: monthTotals(data, m).left, fc: forecast(data, m) }));
@@ -32,11 +35,13 @@ function aheadCard() {
     el('table', { class: 'ahead' },
       el('thead', {}, el('tr', {}, el('th', { scope: 'col', text: 'Månad' }), el('th', { scope: 'col', text: 'Efter räkningar' }),
         hasFc ? el('th', { scope: 'col', text: 'Kvar (prognos)' }) : null)),
-      el('tbody', {}, rows.map((r) => el('tr', { on: { click: () => { showTab('month'); setMonth(r.m); } } },
+      el('tbody', {}, rows.slice(0, aheadOpen ? 12 : AHEAD_SHOWN).map((r) => el('tr', { on: { click: () => { showTab('month'); setMonth(r.m); } } },
         el('td', { text: monthShortYear(r.m) }), cell(r.plan),
         hasFc ? (r.fc ? cell(r.fc.left, 'fc') : el('td', { class: 'fc', text: '–' })) : null))),
-      el('tfoot', {}, el('tr', {}, el('td', { text: 'Summa' }), cell(sum('plan')), hasFc ? cell(sum('fc'), 'fc') : null),
+      el('tfoot', {}, el('tr', {}, el('td', { text: 'Summa 12 mån' }), cell(sum('plan')), hasFc ? cell(sum('fc'), 'fc') : null),
         bal == null ? null : el('tr', {}, el('td', { text: 'Saldo om ett år' }), el('td', { text: kr(endBal('plan')) }),
           hasFc ? el('td', { class: 'fc', text: '≈ ' + kr(endBal('fc')) }) : null))),
+    el('button', { type: 'button', class: 'link ahead-more', 'aria-expanded': String(aheadOpen), text: aheadOpen ? 'Visa färre' : `Visa alla 12 månader ›`,
+      on: { click: () => { aheadOpen = !aheadOpen; renderOverview(); } } }),
     hasFc ? el('p', { class: 'muted small', text: 'Kvar (prognos) = efter räkningar minus rörliga utgifter (snittet av de senaste stängda månaderna, med säsong).' }) : null);
 }

@@ -99,7 +99,7 @@ I18N.add({
   'Ifyllt': 'Entered',
   'Inte stängd:': 'Not closed:', 'Inte stängda:': 'Not closed:',
   'Visa i Månad': 'Show in Month', '+ Sparmål': '+ Savings goal', 'Klart till (valfritt)': 'Done by (optional)', 'Skriv ett sparmål, t.ex. 15 000 – eller lämna fältet tomt.': 'Enter a savings goal, e.g. 15 000 – or leave it empty.',
-  'Efter räkningar': 'After bills', 'Kvar på kontot': 'Left in the account', 'Kvar (prognos)': 'Left (forecast)', 'Saldo om ett år': 'Balance in a year',
+  'Efter räkningar': 'After bills', 'Kvar på kontot': 'Left in the account', 'Kvar (prognos)': 'Left (forecast)', 'Visa färre': 'Show fewer', 'Visa alla 12 månader ›': 'Show all 12 months ›', 'Saldo om ett år': 'Balance in a year',
   'Kvar (prognos) = efter räkningar minus rörliga utgifter (snittet av de senaste stängda månaderna, med säsong).': 'Left (forecast) = after bills minus variable spending (average of the latest closed months, with season).',
   'Dras före lönen (minskar inte Kvar)': 'Taken before payday (does not reduce Left)',
   ' · före lönen': ' · before payday',
