@@ -805,6 +805,9 @@ dialog::backdrop { background: rgba(0,0,0,.25); }
 #version { top: calc(env(safe-area-inset-top) + 4px + 9px); right: 8px; }
 .topbar { justify-content: space-between; gap: 12px; max-width: 640px; padding: calc(env(safe-area-inset-top) + 8px) 8px 0; }
 #version { position: static; margin-left: auto; }
+/* Sidan skrollar aldrig i sidled (2026-11-21): på telefonen var något några px för brett, så sidan drog åt sidan och studsade.
+   clip (inte hidden) skapar ingen skrollbehållare, så sticky (.sel-bar) och svep fungerar som förut. */
+html, body { overflow-x: clip; overscroll-behavior-x: none; }
 
 </style>
 </head>
@@ -1985,7 +1988,7 @@ I18N.add({
 </script>
 <script>
 // ---- version.js ----
-﻿self.APP_VERSION = '0.12.176';
+﻿self.APP_VERSION = '0.12.177';
 
 </script>
   <script>
