@@ -464,7 +464,7 @@ function forecast(d, m) {
   const ly = addMonths(m, -12), lyBase = Object.hasOwn(d.closed, ly) ? variableAvg(d, ly) : null;
   if (lyBase != null && lyBase >= FC_MIN_BASE) factor = Math.min(FC_MAX, Math.max(FC_MIN, variableAt(d, ly) / lyBase));
   const variable = Math.round(base * factor);
-  return { left: monthTotals(d, m).left - variable, variable, base, factor };
+  return { left: Math.round((monthTotals(d, m).left - variable) / 100) * 100, variable: Math.round(variable / 100) * 100, base, factor };   // hela kronor – det är en uppskattning
 }
 
 // Savings account balance at month m: the latest entered balance up to and including m.

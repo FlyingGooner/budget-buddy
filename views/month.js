@@ -551,7 +551,7 @@ $('rd-delete').addEventListener('click', () => {
 // Förklaring till prognosen (2026-11-21).
 let fcOpen = false;
 function fcText(fc) {
-  const pct = Math.round((fc.factor - 1) * 100), name = monthShortLabel(month).toLowerCase();
+  const pct = Math.round((fc.factor - 1) * 100), name = monthShortLabel(month);   // stor bokstav, står först i meningen
   const season = pct > 0 ? ` ${name} brukar kosta ${pct} % mer.` : pct < 0 ? ` ${name} brukar kosta ${-pct} % mindre.` : '';
   return `Planerat kvar minus rörliga utgifter ≈ ${kr(fc.variable)} (snitt för de senaste stängda månaderna).${season}`;
 }

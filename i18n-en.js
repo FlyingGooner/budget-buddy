@@ -258,7 +258,7 @@ I18N.add({
   [/^Saldo efter månaden: (.+)$/, 'Balance after the month: $1'],
   [/^Prognos: ≈ (.+)$/, 'Forecast: ≈ $1'],
   [/^Planerat kvar minus rörliga utgifter ≈ (.+?) \(snitt för de senaste stängda månaderna\)\.(?: (\S+) brukar kosta (\d+) % (mer|mindre)\.)?$/,
-    (g, tr) => `Planned left minus variable spending ≈ ${g[1]} (average of the latest closed months).` + (g[2] ? ` ${tr(g[2])} usually costs ${g[3]} % ${g[4] === 'mer' ? 'more' : 'less'}.` : '')],
+    (g, tr) => `Planned left minus variable spending ≈ ${g[1]} (average of the latest closed months).` + (g[2] ? ` ${tr(g[2].toLowerCase())} usually costs ${g[3]} % ${g[4] === 'mer' ? 'more' : 'less'}.` : '')],
   [/^Kvar i (\S+) \(faktiskt\): (.+)$/, (g, tr) => `Left in ${tr(g[1])} (actual): ${g[2]}`],
   [/^Nästa lön om (\d+) dagar$/, 'Next payday in $1 days'],
   [/^Största förändring: (.+?) ([+−-].+) mot (\S+)$/, (g, tr) => `Biggest change: ${tr(g[1])} ${g[2]} vs ${tr(g[3])}`],

@@ -1724,7 +1724,7 @@ I18N.add({
   [/^Saldo efter månaden: (.+)$/, 'Balance after the month: $1'],
   [/^Prognos: ≈ (.+)$/, 'Forecast: ≈ $1'],
   [/^Planerat kvar minus rörliga utgifter ≈ (.+?) \(snitt för de senaste stängda månaderna\)\.(?: (\S+) brukar kosta (\d+) % (mer|mindre)\.)?$/,
-    (g, tr) => `Planned left minus variable spending ≈ ${g[1]} (average of the latest closed months).` + (g[2] ? ` ${tr(g[2])} usually costs ${g[3]} % ${g[4] === 'mer' ? 'more' : 'less'}.` : '')],
+    (g, tr) => `Planned left minus variable spending ≈ ${g[1]} (average of the latest closed months).` + (g[2] ? ` ${tr(g[2].toLowerCase())} usually costs ${g[3]} % ${g[4] === 'mer' ? 'more' : 'less'}.` : '')],
   [/^Kvar i (\S+) \(faktiskt\): (.+)$/, (g, tr) => `Left in ${tr(g[1])} (actual): ${g[2]}`],
   [/^Nästa lön om (\d+) dagar$/, 'Next payday in $1 days'],
   [/^Största förändring: (.+?) ([+−-].+) mot (\S+)$/, (g, tr) => `Biggest change: ${tr(g[1])} ${g[2]} vs ${tr(g[3])}`],
@@ -1758,7 +1758,7 @@ I18N.add({
 </script>
 <script>
 // ---- version.js ----
-﻿self.APP_VERSION = '0.12.119';
+﻿self.APP_VERSION = '0.12.120';
 
 </script>
   <script>
@@ -2677,7 +2677,7 @@ function forecast(d, m) {
   const ly = addMonths(m, -12), lyBase = Object.hasOwn(d.closed, ly) ? variableAvg(d, ly) : null;
   if (lyBase != null && lyBase >= FC_MIN_BASE) factor = Math.min(FC_MAX, Math.max(FC_MIN, variableAt(d, ly) / lyBase));
   const variable = Math.round(base * factor);
-  return { left: monthTotals(d, m).left - variable, variable, base, factor };
+  return { left: Math.round((monthTotals(d, m).left - variable) / 100) * 100, variable: Math.round(variable / 100) * 100, base, factor };   // hela kronor – det är en uppskattning
 }
 
 // Savings account balance at month m: the latest entered balance up to and including m.
@@ -3445,7 +3445,7 @@ $('rd-delete').addEventListener('click', () => {
 // Förklaring till prognosen (2026-11-21).
 let fcOpen = false;
 function fcText(fc) {
-  const pct = Math.round((fc.factor - 1) * 100), name = monthShortLabel(month).toLowerCase();
+  const pct = Math.round((fc.factor - 1) * 100), name = monthShortLabel(month);   // stor bokstav, står först i meningen
   const season = pct > 0 ? ` ${name} brukar kosta ${pct} % mer.` : pct < 0 ? ` ${name} brukar kosta ${-pct} % mindre.` : '';
   return `Planerat kvar minus rörliga utgifter ≈ ${kr(fc.variable)} (snitt för de senaste stängda månaderna).${season}`;
 }
