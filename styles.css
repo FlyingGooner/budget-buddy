@@ -406,11 +406,10 @@ body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; 
 .chart .mc-area { fill: var(--primary); opacity: .12; }
 .chart .mc-now { fill: var(--primary); stroke: var(--surface-container); stroke-width: 2; }
 .chart .zero { stroke: var(--on-surface-variant); stroke-width: 1; stroke-dasharray: 2 3; }
-.lg-fut { background: none !important; border-top: 2px dashed var(--primary); height: 0 !important; }
+.lg-fut { background: none !important; border-top: 2px dashed var(--primary); height: 0 !important; width: 14px !important; vertical-align: middle; }
 .mc-kpis { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 10px; text-align: center; }
 .mc-kpis b { display: block; font-size: 1.25rem; font-weight: 500; font-variant-numeric: tabular-nums; }
 .mc-kpis span { font-size: .75rem; color: var(--on-surface-variant); }
-.lg-fut { width: 14px !important; vertical-align: middle; }
 /* Månad: hopfällbara kort (2026-11-17) */
 .fold > summary { position: relative; display: block; cursor: pointer; list-style: none; padding-right: 22px; }
 .fold > summary::-webkit-details-marker { display: none; }
@@ -419,12 +418,6 @@ body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; 
 .fold > summary h2 { padding-bottom: 0; }
 .fold[open] > summary { margin-bottom: 8px; }
 .fold > summary .sv-share { margin: 6px 0 0; }
-/* Inställningar finputs (2026-11-17): som Fitness buddy – luftiga grupprader, liten pil, sammanfattning till höger */
-.set-group-wrap { margin-top: 2px; }
-.set-group-wrap > summary.set-group { min-height: 64px; padding: 0 4px; font-size: 1rem; }
-.set-group-wrap > summary.set-group .set-title { font-size: 1.0625rem; font-weight: 600; }
-.set-group-wrap > summary::before, .set-sec > summary::before { font-size: .75rem; width: 14px; }
-.set-group-wrap > summary.set-group .sect-sub { font-size: .9375rem; }
 .set-foot { margin: 16px 0 0; text-align: center; }
 /* Inställningar = Fitness buddys mått exakt (2026-11-17) */
 .set-group-wrap { margin-top: 10px; }
@@ -434,7 +427,6 @@ body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; 
 .set-group-wrap > summary.set-group .sect-sub, .set-sec .sect-sub { margin-left: auto; flex: 0 1 auto; max-width: 60%; font-size: .8125rem; }
 .card.set-sec { padding: 4px 14px; }
 .set-sec > summary { min-height: 48px; }
-.set-group-wrap > .set-sec + .set-sec { margin-top: 8px; }
 .set-body { padding: 4px 0 12px; }
 /* Sparkonton kopplade till sparposter (2026-11-17) */
 .ad-feeds { margin: 8px 0 0; }

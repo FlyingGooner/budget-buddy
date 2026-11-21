@@ -423,11 +423,10 @@ body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; 
 .chart .mc-area { fill: var(--primary); opacity: .12; }
 .chart .mc-now { fill: var(--primary); stroke: var(--surface-container); stroke-width: 2; }
 .chart .zero { stroke: var(--on-surface-variant); stroke-width: 1; stroke-dasharray: 2 3; }
-.lg-fut { background: none !important; border-top: 2px dashed var(--primary); height: 0 !important; }
+.lg-fut { background: none !important; border-top: 2px dashed var(--primary); height: 0 !important; width: 14px !important; vertical-align: middle; }
 .mc-kpis { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 10px; text-align: center; }
 .mc-kpis b { display: block; font-size: 1.25rem; font-weight: 500; font-variant-numeric: tabular-nums; }
 .mc-kpis span { font-size: .75rem; color: var(--on-surface-variant); }
-.lg-fut { width: 14px !important; vertical-align: middle; }
 /* Månad: hopfällbara kort (2026-11-17) */
 .fold > summary { position: relative; display: block; cursor: pointer; list-style: none; padding-right: 22px; }
 .fold > summary::-webkit-details-marker { display: none; }
@@ -436,12 +435,6 @@ body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; 
 .fold > summary h2 { padding-bottom: 0; }
 .fold[open] > summary { margin-bottom: 8px; }
 .fold > summary .sv-share { margin: 6px 0 0; }
-/* Inställningar finputs (2026-11-17): som Fitness buddy – luftiga grupprader, liten pil, sammanfattning till höger */
-.set-group-wrap { margin-top: 2px; }
-.set-group-wrap > summary.set-group { min-height: 64px; padding: 0 4px; font-size: 1rem; }
-.set-group-wrap > summary.set-group .set-title { font-size: 1.0625rem; font-weight: 600; }
-.set-group-wrap > summary::before, .set-sec > summary::before { font-size: .75rem; width: 14px; }
-.set-group-wrap > summary.set-group .sect-sub { font-size: .9375rem; }
 .set-foot { margin: 16px 0 0; text-align: center; }
 /* Inställningar = Fitness buddys mått exakt (2026-11-17) */
 .set-group-wrap { margin-top: 10px; }
@@ -451,7 +444,6 @@ body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; 
 .set-group-wrap > summary.set-group .sect-sub, .set-sec .sect-sub { margin-left: auto; flex: 0 1 auto; max-width: 60%; font-size: .8125rem; }
 .card.set-sec { padding: 4px 14px; }
 .set-sec > summary { min-height: 48px; }
-.set-group-wrap > .set-sec + .set-sec { margin-top: 8px; }
 .set-body { padding: 4px 0 12px; }
 /* Sparkonton kopplade till sparposter (2026-11-17) */
 .ad-feeds { margin: 8px 0 0; }
@@ -1170,11 +1162,7 @@ dialog:focus { outline: none; }
   </form>
 </dialog>
 
-<!-- Dialog: ändra återkommande post -->
-
-<!-- Dialog: avsluta flera markerade poster -->
-
-<!-- Dialog: saldo på sparkonto -->
+<!-- Dialog: stäng månaden -->
 <dialog id="close-dialog" tabindex="-1" autofocus aria-labelledby="cd-title">
   <form method="dialog" id="cd-form" novalidate>
     <h2 id="cd-title"></h2>
@@ -1708,7 +1696,7 @@ I18N.add({
   'Varje månad': 'Every month', 'Varannan månad': 'Every other month', 'En gång om året': 'Once a year', 'Var tredje månad': 'Every third month', 'Hur ofta': 'How often',
   'Kunde inte spara – lagringen är full eller blockerad.': 'Could not save – storage is full or blocked.',
   'Fortsätt': 'Continue',
-  'Lön': 'Salary', 'Försäkringskassan': 'Social insurance', 'Övrig inkomst': 'Other income', 'Försäkring': 'Insurance', 'Lån': 'Loans', 'Hushåll': 'Household',
+  'Lön': 'Salary', 'Försäkringskassan': 'Social insurance', 'Bidrag och ersättningar': 'Benefits and allowances', 'Värde': 'Value', 'Övrig inkomst': 'Other income', 'Försäkring': 'Insurance', 'Lån': 'Loans', 'Hushåll': 'Household',
   'Boende': 'Housing', 'Transport': 'Transport', 'Abonnemang': 'Subscriptions', 'Sparande': 'Savings', 'Barnbidrag': 'Child benefit', 'Pension': 'Pension', 'Mat': 'Food', 'Nöje': 'Leisure',
   'Finns inte längre.': 'No longer exists.',
   'Klistra in en exporterad text först.': 'Paste an exported text first.', 'Texten är för lång (max 2 MB).': 'The text is too long (max 2 MB).',
@@ -1914,7 +1902,7 @@ I18N.add({
 </script>
 <script>
 // ---- version.js ----
-﻿self.APP_VERSION = '0.12.168';
+﻿self.APP_VERSION = '0.12.169';
 
 </script>
   <script>
@@ -2415,7 +2403,7 @@ const cleanName = (v, max = 60) => (typeof v === 'string' ? v.replace(CTRL_RE, '
 const FALLBACK_CAT = { expense: 'other', income: 'income-other' };
 const DEFAULT_INCOME_CATEGORIES = [
   { id: 'salary', name: 'Lön', type: 'income' },
-  { id: 'fk', name: 'Försäkringskassan', type: 'income' },
+  { id: 'fk', name: 'Bidrag och ersättningar', type: 'income' },   // 2026-11-21: förr Försäkringskassan (krockade med postnamn)
   { id: 'child', name: 'Barnbidrag', type: 'income' },
   { id: 'pension', name: 'Pension', type: 'income' },
   { id: 'income-other', name: 'Övrig inkomst', type: 'income' },
@@ -4620,8 +4608,16 @@ $('csv-export').addEventListener('click', () => {
   const rows = [];
   for (let m = months[0], i = 0; m <= last && i < 240; m = addMonths(m, 1), i++) {
     for (const r of rowsForMonth(data, m)) rows.push([m, r.name, tr(r.type === 'income' ? 'Inkomst' : 'Kostnad'), catName(r.category),
-      hasPeople() ? personName(r.person) : '', r.amount / 100, home(), tr(r.kind === 'rec' ? 'Ja' : 'Nej'), r.adjusted ? tr('Ja') : '']);
+      hasPeople() ? personName(r.person) : '', r.amount / 100, home(), tr(r.kind === 'rec' || r.kind === 'acc' ? 'Ja' : 'Nej'), r.adjusted ? tr('Ja') : '']);   // acc = kontots månadssparande
   }
+  // 2026-11-21: utfall för stängda månader och sparkontonas ifyllda värden – för analys i t.ex. Excel.
+  for (const m of Object.keys(data.closed).sort()) {
+    const t = monthTotals(data, m);
+    rows.push([m, tr('Kvar på kontot'), tr('Stängd'), '', '', t.left / 100, home(), '', '']);
+    rows.push([m, tr('Rörligt'), tr('Stängd'), '', '', (t.planned - t.left) / 100, home(), '', '']);
+  }
+  for (const a of data.accounts) for (const m of Object.keys(a.balances).sort())
+    rows.push([m, a.name, tr('Sparkonto'), tr('Värde'), '', a.balances[m] / 100, a.currency, '', '']);
   const text = Csv.build(['Månad', 'Namn', 'Typ', 'Kategori', 'Person', 'Belopp', 'Valuta', 'Återkommande', 'Ändrad denna månad'], rows);
   snackbar(Csv.download(`budget-buddy-${isoToday()}.csv`, text) ? 'CSV-filen laddas ner' : 'Kunde inte skapa filen', null, null, 3000);
 });

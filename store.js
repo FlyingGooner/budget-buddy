@@ -46,7 +46,7 @@ const cleanName = (v, max = 60) => (typeof v === 'string' ? v.replace(CTRL_RE, '
 const FALLBACK_CAT = { expense: 'other', income: 'income-other' };
 const DEFAULT_INCOME_CATEGORIES = [
   { id: 'salary', name: 'Lön', type: 'income' },
-  { id: 'fk', name: 'Försäkringskassan', type: 'income' },
+  { id: 'fk', name: 'Bidrag och ersättningar', type: 'income' },   // 2026-11-21: förr Försäkringskassan (krockade med postnamn)
   { id: 'child', name: 'Barnbidrag', type: 'income' },
   { id: 'pension', name: 'Pension', type: 'income' },
   { id: 'income-other', name: 'Övrig inkomst', type: 'income' },

@@ -26,7 +26,7 @@ En app för att planera sin ekonomi månad för månad. Man lägger in inkomster
 | **Återkommande post** | Inkomst eller kostnad som upprepas. **Inkomster är alltid per månad.** Kostnader kan komma varje månad, varannan månad, varje kvartal eller en gång om året. Har startmånad och valfri slutmånad. T.ex. lön, hyra, el, bilförsäkring (årlig i mars). |
 | **Avvikelse** | Engångspost som bara gäller en månad – kostnad eller inkomst. T.ex. nya däck, bonus. |
 | **Justering** | Ändrat belopp för en återkommande post en enskild månad. Posten själv ändras inte. |
-| **Kategori** | Typad grupp. **Inkomstkategorier:** Lön, Försäkringskassan, Barnbidrag, Pension, Övrig inkomst. **Kostnadskategorier:** Boende, Transport, Försäkring, Abonnemang, Lån, Hushåll, Övrigt. Båda listorna är redigerbara i Inställningar; "Övrig inkomst" och "Övrigt" finns alltid. |
+| **Kategori** | Typad grupp. **Inkomstkategorier:** Lön, Bidrag och ersättningar, Barnbidrag, Pension, Övrig inkomst. **Kostnadskategorier:** Boende, Transport, Försäkring, Abonnemang, Lån, Hushåll, Övrigt. Båda listorna är redigerbara i Inställningar; "Övrig inkomst" och "Övrigt" finns alltid. |
 | **Person** | Valfritt. Personer i hushållet (max 10). Varje inkomst/kostnad kan kopplas till en person eller vara **Gemensamt**. Personvalet finns alltid i formulären (valfritt); **standard är Gemensamt**. |
 | **Nettoinkomst** | Det som faktiskt kommer in på kontot – lön **efter skatt** (nettolön enligt lönebeskedet), bidrag, ersättningar. Alla inkomster i appen är netto. |
 | **Kvar** | Inkomster − kostnader för en månad. Positivt = över, negativt = underskott. |

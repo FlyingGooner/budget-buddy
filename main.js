@@ -328,8 +328,16 @@ $('csv-export').addEventListener('click', () => {
   const rows = [];
   for (let m = months[0], i = 0; m <= last && i < 240; m = addMonths(m, 1), i++) {
     for (const r of rowsForMonth(data, m)) rows.push([m, r.name, tr(r.type === 'income' ? 'Inkomst' : 'Kostnad'), catName(r.category),
-      hasPeople() ? personName(r.person) : '', r.amount / 100, home(), tr(r.kind === 'rec' ? 'Ja' : 'Nej'), r.adjusted ? tr('Ja') : '']);
+      hasPeople() ? personName(r.person) : '', r.amount / 100, home(), tr(r.kind === 'rec' || r.kind === 'acc' ? 'Ja' : 'Nej'), r.adjusted ? tr('Ja') : '']);   // acc = kontots månadssparande
   }
+  // 2026-11-21: utfall för stängda månader och sparkontonas ifyllda värden – för analys i t.ex. Excel.
+  for (const m of Object.keys(data.closed).sort()) {
+    const t = monthTotals(data, m);
+    rows.push([m, tr('Kvar på kontot'), tr('Stängd'), '', '', t.left / 100, home(), '', '']);
+    rows.push([m, tr('Rörligt'), tr('Stängd'), '', '', (t.planned - t.left) / 100, home(), '', '']);
+  }
+  for (const a of data.accounts) for (const m of Object.keys(a.balances).sort())
+    rows.push([m, a.name, tr('Sparkonto'), tr('Värde'), '', a.balances[m] / 100, a.currency, '', '']);
   const text = Csv.build(['Månad', 'Namn', 'Typ', 'Kategori', 'Person', 'Belopp', 'Valuta', 'Återkommande', 'Ändrad denna månad'], rows);
   snackbar(Csv.download(`budget-buddy-${isoToday()}.csv`, text) ? 'CSV-filen laddas ner' : 'Kunde inte skapa filen', null, null, 3000);
 });

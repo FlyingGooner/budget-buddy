@@ -124,7 +124,7 @@ I18N.add({
   'Varje månad': 'Every month', 'Varannan månad': 'Every other month', 'En gång om året': 'Once a year', 'Var tredje månad': 'Every third month', 'Hur ofta': 'How often',
   'Kunde inte spara – lagringen är full eller blockerad.': 'Could not save – storage is full or blocked.',
   'Fortsätt': 'Continue',
-  'Lön': 'Salary', 'Försäkringskassan': 'Social insurance', 'Övrig inkomst': 'Other income', 'Försäkring': 'Insurance', 'Lån': 'Loans', 'Hushåll': 'Household',
+  'Lön': 'Salary', 'Försäkringskassan': 'Social insurance', 'Bidrag och ersättningar': 'Benefits and allowances', 'Värde': 'Value', 'Övrig inkomst': 'Other income', 'Försäkring': 'Insurance', 'Lån': 'Loans', 'Hushåll': 'Household',
   'Boende': 'Housing', 'Transport': 'Transport', 'Abonnemang': 'Subscriptions', 'Sparande': 'Savings', 'Barnbidrag': 'Child benefit', 'Pension': 'Pension', 'Mat': 'Food', 'Nöje': 'Leisure',
   'Finns inte längre.': 'No longer exists.',
   'Klistra in en exporterad text först.': 'Paste an exported text first.', 'Texten är för lång (max 2 MB).': 'The text is too long (max 2 MB).',
