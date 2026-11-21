@@ -148,7 +148,7 @@ I18N.add({
   'Gemensamt (lägg till personer under Inställningar)': 'Shared (add people under Settings)', 'Gemensamt': 'Shared', 'Person': 'Person',
   'Ny avvikelse': 'New deviation', 'Avvikelser': 'Deviations', 'Föregående år': 'Previous year', 'Nästa år': 'Next year',
   'Inga poster än – lägg till inkomster och räkningar så syns månaderna här.': 'No items yet – add income and bills and the months show here.',
-  'Lägg till inkomster och kostnader': 'Add income and expenses', 'Summa 12 mån': 'Total 12 mo', 'Högra kolumnen: saldo efter månaden.': 'Right column: balance after the month.',
+  'Lägg till inkomster och kostnader': 'Add income and expenses', 'Summa 12 mån': 'Total 12 mo', 'Senaste och kommande månader': 'Recent and upcoming months', 'Kvar = kvar på kontot för stängda månader, annars prognos: efter räkningar minus rörliga utgifter (snittet av de senaste stängda månaderna, med säsong).': 'Left = left in the account for closed months, otherwise forecast: after bills minus variable spending (average of the latest closed months, with season).', 'Högra kolumnen: saldo efter månaden.': 'Right column: balance after the month.',
   'Inga personer – allt räknas som gemensamt.': 'No people – everything counts as shared.', 'Papperskorgen är tom.': 'The trash is empty.',
   'Appens kurser används igen': "The app's rates are used again", 'Fyll i både saldo och månad.': 'Fill in both balance and month.',
   'Kvar av inkomst': 'Left of income', '🐷 Sparkvot (sparande av inkomst)': '🐷 Savings rate (savings of income)', 'Största kostnad': 'Largest expense',
