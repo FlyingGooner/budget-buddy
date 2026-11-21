@@ -103,7 +103,7 @@ $('ad-delete').addEventListener('click', () => {
 });
 $('acc-manage').addEventListener('click', () => {
   showTab('month');
-  const c = $('savings-card'), d = c.querySelector('details');
+  const c = $('income-card'), d = c.querySelector('.ie-sum details');   // 2026-11-21: sparandet ligger i det övre kortet
   if (d) d.open = true;
   c.scrollIntoView({ behavior: 'smooth', block: 'start' });
 });

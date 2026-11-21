@@ -160,15 +160,13 @@ function renderSavingsCard(saving, t) {
   const approx = rowsAll.some((r) => r.cur?.estimated || (r.a && r.a.currency !== home()));
   // 2026-11-21: Totalt sparat också i inkomst/kostnadskortet.
   const ie = document.querySelector('#income-card .ie-sum');
-  if (ie && data.accounts.length) ie.append(el('p', { class: 'split ie-sav' }, el('span', { text: 'Totalt sparat' }), el('span', { text: (approx ? '≈ ' : '') + kr(total) })));
   const open = (r) => (r.items.length === 1 ? openRowDialog(r.items[0]) : r.a ? openAccDialog(r.a) : null);
   // Hopfällt (2026-11-17): rubrik och Totalt sparat syns, kontona fälls ut.
-  fill($('savings-card'), fold('sav', [
-    el('h2', { class: 'split' }, el('span', { text: '🐷 Sparande' }),
-      el('span', { text: `${kr(t.savings)}/mån` + (t.income && t.savings ? ` · ${share} %` : '') })),
-    data.accounts.length ? el('div', { class: 'sv-big' },
-      el('span', { class: 'sv-amt' }, el('small', { text: 'Totalt sparat' }), (approx ? '≈ ' : '') + kr(total)),
-      totalDiff ? el('span', { class: 'sv-diff ' + (totalDiff < 0 ? 'neg' : 'pos'), text: `${totalDiff > 0 ? '+' : '−'}${kr(Math.abs(totalDiff))} sedan ${monthShortLabel(prev).toLowerCase()}` }) : null) : null],
+  // 2026-11-21: inget eget blått kort – Totalt sparat är en rad i det övre kortet som fälls ut med kontona.
+  const savFold = fold('sav',
+    el('h2', { class: 'split' }, el('span', { text: data.accounts.length ? 'Totalt sparat' : 'Sparande' }),
+      el('span', { text: data.accounts.length ? (approx ? '≈ ' : '') + kr(total) : `${kr(t.savings)}/mån` })),
+    totalDiff ? el('p', { class: 'sv-diff ' + (totalDiff < 0 ? 'neg' : 'pos'), text: `${totalDiff > 0 ? '+' : '−'}${kr(Math.abs(totalDiff))} sedan ${monthShortLabel(prev).toLowerCase()}` }) : null,
     el('ul', { class: 'sv-accs' }, rowsOut.map((r) => {
       const foreign = r.a && r.a.currency !== home();
       const sub = [r.monthly ? `+${kr(r.monthly)}/mån` : null, foreign && r.cur ? `(${money(r.cur.amount, r.a.currency)})` : null].filter(Boolean).join(' · ');
@@ -182,7 +180,9 @@ function renderSavingsCard(saving, t) {
       ...hiddenAcc.map((a, i) => el('button', { type: 'button', class: 'link', text: (i ? ', ' : '') + a.name, on: { click: () => openAccDialog(a) } }))) : null,
     el('div', { class: 'sv-foot' },
       el('button', { type: 'button', class: 'link', text: '+ Nytt sparande', on: { click: () => focusAdd('savings') } }),
-      data.accounts.length ? el('button', { type: 'button', class: 'link', text: 'Utveckling ›', on: { click: () => { showTab('stats'); $('stats-accounts').scrollIntoView({ block: 'start' }); } } }) : null)));
+      data.accounts.length ? el('button', { type: 'button', class: 'link', text: 'Utveckling ›', on: { click: () => { showTab('stats'); $('stats-accounts').scrollIntoView({ block: 'start' }); } } }) : null));
+  $('savings-card').hidden = true;
+  if (ie) ie.append(savFold);
 }
 
 // Sparmål (2026-11-21, valfritt): stapel och en rad under kontot – bara information, aldrig varning.

@@ -632,3 +632,5 @@ body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; 
 .add-pair.three { grid-template-columns: 1.2fr 1fr 1fr; gap: 6px; }
 .add-pair.three .btn { font-size: .9375rem; padding: 0 6px; white-space: nowrap; }
 .close-line span.link { display: block; }
+#income-card .ie-sum > .fold { margin: 6px -28px 0 0; }
+#income-card .ie-sum .sv-diff { display: block; margin: 0 0 4px; font-size: .8125rem; }
