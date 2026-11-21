@@ -13,7 +13,7 @@ function rowLabel(r) {
 function monthRow(r) {
   const li = el('li', { class: 'row' });
   li.append(el('button', { type: 'button', class: 'row-main', 'aria-label': `${r.name}, ${kr(r.amount)}, ${rowLabel(r)}. Ändra`,
-    on: { click: () => (r.kind === 'carry' ? setMonth(addMonths(month, -1)) : openRowDialog(r)) } },
+    on: { click: () => (r.kind === 'carry' ? setMonth(addMonths(month, -1)) : r.kind === 'acc' ? openAccDialog(data.accounts.find((a) => a.id === r.id)) : openRowDialog(r)) } },
     el('span', { class: 'row-name' }, el('span', { text: r.name }), el('span', { class: 'row-sub', text: subLine(r) })),
     el('span', { class: 'amount', text: kr(r.amount) }), markers(r)));
   return li;
@@ -181,7 +181,7 @@ function renderSavingsCard(saving, t) {
     totalDiff ? el('p', { class: 'sv-diff ' + (totalDiff < 0 ? 'neg' : 'pos'), text: `${totalDiff > 0 ? '+' : '−'}${kr(Math.abs(totalDiff))} sedan ${monthShortLabel(prev).toLowerCase()}` }) : null,
     el('ul', { class: 'sv-accs' }, rowsOut.map((r) => {
       const foreign = r.a && r.a.currency !== home();
-      const sub = [r.monthly ? `+${kr(r.monthly)}/mån` : null, r.a?.pre && r.a.pre.from <= month ? `+${kr(r.a.pre.amount)}/mån före lön` : null, r.a?.deposits?.[month] ? `+${kr(r.a.deposits[month])} extra` : null, foreign && r.cur ? `(${money(r.cur.amount, r.a.currency)})` : null].filter(Boolean).join(' · ');
+      const sub = [r.monthly ? `+${kr(r.monthly)}/mån` : null, r.a?.pay && r.a.pay.from <= month && (!r.a.pay.end || r.a.pay.end >= month) ? `+${kr(r.a.pay.amount)}/mån från lönen` : null, r.a?.pre && r.a.pre.from <= month ? `+${kr(r.a.pre.amount)}/mån före lön` : null, r.a?.deposits?.[month] ? `+${kr(r.a.deposits[month])} extra` : null, foreign && r.cur ? `(${money(r.cur.amount, r.a.currency)})` : null].filter(Boolean).join(' · ');
       return el('li', {}, el('button', { type: 'button', class: 'sv-row', 'aria-label': `${r.name}. Ändra`, on: { click: () => open(r) } },
         el('span', { class: 'sv-name' }, el('span', { text: r.name }), sub ? el('small', { text: sub }) : null),
         el('span', { class: 'sv-val' }, el('span', { text: r.a ? (r.cur ? ((r.cur.estimated || foreign) ? '≈ ' : '') + kr(r.now) : '–') : '' }),
@@ -191,8 +191,7 @@ function renderSavingsCard(saving, t) {
     hiddenAcc.length ? el('p', { class: 'sv-hidden' }, hiddenAcc.length === 1 ? '+ 1 dolt konto: ' : `+ ${hiddenAcc.length} dolda konton: `,   // tryck för att visa igen
       ...hiddenAcc.map((a, i) => el('button', { type: 'button', class: 'link', text: (i ? ', ' : '') + a.name, on: { click: () => openAccDialog(a) } }))) : null,
     el('div', { class: 'sv-foot' },
-      el('button', { type: 'button', class: 'link', text: '+ Nytt sparande', on: { click: () => focusAdd('savings') } }),
-      el('button', { type: 'button', class: 'link', text: '+ Sparkonto', on: { click: newAccount } }),
+      el('button', { type: 'button', class: 'link', text: '+ Nytt sparande', on: { click: newAccount } }),
       data.accounts.length ? el('button', { type: 'button', class: 'link', text: 'Utveckling ›', on: { click: () => { showTab('stats'); $('stats-accounts').scrollIntoView({ block: 'start' }); } } }) : null));
   $('savings-card').hidden = true;
   if (ie) ie.append(savFold);
@@ -355,7 +354,8 @@ function addLike(rs, label) {
   const rec = (r) => data.recurring.find((x) => x.id === r.id);
   return el('button', { type: 'button', class: 'link add-like', text: `+ Lägg till i ${label}`, on: { click: () => {
     const sav = rs[0].category === SAVINGS_CAT;
-    focusAdd(sav ? 'savings' : 'expense');
+    if (sav) { newAccount(); return; }   // v5: sparande = ett sparkonto
+    focusAdd('expense');
     const f = $(sav ? 'sav-form' : 'exp-form').elements;
     if (!sav) f.category.value = rs[0].category;
     const person = same((r) => r.person);

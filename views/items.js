@@ -93,7 +93,12 @@ function openAllItems() {
       el('button', { type: 'button', class: 'row-main', 'aria-label': `${r.name}, ${kr(r.amount)}. Ändra`, on: { click: () => open(r) } },
         el('span', { class: 'row-name' }, el('span', { text: r.name }), el('span', { class: 'row-sub', text: [k === 'expense' ? catName(r.category) : null, r.type === 'expense' ? everyLabel[r.every] : null, period(r)].filter(Boolean).join(' · ') })),
         el('span', { class: 'amount', text: kr(r.amount) })))))] : null;
-  }).flat().filter(Boolean) : [el('p', { class: 'muted', text: 'Inga poster än.' })]));
+  }).flat().filter(Boolean) : [el('p', { class: 'muted', text: 'Inga poster än.' })]),
+    // v5: sparandet ligger på sparkontona – tryck för att ändra kontot.
+    data.accounts.length ? [el('h3', { class: 'all-h', text: '🐷 Sparkonton' }), el('ul', { class: 'list' }, data.accounts.map((a) => el('li', { class: 'row' },
+      el('button', { type: 'button', class: 'row-main', on: { click: () => { $('all-dialog').close(); setTimeout(() => openAccDialog(a), 0); } } },
+        el('span', { class: 'row-name' }, el('span', { text: a.name }), el('span', { class: 'row-sub', text: [a.pay ? `${kr(a.pay.amount)}/mån från lönen` : null, a.pre ? `${kr(a.pre.amount)}/mån före lön` : null].filter(Boolean).join(' · ') })),
+        el('span', { class: 'amount', text: a.pay ? kr(a.pay.amount) : '' })))))] : null);
   $('all-dialog').showModal();
 }
 $('all-items').addEventListener('click', openAllItems);

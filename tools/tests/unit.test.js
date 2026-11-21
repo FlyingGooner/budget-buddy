@@ -1,6 +1,6 @@
 // Unit tests for store.js (loaded as a classic script before this file). Run: tools\test.ps1 budget-buddy
 const rich = () => ({
-  version: 1,
+  version: 5,
   settings: { categories: DEFAULT_CATEGORIES.map((c) => ({ ...c })), people: [{ id: 'p1', name: 'Anna' }], startBalance: 1500000, startMonth: '2026-01',
     catsV: CATS_V, rates: { USD: 1000, EUR: 1100, GBP: 1300, NOK: 100, DKK: 150 }, ratesDate: '2026-11-01', ratesOwn: true },
   recurring: [

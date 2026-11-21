@@ -8,7 +8,7 @@ Belopp är heltal i ören (minsta enheten) i hemvalutan, utom sparkontons saldon
 
 | Fält | Typ | Betydelse |
 |---|---|---|
-| `version` | heltal | Dataversion, nu `4` (`DATA_VERSION`). Äldre data går genom `migrate()`. |
+| `version` | heltal | Dataversion, nu `5` (`DATA_VERSION`). Äldre data går genom `migrate()`. |
 | `settings` | objekt | Se nedan. |
 | `recurring` | lista | Återkommande poster (max `MAX_RECURRING`). |
 | `oneOffs` | lista | Avvikelser – engångsposter en viss månad (max `MAX_ONEOFFS`). |
@@ -44,12 +44,13 @@ Belopp är heltal i ören (minsta enheten) i hemvalutan, utom sparkontons saldon
 
 ## accounts
 
-`{ id, name, currency, balances: { månad: belopp }, feeds: [postId], hidden, goal?, pre?, deposits? }`
+`{ id, name, currency, balances: { månad: belopp }, feeds: [postId], hidden, goal?, pay?, pre?, deposits? }`
 
 - `balances`: ifyllda saldon. Saldot en senare månad beräknas som senaste ifyllda plus det som `feeds` sparar (omräknat från hemvalutan).
 - `feeds`: id på återkommande sparposter eller avvikelser (från version 2) som fyller på kontot.
 - `hidden`: visas inte i Månad men räknas i Totalt sparat.
 - `goal`: `{ amount, month? }` – sparmål i kontots valuta, ev. klart till en månad.
+- `pay` (v5): `{ amount, from, end? }` – sparande från lönen varje månad, i hemvalutan. Blir en rad i kategorin Sparande bland kostnaderna (`kind: 'acc'` i `rowsForMonth`) och räknas upp på kontot. Från v5 är sparandet och sparkontot samma sak: återkommande sparposter (varje månad) flyttas hit, och en post utan konto blir ett eget konto utan saldo.
 - `pre` (v4): `{ amount, from }` – sätts in före lönen varje månad från och med `from`, i hemvalutan. Räknas som sparat, påverkar inte budgeten.
 - `deposits` (v4): `{ månad: belopp }` – insättningar utöver lönen (t.ex. en gåva), i hemvalutan. Räknas som sparat den månaden.
 - Namnen är unika (kontrolleras i dialogen, inte i `loadData`).
@@ -62,5 +63,7 @@ Belopp är heltal i ören (minsta enheten) i hemvalutan, utom sparkontons saldon
 - `accs` (version 2): konton som posten fyllde på; kopplingen läggs tillbaka vid återställning.
 
 ## Export och backup
+
+Exporten har `version`; en export utan version räknas som version 1 och uppgraderas vid import.
 
 `exportText()` skriver `{ app, format, exported, data }` där `data` är `packData()`: samma fält men utan standardvärden, `type` som `i`/`e`, och utan `trash` och sortering. `importText()` → `unpackData()` → `loadData()`.
