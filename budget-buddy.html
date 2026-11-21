@@ -694,6 +694,17 @@ dialog:focus { outline: none; }
 #income-card .fold[open] .top-cats { display: none; }
 #income-card .top-cats { margin: 6px 28px 2px 0; }
 
+/* Dagar till lön som liten ruta bredvid beloppet (2026-11-21) */
+.big-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.big-row .big { margin: 0; }
+.pay-chip { flex: none; display: grid; justify-items: center; min-width: 64px; padding: 6px 10px; border-radius: 14px; background: var(--surface-container-high); color: var(--on-surface-variant); line-height: 1.1; }
+.pay-chip strong { font-size: 1.375rem; font-weight: 700; color: var(--on-surface); font-variant-numeric: tabular-nums; }
+.pay-chip small { font-size: .625rem; font-weight: 500; text-align: center; }
+.pay-chip.pc-soon { background: var(--primary-container); color: var(--on-primary-container); }
+.pay-chip.pc-soon strong { color: var(--on-primary-container); }
+.pay-chip.pc-due { background: var(--primary); color: var(--on-primary); }
+.pay-chip.pc-due strong { color: var(--on-primary); }
+
 </style>
 </head>
 <body>
@@ -1717,7 +1728,7 @@ I18N.add({
   'Kvar av inkomst': 'Left of income', '🐷 Sparkvot (sparande av inkomst)': '🐷 Savings rate (savings of income)', 'Största kostnad': 'Largest expense',
   '🐷 Sparat 12 mån': '🐷 Saved 12 mo', '🐷 Sparat den här månaden': '🐷 Saved this month', 'Gå till kostnader': 'Go to expenses', 'In och ut, 12 månader': 'In and out, 12 months',
   'Inga poster än – lägg till inkomster och kostnader så syns trenden här.': 'No items yet – add income and expenses and the trend shows here.',
-  'Avsluta markering': 'End selection', 'In': 'In', 'Ut': 'Out', 'Inkomster': 'Income', '(netto)': '(net)', 'Kostnader': 'Expenses', 'Kostnader per kategori': 'Expenses by category', 'Kvar': 'Left', 'Lön i dag': 'Payday today', 'Nästa lön i morgon': 'Next payday tomorrow',
+  'Avsluta markering': 'End selection', 'In': 'In', 'Ut': 'Out', 'Inkomster': 'Income', '(netto)': '(net)', 'Kostnader': 'Expenses', 'Kostnader per kategori': 'Expenses by category', 'Kvar': 'Left', 'Lön i dag': 'Payday today', 'dagar till lön': 'days to payday', 'dag till lön': 'day to payday', 'stäng i dag': 'close today', 'stäng månaden': 'close the month', 'Nästa lön i morgon': 'Next payday tomorrow',
   'Markerade poster': 'Selected items', 'Nyckeltal': 'Key figures', 'Personens poster blir gemensamma': "The person's items become shared", 'standard': 'default',
   'Totalt sparsaldo': 'Total savings', 'Saldo': 'Balance', 'Namn': 'Name', 'Period': 'Period', 'Från': 'From', 'Till': 'To', 'Avsluta': 'End', 'Avslutade': 'Ended', 'Aktiva': 'Active',
   'Kronor (SEK)': 'Swedish kronor (SEK)', 'Euro (EUR)': 'Euro (EUR)', 'Dollar (USD)': 'US dollar (USD)', 'Pund (GBP)': 'British pound (GBP)', 'Norska kronor (NOK)': 'Norwegian kroner (NOK)', 'Danska kronor (DKK)': 'Danish kroner (DKK)',
@@ -1725,7 +1736,7 @@ I18N.add({
   '+ Avvikelse': '+ Deviation', 'Person (valfritt)': 'Person (optional)', 'Varje kvartal': 'Every quarter', 'varje kvartal': 'every quarter', 'App': 'App', 'Typ': 'Type',
   'Avsluta poster': 'End items', 'konto': 'account', 'Version': 'Version', 'Huvudmeny': 'Main menu', 't.ex. Buffert': 'e.g. Buffer', 't.ex. Hyra': 'e.g. Rent', 'Startmånad': 'Start month', 'Start': 'Start',
   'Ta bort konto': 'Remove account', 'Byt namn': 'Rename', 'Klistra in text': 'Paste text', 'Data': 'Data',
-  'varav sparande': 'of which savings', 'Varav sparande': 'Of which savings', 'Lön i dag': 'Payday today', 'Lön i morgon': 'Payday tomorrow', 'Sparande som går hit:': 'Savings that go here:', 'Sparkonton': 'Savings accounts', '+ Nytt sparkonto': '+ New savings account', 'Nytt sparkonto': 'New savings account', '+ Sparkonto': '+ Account', 'Namn': 'Name', 'Skriv ett namn på kontot.': 'Enter a name for the account.', 'Inga sparkonton än.': 'No savings accounts yet.', 'Inga': 'None', ' · dolt': ' · hidden', '🔒 Stäng månad': '🔒 Close month', '🔒 Stäng': '🔒 Close', '🔓 Ändra': '🔓 Edit', 'Stäng månad': 'Close month', 'kvar': 'left', 'Kvar varje månad': 'Left each month', 'Snitt': 'Average', 'Summa': 'Total', 'mån': 'mo',
+  'varav sparande': 'of which savings', 'Varav sparande': 'Of which savings', 'Lön i dag': 'Payday today', 'dagar till lön': 'days to payday', 'dag till lön': 'day to payday', 'stäng i dag': 'close today', 'stäng månaden': 'close the month', 'Lön i morgon': 'Payday tomorrow', 'Sparande som går hit:': 'Savings that go here:', 'Sparkonton': 'Savings accounts', '+ Nytt sparkonto': '+ New savings account', 'Nytt sparkonto': 'New savings account', '+ Sparkonto': '+ Account', 'Namn': 'Name', 'Skriv ett namn på kontot.': 'Enter a name for the account.', 'Inga sparkonton än.': 'No savings accounts yet.', 'Inga': 'None', ' · dolt': ' · hidden', '🔒 Stäng månad': '🔒 Close month', '🔒 Stäng': '🔒 Close', '🔓 Ändra': '🔓 Edit', 'Stäng månad': 'Close month', 'kvar': 'left', 'Kvar varje månad': 'Left each month', 'Snitt': 'Average', 'Summa': 'Total', 'mån': 'mo',
 }, [
   [/^Varav sparande \((.+) före lön\)$/, 'Of which savings ($1 before pay)'],
   [/^Dag (\d+) av (\d+)$/, 'Day $1 of $2'],
@@ -1876,7 +1887,7 @@ I18N.add({
 </script>
 <script>
 // ---- version.js ----
-﻿self.APP_VERSION = '0.12.150';
+﻿self.APP_VERSION = '0.12.151';
 
 </script>
   <script>
@@ -3161,8 +3172,9 @@ function renderMonth() {
   const leftWord = t.closed ? 'Kvar på kontot' : 'Efter räkningar';
   const legend = (cls, label) => el('span', { class: 'lgd' }, el('span', { class: 'dot ' + cls }), label);
   fill($('summary'), fold('kvar', [el('h2', { text: leftWord }),
-    el('p', { class: 'big ' + (t.left < 0 ? 'neg' : 'pos'), text: kr(t.left, true) }),
-    closeLine(t),
+    // 2026-11-21: liten ruta till höger med dagar till lön (färgad när det är dags att stänga), i stället för den stora raden.
+    el('div', { class: 'big-row' }, el('p', { class: 'big ' + (t.left < 0 ? 'neg' : 'pos'), text: kr(t.left, true) }), t.closed ? null : payChip()),
+    t.closed ? closeLine(t) : null,
     // 2026-11-18: beloppen står i korten nedan – här bara jämförelsen, stapeln och färgernas namn.
     hasPrev && delta ? el('p', { class: 'delta ' + (delta < 0 ? 'neg' : 'pos'), text: `${delta > 0 ? '▲' : '▼'} ${kr(Math.abs(delta))} mot ${monthShortLabel(addMonths(month, -1)).toLowerCase()}` }) : null,
     el('div', { class: 'segbar', role: 'img', 'aria-label': `Av inkomsten: kostnader ${kr(t.expense - t.savings)}, sparande ${kr(t.savings)}, ${leftWord.toLowerCase()} ${kr(Math.max(0, t.left))}` },
@@ -3289,6 +3301,15 @@ function closeLine(t) {
   return el('p', { class: 'close-line cl-' + lvl }, el('span', { class: 'link', text: (lvl === 'later' ? '✓ ' : '⏰ ') + text }));
 }
 const closeDay = () => dayLabel(closeIso());
+function payChip() {
+  if (month > activeMonth()) return null;
+  const dc = Math.round((new Date(closeIso() + 'T12:00') - new Date(isoToday() + 'T12:00')) / 864e5);
+  const dp = Math.round((new Date(payIso() + 'T12:00') - new Date(isoToday() + 'T12:00')) / 864e5);
+  const lvl = dc <= 0 ? 'due' : dc <= 3 ? 'soon' : 'later';
+  const sub = dc < 0 ? 'stäng månaden' : dc === 0 ? 'stäng i dag' : dp === 1 ? 'dag till lön' : 'dagar till lön';
+  return el('span', { class: 'pay-chip pc-' + lvl, title: `Stäng månaden ${dayLabel(closeIso())}` },
+    el('strong', { text: dc < 0 ? '!' : String(Math.max(0, dp)) }), el('small', { text: sub }));
+}
 function closeIso() {   // dagen före nästa lön (eller sista dagen i månaden), som YYYY-MM-DD
   const p = data.settings.payday, n = addMonths(month, 1), [y, mo] = n.split('-').map(Number);
   // 2026-11-18: lönedag på lördag/söndag → lönen kommer fredagen före, så frågan gäller dagen före den.
@@ -3322,8 +3343,7 @@ function monthHints(rows) {
       const total = Math.max(1, Math.round((new Date(payIso() + 'T12:00') - new Date(p0 + 'T12:00')) / 864e5)), done = Math.min(total, total - days);
       const f = el('span', { class: 'mp-fill' }); f.style.width = Math.round((done / total) * 100) + '%';
       prog = el('div', { class: 'mprog', role: 'img', 'aria-label': `Dag ${done} av ${total}` },
-        el('div', { class: 'mp-top' }, el('span', { text: `Dag ${done} av ${total}` }),
-          el('span', { text: days === 0 ? 'Lön i dag' : days === 1 ? 'Lön i morgon' : `Lön om ${days} dagar` })),
+        el('div', { class: 'mp-top' }, el('span', { text: `Dag ${done} av ${total}` })),
         el('span', { class: 'mp-track' }, f));
     }
   }

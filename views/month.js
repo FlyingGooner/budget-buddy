@@ -92,8 +92,9 @@ function renderMonth() {
   const leftWord = t.closed ? 'Kvar på kontot' : 'Efter räkningar';
   const legend = (cls, label) => el('span', { class: 'lgd' }, el('span', { class: 'dot ' + cls }), label);
   fill($('summary'), fold('kvar', [el('h2', { text: leftWord }),
-    el('p', { class: 'big ' + (t.left < 0 ? 'neg' : 'pos'), text: kr(t.left, true) }),
-    closeLine(t),
+    // 2026-11-21: liten ruta till höger med dagar till lön (färgad när det är dags att stänga), i stället för den stora raden.
+    el('div', { class: 'big-row' }, el('p', { class: 'big ' + (t.left < 0 ? 'neg' : 'pos'), text: kr(t.left, true) }), t.closed ? null : payChip()),
+    t.closed ? closeLine(t) : null,
     // 2026-11-18: beloppen står i korten nedan – här bara jämförelsen, stapeln och färgernas namn.
     hasPrev && delta ? el('p', { class: 'delta ' + (delta < 0 ? 'neg' : 'pos'), text: `${delta > 0 ? '▲' : '▼'} ${kr(Math.abs(delta))} mot ${monthShortLabel(addMonths(month, -1)).toLowerCase()}` }) : null,
     el('div', { class: 'segbar', role: 'img', 'aria-label': `Av inkomsten: kostnader ${kr(t.expense - t.savings)}, sparande ${kr(t.savings)}, ${leftWord.toLowerCase()} ${kr(Math.max(0, t.left))}` },
@@ -220,6 +221,15 @@ function closeLine(t) {
   return el('p', { class: 'close-line cl-' + lvl }, el('span', { class: 'link', text: (lvl === 'later' ? '✓ ' : '⏰ ') + text }));
 }
 const closeDay = () => dayLabel(closeIso());
+function payChip() {
+  if (month > activeMonth()) return null;
+  const dc = Math.round((new Date(closeIso() + 'T12:00') - new Date(isoToday() + 'T12:00')) / 864e5);
+  const dp = Math.round((new Date(payIso() + 'T12:00') - new Date(isoToday() + 'T12:00')) / 864e5);
+  const lvl = dc <= 0 ? 'due' : dc <= 3 ? 'soon' : 'later';
+  const sub = dc < 0 ? 'stäng månaden' : dc === 0 ? 'stäng i dag' : dp === 1 ? 'dag till lön' : 'dagar till lön';
+  return el('span', { class: 'pay-chip pc-' + lvl, title: `Stäng månaden ${dayLabel(closeIso())}` },
+    el('strong', { text: dc < 0 ? '!' : String(Math.max(0, dp)) }), el('small', { text: sub }));
+}
 function closeIso() {   // dagen före nästa lön (eller sista dagen i månaden), som YYYY-MM-DD
   const p = data.settings.payday, n = addMonths(month, 1), [y, mo] = n.split('-').map(Number);
   // 2026-11-18: lönedag på lördag/söndag → lönen kommer fredagen före, så frågan gäller dagen före den.
@@ -253,8 +263,7 @@ function monthHints(rows) {
       const total = Math.max(1, Math.round((new Date(payIso() + 'T12:00') - new Date(p0 + 'T12:00')) / 864e5)), done = Math.min(total, total - days);
       const f = el('span', { class: 'mp-fill' }); f.style.width = Math.round((done / total) * 100) + '%';
       prog = el('div', { class: 'mprog', role: 'img', 'aria-label': `Dag ${done} av ${total}` },
-        el('div', { class: 'mp-top' }, el('span', { text: `Dag ${done} av ${total}` }),
-          el('span', { text: days === 0 ? 'Lön i dag' : days === 1 ? 'Lön i morgon' : `Lön om ${days} dagar` })),
+        el('div', { class: 'mp-top' }, el('span', { text: `Dag ${done} av ${total}` })),
         el('span', { class: 'mp-track' }, f));
     }
   }
