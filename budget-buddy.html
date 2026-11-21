@@ -790,6 +790,10 @@ dialog::backdrop { background: rgba(0,0,0,.25); }
 .topbar { max-width: 640px; margin: 0 auto; padding: calc(env(safe-area-inset-top) + 10px) 96px 0 8px; }
 .brand { font-size: 1.75rem; font-weight: 700; letter-spacing: .01em; line-height: 1.2; color: var(--text); }
 #version { top: calc(env(safe-area-inset-top) + 20px); }
+/* Knappraden får aldrig göra sidan bredare (2026-11-21): med stor text i telefonen trängde tre knappar ut alla kort. */
+.add-pair { grid-template-columns: minmax(0, 3fr) minmax(0, 2fr); }
+.add-pair.three { grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr) minmax(0, 1fr); }
+.add-pair .btn { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
 </style>
 </head>
@@ -1971,7 +1975,7 @@ I18N.add({
 </script>
 <script>
 // ---- version.js ----
-﻿self.APP_VERSION = '0.12.173';
+﻿self.APP_VERSION = '0.12.174';
 
 </script>
   <script>
