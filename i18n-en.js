@@ -173,6 +173,7 @@ I18N.add({
   [/^\+(.+) extra$/, '+$1 extra'],
   [/^(.+)\/mån från lönen$/, '$1/mo from pay'],
   [/^Poster som också går hit: (.+)$/, (g) => `Items that also go here: ${g[1].replace(/\/mån/g, '/mo')}`],
+  [/^ifyllt (\S+) · (.+)$/, (g, tr) => `entered ${tr(g[1])} · ${g[2].replace(/\/mån/g, '/mo').replace(/från lönen/g, 'from pay').replace(/före lön/g, 'before pay')}`],
   [/^förslag: (.+) \+ (.+)$/, 'suggested: $1 + $2'],
   [/^Värde \((.+)\)$/, 'Value ($1)'],
   [/^Ifyllt i (.+)\.$/, (g, tr) => `Entered in ${tr(g[1])}.`],
