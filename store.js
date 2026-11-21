@@ -65,9 +65,24 @@ const DEFAULT_CATEGORIES = [...DEFAULT_INCOME_CATEGORIES, ...DEFAULT_EXPENSE_CAT
 const SAVINGS_CAT = 'savings';
 const CATS_V = 2; // settings.catsV: one-time additions to older saved category lists (v2: "Sparande")
 
+// Dataversion (2026-11-21): loadData() kör MIGRATIONS i ordning från den sparade versionen och sparar alltid den senaste.
+// Lägg en ny funktion här när fält byter betydelse; nya valfria fält behöver ingen (loadData fyller i standardvärden).
+const DATA_VERSION = 2;
+const MIGRATIONS = {
+  // 1 → 2: sparkonton kan fyllas på av engångssparande (feeds kan peka på avvikelser), papperskorgen minns kontokopplingar.
+  // Inga gamla fält ändrar betydelse, så inget behöver skrivas om.
+  2: (d) => d,
+};
+function migrate(d) {
+  let v = Number.isInteger(d.version) && d.version >= 1 ? d.version : 1;
+  if (v > DATA_VERSION) return d;   // nyare app har sparat – läs det vi känner igen
+  while (v < DATA_VERSION) d = MIGRATIONS[++v](d);
+  return d;
+}
+
 function emptyData() {
   return {
-    version: 1,
+    version: DATA_VERSION,
     settings: { categories: DEFAULT_CATEGORIES.map((c) => ({ ...c })), people: [], startBalance: 0, startMonth: null, catsV: CATS_V,
       rates: { ...DEFAULT_RATES }, ratesDate: RATES_DATE, ratesOwn: false, sort: 'a-', home: 'SEK', payday: 1 },
     recurring: [],
@@ -83,6 +98,7 @@ function emptyData() {
 function loadData(d) {
   const out = emptyData();
   if (!isObj(d)) return out;
+  d = migrate(d);
 
   // Settings
   const s = isObj(d.settings) ? d.settings : {};
@@ -197,7 +213,7 @@ function loadData(d) {
       seenA.add(a.id);
       const currency = CURRENCIES.includes(a.currency) ? a.currency : 'SEK'; // v0.8.0; balances in minor units of it
       // feeds (2026-11-17): återkommande sparposter som fyller på kontot varje månad (beräknat saldo, se estBalance).
-      const feeds = Array.isArray(a.feeds) ? [...new Set(a.feeds.filter((x) => recIds.has(x)))].slice(0, 20) : [];
+      const feeds = Array.isArray(a.feeds) ? [...new Set(a.feeds.filter((x) => ids.has(x)))].slice(0, 40) : [];   // 2026-11-21: även engångssparande (avvikelser)
       // goal (2026-11-21, valfritt): { amount, month? } – sparmål i kontots valuta, ev. klart till en månad. Finns bara när det är satt.
       const goal = isObj(a.goal) && isAmount(a.goal.amount) && a.goal.amount > 0
         ? { amount: a.goal.amount, ...(isMonth(a.goal.month) ? { month: a.goal.month } : {}) } : null;
@@ -216,6 +232,7 @@ function loadData(d) {
       const e = sub.recurring[0] ? { d: t.d, rec: sub.recurring[0] } : sub.oneOffs[0] ? { d: t.d, one: sub.oneOffs[0] } : sub.accounts[0] ? { d: t.d, acc: sub.accounts[0] } : null;
       if (!e) continue;
       if (e.rec) { const a = {}; for (const [m, map] of Object.entries(sub.adjustments)) a[m] = map[e.rec.id]; if (Object.keys(a).length) e.adj = a; }
+      if (!e.acc && Array.isArray(t.accs)) { const accs = [...new Set(t.accs.filter(isId))].slice(0, MAX_ACCOUNTS); if (accs.length) e.accs = accs; }
       out.trash.push(e);
     }
   }
@@ -244,6 +261,10 @@ function trashItems(d, kind, ids, today) {
   const set = new Set(ids), key = { rec: 'recurring', one: 'oneOffs', acc: 'accounts' }[kind];
   for (const x of d[key].filter((x) => set.has(x.id))) {
     const e = { d: today, [kind]: x };
+    if (kind !== 'acc') {   // 2026-11-21: kom ihåg vilka konton posten fyllde på, så kopplingen kommer tillbaka vid återställning
+      const accs = d.accounts.filter((a) => (a.feeds || []).includes(x.id)).map((a) => a.id);
+      if (accs.length) e.accs = accs;
+    }
     if (kind === 'rec') {
       const adj = {};
       for (const [m, map] of Object.entries(d.adjustments)) if (Object.hasOwn(map, x.id)) { adj[m] = map[x.id]; delete map[x.id]; if (!Object.keys(map).length) delete d.adjustments[m]; }
@@ -265,6 +286,7 @@ function restoreItem(d, i) {
   if (taken.has(x.id)) x.id = (kind === 'acc' ? 'a' : '') + newId().slice(-10);
   d[key].push(x);
   if (e.adj) for (const [m, a] of Object.entries(e.adj)) (d.adjustments[m] ||= {})[x.id] = a;
+  for (const a of d.accounts) if ((e.accs || []).includes(a.id) && !(a.feeds ||= []).includes(x.id)) a.feeds.push(x.id);
   d.trash.splice(i, 1);
   return x;
 }
@@ -296,6 +318,7 @@ function packData(d) {
   const item = (r) => {
     const o = { id: r.id, name: r.name, type: t(r.type), amount: r.amount, category: r.category };
     if (r.person) o.person = r.person;
+    if (r.pre) o.pre = true;   // 2026-11-21: "Dras före lönen" följer med i backupen
     return o;
   };
   if (d.recurring.length) out.recurring = d.recurring.map((r) => Object.assign(item(r),
@@ -320,9 +343,9 @@ function unpackData(p) {
   if (Array.isArray(s.categories)) settings.categories = list(s.categories).map((c) => ({ id: c.id, name: c.name, type: type(c.type) }));
   if (Array.isArray(s.people)) settings.people = list(s.people).map((x) => ({ id: x.id, name: x.name }));
   if (isObj(s.rates)) { settings.rates = { ...s.rates }; settings.ratesDate = s.ratesDate; settings.ratesOwn = true; }
-  const item = (r) => ({ id: r.id, name: r.name, type: type(r.type), amount: r.amount, category: r.category, person: r.person ?? null });
+  const item = (r) => ({ id: r.id, name: r.name, type: type(r.type), amount: r.amount, category: r.category, person: r.person ?? null, pre: r.pre === true });
   return {
-    version: 1,
+    version: DATA_VERSION,
     settings,
     recurring: list(p.recurring).map((r) => ({ ...item(r), every: r.every ?? 1, start: r.start, end: r.end ?? null })),
     oneOffs: list(p.oneOffs).map((o) => ({ ...item(o), month: o.month })),

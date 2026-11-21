@@ -884,10 +884,10 @@ dialog:focus { outline: none; }
         </details>
         <details><summary>Månad</summary>
           <p>Efter räkningar överst är det som blir över efter kostnader och sparande – pengarna att leva på (mat, nöjen och annat rörligt). När månaden är stängd står Kvar på kontot i stället: det som faktiskt fanns kvar. Under det jämförelsen med förra månaden, och stapeln visar vart inkomsten går. Beloppen finns i korten nedanför.</p>
-          <p>Inkomster och Kostnader är hopfällda – tryck för att se dem. Kostnaderna är grupperade per kategori, och de tre största syns direkt.</p>
+          <p>Inkomster, Kostnader och Totalt sparat ligger i samma kort och är hopfällda – tryck på en rad för att se den. Kostnaderna är grupperade per kategori. Under dem står Summa (inkomster minus kostnader, med sparande som dras före lönen inräknat) och Varav sparande med andel av inkomsten.</p>
           <p>Tryck på en rad för att ändra beloppet bara den här månaden, hoppa över den eller Ändra posten (namn, belopp, kategori, period). + Lägg till i Boende lägger till en kostnad med samma kategori, person och hur ofta.</p>
           <p>Byt månad med ◀ ▶ eller svep. Tryck på Månad i menyn för att komma tillbaka till aktuell månad.</p>
-          <p>☰ Alla poster bredvid Lägg till visar alla återkommande poster, även avslutade och kommande. Posterna står med störst belopp först, både där och i Månad. Tryck på en för att ändra den.</p>
+          <p>＋ Lägg till, ☰ Alla poster och 🔒 Stäng (eller 🔓 Ändra i en stängd månad) ligger på en rad längst ner. ☰ Alla poster visar alla återkommande poster, även avslutade och kommande. Posterna står med störst belopp först, både där och i Månad. Tryck på en för att ändra den.</p>
           <p>Under knapparna står hur många dagar det är kvar till nästa lön (innevarande månad) och vilken kategori som ändrats mest mot förra månaden. I kortet står också förra månaden: kvar på kontot om den är stängd, annars efter räkningar.</p>
           <p>Kvar vid stängning (prognos) står på samma rad, när minst en tidigare månad är stängd: efter räkningar minus de rörliga utgifterna (snittet av de tre senaste stängda månaderna). Är samma månad förra året stängd räknas den med i procent – är december 65 % dyrare än vanligt, räknas det in. Tryck på prognosen för förklaringen.</p>
           <p>Senaste och kommande månader (Översikt): de tre senaste månaderna överst (stängda med vad som blev kvar på kontot), sedan efter räkningar för de tre närmaste månaderna (tryck Visa alla 12 månader för resten) och, när någon månad är stängd, kvar enligt prognosen bredvid. Tryck på en månad för att öppna den.</p>
@@ -897,19 +897,19 @@ dialog:focus { outline: none; }
         </details>
         <details><summary>Sparande</summary>
           <p>Sparande är inte en kostnad, men dras av från det som blir kvar. Lägg till med + Sparande: namn, belopp, hur ofta och gärna Saldo nu. Då skapas ett sparkonto som räknas upp av sig självt varje månad.</p>
-          <p>Kortet 🐷 Sparande i Månad visar månadens sparande och Totalt sparat i din valuta. Tryck för att fälla ut en rad per konto: saldo i din valuta, månadssparandet och ändringen sedan förra månaden. Konton i annan valuta visar sitt eget belopp inom parentes, t.ex. (730 USD).</p>
+          <p>Raden Totalt sparat i Månad visar summan på sparkontona i din valuta. Tryck för att fälla ut en rad per konto: saldo i din valuta, månadssparandet och ändringen sedan förra månaden. Konton i annan valuta visar sitt eget belopp inom parentes, t.ex. (730 USD).</p>
           <p>Tryck på en rad för att ändra belopp, välja vilket Sparkonto pengarna går till eller rätta saldot. Saldot märkt ≈ är beräknat: senast ifyllt plus sparandet.</p>
           <p>Dras sparandet innan nettolönen betalas ut (t.ex. aktier via jobbet), bocka i Dras före lönen. Då räknas det som sparat men minskar inte Kvar. Samma val finns på en avvikelse i kategorin Sparande.</p>
-          <p>Konton som inte rörs (t.ex. barnens) kan döljas från Månad: tryck på raden i Sparande-kortet och bocka ur Visa i Månad. Tryck på namnet under &quot;+ 1 dolt konto&quot; för att visa det igen. Det räknas fortfarande i Totalt sparat.</p>
-          <p>Sparkonton hanteras bara här. Kontot › i rutan för en sparpost ändrar kontots valuta, vilka sparposter som går dit, eller tar bort kontot (det hamnar i papperskorgen).</p>
+          <p>Konton som inte rörs (t.ex. barnens) kan döljas från Månad: tryck på kontot och bocka ur Visa i Månad. Tryck på namnet under &quot;+ 1 dolt konto&quot; för att visa det igen. Det räknas fortfarande i Totalt sparat.</p>
+          <p>Inställningar → Sparkonton listar alla konton, även dolda. Tryck på ett för att byta namn, valuta, saldo eller vilket sparande som går dit (även engångssparande), eller ta bort det (det hamnar i papperskorgen). + Nytt sparkonto skapar ett konto med bara saldo, t.ex. ett konto du inte sparar till varje månad. Samma knapp finns som + Sparkonto under Totalt sparat. Två konton kan inte heta likadant. När du sparar visas Ångra en stund.</p>
           <p>Summan och en graf över alla konton finns under Översikt → Sparkonton.</p>
         </details>
         <details><summary>Stäng månaden</summary>
           <p>Efter räkningar är planerat. Mat, nöjen och oväntade utgifter syns inte där.</p>
           <p>Under beloppet står när det är dags att stänga (t.ex. *Stäng månaden tis 24 nov · om 6 dagar*). Tre dagar innan blir raden färgad, och när dagen har kommit står det Dags att stänga månaden.</p>
-          <p>Dagen före lön trycker du ✓ Stäng månaden under beloppet och skriver in vad som faktiskt fanns kvar på kontot. Ligger pengarna kvar på kontot låter du Pengarna ligger kvar och följer med vara ibockad – då blir beloppet raden Kvar från förra månaden (⇢) i nästa månad. Flyttar du dem, t.ex. till sparkontot, bockar du ur. Första månaden, eller om förra månaden inte är stängd, fyller du i det själv med + Kvar från förra månaden under Inkomster. I samma ruta stämmer du av sparkontona (förifyllda – ändra bara det som skiljer).</p>
+          <p>Dagen före lön trycker du 🔒 Stäng längst ner och skriver in vad som faktiskt fanns kvar på kontot. Ligger pengarna kvar på kontot låter du Pengarna ligger kvar och följer med vara ibockad – då blir beloppet raden Kvar från förra månaden (⇢) i nästa månad. Flyttar du dem, t.ex. till sparkontot, bockar du ur. Första månaden, eller om förra månaden inte är stängd, fyller du i det själv med + Kvar från förra månaden under Inkomster. I samma ruta stämmer du av sparkontona (förifyllda – ändra bara det som skiljer).</p>
           <p>Rubriken blir då Kvar på kontot med det faktiska beloppet, och skillnaden visas som Rörligt i stapeln. Nästa månad blir den aktuella direkt.</p>
-          <p>Har du börjat stänga månader visas överst i Månad de som inte är stängda (Inte stängd: Okt) – tryck för att gå dit. I en stängd månad trycker du Ändra / öppna igen: där rättar du beloppet eller tar bort stängningen med Öppna igen.</p>
+          <p>Har du börjat stänga månader visas överst i Månad de som inte är stängda (Inte stängd: Okt) – tryck för att gå dit. I en stängd månad trycker du 🔓 Ändra: där rättar du beloppet eller tar bort stängningen med Öppna igen.</p>
         </details>
         <details><summary>Lönedag</summary>
           <p>Under Inställningar → Hushåll → Lönedag väljer du vilken dag budgetmånaden börjar. Den 1:a är vanliga kalendermånader.</p>
@@ -967,10 +967,10 @@ dialog:focus { outline: none; }
         </details>
         <details><summary>Month</summary>
           <p>After bills at the top is what remains after costs and savings – the money to live on (food, fun and other variable spending). When the month is closed it says Left in the account instead: what was actually left. Below it the comparison with last month, and the bar shows where the income goes. The amounts are in the cards below.</p>
-          <p>Income and Expenses are folded – tap to see them. Expenses are grouped by category, and the three largest are shown right away.</p>
+          <p>Income, Expenses and Total saved share one card and are folded – tap a row to see it. Expenses are grouped by category. Below them are Total (income minus expenses, including savings deducted before pay) and Of which savings with its share of income.</p>
           <p>Tap a row to change the amount for this month only, skip it or Edit item (name, amount, category, period). + Add to Housing adds a cost with the same category, person and frequency.</p>
           <p>Change month with ◀ ▶ or swipe. Tap Month in the menu to return to the current month.</p>
-          <p>☰ All items next to Add shows all recurring items, including ended and upcoming ones. Items are listed largest amount first, there and in Month. Tap one to change it.</p>
+          <p>＋ Add, ☰ All items and 🔒 Close (or 🔓 Edit in a closed month) sit in one row at the bottom. ☰ All items shows all recurring items, including ended and upcoming ones. Items are listed largest amount first, there and in Month. Tap one to change it.</p>
           <p>Below the buttons you see how many days are left until the next payday (current month) and which category changed the most since last month. The card also shows last month: left in the account if it is closed, otherwise after bills.</p>
           <p>Left at close (forecast) is on the same line, once at least one earlier month is closed: after bills minus variable spending (average of the three latest closed months). If the same month last year is closed it is included as a percentage – if December was 65 % more expensive than usual, that is included. Tap the forecast for the explanation.</p>
           <p>Recent and upcoming months (Overview): the last three months at the top (closed ones with what was left in the account), then after bills for the next three months (tap Show all 12 months for the rest) and, once a month is closed, the forecast next to it. Tap a month to open it.</p>
@@ -980,19 +980,19 @@ dialog:focus { outline: none; }
         </details>
         <details><summary>Savings</summary>
           <p>Savings are not a cost, but they are deducted from what is left. Add with + Saving: name, amount, frequency and preferably Balance now. A savings account is then created that counts up by itself every month.</p>
-          <p>The 🐷 Savings card in Month shows the month's savings and Total saved in your currency. Tap to unfold one row per account: balance in your currency, the monthly saving and the change since last month. Accounts in another currency show their own amount in brackets, e.g. (730 USD).</p>
+          <p>The Total saved row in Month shows the sum of your savings accounts in your currency. Tap to unfold one row per account: balance in your currency, the monthly saving and the change since last month. Accounts in another currency show their own amount in brackets, e.g. (730 USD).</p>
           <p>Tap a row to change the amount, choose which Savings account the money goes to, or correct the balance. A balance marked ≈ is estimated: last entered plus the savings.</p>
           <p>If the saving is taken before your net salary is paid (e.g. shares through work), tick Taken before payday. It then counts as saved but does not reduce Left. The same option is available on a one-off in the Savings category.</p>
-          <p>Accounts you never touch (e.g. the children's) can be hidden from Month: tap the row in the Savings card and untick Show in Month. Tap the name under &quot;+ 1 hidden account&quot; to show it again. It still counts in Total saved.</p>
-          <p>Savings accounts are managed only here. Account › in the box for a savings item changes the account's currency, which savings items go there, or deletes the account (it goes to the trash).</p>
+          <p>Accounts you never touch (e.g. the children's) can be hidden from Month: tap the account and untick Show in Month. Tap the name under &quot;+ 1 hidden account&quot; to show it again. It still counts in Total saved.</p>
+          <p>Settings → Savings accounts lists all accounts, including hidden ones. Tap one to change its name, currency, balance or which savings go there (one-off savings too), or delete it (it goes to the trash). + New savings account creates an account with just a balance, e.g. one you don't save to every month. The same button is + Account under Total saved. Two accounts can't have the same name. When you save, Undo is shown for a moment.</p>
           <p>The total and a chart of all accounts are under Overview → Savings accounts.</p>
         </details>
         <details><summary>Close the month</summary>
           <p>After bills is planned. Food, fun and unexpected spending do not show there.</p>
           <p>Below Left it says when it is time to close (e.g. *Close the month Tue 24 Nov · in 6 days*). Three days before, the line gets a colour, and when the day has come it says Time to close the month.</p>
-          <p>The day before payday, tap ✓ Close the month under the amount and enter what was actually left in the account. If the money stays in the account, leave The money stays and carries over ticked – the amount then becomes the row Left over from last month (⇢) in the next month. If you move it, e.g. to the savings account, untick it. In the first month, or if last month isn't closed, fill it in yourself with + Left over from last month under Income. In the same dialog you reconcile the savings accounts (prefilled – only change what differs).</p>
+          <p>The day before payday, tap 🔒 Close at the bottom and enter what was actually left in the account. If the money stays in the account, leave The money stays and carries over ticked – the amount then becomes the row Left over from last month (⇢) in the next month. If you move it, e.g. to the savings account, untick it. In the first month, or if last month isn't closed, fill it in yourself with + Left over from last month under Income. In the same dialog you reconcile the savings accounts (prefilled – only change what differs).</p>
           <p>The heading then becomes Left in the account with the actual amount, and the difference is shown as Variable in the bar. The next month becomes the current one right away.</p>
-          <p>Once you have started closing months, months that are not closed are shown at the top of Month (Not closed: Oct) – tap to go there. In a closed month, tap Edit / reopen: correct the amount there, or remove the closing with Reopen.</p>
+          <p>Once you have started closing months, months that are not closed are shown at the top of Month (Not closed: Oct) – tap to go there. In a closed month, tap 🔓 Edit: correct the amount there, or remove the closing with Reopen.</p>
         </details>
         <details><summary>Payday</summary>
           <p>Under Settings → Household → Payday you choose which day the budget month starts. The 1st means normal calendar months.</p>
@@ -1717,9 +1717,14 @@ I18N.add({
   '+ Avvikelse': '+ Deviation', 'Person (valfritt)': 'Person (optional)', 'Varje kvartal': 'Every quarter', 'varje kvartal': 'every quarter', 'App': 'App', 'Typ': 'Type',
   'Avsluta poster': 'End items', 'konto': 'account', 'Version': 'Version', 'Huvudmeny': 'Main menu', 't.ex. Buffert': 'e.g. Buffer', 't.ex. Hyra': 'e.g. Rent', 'Startmånad': 'Start month', 'Start': 'Start',
   'Ta bort konto': 'Remove account', 'Byt namn': 'Rename', 'Klistra in text': 'Paste text', 'Data': 'Data',
-  'varav sparande': 'of which savings', 'Varav sparande': 'Of which savings', 'Sparkonton': 'Savings accounts', '+ Nytt sparkonto': '+ New savings account', 'Nytt sparkonto': 'New savings account', '+ Sparkonto': '+ Account', 'Namn': 'Name', 'Skriv ett namn på kontot.': 'Enter a name for the account.', 'Inga sparkonton än.': 'No savings accounts yet.', 'Inga': 'None', ' · dolt': ' · hidden', '🔒 Stäng månad': '🔒 Close month', '🔒 Stäng': '🔒 Close', '🔓 Ändra': '🔓 Edit', 'Stäng månad': 'Close month', 'kvar': 'left', 'Kvar varje månad': 'Left each month', 'Snitt': 'Average', 'Summa': 'Total', 'mån': 'mo',
+  'varav sparande': 'of which savings', 'Varav sparande': 'Of which savings', 'Sparande som går hit:': 'Savings that go here:', 'Sparkonton': 'Savings accounts', '+ Nytt sparkonto': '+ New savings account', 'Nytt sparkonto': 'New savings account', '+ Sparkonto': '+ Account', 'Namn': 'Name', 'Skriv ett namn på kontot.': 'Enter a name for the account.', 'Inga sparkonton än.': 'No savings accounts yet.', 'Inga': 'None', ' · dolt': ' · hidden', '🔒 Stäng månad': '🔒 Close month', '🔒 Stäng': '🔒 Close', '🔓 Ändra': '🔓 Edit', 'Stäng månad': 'Close month', 'kvar': 'left', 'Kvar varje månad': 'Left each month', 'Snitt': 'Average', 'Summa': 'Total', 'mån': 'mo',
 }, [
   [/^Varav sparande \((.+) före lön\)$/, 'Of which savings ($1 before pay)'],
+  [/^(.+) skapat$/, '$1 created'],
+  [/^(.+) sparat$/, '$1 saved'],
+  [/^Det finns redan ett konto som heter (.+)\.$/, 'There is already an account called $1.'],
+  [/^Max (\d+) sparkonton – ta bort något först\.$/, 'Max $1 savings accounts – remove one first.'],
+  [/^(.+) \(avslutad\)$/, '$1 (ended)'],
   [/^Egna kurser från (.+)$/, 'Own rates from $1'],
   [/^ECB:s referenskurser (.+)$/, 'ECB reference rates $1'],
   [/^(\d+) st$/, '$1'],
@@ -1861,7 +1866,7 @@ I18N.add({
 </script>
 <script>
 // ---- version.js ----
-﻿self.APP_VERSION = '0.12.147';
+﻿self.APP_VERSION = '0.12.148';
 
 </script>
   <script>
@@ -2381,9 +2386,24 @@ const DEFAULT_CATEGORIES = [...DEFAULT_INCOME_CATEGORIES, ...DEFAULT_EXPENSE_CAT
 const SAVINGS_CAT = 'savings';
 const CATS_V = 2; // settings.catsV: one-time additions to older saved category lists (v2: "Sparande")
 
+// Dataversion (2026-11-21): loadData() kör MIGRATIONS i ordning från den sparade versionen och sparar alltid den senaste.
+// Lägg en ny funktion här när fält byter betydelse; nya valfria fält behöver ingen (loadData fyller i standardvärden).
+const DATA_VERSION = 2;
+const MIGRATIONS = {
+  // 1 → 2: sparkonton kan fyllas på av engångssparande (feeds kan peka på avvikelser), papperskorgen minns kontokopplingar.
+  // Inga gamla fält ändrar betydelse, så inget behöver skrivas om.
+  2: (d) => d,
+};
+function migrate(d) {
+  let v = Number.isInteger(d.version) && d.version >= 1 ? d.version : 1;
+  if (v > DATA_VERSION) return d;   // nyare app har sparat – läs det vi känner igen
+  while (v < DATA_VERSION) d = MIGRATIONS[++v](d);
+  return d;
+}
+
 function emptyData() {
   return {
-    version: 1,
+    version: DATA_VERSION,
     settings: { categories: DEFAULT_CATEGORIES.map((c) => ({ ...c })), people: [], startBalance: 0, startMonth: null, catsV: CATS_V,
       rates: { ...DEFAULT_RATES }, ratesDate: RATES_DATE, ratesOwn: false, sort: 'a-', home: 'SEK', payday: 1 },
     recurring: [],
@@ -2399,6 +2419,7 @@ function emptyData() {
 function loadData(d) {
   const out = emptyData();
   if (!isObj(d)) return out;
+  d = migrate(d);
 
   // Settings
   const s = isObj(d.settings) ? d.settings : {};
@@ -2513,7 +2534,7 @@ function loadData(d) {
       seenA.add(a.id);
       const currency = CURRENCIES.includes(a.currency) ? a.currency : 'SEK'; // v0.8.0; balances in minor units of it
       // feeds (2026-11-17): återkommande sparposter som fyller på kontot varje månad (beräknat saldo, se estBalance).
-      const feeds = Array.isArray(a.feeds) ? [...new Set(a.feeds.filter((x) => recIds.has(x)))].slice(0, 20) : [];
+      const feeds = Array.isArray(a.feeds) ? [...new Set(a.feeds.filter((x) => ids.has(x)))].slice(0, 40) : [];   // 2026-11-21: även engångssparande (avvikelser)
       // goal (2026-11-21, valfritt): { amount, month? } – sparmål i kontots valuta, ev. klart till en månad. Finns bara när det är satt.
       const goal = isObj(a.goal) && isAmount(a.goal.amount) && a.goal.amount > 0
         ? { amount: a.goal.amount, ...(isMonth(a.goal.month) ? { month: a.goal.month } : {}) } : null;
@@ -2532,6 +2553,7 @@ function loadData(d) {
       const e = sub.recurring[0] ? { d: t.d, rec: sub.recurring[0] } : sub.oneOffs[0] ? { d: t.d, one: sub.oneOffs[0] } : sub.accounts[0] ? { d: t.d, acc: sub.accounts[0] } : null;
       if (!e) continue;
       if (e.rec) { const a = {}; for (const [m, map] of Object.entries(sub.adjustments)) a[m] = map[e.rec.id]; if (Object.keys(a).length) e.adj = a; }
+      if (!e.acc && Array.isArray(t.accs)) { const accs = [...new Set(t.accs.filter(isId))].slice(0, MAX_ACCOUNTS); if (accs.length) e.accs = accs; }
       out.trash.push(e);
     }
   }
@@ -2560,6 +2582,10 @@ function trashItems(d, kind, ids, today) {
   const set = new Set(ids), key = { rec: 'recurring', one: 'oneOffs', acc: 'accounts' }[kind];
   for (const x of d[key].filter((x) => set.has(x.id))) {
     const e = { d: today, [kind]: x };
+    if (kind !== 'acc') {   // 2026-11-21: kom ihåg vilka konton posten fyllde på, så kopplingen kommer tillbaka vid återställning
+      const accs = d.accounts.filter((a) => (a.feeds || []).includes(x.id)).map((a) => a.id);
+      if (accs.length) e.accs = accs;
+    }
     if (kind === 'rec') {
       const adj = {};
       for (const [m, map] of Object.entries(d.adjustments)) if (Object.hasOwn(map, x.id)) { adj[m] = map[x.id]; delete map[x.id]; if (!Object.keys(map).length) delete d.adjustments[m]; }
@@ -2581,6 +2607,7 @@ function restoreItem(d, i) {
   if (taken.has(x.id)) x.id = (kind === 'acc' ? 'a' : '') + newId().slice(-10);
   d[key].push(x);
   if (e.adj) for (const [m, a] of Object.entries(e.adj)) (d.adjustments[m] ||= {})[x.id] = a;
+  for (const a of d.accounts) if ((e.accs || []).includes(a.id) && !(a.feeds ||= []).includes(x.id)) a.feeds.push(x.id);
   d.trash.splice(i, 1);
   return x;
 }
@@ -2612,6 +2639,7 @@ function packData(d) {
   const item = (r) => {
     const o = { id: r.id, name: r.name, type: t(r.type), amount: r.amount, category: r.category };
     if (r.person) o.person = r.person;
+    if (r.pre) o.pre = true;   // 2026-11-21: "Dras före lönen" följer med i backupen
     return o;
   };
   if (d.recurring.length) out.recurring = d.recurring.map((r) => Object.assign(item(r),
@@ -2636,9 +2664,9 @@ function unpackData(p) {
   if (Array.isArray(s.categories)) settings.categories = list(s.categories).map((c) => ({ id: c.id, name: c.name, type: type(c.type) }));
   if (Array.isArray(s.people)) settings.people = list(s.people).map((x) => ({ id: x.id, name: x.name }));
   if (isObj(s.rates)) { settings.rates = { ...s.rates }; settings.ratesDate = s.ratesDate; settings.ratesOwn = true; }
-  const item = (r) => ({ id: r.id, name: r.name, type: type(r.type), amount: r.amount, category: r.category, person: r.person ?? null });
+  const item = (r) => ({ id: r.id, name: r.name, type: type(r.type), amount: r.amount, category: r.category, person: r.person ?? null, pre: r.pre === true });
   return {
-    version: 1,
+    version: DATA_VERSION,
     settings,
     recurring: list(p.recurring).map((r) => ({ ...item(r), every: r.every ?? 1, start: r.start, end: r.end ?? null })),
     oneOffs: list(p.oneOffs).map((o) => ({ ...item(o), month: o.month })),
@@ -3814,10 +3842,14 @@ function openAccDialog(a) {
   $('ad-amount').value = Object.hasOwn(a.balances, month) ? krInput(a.balances[month]) : '';
   $('ad-amount').placeholder = est && est.estimated ? krInput(est.amount) : '';
   // Sparposter som fyller på kontot (2026-11-17): kryssa i, så räknas saldot upp varje månad.
-  const savers = data.recurring.filter((r) => r.type === 'expense' && r.category === SAVINGS_CAT);
-  fill($('ad-feeds'), savers.length ? [el('p', { class: 'small', text: 'Sparande som går hit varje månad:' }),
-    ...savers.map((r) => el('label', { class: 'check' }, el('input', { type: 'checkbox', value: r.id, checked: (a.feeds || []).includes(r.id) }),
-      el('span', { text: `${r.name} · ${kr(r.amount)}` })))]
+  // 2026-11-21: avslutade sparposter visas bara om de redan är kopplade (märkta), engångssparande med sin månad.
+  const linked = (id) => (a.feeds || []).includes(id);
+  const savers = data.recurring.filter((r) => r.type === 'expense' && r.category === SAVINGS_CAT && (!r.end || r.end >= month || linked(r.id)));
+  const ones = data.oneOffs.filter((o) => o.type === 'expense' && o.category === SAVINGS_CAT).sort((x, y) => (x.month < y.month ? 1 : -1));
+  const box = (id, text) => el('label', { class: 'check' }, el('input', { type: 'checkbox', value: id, checked: linked(id) }), el('span', { text }));
+  fill($('ad-feeds'), savers.length || ones.length ? [el('p', { class: 'small', text: 'Sparande som går hit:' }),
+    ...savers.map((r) => box(r.id, `${r.name} · ${kr(r.amount)}/mån` + (r.end && r.end < month ? ' (avslutad)' : ''))),
+    ...ones.map((o) => box(o.id, `${o.name} · ${kr(o.amount)} (${monthShortLabel(o.month).toLowerCase()})`))]
     : el('p', { class: 'muted small', text: 'Lägg en återkommande kostnad i kategorin Sparande, så kan den kopplas hit och saldot räknas upp själv.' }));
   // Sparmål (2026-11-21): valfritt – fälten visas först efter + Sparmål, eller när kontot redan har ett mål.
   const g = a.goal;
@@ -3853,16 +3885,22 @@ $('ad-form').addEventListener('submit', (e) => {
   const gMonth = $('ad-goal-month').value;
   const name = cleanName($('ad-name').value, 30);
   if (!name) { $('ad-error').textContent = 'Skriv ett namn på kontot.'; return; }
-  let a = data.accounts.find((x) => x.id === dialogAcc.id);
+  if (data.accounts.some((x) => x.id !== dialogAcc.id && x.name.toLowerCase() === name.toLowerCase())) { $('ad-error').textContent = `Det finns redan ett konto som heter ${name}.`; return; }
+  const isNewAcc = !data.accounts.some((x) => x.id === dialogAcc.id);
+  if (isNewAcc && data.accounts.length >= MAX_ACCOUNTS) { $('ad-error').textContent = `Max ${MAX_ACCOUNTS} sparkonton – ta bort något först.`; return; }
+  const before = JSON.stringify(data);   // Ångra (2026-11-21)
+  const feeds = [...$('ad-feeds').querySelectorAll('input:checked')].map((i) => i.value);
+  const old = data.accounts.find((x) => x.id === dialogAcc.id);
+  if (!raw && !old?.feeds?.length && !feeds.length && !Object.keys(old?.balances || {}).length) { $('ad-error').textContent = 'Skriv ett saldo, t.ex. 45 000 eller 1250,50.'; return; }
+  let a = old;
   if (!a) { a = { id: dialogAcc.id, name, currency: home(), balances: {}, feeds: [] }; data.accounts.push(a); }
   a.name = name;
-  const feeds = [...$('ad-feeds').querySelectorAll('input:checked')].map((i) => i.value);
-  if (!raw && !a?.feeds?.length && !feeds.length && !Object.keys(a?.balances || {}).length) { $('ad-error').textContent = 'Skriv ett saldo, t.ex. 45 000 eller 1250,50.'; return; }
   if (a) { if (raw) a.balances[month] = amount; a.currency = $('ad-currency').value; a.feeds = feeds; a.hidden = !$('ad-show').checked;
     if (gAmount) a.goal = { amount: gAmount, ...(isMonth(gMonth) ? { month: gMonth } : {}) }; else delete a.goal; }
   data = loadData(data);
   $('acc-dialog').close();
   save();
+  snackbar(isNewAcc ? `${name} skapat` : `${name} sparat`, 'Ångra', () => { data = loadData(JSON.parse(before)); save(); });
 });
 $('ad-delete').addEventListener('click', () => {
   const a = dialogAcc;
@@ -3888,7 +3926,10 @@ function renderAccSettings() {
   }) : el('li', { class: 'muted small', text: 'Inga sparkonton än.' }));
   $('acc-new').disabled = accs.length >= MAX_ACCOUNTS;
 }
-function newAccount() { openAccDialog({ id: 'a' + newId().slice(-10), name: '', currency: home(), balances: {}, feeds: [] }); }
+function newAccount() {
+  if (data.accounts.length >= MAX_ACCOUNTS) { snackbar(`Max ${MAX_ACCOUNTS} sparkonton – ta bort något först.`); return; }
+  openAccDialog({ id: 'a' + newId().slice(-10), name: '', currency: home(), balances: {}, feeds: [] });
+}
 $('acc-new').addEventListener('click', newAccount);
 
 </script>

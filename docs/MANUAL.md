@@ -9,10 +9,10 @@ Samma text finns i appen under **Inställningar → Allmänt → Hjälp och manu
 
 ## Månad
 - **Efter räkningar** överst är det som blir över efter kostnader och sparande – pengarna att leva på (mat, nöjen och annat rörligt). När månaden är stängd står **Kvar på kontot** i stället: det som faktiskt fanns kvar. Under det jämförelsen med förra månaden, och stapeln visar vart inkomsten går. Beloppen finns i korten nedanför.
-- **Inkomster** och **Kostnader** är hopfällda – tryck för att se dem. Kostnaderna är grupperade per kategori, och de tre största syns direkt.
+- **Inkomster**, **Kostnader** och **Totalt sparat** ligger i samma kort och är hopfällda – tryck på en rad för att se den. Kostnaderna är grupperade per kategori. Under dem står **Summa** (inkomster minus kostnader, med sparande som dras före lönen inräknat) och **Varav sparande** med andel av inkomsten.
 - Tryck på en rad för att ändra beloppet bara den här månaden, hoppa över den eller **Ändra posten** (namn, belopp, kategori, period). **+ Lägg till i Boende** lägger till en kostnad med samma kategori, person och hur ofta.
 - Byt månad med **◀ ▶** eller svep. Tryck på **Månad** i menyn för att komma tillbaka till aktuell månad.
-- **☰ Alla poster** bredvid Lägg till visar alla återkommande poster, även avslutade och kommande. Posterna står med störst belopp först, både där och i Månad. Tryck på en för att ändra den.
+- **＋ Lägg till**, **☰ Alla poster** och **🔒 Stäng** (eller **🔓 Ändra** i en stängd månad) ligger på en rad längst ner. **☰ Alla poster** visar alla återkommande poster, även avslutade och kommande. Posterna står med störst belopp först, både där och i Månad. Tryck på en för att ändra den.
 - Under knapparna står hur många dagar det är kvar till nästa lön (innevarande månad) och vilken kategori som ändrats mest mot förra månaden. I kortet står också förra månaden: kvar på kontot om den är stängd, annars efter räkningar.
 - **Kvar vid stängning** (prognos) står på samma rad, när minst en tidigare månad är stängd: efter räkningar minus de rörliga utgifterna (snittet av de tre senaste stängda månaderna). Är samma månad förra året stängd räknas den med i procent – är december 65 % dyrare än vanligt, räknas det in. Tryck på prognosen för förklaringen.
 - **Senaste och kommande månader** (Översikt): de tre senaste månaderna överst (stängda med vad som blev kvar på kontot), sedan efter räkningar för de tre närmaste månaderna (tryck **Visa alla 12 månader** för resten) och, när någon månad är stängd, kvar enligt prognosen bredvid. Tryck på en månad för att öppna den.
@@ -22,19 +22,19 @@ Samma text finns i appen under **Inställningar → Allmänt → Hjälp och manu
 
 ## Sparande
 - Sparande är inte en kostnad, men dras av från det som blir kvar. Lägg till med **+ Sparande**: namn, belopp, hur ofta och gärna **Saldo nu**. Då skapas ett sparkonto som räknas upp av sig självt varje månad.
-- Kortet **🐷 Sparande** i Månad visar månadens sparande och **Totalt sparat** i din valuta. Tryck för att fälla ut en rad per konto: saldo i din valuta, månadssparandet och ändringen sedan förra månaden. Konton i annan valuta visar sitt eget belopp inom parentes, t.ex. (730 USD).
+- Raden **Totalt sparat** i Månad visar summan på sparkontona i din valuta. Tryck för att fälla ut en rad per konto: saldo i din valuta, månadssparandet och ändringen sedan förra månaden. Konton i annan valuta visar sitt eget belopp inom parentes, t.ex. (730 USD).
 - Tryck på en rad för att ändra belopp, välja vilket **Sparkonto** pengarna går till eller rätta saldot. Saldot märkt ≈ är beräknat: senast ifyllt plus sparandet.
 - Dras sparandet innan nettolönen betalas ut (t.ex. aktier via jobbet), bocka i **Dras före lönen**. Då räknas det som sparat men minskar inte Kvar. Samma val finns på en avvikelse i kategorin Sparande.
-- Konton som inte rörs (t.ex. barnens) kan döljas från Månad: tryck på raden i Sparande-kortet och bocka ur **Visa i Månad**. Tryck på namnet under "+ 1 dolt konto" för att visa det igen. Det räknas fortfarande i Totalt sparat.
-- Sparkonton hanteras bara här. **Kontot ›** i rutan för en sparpost ändrar kontots valuta, vilka sparposter som går dit, eller tar bort kontot (det hamnar i papperskorgen).
+- Konton som inte rörs (t.ex. barnens) kan döljas från Månad: tryck på kontot och bocka ur **Visa i Månad**. Tryck på namnet under "+ 1 dolt konto" för att visa det igen. Det räknas fortfarande i Totalt sparat.
+- **Inställningar → Sparkonton** listar alla konton, även dolda. Tryck på ett för att byta namn, valuta, saldo eller vilket sparande som går dit (även engångssparande), eller ta bort det (det hamnar i papperskorgen). **+ Nytt sparkonto** skapar ett konto med bara saldo, t.ex. ett konto du inte sparar till varje månad. Samma knapp finns som **+ Sparkonto** under Totalt sparat. Två konton kan inte heta likadant. När du sparar visas **Ångra** en stund.
 - Summan och en graf över alla konton finns under **Översikt → Sparkonton**.
 
 ## Stäng månaden
 - Efter räkningar är planerat. Mat, nöjen och oväntade utgifter syns inte där.
 - Under beloppet står när det är dags att stänga (t.ex. *Stäng månaden tis 24 nov · om 6 dagar*). Tre dagar innan blir raden färgad, och när dagen har kommit står det **Dags att stänga månaden**.
-- Dagen före lön trycker du **✓ Stäng månaden** under beloppet och skriver in vad som faktiskt fanns kvar på kontot. Ligger pengarna kvar på kontot låter du **Pengarna ligger kvar och följer med** vara ibockad – då blir beloppet raden **Kvar från förra månaden** (⇢) i nästa månad. Flyttar du dem, t.ex. till sparkontot, bockar du ur. Första månaden, eller om förra månaden inte är stängd, fyller du i det själv med **+ Kvar från förra månaden** under Inkomster. I samma ruta stämmer du av sparkontona (förifyllda – ändra bara det som skiljer).
+- Dagen före lön trycker du **🔒 Stäng** längst ner och skriver in vad som faktiskt fanns kvar på kontot. Ligger pengarna kvar på kontot låter du **Pengarna ligger kvar och följer med** vara ibockad – då blir beloppet raden **Kvar från förra månaden** (⇢) i nästa månad. Flyttar du dem, t.ex. till sparkontot, bockar du ur. Första månaden, eller om förra månaden inte är stängd, fyller du i det själv med **+ Kvar från förra månaden** under Inkomster. I samma ruta stämmer du av sparkontona (förifyllda – ändra bara det som skiljer).
 - Rubriken blir då **Kvar på kontot** med det faktiska beloppet, och skillnaden visas som **Rörligt** i stapeln. Nästa månad blir den aktuella direkt.
-- Har du börjat stänga månader visas överst i Månad de som inte är stängda (**Inte stängd: Okt**) – tryck för att gå dit. I en stängd månad trycker du **Ändra / öppna igen**: där rättar du beloppet eller tar bort stängningen med **Öppna igen**.
+- Har du börjat stänga månader visas överst i Månad de som inte är stängda (**Inte stängd: Okt**) – tryck för att gå dit. I en stängd månad trycker du **🔓 Ändra**: där rättar du beloppet eller tar bort stängningen med **Öppna igen**.
 
 ## Lönedag
 - Under **Inställningar → Hushåll → Lönedag** väljer du vilken dag budgetmånaden börjar. Den 1:a är vanliga kalendermånader.

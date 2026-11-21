@@ -9,10 +9,10 @@ The same text is in the app under **Settings → General → Help and manual**. 
 
 ## Month
 - **After bills** at the top is what remains after costs and savings – the money to live on (food, fun and other variable spending). When the month is closed it says **Left in the account** instead: what was actually left. Below it the comparison with last month, and the bar shows where the income goes. The amounts are in the cards below.
-- **Income** and **Expenses** are folded – tap to see them. Expenses are grouped by category, and the three largest are shown right away.
+- **Income**, **Expenses** and **Total saved** share one card and are folded – tap a row to see it. Expenses are grouped by category. Below them are **Total** (income minus expenses, including savings deducted before pay) and **Of which savings** with its share of income.
 - Tap a row to change the amount for this month only, skip it or **Edit item** (name, amount, category, period). **+ Add to Housing** adds a cost with the same category, person and frequency.
 - Change month with **◀ ▶** or swipe. Tap **Month** in the menu to return to the current month.
-- **☰ All items** next to Add shows all recurring items, including ended and upcoming ones. Items are listed largest amount first, there and in Month. Tap one to change it.
+- **＋ Add**, **☰ All items** and **🔒 Close** (or **🔓 Edit** in a closed month) sit in one row at the bottom. **☰ All items** shows all recurring items, including ended and upcoming ones. Items are listed largest amount first, there and in Month. Tap one to change it.
 - Below the buttons you see how many days are left until the next payday (current month) and which category changed the most since last month. The card also shows last month: left in the account if it is closed, otherwise after bills.
 - **Left at close** (forecast) is on the same line, once at least one earlier month is closed: after bills minus variable spending (average of the three latest closed months). If the same month last year is closed it is included as a percentage – if December was 65 % more expensive than usual, that is included. Tap the forecast for the explanation.
 - **Recent and upcoming months** (Overview): the last three months at the top (closed ones with what was left in the account), then after bills for the next three months (tap **Show all 12 months** for the rest) and, once a month is closed, the forecast next to it. Tap a month to open it.
@@ -22,19 +22,19 @@ The same text is in the app under **Settings → General → Help and manual**. 
 
 ## Savings
 - Savings are not a cost, but they are deducted from what is left. Add with **+ Saving**: name, amount, frequency and preferably **Balance now**. A savings account is then created that counts up by itself every month.
-- The **🐷 Savings** card in Month shows the month's savings and **Total saved** in your currency. Tap to unfold one row per account: balance in your currency, the monthly saving and the change since last month. Accounts in another currency show their own amount in brackets, e.g. (730 USD).
+- The **Total saved** row in Month shows the sum of your savings accounts in your currency. Tap to unfold one row per account: balance in your currency, the monthly saving and the change since last month. Accounts in another currency show their own amount in brackets, e.g. (730 USD).
 - Tap a row to change the amount, choose which **Savings account** the money goes to, or correct the balance. A balance marked ≈ is estimated: last entered plus the savings.
 - If the saving is taken before your net salary is paid (e.g. shares through work), tick **Taken before payday**. It then counts as saved but does not reduce Left. The same option is available on a one-off in the Savings category.
-- Accounts you never touch (e.g. the children's) can be hidden from Month: tap the row in the Savings card and untick **Show in Month**. Tap the name under "+ 1 hidden account" to show it again. It still counts in Total saved.
-- Savings accounts are managed only here. **Account ›** in the box for a savings item changes the account's currency, which savings items go there, or deletes the account (it goes to the trash).
+- Accounts you never touch (e.g. the children's) can be hidden from Month: tap the account and untick **Show in Month**. Tap the name under "+ 1 hidden account" to show it again. It still counts in Total saved.
+- **Settings → Savings accounts** lists all accounts, including hidden ones. Tap one to change its name, currency, balance or which savings go there (one-off savings too), or delete it (it goes to the trash). **+ New savings account** creates an account with just a balance, e.g. one you don't save to every month. The same button is **+ Account** under Total saved. Two accounts can't have the same name. When you save, **Undo** is shown for a moment.
 - The total and a chart of all accounts are under **Overview → Savings accounts**.
 
 ## Close the month
 - After bills is planned. Food, fun and unexpected spending do not show there.
 - Below Left it says when it is time to close (e.g. *Close the month Tue 24 Nov · in 6 days*). Three days before, the line gets a colour, and when the day has come it says **Time to close the month**.
-- The day before payday, tap **✓ Close the month** under the amount and enter what was actually left in the account. If the money stays in the account, leave **The money stays and carries over** ticked – the amount then becomes the row **Left over from last month** (⇢) in the next month. If you move it, e.g. to the savings account, untick it. In the first month, or if last month isn't closed, fill it in yourself with **+ Left over from last month** under Income. In the same dialog you reconcile the savings accounts (prefilled – only change what differs).
+- The day before payday, tap **🔒 Close** at the bottom and enter what was actually left in the account. If the money stays in the account, leave **The money stays and carries over** ticked – the amount then becomes the row **Left over from last month** (⇢) in the next month. If you move it, e.g. to the savings account, untick it. In the first month, or if last month isn't closed, fill it in yourself with **+ Left over from last month** under Income. In the same dialog you reconcile the savings accounts (prefilled – only change what differs).
 - The heading then becomes **Left in the account** with the actual amount, and the difference is shown as **Variable** in the bar. The next month becomes the current one right away.
-- Once you have started closing months, months that are not closed are shown at the top of Month (**Not closed: Oct**) – tap to go there. In a closed month, tap **Edit / reopen**: correct the amount there, or remove the closing with **Reopen**.
+- Once you have started closing months, months that are not closed are shown at the top of Month (**Not closed: Oct**) – tap to go there. In a closed month, tap **🔓 Edit**: correct the amount there, or remove the closing with **Reopen**.
 
 ## Payday
 - Under **Settings → Household → Payday** you choose which day the budget month starts. The 1st means normal calendar months.
