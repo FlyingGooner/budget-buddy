@@ -780,3 +780,11 @@ dialog::backdrop { background: rgba(0,0,0,.25); }
 /* Mindre apprubrik, tydligt versionsnummer (2026-11-21) */
 .brand { font-size: 1.25rem; font-weight: 600; letter-spacing: 0; }
 #version { font-size: .8125rem; font-weight: 600; line-height: 1; padding: 6px 12px; background: var(--fill-2); color: var(--text); -webkit-backdrop-filter: none; backdrop-filter: none; border: 0; box-shadow: none; } #version { top: calc(env(safe-area-inset-top) + 22px); }
+/* Liten, symmetrisk rubrikrad (2026-11-21): appnamn och version lika diskreta, i höjd med varandra */
+.brand { font-size: 1.0625rem; font-weight: 600; letter-spacing: -.01em; line-height: 1.3; }
+#version { font-size: .75rem; font-weight: 600; line-height: 1; padding: 5px 10px; }
+.tab { grid-template-columns: minmax(0, 1fr); }   /* kolumnen växer aldrig efter innehållet: korten blev bredare än skärmen med stor text */
+.topbar { display: flex; align-items: center; min-height: 40px; padding: calc(env(safe-area-inset-top) + 4px) 80px 0 8px; }
+#version { top: calc(env(safe-area-inset-top) + 4px + 9px); right: 8px; }
+.topbar { justify-content: space-between; gap: 12px; max-width: 640px; padding: calc(env(safe-area-inset-top) + 8px) 8px 0; }
+#version { position: static; margin-left: auto; }
