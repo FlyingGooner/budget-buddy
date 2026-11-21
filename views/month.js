@@ -358,8 +358,8 @@ function addLike(rs, label) {
     const sav = rs[0].category === SAVINGS_CAT;
     if (sav) { newAccount(); return; }   // v5: sparande = ett sparkonto
     focusAdd('expense');
-    const f = $(sav ? 'sav-form' : 'exp-form').elements;
-    if (!sav) f.category.value = rs[0].category;
+    const f = $('exp-form').elements;
+    f.category.value = rs[0].category;
     const person = same((r) => r.person);
     if (person !== undefined && f.person) f.person.value = person || '';
     const every = same((r) => rec(r)?.every);
@@ -476,14 +476,13 @@ function openRowDialog(r) {
   $('rd-type').value = isOne && !isNew ? r.type : 'expense';
   fillCategorySelect($('rd-cat'), isOne && !isNew ? r.category : null, $('rd-type').value);
   fillPersonSelect($('rd-person'), isOne && !isNew ? r.person : null);
-  $('rd-pre').value = (r && r.src) || ''; showPre();
   $('rd-amount').value = isNew ? '' : krInput(r.amount);
   $('rd-delete').hidden = isNew;
   $('rd-delete').textContent = r && r.kind === 'rec' ? 'Ta bort posten' : 'Ta bort';
   $('rd-reset').hidden = isNew || r.kind !== 'rec' || !r.adjusted;
   // En ruta per post (2026-11-18): det som gäller alla månader ligger hopfällt under beloppet.
   const rec = r && r.kind === 'rec' ? data.recurring.find((x) => x.id === r.id) : null;
-  $('rd-all').hidden = !rec; $('rd-all').open = false;
+  $('rd-all').hidden = !rec; $('rd-mer').open = false;
   if (rec) {
     $('f-name').value = rec.name;
     $('f-amount').value = krInput(rec.amount);
@@ -496,20 +495,7 @@ function openRowDialog(r) {
   }
   $('rd-amount').dataset.orig = $('rd-amount').value;
   $('rd-skip').hidden = isNew || r.kind !== 'rec' || (r.adjusted && r.amount === 0);
-  // 2026-11-18: kontots egna inställningar (valuta, kopplingar, ta bort) nås härifrån – sparkonton hanteras bara i Månad.
-  $('rd-account').hidden = !(r && data.accounts.some((a) => (a.feeds || []).includes(r.id)));
-  // Sparpost = konto (2026-11-17): visa kontots saldo direkt i rutan. Saknas konto skapas ett med samma namn när du fyller i saldot.
-  const isSave = r && r.kind === 'rec' && r.category === SAVINGS_CAT;
-  $('rd-acc').hidden = !isSave;
-  if (isSave) {
-    // Koppla till ett befintligt sparkonto, skapa ett nytt eller inget. Saldot hämtas från kontot och räknas upp framåt.
-    const linked = data.accounts.find((a) => (a.feeds || []).includes(r.id));
-    $('rd-acc-pick').replaceChildren(el('option', { value: '', text: 'Inget sparkonto' }),
-      el('option', { value: 'new', text: `Nytt konto: ${r.name}` }),
-      ...data.accounts.map((a) => el('option', { value: a.id, text: a.name })));
-    $('rd-acc-pick').value = linked ? linked.id : data.accounts.length ? '' : 'new';
-    showAccBalance();
-  }
+  $('rd-mer').hidden = isNew;   // ny avvikelse: inget under Mer
   $('rd-error').textContent = '';
   $('row-dialog').showModal();
   $('row-dialog').focus();   // inget tangentbord direkt (2026-11-21)
@@ -524,31 +510,7 @@ $('add-dialog').addEventListener('click', (e) => {
   $('add-dialog').close();
   setTimeout(() => (kind === 'oneoff' ? openRowDialog(null) : kind === 'account' ? openAccPick() : focusAdd(kind)), 0);
 });
-$('rd-account').addEventListener('click', () => {
-  const acc = dialogRow && data.accounts.find((a) => (a.feeds || []).includes(dialogRow.id));
-  if (!acc) return;
-  $('row-dialog').close();
-  setTimeout(() => openAccDialog(acc), 0);
-});
-function showAccBalance() {
-  const pick = $('rd-acc-pick').value, acc = data.accounts.find((a) => a.id === pick), est = acc ? estBalance(data, acc, month) : null;
-  $('rd-balance').closest('label').hidden = pick !== 'new';   // 2026-11-21: saldot ändras på kontot, här bara för ett nytt konto
-  $('rd-show-wrap').hidden = true;
-  $('rd-show').checked = acc ? !acc.hidden : true;
-  $('rd-bal-label').textContent = acc ? `Saldo på ${acc.name} (${unit(acc.currency)})` : 'Saldo på kontot nu';
-  $('rd-balance').value = est ? krInput(est.amount) : '';
-  $('rd-balance').dataset.orig = $('rd-balance').value;
-  $('rd-acc-note').textContent = !pick ? '' : !acc ? 'Fyll i saldot så skapas kontot. Det räknas upp med sparandet varje månad.' : acc ? '' 
-    : est && est.estimated ? 'Beräknat från senaste saldot + sparandet – ändra om det inte stämmer.' : 'Räknas upp med sparandet varje månad.';
-}
-$('rd-acc-pick').addEventListener('change', showAccBalance);
-// Sparande före lönen (2026-11-18): bara för avvikelser i kategorin Sparande.
-function showPre() {
-  const r = dialogRow;
-  $('rd-pre-wrap').hidden = !(r && r.src);   // v4: bara äldre poster som fortfarande har en källa – nytt sparande före lön ligger på kontot
-}
-$('rd-type').addEventListener('change', () => { fillCategorySelect($('rd-cat'), null, $('rd-type').value); showPre(); });
-$('rd-cat').addEventListener('change', showPre);
+$('rd-type').addEventListener('change', () => fillCategorySelect($('rd-cat'), null, $('rd-type').value));
 $('rd-cancel').addEventListener('click', () => $('row-dialog').close());
 
 $('rd-form').addEventListener('submit', (e) => {
@@ -563,37 +525,18 @@ $('rd-form').addEventListener('submit', (e) => {
     const start = $('f-start').value, end = $('f-end').value || null;
     const err = !name ? 'Skriv ett namn.' : base == null ? 'Skriv ett ordinarie belopp, t.ex. 1 250 eller 99,50.'
       : !isMonth(start) ? 'Välj från vilken månad.' : end && (!isMonth(end) || end < start) ? 'Till-månaden måste vara efter från-månaden.' : '';
-    if (err) { $('rd-all').open = true; $('rd-error').textContent = err; return; }
+    if (err) { $('rd-mer').open = true; $('rd-error').textContent = err; return; }
     if (rec) item = { ...rec, name, amount: base, every: rec.type === 'income' ? 1 : Number($('f-every').value), start, end,
       category: $('f-cat').value, person: personValue($('f-person')) };
-  }
-  if (!$('rd-acc').hidden) {
-    const pick = $('rd-acc-pick').value, balRaw = $('rd-balance').value.trim();
-    const bal = balRaw ? parseKr(balRaw) : null;
-    if (balRaw && (bal == null || !isAmount(bal))) { $('rd-error').textContent = 'Skriv ett saldo, t.ex. 45 000 eller 1250,50.'; return; }
-    for (const a of data.accounts) a.feeds = (a.feeds || []).filter((x) => x !== r.id);   // en sparpost går till ett konto
-    let acc = data.accounts.find((a) => a.id === pick);
-    if (pick === 'new' && balRaw) {
-      if (data.accounts.length >= MAX_ACCOUNTS) { $('rd-error').textContent = `Max ${MAX_ACCOUNTS} sparkonton.`; return; }
-      acc = { id: 'a' + newId().slice(-10), name: cleanName(r.name, 30) || 'Sparkonto', currency: home(), balances: {}, feeds: [] };
-      data.accounts.push(acc);
-    }
-    if (acc) {
-      acc.feeds.push(r.id);
-      if (!$('rd-show-wrap').hidden) acc.hidden = !$('rd-show').checked;   // dölj kontot i Sparande-kortet
-      if (balRaw && balRaw !== $('rd-balance').dataset.orig) acc.balances[month] = bal;
-    }
   }
   if (!r || r.kind === 'one') {
     const name = cleanName($('rd-name').value);
     if (!name) { $('rd-error').textContent = 'Skriv ett namn.'; return; }
     const o = { id: r ? r.id : newId(), month, name, type: $('rd-type').value === 'income' ? 'income' : 'expense',
-      amount, category: $('rd-cat').value, person: personValue($('rd-person')), ...(!$('rd-pre-wrap').hidden && $('rd-pre').value ? { src: $('rd-pre').value } : {}) };
+      amount, category: $('rd-cat').value, person: personValue($('rd-person')), ...(r?.src ? { src: r.src } : {}) };   // äldre källa behålls
     if (r) data.oneOffs = data.oneOffs.map((x) => (x.id === r.id ? o : x)); else data.oneOffs.push(o);
   } else {
-    // Sparpost: "Dras före lönen" gäller posten (alla månader).
     if (item) {
-      delete item.pre; if (!$('rd-pre-wrap').hidden && $('rd-pre').value && item.category === SAVINGS_CAT) item.src = $('rd-pre').value; else delete item.src;
       data.recurring = data.recurring.map((x) => (x.id === item.id ? item : x));
       // Månadens belopp: oförändrat fält följer ordinarie (eller behåller en tidigare avvikelse); ändrat = avvikelse.
       const changed = $('rd-amount').value !== $('rd-amount').dataset.orig;

@@ -48,7 +48,6 @@ function openAccDialog(a) {
   // Nytt konto: namnet överst; befintligt: namnet under Fler inställningar (2026-11-21).
   if (isNew) $('ad-name-new').append($('ad-name-wrap')); else $('ad-more').querySelector('summary').after($('ad-name-wrap'));
   $('ad-more').open = false;
-  $('ad-feeds-sum').textContent = '';   // 2026-11-21: inga kopplingar att visa – kontot har sitt eget sparande
   $('ad-sub').textContent = !cur ? '' : cur.month === month ? `Ifyllt i ${monthLabel(month).toLowerCase()}.` : `Senast ifyllt ${money(cur.amount, a.currency)} i ${monthLabel(cur.month).toLowerCase()} – förslaget här är det plus sparandet sedan dess.`;
   $('ad-currency').value = a.currency;
   $('ad-show').checked = !a.hidden;
@@ -56,24 +55,11 @@ function openAccDialog(a) {
   const est = estBalance(data, a, month);
   $('ad-amount').value = Object.hasOwn(a.balances, month) ? krInput(a.balances[month]) : '';
   $('ad-amount').placeholder = est && est.estimated ? krInput(est.amount) : '';
-  // Sparposter som fyller på kontot (2026-11-17): kryssa i, så räknas saldot upp varje månad.
-  // 2026-11-21: avslutade sparposter visas bara om de redan är kopplade (märkta), engångssparande med sin månad.
-  const linked = (id) => (a.feeds || []).includes(id);
-  // v5: sparande från lönen är ett fält på kontot; här bara äldre poster och avvikelser i Sparande som kan kopplas.
-  const savers = data.recurring.filter((r) => r.type === 'expense' && r.category === SAVINGS_CAT && (!r.end || r.end >= month || linked(r.id)));
-  const ones = data.oneOffs.filter((o) => o.type === 'expense' && o.category === SAVINGS_CAT && (o.month === month || linked(o.id))).sort((x, y) => (x.month < y.month ? 1 : -1));
-  const box = (id, text) => el('label', { class: 'check' }, el('input', { type: 'checkbox', value: id, checked: linked(id) }), el('span', { text }));
-  fill($('ad-feeds'), savers.length || ones.length ? [el('p', { class: 'small', text: 'Poster som också går hit:' }),
-    ...savers.map((r) => box(r.id, `${r.name} · ${kr(r.amount)}/mån` + (r.end && r.end < month ? ' (avslutad)' : ''))),
-    ...ones.map((o) => box(o.id, `${o.name} · ${kr(o.amount)} (${monthShortLabel(o.month).toLowerCase()})`))]
-    : null);
   // Sparmål (2026-11-21): valfritt – fälten visas först efter + Sparmål, eller när kontot redan har ett mål.
   const g = a.goal;
   $('ad-goal').hidden = !g; $('ad-goal-add').hidden = !!g;
   $('ad-pay').value = a.pay ? krInput(a.pay.amount) : '';   // v5: sparande från lönen ligger på kontot
   $('ad-pre').value = a.pre ? krInput(a.pre.amount) : '';   // v4: före lön och insättning ligger på kontot
-  $('ad-dep').value = a.deposits?.[month] ? krInput(a.deposits[month]) : '';
-  $('ad-dep-label').textContent = `Insättning i ${monthShortLabel(month).toLowerCase()} (${unit()})`;
   $('ad-goal-amount').value = g ? krInput(g.amount) : '';
   { // appens månadsnamn (lönedag), 3 år framåt från vald månad
     const ms = Array.from({ length: 36 }, (_, i) => addMonths(month, i + 1));
@@ -104,26 +90,24 @@ $('ad-form').addEventListener('submit', (e) => {
   if (gRaw && (gAmount == null || !isAmount(gAmount) || gAmount <= 0)) { $('ad-error').textContent = 'Skriv ett sparmål, t.ex. 15 000 – eller lämna fältet tomt.'; return; }
   const gMonth = $('ad-goal-month').value;
   const num = (id) => { const v = $(id).value.trim(); return v ? parseKr(v) : 0; };
-  const preAmt = num('ad-pre'), depAmt = num('ad-dep'), payAmt = num('ad-pay');
-  if (preAmt == null || depAmt == null || payAmt == null || preAmt < 0 || depAmt < 0 || payAmt < 0) { $('ad-error').textContent = 'Skriv ett belopp, t.ex. 3 400 – eller lämna fältet tomt.'; return; }
+  const preAmt = num('ad-pre'), payAmt = num('ad-pay');
+  if (preAmt == null || payAmt == null || preAmt < 0 || payAmt < 0) { $('ad-error').textContent = 'Skriv ett belopp, t.ex. 3 400 – eller lämna fältet tomt.'; return; }
   const name = cleanName($('ad-name').value, 30);
   if (!name) { $('ad-error').textContent = 'Skriv ett namn på kontot.'; return; }
   if (data.accounts.some((x) => x.id !== dialogAcc.id && x.name.toLowerCase() === name.toLowerCase())) { $('ad-error').textContent = `Det finns redan ett konto som heter ${name}.`; return; }
   const isNewAcc = !data.accounts.some((x) => x.id === dialogAcc.id);
   if (isNewAcc && data.accounts.length >= MAX_ACCOUNTS) { $('ad-error').textContent = `Max ${MAX_ACCOUNTS} sparkonton – ta bort något först.`; return; }
   const before = JSON.stringify(data);   // Ångra (2026-11-21)
-  const feeds = [...$('ad-feeds').querySelectorAll('input:checked')].map((i) => i.value);
   const old = data.accounts.find((x) => x.id === dialogAcc.id);
-  if (!raw && !old?.feeds?.length && !feeds.length && !preAmt && !payAmt && !depAmt && !Object.keys(old?.balances || {}).length) { $('ad-error').textContent = 'Skriv ett saldo, t.ex. 45 000 eller 1250,50.'; return; }
+  if (!raw && !old?.feeds?.length && !preAmt && !payAmt && !Object.keys(old?.balances || {}).length) { $('ad-error').textContent = 'Skriv ett saldo, t.ex. 45 000 eller 1250,50.'; return; }
   let a = old;
   if (!a) { a = { id: dialogAcc.id, name, currency: home(), balances: {}, feeds: [] }; data.accounts.push(a); }
   a.name = name;
-  if (a) { if (raw) a.balances[month] = amount; a.currency = $('ad-currency').value; a.feeds = feeds; a.hidden = !$('ad-show').checked;
+  if (a) { if (raw) a.balances[month] = amount; a.currency = $('ad-currency').value; a.hidden = !$('ad-show').checked;
     if (gAmount) a.goal = { amount: gAmount, ...(isMonth(gMonth) ? { month: gMonth } : {}) }; else delete a.goal;
     if (payAmt) a.pay = { amount: payAmt, from: a.pay?.from && a.pay.from <= month ? a.pay.from : month, ...(a.pay?.end ? { end: a.pay.end } : {}) }; else delete a.pay;
     if (preAmt) a.pre = { amount: preAmt, from: a.pre?.from && a.pre.from <= month ? a.pre.from : month }; else delete a.pre;
-    a.deposits = { ...(a.deposits || {}) }; if (depAmt) a.deposits[month] = depAmt; else delete a.deposits[month];
-    if (!Object.keys(a.deposits).length) delete a.deposits; }
+  }   // äldre kopplingar (feeds) och insättningar (deposits) behålls som de är
   data = loadData(data);
   $('acc-dialog').close();
   save();
@@ -134,30 +118,11 @@ $('ad-delete').addEventListener('click', () => {
   $('acc-dialog').close();
   withUndo(`${a.name} ligger i papperskorgen`, () => trashItems(data, 'acc', [a.id], isoToday()));
 });
-$('acc-manage').addEventListener('click', () => {
-  showTab('month');
-  const c = $('income-card'), d = c.querySelector('.ie-sum details');   // 2026-11-21: sparandet ligger i det övre kortet
-  if (d) d.open = true;
-  c.scrollIntoView({ behavior: 'smooth', block: 'start' });
-});
 
-// Inställningar → Sparkonton (2026-11-21): alla konton, även dolda, och + Nytt sparkonto.
-function renderAccSettings() {
-  const accs = data.accounts;
-  $('g-accounts').textContent = accs.length ? `${accs.length} st` : 'Inga';
-  fill($('acc-set-list'), accs.length ? accs.map((a) => {
-    const est = estBalance(data, a, month);
-    return el('li', {}, el('button', { type: 'button', class: 'acc-set-row', on: { click: () => openAccDialog(a) } },
-      el('span', {}, el('span', { text: a.name }), a.hidden ? el('small', { class: 'muted', text: ' · dolt' }) : null),
-      el('span', { class: 'muted', text: est ? (est.estimated ? '≈ ' : '') + money(est.amount, a.currency) : '–' })));
-  }) : el('li', { class: 'muted small', text: 'Inga sparkonton än.' }));
-  $('acc-new').disabled = accs.length >= MAX_ACCOUNTS;
-}
 function newAccount() {
   if (data.accounts.length >= MAX_ACCOUNTS) { snackbar(`Max ${MAX_ACCOUNTS} sparkonton – ta bort något först.`); return; }
   openAccDialog({ id: 'a' + newId().slice(-10), name: '', currency: home(), balances: {}, feeds: [] });
 }
-$('acc-new').addEventListener('click', newAccount);
 
 // ＋ Lägg till → Före lön / insättning (2026-11-21): välj konto (eller skapa nytt), kontodialogen öppnas.
 function openAccPick() {

@@ -695,3 +695,10 @@ dialog:focus { outline: none; }
 #acc-dialog .actions #ad-cancel { grid-column: 1 / -1; justify-self: end; }
 #acc-dialog .ad-more { margin-top: 8px; } #acc-dialog .ad-more > summary { cursor: pointer; padding: 8px 0; color: var(--primary); font-weight: 500; }
 #acc-dialog #ad-delete { margin-top: 8px; padding-left: 0; }
+/* Rutan för en post (2026-11-21): belopp + Spara/Avbryt, resten under Mer */
+#row-dialog .rd-mer { margin-top: 8px; border-top: 1px solid var(--outline-variant); }
+#row-dialog .rd-mer > summary { cursor: pointer; padding: 10px 0; color: var(--primary); font-weight: 500; }
+#row-dialog .rd-all-h { margin: 4px 0; font-weight: 500; }
+#row-dialog .rd-more { display: flex; flex-direction: column; align-items: flex-start; gap: 0; margin-top: 4px; }
+#row-dialog .rd-more .btn { padding-left: 0; }
+#row-dialog #rd-error:empty { display: none; }

@@ -59,7 +59,7 @@
         <p class="acc-big"><span id="acc-total"></span><span class="acc-total-diff" id="acc-total-diff"></span></p>
         <div id="acc-chart"></div>
         <p class="muted small" id="acc-rates"></p>
-        <button type="button" class="link" id="acc-manage">Ändra sparkonton i Månad ›</button>
+        
       </div>
     </div>
     <div class="col" id="overview"></div>
@@ -120,13 +120,6 @@
           <div class="actions"><span class="spacer"></span><button type="button" class="btn tonal" id="s-save">Spara</button></div>
           </div>
         </details>
-      </details>
-      <details class="set-group-wrap" id="acc-set">
-        <summary class="set-group"><span class="set-title">Sparkonton</span><span class="sect-sub" id="g-accounts"></span></summary>
-        <div class="card set-body">
-          <ul class="list" id="acc-set-list"></ul>
-          <div class="actions"><button type="button" class="btn tonal" id="acc-new">+ Nytt sparkonto</button></div>
-        </div>
       </details>
       <details class="set-group-wrap">
         <summary class="set-group"><span class="set-title">Valuta</span><span class="sect-sub" id="g-currency"></span></summary>
@@ -214,14 +207,14 @@
         <details><summary>Månad</summary>
           <p>Efter räkningar överst är det som blir över efter kostnader och sparande – pengarna att leva på (mat, nöjen och annat rörligt). När månaden är stängd står Kvar på kontot i stället: det som faktiskt fanns kvar. Under det jämförelsen med förra månaden, och stapeln visar vart inkomsten går. Beloppen finns i korten nedanför.</p>
           <p>Inkomster, Kostnader och Totalt sparat ligger i samma kort och är hopfällda – tryck på en rad för att se den. Kostnaderna är grupperade per kategori. Under dem står Efter räkningar (inkomster minus kostnader, samma belopp som överst) och Sparat i månaden med andel av inkomsten.</p>
-          <p>Tryck på en rad för att ändra beloppet bara den här månaden, hoppa över den eller Ändra posten (namn, belopp, kategori, period). + Lägg till i Boende lägger till en kostnad med samma kategori, person och hur ofta.</p>
+          <p>Tryck på en rad för att ändra beloppet den här månaden. Under Mer finns Ändra posten (alla månader) (namn, belopp, kategori, period), Hoppa över den här månaden, Återställ till ordinarie och Ta bort. + Lägg till i Boende lägger till en kostnad med samma kategori, person och hur ofta.</p>
           <p>Byt månad med ◀ ▶ eller svep. Tryck på Månad i menyn för att komma tillbaka till aktuell månad.</p>
           <p>＋ Lägg till, ☰ Alla poster och 🔒 Stäng (eller 🔓 Ändra i en stängd månad) ligger på en rad längst ner. ☰ Alla poster visar alla återkommande poster, även avslutade och kommande. Posterna står med störst belopp först, både där och i Månad. Tryck på en för att ändra den.</p>
           <p>Under knapparna står hur många dagar det är kvar till nästa lön (innevarande månad) och vilken kategori som ändrats mest mot förra månaden. I kortet står också förra månaden: kvar på kontot om den är stängd, annars efter räkningar.</p>
           <p>Kvar vid stängning (prognos) står på samma rad, när minst en tidigare månad är stängd: efter räkningar minus de rörliga utgifterna (snittet av de tre senaste stängda månaderna). Är samma månad förra året stängd räknas den med i procent – är december 65 % dyrare än vanligt, räknas det in. Tryck på prognosen för förklaringen.</p>
           <p>Senaste och kommande månader (Översikt): de tre senaste månaderna överst (stängda med vad som blev kvar på kontot), sedan efter räkningar för de tre närmaste månaderna (tryck Visa alla 12 månader för resten) och, när någon månad är stängd, kvar enligt prognosen bredvid. Tryck på en månad för att öppna den.</p>
           <p>Sparmål (valfritt): öppna ett sparkonto och tryck + Sparmål. Skriv ett belopp och, om du vill, en månad det ska vara klart. Under kontot visas hur långt du har kommit, när du når målet i nuvarande takt och – med datum – vad som behövs per månad för att hinna. Töm fältet för att ta bort målet.</p>
-          <p>Tryck på en post för att ändra den. Beloppet överst gäller bara månaden du tittar på. Under Ändra posten (alla månader) ändrar du namn, ordinarie belopp, hur ofta, kategori och period. Ta bort posten lägger den i papperskorgen.</p>
+          <p>Tryck på en post för att ändra den. Beloppet överst gäller bara månaden du tittar på; resten ligger under Mer. Ta bort lägger posten i papperskorgen.</p>
           <p>Vill du avsluta en post, fyll i Till månad. Poster som har slutat eller inte börjat syns i de månader de gäller.</p>
         </details>
         <details><summary>Sparande</summary>
@@ -230,7 +223,7 @@
           <p>Tryck på en rad för att ändra belopp, välja vilket Sparkonto pengarna går till eller rätta saldot. Saldot märkt ≈ är beräknat: senast ifyllt plus sparandet.</p>
           <p>Sparande och sparkonto är samma sak. ＋ Lägg till → 🐷 Sparande väljer eller skapar ett sparkonto, där du fyller i Saldo, Från lönen / mån (en kostnad – står under Kostnader → Sparande och minskar Efter räkningar), Före lön / mån (t.ex. aktier via jobbet) och Insättning den här månaden (t.ex. en gåva). Före lön och insättningar räknas som sparat men påverkar inte budgeten. Tryck på ett konto under Kostnader → Sparande eller Totalt sparat för att ändra det. Sparat i månaden visar allt sparande och hur det fördelar sig.</p>
           <p>Konton som inte rörs (t.ex. barnens) kan döljas från Månad: tryck på kontot och bocka ur Visa i Månad. Tryck på namnet under &quot;+ 1 dolt konto&quot; för att visa det igen. Det räknas fortfarande i Totalt sparat.</p>
-          <p>Inställningar → Sparkonton listar alla konton, även dolda. Tryck på ett: överst saldo, före lön och insättning; under Fler inställningar namn, valuta, vilket sparande som går dit, sparmål, Visa i Månad och Ta bort konto. När du lägger till ett sparande från lönen väljer du Sparkonto direkt (befintligt eller + Nytt sparkonto). Ta bort ett konto (det hamnar i papperskorgen). + Nytt sparkonto skapar ett konto med bara saldo, t.ex. ett konto du inte sparar till varje månad. Samma knapp finns som + Sparkonto under Totalt sparat. Två konton kan inte heta likadant. När du sparar visas Ångra en stund.</p>
+          <p>Tryck på ett konto under Totalt sparat (eller under Kostnader → Sparande) för att ändra det: Värde, Från lönen / mån och Före lön / mån överst; under Fler inställningar namn, valuta, sparmål, Visa i Månad och Ta bort konto (det hamnar i papperskorgen). + Nytt sparande under Totalt sparat skapar ett nytt konto. Två konton kan inte heta likadant. När du sparar visas Ångra en stund.</p>
           <p>Summan och en graf över alla konton finns under Översikt → Sparkonton.</p>
         </details>
         <details><summary>Stäng månaden</summary>
@@ -297,14 +290,14 @@
         <details><summary>Month</summary>
           <p>After bills at the top is what remains after costs and savings – the money to live on (food, fun and other variable spending). When the month is closed it says Left in the account instead: what was actually left. Below it the comparison with last month, and the bar shows where the income goes. The amounts are in the cards below.</p>
           <p>Income, Expenses and Total saved share one card and are folded – tap a row to see it. Expenses are grouped by category. Below them are After bills (income minus expenses, the same amount as at the top) and Saved this month with its share of income.</p>
-          <p>Tap a row to change the amount for this month only, skip it or Edit item (name, amount, category, period). + Add to Housing adds a cost with the same category, person and frequency.</p>
+          <p>Tap a row to change the amount for this month. Under More you find Edit item (all months) (name, amount, category, period), Skip this month, Reset to regular and Delete. + Add to Housing adds a cost with the same category, person and frequency.</p>
           <p>Change month with ◀ ▶ or swipe. Tap Month in the menu to return to the current month.</p>
           <p>＋ Add, ☰ All items and 🔒 Close (or 🔓 Edit in a closed month) sit in one row at the bottom. ☰ All items shows all recurring items, including ended and upcoming ones. Items are listed largest amount first, there and in Month. Tap one to change it.</p>
           <p>Below the buttons you see how many days are left until the next payday (current month) and which category changed the most since last month. The card also shows last month: left in the account if it is closed, otherwise after bills.</p>
           <p>Left at close (forecast) is on the same line, once at least one earlier month is closed: after bills minus variable spending (average of the three latest closed months). If the same month last year is closed it is included as a percentage – if December was 65 % more expensive than usual, that is included. Tap the forecast for the explanation.</p>
           <p>Recent and upcoming months (Overview): the last three months at the top (closed ones with what was left in the account), then after bills for the next three months (tap Show all 12 months for the rest) and, once a month is closed, the forecast next to it. Tap a month to open it.</p>
           <p>Savings goal (optional): open a savings account and tap + Savings goal. Enter an amount and, if you like, a month it should be done by. Below the account you see how far you have come, when you reach the goal at the current pace and – with a date – what is needed per month to make it. Empty the field to remove the goal.</p>
-          <p>Tap an item to change it. The amount at the top applies only to the month you are viewing. Under Edit the item (all months) you change name, regular amount, how often, category and period. Delete the item moves it to the trash.</p>
+          <p>Tap an item to change it. The amount at the top applies only to the month you are viewing; the rest is under More. Delete puts the item in the trash.</p>
           <p>To end an item, fill in To month. Items that have ended or not started show in the months they apply to.</p>
         </details>
         <details><summary>Savings</summary>
@@ -313,7 +306,7 @@
           <p>Tap a row to change the amount, choose which Savings account the money goes to, or correct the balance. A balance marked ≈ is estimated: last entered plus the savings.</p>
           <p>Savings and savings accounts are the same thing. ＋ Add → 🐷 Savings picks or creates a savings account, where you enter Balance, From pay / mo (a cost – listed under Expenses → Savings and reduces After bills), Before pay / mo (e.g. shares through work) and Deposit this month (e.g. a gift). Before pay and deposits count as saved but don't affect the budget. Tap an account under Expenses → Savings or Total saved to change it. Saved this month shows all saving and how it splits.</p>
           <p>Accounts you never touch (e.g. the children's) can be hidden from Month: tap the account and untick Show in Month. Tap the name under &quot;+ 1 hidden account&quot; to show it again. It still counts in Total saved.</p>
-          <p>Settings → Savings accounts lists all accounts, including hidden ones. Tap one: balance, before pay and deposit at the top; under More settings name, currency, which savings go there, savings goal, Show in Month and Delete account. When you add saving from pay you pick the Savings account right away (an existing one or + New savings account). Delete an account (it goes to the trash). + New savings account creates an account with just a balance, e.g. one you don't save to every month. The same button is + Account under Total saved. Two accounts can't have the same name. When you save, Undo is shown for a moment.</p>
+          <p>Tap an account under Total saved (or under Expenses → Savings) to change it: Value, From pay / mo and Before pay / mo at the top; under More settings name, currency, savings goal, Show in Month and Delete account (it goes to the trash). + New saving under Total saved creates a new account. Two accounts can't have the same name. When you save, Undo is shown for a moment.</p>
           <p>The total and a chart of all accounts are under Overview → Savings accounts.</p>
         </details>
         <details><summary>Close the month</summary>
@@ -396,18 +389,6 @@
         <button type="submit" class="btn filled">Lägg till</button>
         <p class="error" role="alert"></p>
       </form>
-  <form class="add-form" id="sav-form" data-type="expense" novalidate>
-        <input type="hidden" name="category" value="savings">
-        <label class="field grow"><span>Namn</span><input name="name" maxlength="60" placeholder="t.ex. Buffert" autocomplete="off"></label>
-        <label class="field amt"><span>Per gång (<span class="cur-unit">kr</span>)</span><input name="amount" inputmode="decimal" autocomplete="off"></label>
-        <label class="field"><span>Hur ofta</span><select name="every"></select></label>
-        <label class="field person-field"><span>Person (valfritt)</span><select name="person"></select></label>
-        <label class="field"><span>Sparkonto</span><select name="acc"></select></label>
-        <label class="field amt" hidden><span>Saldo nu</span><input name="balance" inputmode="decimal" autocomplete="off"></label>
-        <p class="muted small hint-row">Sparande från lönen är en kostnad – pengarna lämnar kontot och räknas upp på sparkontot varje månad. Sparande före lön och insättningar fyller du i på kontot.</p>
-        <button type="submit" class="btn filled">Lägg till</button>
-        <p class="error" role="alert"></p>
-      </form>
   <p class="muted small">Gäller från den månad du tittar på.</p>
   <div class="actions"><span class="spacer"></span><button type="button" class="btn text" id="nd-cancel">Stäng</button></div>
 </dialog>
@@ -444,14 +425,9 @@
       <label class="field person-field"><span>Person (valfritt)</span><select id="rd-person"></select></label>
     </div>
     <label class="field"><span>Belopp (<span class="cur-unit">kr</span>)</span><input id="rd-amount" inputmode="decimal" autocomplete="off"></label>
-    <label class="field" id="rd-pre-wrap" hidden><span>Varifrån</span><select id="rd-pre"><option value="">Från lönen</option><option value="pre">Före lön (dras innan nettolönen)</option><option value="extra">Utöver lönen (t.ex. gåva)</option></select></label>
-    <div id="rd-acc" hidden>
-      <label class="field"><span>Sparkonto</span><select id="rd-acc-pick"></select></label>
-      <label class="field"><span id="rd-bal-label">Saldo på kontot nu</span><input id="rd-balance" inputmode="decimal" autocomplete="off"></label>
-      <p class="muted small" id="rd-acc-note"></p>
-      <label class="check" id="rd-show-wrap"><input type="checkbox" id="rd-show"><span>Visa i Månad</span></label>
-    </div>
-    <details class="rd-all" id="rd-all"><summary>Ändra posten (alla månader)</summary>
+    <!-- 2026-11-21: förenklat – belopp, Spara/Avbryt; resten under Mer -->
+    <details class="rd-mer" id="rd-mer"><summary>Mer</summary>
+    <div class="rd-all" id="rd-all"><p class="small rd-all-h">Ändra posten (alla månader)</p>
       <label class="field"><span>Namn</span><input id="f-name" maxlength="60" autocomplete="off"></label>
       <div class="row2">
         <label class="field"><span>Ordinarie belopp (<span class="cur-unit">kr</span>)</span><input id="f-amount" inputmode="decimal" autocomplete="off"></label>
@@ -465,14 +441,14 @@
         <label class="field"><span>Från månad</span><input id="f-start" type="month" min="1900-01" max="2099-12"></label>
         <label class="field"><span>Till månad (valfritt)</span><input id="f-end" type="month" min="1900-01" max="2099-12"></label>
       </div>
+    </div>
+    <div class="actions wrap rd-more">
+      <button type="button" class="btn text" id="rd-skip">Hoppa över den här månaden</button>
+      <button type="button" class="btn text" id="rd-reset">Återställ till ordinarie</button>
+      <button type="button" class="btn text danger" id="rd-delete">Ta bort</button>
+    </div>
     </details>
     <p class="error" id="rd-error" role="alert"></p>
-    <div class="actions wrap rd-more">
-      <button type="button" class="btn text danger" id="rd-delete">Ta bort</button>
-      <button type="button" class="btn text" id="rd-reset">Återställ</button>
-      <button type="button" class="btn text" id="rd-skip">Hoppa över</button>
-      <button type="button" class="btn text" id="rd-account">Kontot ›</button>
-    </div>
     <div class="actions rd-main">
       <button type="button" class="btn text" id="rd-cancel">Avbryt</button>
       <button type="submit" class="btn filled" id="rd-save">Spara</button>
@@ -513,13 +489,10 @@
       <label class="field"><span>Från lönen / mån (<span class="cur-unit">kr</span>)</span><input id="ad-pay" inputmode="decimal" autocomplete="off" placeholder="0"></label>
       <label class="field"><span>Före lön / mån (<span class="cur-unit">kr</span>)</span><input id="ad-pre" inputmode="decimal" autocomplete="off" placeholder="0"></label>
     </div>
-    <input type="hidden" id="ad-dep"><span hidden id="ad-dep-label"></span>
     <p class="muted small ad-hint">Från lönen är en kostnad i budgeten; före lön (t.ex. aktier via jobbet) påverkar den inte. Värdet räknas upp med båda varje månad – när du stänger månaden skriver du in det verkliga värdet.</p>
-    <p class="small" id="ad-feeds-sum"></p>
     <details class="ad-more" id="ad-more"><summary>Fler inställningar</summary>
       <label class="field" id="ad-name-wrap"><span>Namn</span><input id="ad-name" maxlength="30" autocomplete="off"></label>
       <label class="field"><span>Valuta</span><select id="ad-currency"></select></label>
-      <div class="ad-feeds" id="ad-feeds" hidden></div>
       <button type="button" class="link" id="ad-goal-add">+ Sparmål</button>
       <div class="row2" id="ad-goal" hidden>
         <label class="field"><span id="ad-goal-label">Sparmål (kr)</span><input id="ad-goal-amount" inputmode="decimal" autocomplete="off"></label>

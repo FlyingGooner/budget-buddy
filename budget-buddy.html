@@ -712,6 +712,13 @@ dialog:focus { outline: none; }
 #acc-dialog .actions #ad-cancel { grid-column: 1 / -1; justify-self: end; }
 #acc-dialog .ad-more { margin-top: 8px; } #acc-dialog .ad-more > summary { cursor: pointer; padding: 8px 0; color: var(--primary); font-weight: 500; }
 #acc-dialog #ad-delete { margin-top: 8px; padding-left: 0; }
+/* Rutan för en post (2026-11-21): belopp + Spara/Avbryt, resten under Mer */
+#row-dialog .rd-mer { margin-top: 8px; border-top: 1px solid var(--outline-variant); }
+#row-dialog .rd-mer > summary { cursor: pointer; padding: 10px 0; color: var(--primary); font-weight: 500; }
+#row-dialog .rd-all-h { margin: 4px 0; font-weight: 500; }
+#row-dialog .rd-more { display: flex; flex-direction: column; align-items: flex-start; gap: 0; margin-top: 4px; }
+#row-dialog .rd-more .btn { padding-left: 0; }
+#row-dialog #rd-error:empty { display: none; }
 
 </style>
 </head>
@@ -757,7 +764,7 @@ dialog:focus { outline: none; }
         <p class="acc-big"><span id="acc-total"></span><span class="acc-total-diff" id="acc-total-diff"></span></p>
         <div id="acc-chart"></div>
         <p class="muted small" id="acc-rates"></p>
-        <button type="button" class="link" id="acc-manage">Ändra sparkonton i Månad ›</button>
+        
       </div>
     </div>
     <div class="col" id="overview"></div>
@@ -818,13 +825,6 @@ dialog:focus { outline: none; }
           <div class="actions"><span class="spacer"></span><button type="button" class="btn tonal" id="s-save">Spara</button></div>
           </div>
         </details>
-      </details>
-      <details class="set-group-wrap" id="acc-set">
-        <summary class="set-group"><span class="set-title">Sparkonton</span><span class="sect-sub" id="g-accounts"></span></summary>
-        <div class="card set-body">
-          <ul class="list" id="acc-set-list"></ul>
-          <div class="actions"><button type="button" class="btn tonal" id="acc-new">+ Nytt sparkonto</button></div>
-        </div>
       </details>
       <details class="set-group-wrap">
         <summary class="set-group"><span class="set-title">Valuta</span><span class="sect-sub" id="g-currency"></span></summary>
@@ -912,14 +912,14 @@ dialog:focus { outline: none; }
         <details><summary>Månad</summary>
           <p>Efter räkningar överst är det som blir över efter kostnader och sparande – pengarna att leva på (mat, nöjen och annat rörligt). När månaden är stängd står Kvar på kontot i stället: det som faktiskt fanns kvar. Under det jämförelsen med förra månaden, och stapeln visar vart inkomsten går. Beloppen finns i korten nedanför.</p>
           <p>Inkomster, Kostnader och Totalt sparat ligger i samma kort och är hopfällda – tryck på en rad för att se den. Kostnaderna är grupperade per kategori. Under dem står Efter räkningar (inkomster minus kostnader, samma belopp som överst) och Sparat i månaden med andel av inkomsten.</p>
-          <p>Tryck på en rad för att ändra beloppet bara den här månaden, hoppa över den eller Ändra posten (namn, belopp, kategori, period). + Lägg till i Boende lägger till en kostnad med samma kategori, person och hur ofta.</p>
+          <p>Tryck på en rad för att ändra beloppet den här månaden. Under Mer finns Ändra posten (alla månader) (namn, belopp, kategori, period), Hoppa över den här månaden, Återställ till ordinarie och Ta bort. + Lägg till i Boende lägger till en kostnad med samma kategori, person och hur ofta.</p>
           <p>Byt månad med ◀ ▶ eller svep. Tryck på Månad i menyn för att komma tillbaka till aktuell månad.</p>
           <p>＋ Lägg till, ☰ Alla poster och 🔒 Stäng (eller 🔓 Ändra i en stängd månad) ligger på en rad längst ner. ☰ Alla poster visar alla återkommande poster, även avslutade och kommande. Posterna står med störst belopp först, både där och i Månad. Tryck på en för att ändra den.</p>
           <p>Under knapparna står hur många dagar det är kvar till nästa lön (innevarande månad) och vilken kategori som ändrats mest mot förra månaden. I kortet står också förra månaden: kvar på kontot om den är stängd, annars efter räkningar.</p>
           <p>Kvar vid stängning (prognos) står på samma rad, när minst en tidigare månad är stängd: efter räkningar minus de rörliga utgifterna (snittet av de tre senaste stängda månaderna). Är samma månad förra året stängd räknas den med i procent – är december 65 % dyrare än vanligt, räknas det in. Tryck på prognosen för förklaringen.</p>
           <p>Senaste och kommande månader (Översikt): de tre senaste månaderna överst (stängda med vad som blev kvar på kontot), sedan efter räkningar för de tre närmaste månaderna (tryck Visa alla 12 månader för resten) och, när någon månad är stängd, kvar enligt prognosen bredvid. Tryck på en månad för att öppna den.</p>
           <p>Sparmål (valfritt): öppna ett sparkonto och tryck + Sparmål. Skriv ett belopp och, om du vill, en månad det ska vara klart. Under kontot visas hur långt du har kommit, när du når målet i nuvarande takt och – med datum – vad som behövs per månad för att hinna. Töm fältet för att ta bort målet.</p>
-          <p>Tryck på en post för att ändra den. Beloppet överst gäller bara månaden du tittar på. Under Ändra posten (alla månader) ändrar du namn, ordinarie belopp, hur ofta, kategori och period. Ta bort posten lägger den i papperskorgen.</p>
+          <p>Tryck på en post för att ändra den. Beloppet överst gäller bara månaden du tittar på; resten ligger under Mer. Ta bort lägger posten i papperskorgen.</p>
           <p>Vill du avsluta en post, fyll i Till månad. Poster som har slutat eller inte börjat syns i de månader de gäller.</p>
         </details>
         <details><summary>Sparande</summary>
@@ -928,7 +928,7 @@ dialog:focus { outline: none; }
           <p>Tryck på en rad för att ändra belopp, välja vilket Sparkonto pengarna går till eller rätta saldot. Saldot märkt ≈ är beräknat: senast ifyllt plus sparandet.</p>
           <p>Sparande och sparkonto är samma sak. ＋ Lägg till → 🐷 Sparande väljer eller skapar ett sparkonto, där du fyller i Saldo, Från lönen / mån (en kostnad – står under Kostnader → Sparande och minskar Efter räkningar), Före lön / mån (t.ex. aktier via jobbet) och Insättning den här månaden (t.ex. en gåva). Före lön och insättningar räknas som sparat men påverkar inte budgeten. Tryck på ett konto under Kostnader → Sparande eller Totalt sparat för att ändra det. Sparat i månaden visar allt sparande och hur det fördelar sig.</p>
           <p>Konton som inte rörs (t.ex. barnens) kan döljas från Månad: tryck på kontot och bocka ur Visa i Månad. Tryck på namnet under &quot;+ 1 dolt konto&quot; för att visa det igen. Det räknas fortfarande i Totalt sparat.</p>
-          <p>Inställningar → Sparkonton listar alla konton, även dolda. Tryck på ett: överst saldo, före lön och insättning; under Fler inställningar namn, valuta, vilket sparande som går dit, sparmål, Visa i Månad och Ta bort konto. När du lägger till ett sparande från lönen väljer du Sparkonto direkt (befintligt eller + Nytt sparkonto). Ta bort ett konto (det hamnar i papperskorgen). + Nytt sparkonto skapar ett konto med bara saldo, t.ex. ett konto du inte sparar till varje månad. Samma knapp finns som + Sparkonto under Totalt sparat. Två konton kan inte heta likadant. När du sparar visas Ångra en stund.</p>
+          <p>Tryck på ett konto under Totalt sparat (eller under Kostnader → Sparande) för att ändra det: Värde, Från lönen / mån och Före lön / mån överst; under Fler inställningar namn, valuta, sparmål, Visa i Månad och Ta bort konto (det hamnar i papperskorgen). + Nytt sparande under Totalt sparat skapar ett nytt konto. Två konton kan inte heta likadant. När du sparar visas Ångra en stund.</p>
           <p>Summan och en graf över alla konton finns under Översikt → Sparkonton.</p>
         </details>
         <details><summary>Stäng månaden</summary>
@@ -995,14 +995,14 @@ dialog:focus { outline: none; }
         <details><summary>Month</summary>
           <p>After bills at the top is what remains after costs and savings – the money to live on (food, fun and other variable spending). When the month is closed it says Left in the account instead: what was actually left. Below it the comparison with last month, and the bar shows where the income goes. The amounts are in the cards below.</p>
           <p>Income, Expenses and Total saved share one card and are folded – tap a row to see it. Expenses are grouped by category. Below them are After bills (income minus expenses, the same amount as at the top) and Saved this month with its share of income.</p>
-          <p>Tap a row to change the amount for this month only, skip it or Edit item (name, amount, category, period). + Add to Housing adds a cost with the same category, person and frequency.</p>
+          <p>Tap a row to change the amount for this month. Under More you find Edit item (all months) (name, amount, category, period), Skip this month, Reset to regular and Delete. + Add to Housing adds a cost with the same category, person and frequency.</p>
           <p>Change month with ◀ ▶ or swipe. Tap Month in the menu to return to the current month.</p>
           <p>＋ Add, ☰ All items and 🔒 Close (or 🔓 Edit in a closed month) sit in one row at the bottom. ☰ All items shows all recurring items, including ended and upcoming ones. Items are listed largest amount first, there and in Month. Tap one to change it.</p>
           <p>Below the buttons you see how many days are left until the next payday (current month) and which category changed the most since last month. The card also shows last month: left in the account if it is closed, otherwise after bills.</p>
           <p>Left at close (forecast) is on the same line, once at least one earlier month is closed: after bills minus variable spending (average of the three latest closed months). If the same month last year is closed it is included as a percentage – if December was 65 % more expensive than usual, that is included. Tap the forecast for the explanation.</p>
           <p>Recent and upcoming months (Overview): the last three months at the top (closed ones with what was left in the account), then after bills for the next three months (tap Show all 12 months for the rest) and, once a month is closed, the forecast next to it. Tap a month to open it.</p>
           <p>Savings goal (optional): open a savings account and tap + Savings goal. Enter an amount and, if you like, a month it should be done by. Below the account you see how far you have come, when you reach the goal at the current pace and – with a date – what is needed per month to make it. Empty the field to remove the goal.</p>
-          <p>Tap an item to change it. The amount at the top applies only to the month you are viewing. Under Edit the item (all months) you change name, regular amount, how often, category and period. Delete the item moves it to the trash.</p>
+          <p>Tap an item to change it. The amount at the top applies only to the month you are viewing; the rest is under More. Delete puts the item in the trash.</p>
           <p>To end an item, fill in To month. Items that have ended or not started show in the months they apply to.</p>
         </details>
         <details><summary>Savings</summary>
@@ -1011,7 +1011,7 @@ dialog:focus { outline: none; }
           <p>Tap a row to change the amount, choose which Savings account the money goes to, or correct the balance. A balance marked ≈ is estimated: last entered plus the savings.</p>
           <p>Savings and savings accounts are the same thing. ＋ Add → 🐷 Savings picks or creates a savings account, where you enter Balance, From pay / mo (a cost – listed under Expenses → Savings and reduces After bills), Before pay / mo (e.g. shares through work) and Deposit this month (e.g. a gift). Before pay and deposits count as saved but don't affect the budget. Tap an account under Expenses → Savings or Total saved to change it. Saved this month shows all saving and how it splits.</p>
           <p>Accounts you never touch (e.g. the children's) can be hidden from Month: tap the account and untick Show in Month. Tap the name under &quot;+ 1 hidden account&quot; to show it again. It still counts in Total saved.</p>
-          <p>Settings → Savings accounts lists all accounts, including hidden ones. Tap one: balance, before pay and deposit at the top; under More settings name, currency, which savings go there, savings goal, Show in Month and Delete account. When you add saving from pay you pick the Savings account right away (an existing one or + New savings account). Delete an account (it goes to the trash). + New savings account creates an account with just a balance, e.g. one you don't save to every month. The same button is + Account under Total saved. Two accounts can't have the same name. When you save, Undo is shown for a moment.</p>
+          <p>Tap an account under Total saved (or under Expenses → Savings) to change it: Value, From pay / mo and Before pay / mo at the top; under More settings name, currency, savings goal, Show in Month and Delete account (it goes to the trash). + New saving under Total saved creates a new account. Two accounts can't have the same name. When you save, Undo is shown for a moment.</p>
           <p>The total and a chart of all accounts are under Overview → Savings accounts.</p>
         </details>
         <details><summary>Close the month</summary>
@@ -1094,18 +1094,6 @@ dialog:focus { outline: none; }
         <button type="submit" class="btn filled">Lägg till</button>
         <p class="error" role="alert"></p>
       </form>
-  <form class="add-form" id="sav-form" data-type="expense" novalidate>
-        <input type="hidden" name="category" value="savings">
-        <label class="field grow"><span>Namn</span><input name="name" maxlength="60" placeholder="t.ex. Buffert" autocomplete="off"></label>
-        <label class="field amt"><span>Per gång (<span class="cur-unit">kr</span>)</span><input name="amount" inputmode="decimal" autocomplete="off"></label>
-        <label class="field"><span>Hur ofta</span><select name="every"></select></label>
-        <label class="field person-field"><span>Person (valfritt)</span><select name="person"></select></label>
-        <label class="field"><span>Sparkonto</span><select name="acc"></select></label>
-        <label class="field amt" hidden><span>Saldo nu</span><input name="balance" inputmode="decimal" autocomplete="off"></label>
-        <p class="muted small hint-row">Sparande från lönen är en kostnad – pengarna lämnar kontot och räknas upp på sparkontot varje månad. Sparande före lön och insättningar fyller du i på kontot.</p>
-        <button type="submit" class="btn filled">Lägg till</button>
-        <p class="error" role="alert"></p>
-      </form>
   <p class="muted small">Gäller från den månad du tittar på.</p>
   <div class="actions"><span class="spacer"></span><button type="button" class="btn text" id="nd-cancel">Stäng</button></div>
 </dialog>
@@ -1142,14 +1130,9 @@ dialog:focus { outline: none; }
       <label class="field person-field"><span>Person (valfritt)</span><select id="rd-person"></select></label>
     </div>
     <label class="field"><span>Belopp (<span class="cur-unit">kr</span>)</span><input id="rd-amount" inputmode="decimal" autocomplete="off"></label>
-    <label class="field" id="rd-pre-wrap" hidden><span>Varifrån</span><select id="rd-pre"><option value="">Från lönen</option><option value="pre">Före lön (dras innan nettolönen)</option><option value="extra">Utöver lönen (t.ex. gåva)</option></select></label>
-    <div id="rd-acc" hidden>
-      <label class="field"><span>Sparkonto</span><select id="rd-acc-pick"></select></label>
-      <label class="field"><span id="rd-bal-label">Saldo på kontot nu</span><input id="rd-balance" inputmode="decimal" autocomplete="off"></label>
-      <p class="muted small" id="rd-acc-note"></p>
-      <label class="check" id="rd-show-wrap"><input type="checkbox" id="rd-show"><span>Visa i Månad</span></label>
-    </div>
-    <details class="rd-all" id="rd-all"><summary>Ändra posten (alla månader)</summary>
+    <!-- 2026-11-21: förenklat – belopp, Spara/Avbryt; resten under Mer -->
+    <details class="rd-mer" id="rd-mer"><summary>Mer</summary>
+    <div class="rd-all" id="rd-all"><p class="small rd-all-h">Ändra posten (alla månader)</p>
       <label class="field"><span>Namn</span><input id="f-name" maxlength="60" autocomplete="off"></label>
       <div class="row2">
         <label class="field"><span>Ordinarie belopp (<span class="cur-unit">kr</span>)</span><input id="f-amount" inputmode="decimal" autocomplete="off"></label>
@@ -1163,14 +1146,14 @@ dialog:focus { outline: none; }
         <label class="field"><span>Från månad</span><input id="f-start" type="month" min="1900-01" max="2099-12"></label>
         <label class="field"><span>Till månad (valfritt)</span><input id="f-end" type="month" min="1900-01" max="2099-12"></label>
       </div>
+    </div>
+    <div class="actions wrap rd-more">
+      <button type="button" class="btn text" id="rd-skip">Hoppa över den här månaden</button>
+      <button type="button" class="btn text" id="rd-reset">Återställ till ordinarie</button>
+      <button type="button" class="btn text danger" id="rd-delete">Ta bort</button>
+    </div>
     </details>
     <p class="error" id="rd-error" role="alert"></p>
-    <div class="actions wrap rd-more">
-      <button type="button" class="btn text danger" id="rd-delete">Ta bort</button>
-      <button type="button" class="btn text" id="rd-reset">Återställ</button>
-      <button type="button" class="btn text" id="rd-skip">Hoppa över</button>
-      <button type="button" class="btn text" id="rd-account">Kontot ›</button>
-    </div>
     <div class="actions rd-main">
       <button type="button" class="btn text" id="rd-cancel">Avbryt</button>
       <button type="submit" class="btn filled" id="rd-save">Spara</button>
@@ -1211,13 +1194,10 @@ dialog:focus { outline: none; }
       <label class="field"><span>Från lönen / mån (<span class="cur-unit">kr</span>)</span><input id="ad-pay" inputmode="decimal" autocomplete="off" placeholder="0"></label>
       <label class="field"><span>Före lön / mån (<span class="cur-unit">kr</span>)</span><input id="ad-pre" inputmode="decimal" autocomplete="off" placeholder="0"></label>
     </div>
-    <input type="hidden" id="ad-dep"><span hidden id="ad-dep-label"></span>
     <p class="muted small ad-hint">Från lönen är en kostnad i budgeten; före lön (t.ex. aktier via jobbet) påverkar den inte. Värdet räknas upp med båda varje månad – när du stänger månaden skriver du in det verkliga värdet.</p>
-    <p class="small" id="ad-feeds-sum"></p>
     <details class="ad-more" id="ad-more"><summary>Fler inställningar</summary>
       <label class="field" id="ad-name-wrap"><span>Namn</span><input id="ad-name" maxlength="30" autocomplete="off"></label>
       <label class="field"><span>Valuta</span><select id="ad-currency"></select></label>
-      <div class="ad-feeds" id="ad-feeds" hidden></div>
       <button type="button" class="link" id="ad-goal-add">+ Sparmål</button>
       <div class="row2" id="ad-goal" hidden>
         <label class="field"><span id="ad-goal-label">Sparmål (kr)</span><input id="ad-goal-amount" inputmode="decimal" autocomplete="off"></label>
@@ -1749,7 +1729,7 @@ I18N.add({
   'Kvar av inkomst': 'Left of income', '🐷 Sparkvot (sparande av inkomst)': '🐷 Savings rate (savings of income)', 'Största kostnad': 'Largest expense',
   '🐷 Sparat 12 mån': '🐷 Saved 12 mo', '🐷 Sparat den här månaden': '🐷 Saved this month', 'Gå till kostnader': 'Go to expenses', 'In och ut, 12 månader': 'In and out, 12 months',
   'Inga poster än – lägg till inkomster och kostnader så syns trenden här.': 'No items yet – add income and expenses and the trend shows here.',
-  'Avsluta markering': 'End selection', 'In': 'In', 'Ut': 'Out', 'Inkomster': 'Income', '(netto)': '(net)', 'Kostnader': 'Expenses', 'Kostnader per kategori': 'Expenses by category', 'Kvar': 'Left', 'Lön i dag': 'Payday today', 'Skriv in värdet från banken': 'Enter the value from the bank', 'Inget värde än': 'No value yet', 'Från lönen är en kostnad i budgeten; före lön (t.ex. aktier via jobbet) påverkar den inte. Värdet räknas upp med båda varje månad – när du stänger månaden skriver du in det verkliga värdet.': 'From pay is a cost in the budget; before pay (e.g. shares through work) is not. The value goes up with both every month – when you close the month you enter the real value.', 'Ett sparkonto: från lönen och/eller före lön': 'A savings account: from pay and/or before pay', 'Från lönen / mån (': 'From pay / mo (', 'Från lönen är en kostnad i budgeten. Före lön (t.ex. aktier via jobbet) och insättningar (t.ex. en gåva) räknas som sparat men påverkar inte budgeten.': 'From pay is a cost in the budget. Before pay (e.g. shares through work) and deposits (e.g. a gift) count as saved but do not affect the budget.', '🐷 Sparande': '🐷 Savings', 'Ett sparkonto: från lönen, före lön eller en insättning': 'A savings account: from pay, before pay or a deposit', 'Poster som också går hit:': 'Items that also go here:', '🐷 Sparkonton': '🐷 Savings accounts', 'Fler inställningar': 'More settings', 'Före lön / mån (': 'Before pay / mo (', 'Räknas som sparat men påverkar inte budgeten. Sparande från lönen lägger du till som en post.': 'Counts as saved but does not affect the budget. Add saving from pay as an item.', 'Saldo nu': 'Balance now', 'Sparande från lönen är en kostnad – pengarna lämnar kontot och räknas upp på sparkontot varje månad. Sparande före lön och insättningar fyller du i på kontot.': 'Saving from pay is a cost – the money leaves the account and is added to the savings account every month. Enter saving before pay and deposits on the account.', 'Vilket sparkonto?': 'Which savings account?', '🏦 Före lön / insättning': '🏦 Before pay / deposit', 'Direkt till ett sparkonto, påverkar inte budgeten': 'Straight to a savings account, does not affect the budget', '🐷 Sparande från lönen': '🐷 Saving from pay', 'En kostnad som går till ett sparkonto': 'A cost that goes to a savings account', 'Före lön varje månad (': 'Before pay each month (', 'Före lön: dras innan nettolönen, t.ex. aktier via jobbet. Insättning: utöver lönen den här månaden, t.ex. en gåva. Båda räknas som sparat men påverkar inte budgeten.': 'Before pay: taken before your net salary, e.g. shares through work. Deposit: on top of pay this month, e.g. a gift. Both count as saved but do not affect the budget.', 'Skriv ett belopp, t.ex. 3 400 – eller lämna fältet tomt.': 'Enter an amount, e.g. 3 400 – or leave the field empty.', 'Sparande från lönen är en kostnad – pengarna lämnar kontot. Sparande före lön och insättningar fyller du i på sparkontot.': 'Saving from pay is a cost – the money leaves the account. Enter saving before pay and deposits on the savings account.', 'Varifrån': 'Source', 'Från lönen': 'From pay', 'Före lön (dras innan nettolönen)': 'Before pay (deducted before net pay)', 'Utöver lönen (t.ex. gåva)': 'On top of pay (e.g. a gift)', 'Sparande från lönen är en kostnad – pengarna lämnar kontot. Före lön och utöver lönen räknas som sparat men minskar inte det som blir kvar.': 'Saving from pay is a cost – the money leaves the account. Before pay and on top of pay count as saved but do not reduce what is left.', 'dagar till lön': 'days to payday', 'dag till lön': 'day to payday', 'stäng i dag': 'close today', 'stäng månaden': 'close the month', 'Nästa lön i morgon': 'Next payday tomorrow',
+  'Avsluta markering': 'End selection', 'In': 'In', 'Ut': 'Out', 'Inkomster': 'Income', '(netto)': '(net)', 'Kostnader': 'Expenses', 'Kostnader per kategori': 'Expenses by category', 'Kvar': 'Left', 'Lön i dag': 'Payday today', 'Mer': 'More', 'Hoppa över den här månaden': 'Skip this month', 'Återställ till ordinarie': 'Reset to regular', 'Skriv in värdet från banken': 'Enter the value from the bank', 'Inget värde än': 'No value yet', 'Från lönen är en kostnad i budgeten; före lön (t.ex. aktier via jobbet) påverkar den inte. Värdet räknas upp med båda varje månad – när du stänger månaden skriver du in det verkliga värdet.': 'From pay is a cost in the budget; before pay (e.g. shares through work) is not. The value goes up with both every month – when you close the month you enter the real value.', 'Ett sparkonto: från lönen och/eller före lön': 'A savings account: from pay and/or before pay', 'Från lönen / mån (': 'From pay / mo (', 'Från lönen är en kostnad i budgeten. Före lön (t.ex. aktier via jobbet) och insättningar (t.ex. en gåva) räknas som sparat men påverkar inte budgeten.': 'From pay is a cost in the budget. Before pay (e.g. shares through work) and deposits (e.g. a gift) count as saved but do not affect the budget.', '🐷 Sparande': '🐷 Savings', 'Ett sparkonto: från lönen, före lön eller en insättning': 'A savings account: from pay, before pay or a deposit', 'Poster som också går hit:': 'Items that also go here:', '🐷 Sparkonton': '🐷 Savings accounts', 'Fler inställningar': 'More settings', 'Före lön / mån (': 'Before pay / mo (', 'Räknas som sparat men påverkar inte budgeten. Sparande från lönen lägger du till som en post.': 'Counts as saved but does not affect the budget. Add saving from pay as an item.', 'Saldo nu': 'Balance now', 'Sparande från lönen är en kostnad – pengarna lämnar kontot och räknas upp på sparkontot varje månad. Sparande före lön och insättningar fyller du i på kontot.': 'Saving from pay is a cost – the money leaves the account and is added to the savings account every month. Enter saving before pay and deposits on the account.', 'Vilket sparkonto?': 'Which savings account?', '🏦 Före lön / insättning': '🏦 Before pay / deposit', 'Direkt till ett sparkonto, påverkar inte budgeten': 'Straight to a savings account, does not affect the budget', '🐷 Sparande från lönen': '🐷 Saving from pay', 'En kostnad som går till ett sparkonto': 'A cost that goes to a savings account', 'Före lön varje månad (': 'Before pay each month (', 'Före lön: dras innan nettolönen, t.ex. aktier via jobbet. Insättning: utöver lönen den här månaden, t.ex. en gåva. Båda räknas som sparat men påverkar inte budgeten.': 'Before pay: taken before your net salary, e.g. shares through work. Deposit: on top of pay this month, e.g. a gift. Both count as saved but do not affect the budget.', 'Skriv ett belopp, t.ex. 3 400 – eller lämna fältet tomt.': 'Enter an amount, e.g. 3 400 – or leave the field empty.', 'Sparande från lönen är en kostnad – pengarna lämnar kontot. Sparande före lön och insättningar fyller du i på sparkontot.': 'Saving from pay is a cost – the money leaves the account. Enter saving before pay and deposits on the savings account.', 'Varifrån': 'Source', 'Från lönen': 'From pay', 'Före lön (dras innan nettolönen)': 'Before pay (deducted before net pay)', 'Utöver lönen (t.ex. gåva)': 'On top of pay (e.g. a gift)', 'Sparande från lönen är en kostnad – pengarna lämnar kontot. Före lön och utöver lönen räknas som sparat men minskar inte det som blir kvar.': 'Saving from pay is a cost – the money leaves the account. Before pay and on top of pay count as saved but do not reduce what is left.', 'dagar till lön': 'days to payday', 'dag till lön': 'day to payday', 'stäng i dag': 'close today', 'stäng månaden': 'close the month', 'Nästa lön i morgon': 'Next payday tomorrow',
   'Markerade poster': 'Selected items', 'Nyckeltal': 'Key figures', 'Personens poster blir gemensamma': "The person's items become shared", 'standard': 'default',
   'Totalt sparsaldo': 'Total savings', 'Saldo': 'Balance', 'Namn': 'Name', 'Period': 'Period', 'Från': 'From', 'Till': 'To', 'Avsluta': 'End', 'Avslutade': 'Ended', 'Aktiva': 'Active',
   'Kronor (SEK)': 'Swedish kronor (SEK)', 'Euro (EUR)': 'Euro (EUR)', 'Dollar (USD)': 'US dollar (USD)', 'Pund (GBP)': 'British pound (GBP)', 'Norska kronor (NOK)': 'Norwegian kroner (NOK)', 'Danska kronor (DKK)': 'Danish kroner (DKK)',
@@ -1922,7 +1902,7 @@ I18N.add({
 </script>
 <script>
 // ---- version.js ----
-﻿self.APP_VERSION = '0.12.163';
+﻿self.APP_VERSION = '0.12.164';
 
 </script>
   <script>
@@ -3560,8 +3540,8 @@ function addLike(rs, label) {
     const sav = rs[0].category === SAVINGS_CAT;
     if (sav) { newAccount(); return; }   // v5: sparande = ett sparkonto
     focusAdd('expense');
-    const f = $(sav ? 'sav-form' : 'exp-form').elements;
-    if (!sav) f.category.value = rs[0].category;
+    const f = $('exp-form').elements;
+    f.category.value = rs[0].category;
     const person = same((r) => r.person);
     if (person !== undefined && f.person) f.person.value = person || '';
     const every = same((r) => rec(r)?.every);
@@ -3678,14 +3658,13 @@ function openRowDialog(r) {
   $('rd-type').value = isOne && !isNew ? r.type : 'expense';
   fillCategorySelect($('rd-cat'), isOne && !isNew ? r.category : null, $('rd-type').value);
   fillPersonSelect($('rd-person'), isOne && !isNew ? r.person : null);
-  $('rd-pre').value = (r && r.src) || ''; showPre();
   $('rd-amount').value = isNew ? '' : krInput(r.amount);
   $('rd-delete').hidden = isNew;
   $('rd-delete').textContent = r && r.kind === 'rec' ? 'Ta bort posten' : 'Ta bort';
   $('rd-reset').hidden = isNew || r.kind !== 'rec' || !r.adjusted;
   // En ruta per post (2026-11-18): det som gäller alla månader ligger hopfällt under beloppet.
   const rec = r && r.kind === 'rec' ? data.recurring.find((x) => x.id === r.id) : null;
-  $('rd-all').hidden = !rec; $('rd-all').open = false;
+  $('rd-all').hidden = !rec; $('rd-mer').open = false;
   if (rec) {
     $('f-name').value = rec.name;
     $('f-amount').value = krInput(rec.amount);
@@ -3698,20 +3677,7 @@ function openRowDialog(r) {
   }
   $('rd-amount').dataset.orig = $('rd-amount').value;
   $('rd-skip').hidden = isNew || r.kind !== 'rec' || (r.adjusted && r.amount === 0);
-  // 2026-11-18: kontots egna inställningar (valuta, kopplingar, ta bort) nås härifrån – sparkonton hanteras bara i Månad.
-  $('rd-account').hidden = !(r && data.accounts.some((a) => (a.feeds || []).includes(r.id)));
-  // Sparpost = konto (2026-11-17): visa kontots saldo direkt i rutan. Saknas konto skapas ett med samma namn när du fyller i saldot.
-  const isSave = r && r.kind === 'rec' && r.category === SAVINGS_CAT;
-  $('rd-acc').hidden = !isSave;
-  if (isSave) {
-    // Koppla till ett befintligt sparkonto, skapa ett nytt eller inget. Saldot hämtas från kontot och räknas upp framåt.
-    const linked = data.accounts.find((a) => (a.feeds || []).includes(r.id));
-    $('rd-acc-pick').replaceChildren(el('option', { value: '', text: 'Inget sparkonto' }),
-      el('option', { value: 'new', text: `Nytt konto: ${r.name}` }),
-      ...data.accounts.map((a) => el('option', { value: a.id, text: a.name })));
-    $('rd-acc-pick').value = linked ? linked.id : data.accounts.length ? '' : 'new';
-    showAccBalance();
-  }
+  $('rd-mer').hidden = isNew;   // ny avvikelse: inget under Mer
   $('rd-error').textContent = '';
   $('row-dialog').showModal();
   $('row-dialog').focus();   // inget tangentbord direkt (2026-11-21)
@@ -3726,31 +3692,7 @@ $('add-dialog').addEventListener('click', (e) => {
   $('add-dialog').close();
   setTimeout(() => (kind === 'oneoff' ? openRowDialog(null) : kind === 'account' ? openAccPick() : focusAdd(kind)), 0);
 });
-$('rd-account').addEventListener('click', () => {
-  const acc = dialogRow && data.accounts.find((a) => (a.feeds || []).includes(dialogRow.id));
-  if (!acc) return;
-  $('row-dialog').close();
-  setTimeout(() => openAccDialog(acc), 0);
-});
-function showAccBalance() {
-  const pick = $('rd-acc-pick').value, acc = data.accounts.find((a) => a.id === pick), est = acc ? estBalance(data, acc, month) : null;
-  $('rd-balance').closest('label').hidden = pick !== 'new';   // 2026-11-21: saldot ändras på kontot, här bara för ett nytt konto
-  $('rd-show-wrap').hidden = true;
-  $('rd-show').checked = acc ? !acc.hidden : true;
-  $('rd-bal-label').textContent = acc ? `Saldo på ${acc.name} (${unit(acc.currency)})` : 'Saldo på kontot nu';
-  $('rd-balance').value = est ? krInput(est.amount) : '';
-  $('rd-balance').dataset.orig = $('rd-balance').value;
-  $('rd-acc-note').textContent = !pick ? '' : !acc ? 'Fyll i saldot så skapas kontot. Det räknas upp med sparandet varje månad.' : acc ? '' 
-    : est && est.estimated ? 'Beräknat från senaste saldot + sparandet – ändra om det inte stämmer.' : 'Räknas upp med sparandet varje månad.';
-}
-$('rd-acc-pick').addEventListener('change', showAccBalance);
-// Sparande före lönen (2026-11-18): bara för avvikelser i kategorin Sparande.
-function showPre() {
-  const r = dialogRow;
-  $('rd-pre-wrap').hidden = !(r && r.src);   // v4: bara äldre poster som fortfarande har en källa – nytt sparande före lön ligger på kontot
-}
-$('rd-type').addEventListener('change', () => { fillCategorySelect($('rd-cat'), null, $('rd-type').value); showPre(); });
-$('rd-cat').addEventListener('change', showPre);
+$('rd-type').addEventListener('change', () => fillCategorySelect($('rd-cat'), null, $('rd-type').value));
 $('rd-cancel').addEventListener('click', () => $('row-dialog').close());
 
 $('rd-form').addEventListener('submit', (e) => {
@@ -3765,37 +3707,18 @@ $('rd-form').addEventListener('submit', (e) => {
     const start = $('f-start').value, end = $('f-end').value || null;
     const err = !name ? 'Skriv ett namn.' : base == null ? 'Skriv ett ordinarie belopp, t.ex. 1 250 eller 99,50.'
       : !isMonth(start) ? 'Välj från vilken månad.' : end && (!isMonth(end) || end < start) ? 'Till-månaden måste vara efter från-månaden.' : '';
-    if (err) { $('rd-all').open = true; $('rd-error').textContent = err; return; }
+    if (err) { $('rd-mer').open = true; $('rd-error').textContent = err; return; }
     if (rec) item = { ...rec, name, amount: base, every: rec.type === 'income' ? 1 : Number($('f-every').value), start, end,
       category: $('f-cat').value, person: personValue($('f-person')) };
-  }
-  if (!$('rd-acc').hidden) {
-    const pick = $('rd-acc-pick').value, balRaw = $('rd-balance').value.trim();
-    const bal = balRaw ? parseKr(balRaw) : null;
-    if (balRaw && (bal == null || !isAmount(bal))) { $('rd-error').textContent = 'Skriv ett saldo, t.ex. 45 000 eller 1250,50.'; return; }
-    for (const a of data.accounts) a.feeds = (a.feeds || []).filter((x) => x !== r.id);   // en sparpost går till ett konto
-    let acc = data.accounts.find((a) => a.id === pick);
-    if (pick === 'new' && balRaw) {
-      if (data.accounts.length >= MAX_ACCOUNTS) { $('rd-error').textContent = `Max ${MAX_ACCOUNTS} sparkonton.`; return; }
-      acc = { id: 'a' + newId().slice(-10), name: cleanName(r.name, 30) || 'Sparkonto', currency: home(), balances: {}, feeds: [] };
-      data.accounts.push(acc);
-    }
-    if (acc) {
-      acc.feeds.push(r.id);
-      if (!$('rd-show-wrap').hidden) acc.hidden = !$('rd-show').checked;   // dölj kontot i Sparande-kortet
-      if (balRaw && balRaw !== $('rd-balance').dataset.orig) acc.balances[month] = bal;
-    }
   }
   if (!r || r.kind === 'one') {
     const name = cleanName($('rd-name').value);
     if (!name) { $('rd-error').textContent = 'Skriv ett namn.'; return; }
     const o = { id: r ? r.id : newId(), month, name, type: $('rd-type').value === 'income' ? 'income' : 'expense',
-      amount, category: $('rd-cat').value, person: personValue($('rd-person')), ...(!$('rd-pre-wrap').hidden && $('rd-pre').value ? { src: $('rd-pre').value } : {}) };
+      amount, category: $('rd-cat').value, person: personValue($('rd-person')), ...(r?.src ? { src: r.src } : {}) };   // äldre källa behålls
     if (r) data.oneOffs = data.oneOffs.map((x) => (x.id === r.id ? o : x)); else data.oneOffs.push(o);
   } else {
-    // Sparpost: "Dras före lönen" gäller posten (alla månader).
     if (item) {
-      delete item.pre; if (!$('rd-pre-wrap').hidden && $('rd-pre').value && item.category === SAVINGS_CAT) item.src = $('rd-pre').value; else delete item.src;
       data.recurring = data.recurring.map((x) => (x.id === item.id ? item : x));
       // Månadens belopp: oförändrat fält följer ordinarie (eller behåller en tidigare avvikelse); ändrat = avvikelse.
       const changed = $('rd-amount').value !== $('rd-amount').dataset.orig;
@@ -3994,7 +3917,6 @@ function openAccDialog(a) {
   // Nytt konto: namnet överst; befintligt: namnet under Fler inställningar (2026-11-21).
   if (isNew) $('ad-name-new').append($('ad-name-wrap')); else $('ad-more').querySelector('summary').after($('ad-name-wrap'));
   $('ad-more').open = false;
-  $('ad-feeds-sum').textContent = '';   // 2026-11-21: inga kopplingar att visa – kontot har sitt eget sparande
   $('ad-sub').textContent = !cur ? '' : cur.month === month ? `Ifyllt i ${monthLabel(month).toLowerCase()}.` : `Senast ifyllt ${money(cur.amount, a.currency)} i ${monthLabel(cur.month).toLowerCase()} – förslaget här är det plus sparandet sedan dess.`;
   $('ad-currency').value = a.currency;
   $('ad-show').checked = !a.hidden;
@@ -4002,24 +3924,11 @@ function openAccDialog(a) {
   const est = estBalance(data, a, month);
   $('ad-amount').value = Object.hasOwn(a.balances, month) ? krInput(a.balances[month]) : '';
   $('ad-amount').placeholder = est && est.estimated ? krInput(est.amount) : '';
-  // Sparposter som fyller på kontot (2026-11-17): kryssa i, så räknas saldot upp varje månad.
-  // 2026-11-21: avslutade sparposter visas bara om de redan är kopplade (märkta), engångssparande med sin månad.
-  const linked = (id) => (a.feeds || []).includes(id);
-  // v5: sparande från lönen är ett fält på kontot; här bara äldre poster och avvikelser i Sparande som kan kopplas.
-  const savers = data.recurring.filter((r) => r.type === 'expense' && r.category === SAVINGS_CAT && (!r.end || r.end >= month || linked(r.id)));
-  const ones = data.oneOffs.filter((o) => o.type === 'expense' && o.category === SAVINGS_CAT && (o.month === month || linked(o.id))).sort((x, y) => (x.month < y.month ? 1 : -1));
-  const box = (id, text) => el('label', { class: 'check' }, el('input', { type: 'checkbox', value: id, checked: linked(id) }), el('span', { text }));
-  fill($('ad-feeds'), savers.length || ones.length ? [el('p', { class: 'small', text: 'Poster som också går hit:' }),
-    ...savers.map((r) => box(r.id, `${r.name} · ${kr(r.amount)}/mån` + (r.end && r.end < month ? ' (avslutad)' : ''))),
-    ...ones.map((o) => box(o.id, `${o.name} · ${kr(o.amount)} (${monthShortLabel(o.month).toLowerCase()})`))]
-    : null);
   // Sparmål (2026-11-21): valfritt – fälten visas först efter + Sparmål, eller när kontot redan har ett mål.
   const g = a.goal;
   $('ad-goal').hidden = !g; $('ad-goal-add').hidden = !!g;
   $('ad-pay').value = a.pay ? krInput(a.pay.amount) : '';   // v5: sparande från lönen ligger på kontot
   $('ad-pre').value = a.pre ? krInput(a.pre.amount) : '';   // v4: före lön och insättning ligger på kontot
-  $('ad-dep').value = a.deposits?.[month] ? krInput(a.deposits[month]) : '';
-  $('ad-dep-label').textContent = `Insättning i ${monthShortLabel(month).toLowerCase()} (${unit()})`;
   $('ad-goal-amount').value = g ? krInput(g.amount) : '';
   { // appens månadsnamn (lönedag), 3 år framåt från vald månad
     const ms = Array.from({ length: 36 }, (_, i) => addMonths(month, i + 1));
@@ -4050,26 +3959,24 @@ $('ad-form').addEventListener('submit', (e) => {
   if (gRaw && (gAmount == null || !isAmount(gAmount) || gAmount <= 0)) { $('ad-error').textContent = 'Skriv ett sparmål, t.ex. 15 000 – eller lämna fältet tomt.'; return; }
   const gMonth = $('ad-goal-month').value;
   const num = (id) => { const v = $(id).value.trim(); return v ? parseKr(v) : 0; };
-  const preAmt = num('ad-pre'), depAmt = num('ad-dep'), payAmt = num('ad-pay');
-  if (preAmt == null || depAmt == null || payAmt == null || preAmt < 0 || depAmt < 0 || payAmt < 0) { $('ad-error').textContent = 'Skriv ett belopp, t.ex. 3 400 – eller lämna fältet tomt.'; return; }
+  const preAmt = num('ad-pre'), payAmt = num('ad-pay');
+  if (preAmt == null || payAmt == null || preAmt < 0 || payAmt < 0) { $('ad-error').textContent = 'Skriv ett belopp, t.ex. 3 400 – eller lämna fältet tomt.'; return; }
   const name = cleanName($('ad-name').value, 30);
   if (!name) { $('ad-error').textContent = 'Skriv ett namn på kontot.'; return; }
   if (data.accounts.some((x) => x.id !== dialogAcc.id && x.name.toLowerCase() === name.toLowerCase())) { $('ad-error').textContent = `Det finns redan ett konto som heter ${name}.`; return; }
   const isNewAcc = !data.accounts.some((x) => x.id === dialogAcc.id);
   if (isNewAcc && data.accounts.length >= MAX_ACCOUNTS) { $('ad-error').textContent = `Max ${MAX_ACCOUNTS} sparkonton – ta bort något först.`; return; }
   const before = JSON.stringify(data);   // Ångra (2026-11-21)
-  const feeds = [...$('ad-feeds').querySelectorAll('input:checked')].map((i) => i.value);
   const old = data.accounts.find((x) => x.id === dialogAcc.id);
-  if (!raw && !old?.feeds?.length && !feeds.length && !preAmt && !payAmt && !depAmt && !Object.keys(old?.balances || {}).length) { $('ad-error').textContent = 'Skriv ett saldo, t.ex. 45 000 eller 1250,50.'; return; }
+  if (!raw && !old?.feeds?.length && !preAmt && !payAmt && !Object.keys(old?.balances || {}).length) { $('ad-error').textContent = 'Skriv ett saldo, t.ex. 45 000 eller 1250,50.'; return; }
   let a = old;
   if (!a) { a = { id: dialogAcc.id, name, currency: home(), balances: {}, feeds: [] }; data.accounts.push(a); }
   a.name = name;
-  if (a) { if (raw) a.balances[month] = amount; a.currency = $('ad-currency').value; a.feeds = feeds; a.hidden = !$('ad-show').checked;
+  if (a) { if (raw) a.balances[month] = amount; a.currency = $('ad-currency').value; a.hidden = !$('ad-show').checked;
     if (gAmount) a.goal = { amount: gAmount, ...(isMonth(gMonth) ? { month: gMonth } : {}) }; else delete a.goal;
     if (payAmt) a.pay = { amount: payAmt, from: a.pay?.from && a.pay.from <= month ? a.pay.from : month, ...(a.pay?.end ? { end: a.pay.end } : {}) }; else delete a.pay;
     if (preAmt) a.pre = { amount: preAmt, from: a.pre?.from && a.pre.from <= month ? a.pre.from : month }; else delete a.pre;
-    a.deposits = { ...(a.deposits || {}) }; if (depAmt) a.deposits[month] = depAmt; else delete a.deposits[month];
-    if (!Object.keys(a.deposits).length) delete a.deposits; }
+  }   // äldre kopplingar (feeds) och insättningar (deposits) behålls som de är
   data = loadData(data);
   $('acc-dialog').close();
   save();
@@ -4080,30 +3987,11 @@ $('ad-delete').addEventListener('click', () => {
   $('acc-dialog').close();
   withUndo(`${a.name} ligger i papperskorgen`, () => trashItems(data, 'acc', [a.id], isoToday()));
 });
-$('acc-manage').addEventListener('click', () => {
-  showTab('month');
-  const c = $('income-card'), d = c.querySelector('.ie-sum details');   // 2026-11-21: sparandet ligger i det övre kortet
-  if (d) d.open = true;
-  c.scrollIntoView({ behavior: 'smooth', block: 'start' });
-});
 
-// Inställningar → Sparkonton (2026-11-21): alla konton, även dolda, och + Nytt sparkonto.
-function renderAccSettings() {
-  const accs = data.accounts;
-  $('g-accounts').textContent = accs.length ? `${accs.length} st` : 'Inga';
-  fill($('acc-set-list'), accs.length ? accs.map((a) => {
-    const est = estBalance(data, a, month);
-    return el('li', {}, el('button', { type: 'button', class: 'acc-set-row', on: { click: () => openAccDialog(a) } },
-      el('span', {}, el('span', { text: a.name }), a.hidden ? el('small', { class: 'muted', text: ' · dolt' }) : null),
-      el('span', { class: 'muted', text: est ? (est.estimated ? '≈ ' : '') + money(est.amount, a.currency) : '–' })));
-  }) : el('li', { class: 'muted small', text: 'Inga sparkonton än.' }));
-  $('acc-new').disabled = accs.length >= MAX_ACCOUNTS;
-}
 function newAccount() {
   if (data.accounts.length >= MAX_ACCOUNTS) { snackbar(`Max ${MAX_ACCOUNTS} sparkonton – ta bort något först.`); return; }
   openAccDialog({ id: 'a' + newId().slice(-10), name: '', currency: home(), balances: {}, feeds: [] });
 }
-$('acc-new').addEventListener('click', newAccount);
 
 // ＋ Lägg till → Före lön / insättning (2026-11-21): välj konto (eller skapa nytt), kontodialogen öppnas.
 function openAccPick() {
@@ -4133,15 +4021,6 @@ function renderItems() {
     fillCategorySelect(f.elements.category, f.elements.category.value, f.dataset.type);
     fillPersonSelect(f.elements.person, f.elements.person.value);
   }
-  fillPersonSelect($('sav-form').elements.person, $('sav-form').elements.person.value);
-  { // 2026-11-21: välj sparkonto (befintligt, nytt eller inget) i stället för saldo och valuta – inga dubbla konton
-    const f = $('sav-form').elements, v = f.acc.value;
-    f.acc.replaceChildren(...data.accounts.map((a) => el('option', { value: a.id, text: a.name })),
-      ...(data.accounts.length < MAX_ACCOUNTS ? [el('option', { value: 'new', text: '+ Nytt sparkonto' })] : []), el('option', { value: '', text: 'Inget sparkonto' }));
-    f.acc.value = v && [...f.acc.options].some((o) => o.value === v) ? v : f.acc.options[0].value;
-    f.balance.closest('label').hidden = f.acc.value !== 'new';
-    f.acc.onchange = () => { f.balance.closest('label').hidden = f.acc.value !== 'new'; };
-  }
 }
 
 // Quick add: name + amount (+ category) + how often. Starts the month being viewed.
@@ -4158,20 +4037,9 @@ function setupAddForm(form) {
     if (amount == null) { err.textContent = 'Skriv ett belopp, t.ex. 1 250 eller 99,50.'; f.amount.focus(); return; }
     if (data.recurring.length >= MAX_RECURRING) { err.textContent = `Max ${MAX_RECURRING} poster.`; return; }
     err.textContent = '';
-    const bal = f.balance && f.balance.value.trim() ? parseKr(f.balance.value) : null;
-    if (f.balance && f.balance.value.trim() && (bal == null || !isAmount(bal))) { err.textContent = 'Skriv ett saldo, t.ex. 45 000 eller 1250,50.'; f.balance.focus(); return; }
     const id = newId();
     data.recurring.push({ id, name, amount, type, category: f.category.value, person: personValue(f.person),
-      every: type === 'income' ? 1 : Number(f.every.value), start: month, end: null, ...(f.src && f.src.value ? { src: f.src.value } : {}) });
-    if (f.acc) {   // 2026-11-21: koppla till valt konto, eller skapa ett nytt (saldo 0 om inget fylls i)
-      const acc = data.accounts.find((a) => a.id === f.acc.value);
-      if (acc) (acc.feeds ||= []).push(id);
-      else if (f.acc.value === 'new' && data.accounts.length < MAX_ACCOUNTS) {
-        let nm = cleanName(name, 30), n = 2; while (data.accounts.some((a) => a.name.toLowerCase() === nm.toLowerCase())) nm = `${cleanName(name, 27)} ${n++}`;
-        data.accounts.push({ id: 'a' + newId().slice(-10), name: nm, currency: home(), balances: { [month]: bal ?? 0 }, feeds: [id] });
-      }
-    }
-    if (f.balance) f.balance.value = ''; if (f.src) f.src.value = '';
+      every: type === 'income' ? 1 : Number(f.every.value), start: month, end: null });
     data = loadData(data);
     save();
     if (f.name) f.name.value = ''; f.amount.value = '';
@@ -4181,13 +4049,13 @@ function setupAddForm(form) {
 }
 setupAddForm($('inc-form'));
 setupAddForm($('exp-form'));
-setupAddForm($('sav-form'));
 
 // Öppnar rutan Ny post med rätt formulär.
 const NEW_TITLES = { income: 'Ny inkomst', expense: 'Ny kostnad', savings: 'Nytt sparande' };
 function focusAdd(type) {
-  const id = { income: 'inc-form', expense: 'exp-form', savings: 'sav-form' }[type];
-  for (const f of ['inc-form', 'exp-form', 'sav-form']) $(f).hidden = f !== id;
+  if (type === 'savings') { openAccPick(); return; }   // 2026-11-21: sparande = ett sparkonto
+  const id = { income: 'inc-form', expense: 'exp-form' }[type];
+  for (const f of ['inc-form', 'exp-form']) $(f).hidden = f !== id;
   $(id).querySelector('.error').textContent = '';
   $('nd-title').textContent = NEW_TITLES[type];
   if (!$('new-dialog').open) $('new-dialog').showModal();
@@ -4685,7 +4553,6 @@ function render() {
   renderStats();
   renderItems();
   renderSettings();
-  renderAccSettings();
   renderPwd();
 }
 
