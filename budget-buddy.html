@@ -812,6 +812,7 @@ body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; 
           <p>Byt månad med ◀ ▶ eller svep. Tryck på Månad i menyn för att komma tillbaka till aktuell månad.</p>
           <p>☰ Alla poster bredvid Lägg till visar alla återkommande poster, även avslutade och kommande. Posterna står med störst belopp först, både där och i Månad. Tryck på en för att ändra den.</p>
           <p>Under knapparna står hur många dagar det är kvar till nästa lön (innevarande månad) och vilken kategori som ändrats mest mot förra månaden. I kortet Kvar står också vad som blev kvar förra månaden – det faktiska beloppet om den månaden är stängd.</p>
+          <p>Prognos står på samma rad som förra månadens kvar, när minst en tidigare månad är stängd: planerat kvar minus de rörliga utgifterna (snittet av de tre senaste stängda månaderna). Är samma månad förra året stängd räknas den med i procent – är december 65 % dyrare än vanligt, räknas det in. Tryck på prognosen för förklaringen.</p>
           <p>Tryck på en post för att ändra den. Beloppet överst gäller bara månaden du tittar på. Under Ändra posten (alla månader) ändrar du namn, ordinarie belopp, hur ofta, kategori och period. Ta bort posten lägger den i papperskorgen.</p>
           <p>Vill du avsluta en post, fyll i Till månad. Poster som har slutat eller inte börjat syns i de månader de gäller.</p>
         </details>
@@ -892,6 +893,7 @@ body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; 
           <p>Change month with ◀ ▶ or swipe. Tap Month in the menu to return to the current month.</p>
           <p>☰ All items next to Add shows all recurring items, including ended and upcoming ones. Items are listed largest amount first, there and in Month. Tap one to change it.</p>
           <p>Below the buttons you see how many days are left until the next payday (current month) and which category changed the most since last month. The Left card also shows what was left last month – the actual amount if that month is closed.</p>
+          <p>Forecast is on the same line as last month's left, once at least one earlier month is closed: planned left minus variable spending (average of the three latest closed months). If the same month last year is closed it is included as a percentage – if December was 65 % more expensive than usual, that is included. Tap the forecast for the explanation.</p>
           <p>Tap an item to change it. The amount at the top applies only to the month you are viewing. Under Edit the item (all months) you change name, regular amount, how often, category and period. Delete the item moves it to the trash.</p>
           <p>To end an item, fill in To month. Items that have ended or not started show in the months they apply to.</p>
         </details>
@@ -1720,6 +1722,9 @@ I18N.add({
   [/^(.+) börjar efter den månaden – välj en senare månad eller avmarkera den\.$/, '$1 starts after that month – choose a later month or deselect it.'],
   [/^(\d+) procent av inkomsterna går till kostnader$/, '$1 percent of the income goes to expenses'],
   [/^Saldo efter månaden: (.+)$/, 'Balance after the month: $1'],
+  [/^Prognos: ≈ (.+)$/, 'Forecast: ≈ $1'],
+  [/^Planerat kvar minus rörliga utgifter ≈ (.+?) \(snitt för de senaste stängda månaderna\)\.(?: (\S+) brukar kosta (\d+) % (mer|mindre)\.)?$/,
+    (g, tr) => `Planned left minus variable spending ≈ ${g[1]} (average of the latest closed months).` + (g[2] ? ` ${tr(g[2])} usually costs ${g[3]} % ${g[4] === 'mer' ? 'more' : 'less'}.` : '')],
   [/^Kvar i (\S+) \(faktiskt\): (.+)$/, (g, tr) => `Left in ${tr(g[1])} (actual): ${g[2]}`],
   [/^Nästa lön om (\d+) dagar$/, 'Next payday in $1 days'],
   [/^Största förändring: (.+?) ([+−-].+) mot (\S+)$/, (g, tr) => `Biggest change: ${tr(g[1])} ${g[2]} vs ${tr(g[3])}`],
@@ -1753,7 +1758,7 @@ I18N.add({
 </script>
 <script>
 // ---- version.js ----
-﻿self.APP_VERSION = '0.12.118';
+﻿self.APP_VERSION = '0.12.119';
 
 </script>
   <script>
@@ -2654,6 +2659,27 @@ function balanceAfter(data, m) {
   return bal;
 }
 
+// Prognos (2026-11-21): ungefär vad månaden stängs på. Rörligt = planerat kvar − faktiskt kvar i stängda månader.
+// Bas = snittet av de 3 senaste stängda månaderna före m. Säsong: är samma månad förra året stängd, och snittet av de
+// 3 stängda månaderna före den är minst 1 000 kr, multipliceras basen med kvoten (begränsad till 0,5–3).
+// Ingen ny data – allt räknas ur data.closed. null när ingen månad före m är stängd eller m själv är stängd.
+const FC_MONTHS = 3, FC_MIN_BASE = 100000, FC_MIN = 0.5, FC_MAX = 3;
+function variableAt(d, m) { const t = monthTotals(d, m); return t.planned - t.left; }
+function variableAvg(d, m) {   // snitt av upp till 3 stängda månader före m, eller null
+  const ms = Object.keys(d.closed || {}).filter((x) => x < m).sort().slice(-FC_MONTHS);
+  return ms.length ? Math.round(ms.reduce((a, x) => a + variableAt(d, x), 0) / ms.length) : null;
+}
+function forecast(d, m) {
+  if (d.closed && Object.hasOwn(d.closed, m)) return null;
+  const base = variableAvg(d, m);
+  if (base == null) return null;
+  let factor = 1;
+  const ly = addMonths(m, -12), lyBase = Object.hasOwn(d.closed, ly) ? variableAvg(d, ly) : null;
+  if (lyBase != null && lyBase >= FC_MIN_BASE) factor = Math.min(FC_MAX, Math.max(FC_MIN, variableAt(d, ly) / lyBase));
+  const variable = Math.round(base * factor);
+  return { left: monthTotals(d, m).left - variable, variable, base, factor };
+}
+
 // Savings account balance at month m: the latest entered balance up to and including m.
 // Returns { amount, month } or null; prevBalance gives the one before that.
 function balanceAt(acc, m) {
@@ -2950,6 +2976,7 @@ function renderMonth() {
   // Mer synligt (2026-11-17): fördelning av inkomsten (kostnader / sparande / kvar), jämförelse med förra månaden, saldo.
   const prevT = monthTotals(data, addMonths(month, -1));
   const varSpend = t.closed ? Math.max(0, t.planned - t.left) : 0;   // rörliga utgifter = planerat − faktiskt
+  const fc = forecast(data, month);
   const delta = t.left - prevT.left, hasPrev = prevT.income || prevT.expense;
   const base = Math.max(t.income, t.expense + varSpend, 1);
   const seg = (cls, v, label) => { const x = el('span', { class: 'seg ' + cls, title: label }); x.style.width = Math.max(0, (v / base) * 100) + '%'; return x; };
@@ -2964,7 +2991,13 @@ function renderMonth() {
     el('div', { class: 'lgds' }, legend('s-exp', 'Kostnader'), t.savings ? legend('s-sav', 'Sparande') : null, varSpend ? legend('s-var', 'Rörligt') : null,
       t.left > 0 ? legend('s-left', 'Kvar') : null),
     // 2026-11-21: förra månadens kvar (faktiskt om den är stängd) – för att följa ekonomin över tid.
-    hasPrev ? el('p', { class: 'muted small', text: `Kvar i ${monthShortLabel(addMonths(month, -1)).toLowerCase()}${prevT.closed ? ' (faktiskt)' : ''}: ${kr(prevT.left, true)}` }) : null,
+    // 2026-11-21: prognos på samma rad; tryck för förklaringen.
+    hasPrev || fc ? el('p', { class: 'muted small' },
+      hasPrev ? el('span', { text: `Kvar i ${monthShortLabel(addMonths(month, -1)).toLowerCase()}${prevT.closed ? ' (faktiskt)' : ''}: ${kr(prevT.left, true)}` }) : null,
+      hasPrev && fc ? ' · ' : null,
+      fc ? el('button', { type: 'button', class: 'link', 'aria-expanded': String(fcOpen), text: `Prognos: ≈ ${kr(fc.left, true)}`,
+        on: { click: (e) => { e.preventDefault(); e.stopPropagation(); fcOpen = !fcOpen; renderMonth(); } } }) : null) : null,
+    fc && fcOpen ? el('p', { class: 'muted small', text: fcText(fc) }) : null,
     bal == null ? null : el('p', { class: 'muted small', text: `Saldo efter månaden: ${kr(bal)}` })],
     perPerson(rows)));
 
@@ -3408,6 +3441,14 @@ $('rd-delete').addEventListener('click', () => {
   $('row-dialog').close();
   withUndo(`${r.name} ligger i papperskorgen`, () => trashItems(data, r.kind === 'rec' ? 'rec' : 'one', [r.id], isoToday()));
 });
+
+// Förklaring till prognosen (2026-11-21).
+let fcOpen = false;
+function fcText(fc) {
+  const pct = Math.round((fc.factor - 1) * 100), name = monthShortLabel(month).toLowerCase();
+  const season = pct > 0 ? ` ${name} brukar kosta ${pct} % mer.` : pct < 0 ? ` ${name} brukar kosta ${-pct} % mindre.` : '';
+  return `Planerat kvar minus rörliga utgifter ≈ ${kr(fc.variable)} (snitt för de senaste stängda månaderna).${season}`;
+}
 
 </script>
 <script>

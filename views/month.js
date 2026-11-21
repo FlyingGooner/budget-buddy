@@ -82,6 +82,7 @@ function renderMonth() {
   // Mer synligt (2026-11-17): fördelning av inkomsten (kostnader / sparande / kvar), jämförelse med förra månaden, saldo.
   const prevT = monthTotals(data, addMonths(month, -1));
   const varSpend = t.closed ? Math.max(0, t.planned - t.left) : 0;   // rörliga utgifter = planerat − faktiskt
+  const fc = forecast(data, month);
   const delta = t.left - prevT.left, hasPrev = prevT.income || prevT.expense;
   const base = Math.max(t.income, t.expense + varSpend, 1);
   const seg = (cls, v, label) => { const x = el('span', { class: 'seg ' + cls, title: label }); x.style.width = Math.max(0, (v / base) * 100) + '%'; return x; };
@@ -96,7 +97,13 @@ function renderMonth() {
     el('div', { class: 'lgds' }, legend('s-exp', 'Kostnader'), t.savings ? legend('s-sav', 'Sparande') : null, varSpend ? legend('s-var', 'Rörligt') : null,
       t.left > 0 ? legend('s-left', 'Kvar') : null),
     // 2026-11-21: förra månadens kvar (faktiskt om den är stängd) – för att följa ekonomin över tid.
-    hasPrev ? el('p', { class: 'muted small', text: `Kvar i ${monthShortLabel(addMonths(month, -1)).toLowerCase()}${prevT.closed ? ' (faktiskt)' : ''}: ${kr(prevT.left, true)}` }) : null,
+    // 2026-11-21: prognos på samma rad; tryck för förklaringen.
+    hasPrev || fc ? el('p', { class: 'muted small' },
+      hasPrev ? el('span', { text: `Kvar i ${monthShortLabel(addMonths(month, -1)).toLowerCase()}${prevT.closed ? ' (faktiskt)' : ''}: ${kr(prevT.left, true)}` }) : null,
+      hasPrev && fc ? ' · ' : null,
+      fc ? el('button', { type: 'button', class: 'link', 'aria-expanded': String(fcOpen), text: `Prognos: ≈ ${kr(fc.left, true)}`,
+        on: { click: (e) => { e.preventDefault(); e.stopPropagation(); fcOpen = !fcOpen; renderMonth(); } } }) : null) : null,
+    fc && fcOpen ? el('p', { class: 'muted small', text: fcText(fc) }) : null,
     bal == null ? null : el('p', { class: 'muted small', text: `Saldo efter månaden: ${kr(bal)}` })],
     perPerson(rows)));
 
@@ -540,3 +547,11 @@ $('rd-delete').addEventListener('click', () => {
   $('row-dialog').close();
   withUndo(`${r.name} ligger i papperskorgen`, () => trashItems(data, r.kind === 'rec' ? 'rec' : 'one', [r.id], isoToday()));
 });
+
+// Förklaring till prognosen (2026-11-21).
+let fcOpen = false;
+function fcText(fc) {
+  const pct = Math.round((fc.factor - 1) * 100), name = monthShortLabel(month).toLowerCase();
+  const season = pct > 0 ? ` ${name} brukar kosta ${pct} % mer.` : pct < 0 ? ` ${name} brukar kosta ${-pct} % mindre.` : '';
+  return `Planerat kvar minus rörliga utgifter ≈ ${kr(fc.variable)} (snitt för de senaste stängda månaderna).${season}`;
+}

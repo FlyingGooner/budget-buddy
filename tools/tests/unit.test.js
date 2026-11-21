@@ -227,3 +227,20 @@ T.test('shiftMonths: lönedag på flyttar alla månader ett steg bakåt (2026-11
   shiftMonths(d, -1);
   T.eq([d.recurring[0].start, d.recurring[0].end, d.oneOffs[0].month, Object.keys(d.adjustments)[0], Object.keys(d.closed)[0]], ['2026-10', '2027-01', '2026-11', '2026-11', '2026-10']);
 });
+
+T.test('forecast: rullande snitt och säsong i procent', () => {
+  const d = loadData(rich());   // planerat kvar 2026: 3 200 000 − 400 000 − (240 000 vissa månader)
+  T.eq(forecast(d, '2026-03'), null);                         // inga stängda månader
+  d.closed = { '2026-01': 2500000, '2026-03': 2400000 };      // rörligt 300 000 resp. 400 000
+  T.eq(forecast(d, '2026-03'), null);                         // stängd själv
+  const f = forecast(d, '2026-04');
+  T.eq([f.base, f.factor, f.variable, f.left], [350000, 1, 350000, 2800000 - 350000]);
+  // samma månad året efter: april 2026 rörligt 700 000 mot snitt 350 000 → ×2
+  d.closed['2026-04'] = 2800000 - 700000;
+  const g = forecast(d, '2027-04');
+  T.eq([g.base, g.factor], [Math.round((300000 + 400000 + 700000) / 3), 2]);
+  d.closed['2026-04'] = 2800000 - 3000000;                    // ×8,6 → taket 3
+  T.eq(forecast(d, '2027-04').factor, 3);
+  d.closed = { '2026-03': 3200000, '2026-04': 2800000 - 500000 };   // snitt före april = −400 000 < 1 000 kr → ingen säsong
+  T.eq(forecast(d, '2027-04').factor, 1);
+});

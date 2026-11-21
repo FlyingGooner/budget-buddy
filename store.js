@@ -446,6 +446,27 @@ function balanceAfter(data, m) {
   return bal;
 }
 
+// Prognos (2026-11-21): ungefär vad månaden stängs på. Rörligt = planerat kvar − faktiskt kvar i stängda månader.
+// Bas = snittet av de 3 senaste stängda månaderna före m. Säsong: är samma månad förra året stängd, och snittet av de
+// 3 stängda månaderna före den är minst 1 000 kr, multipliceras basen med kvoten (begränsad till 0,5–3).
+// Ingen ny data – allt räknas ur data.closed. null när ingen månad före m är stängd eller m själv är stängd.
+const FC_MONTHS = 3, FC_MIN_BASE = 100000, FC_MIN = 0.5, FC_MAX = 3;
+function variableAt(d, m) { const t = monthTotals(d, m); return t.planned - t.left; }
+function variableAvg(d, m) {   // snitt av upp till 3 stängda månader före m, eller null
+  const ms = Object.keys(d.closed || {}).filter((x) => x < m).sort().slice(-FC_MONTHS);
+  return ms.length ? Math.round(ms.reduce((a, x) => a + variableAt(d, x), 0) / ms.length) : null;
+}
+function forecast(d, m) {
+  if (d.closed && Object.hasOwn(d.closed, m)) return null;
+  const base = variableAvg(d, m);
+  if (base == null) return null;
+  let factor = 1;
+  const ly = addMonths(m, -12), lyBase = Object.hasOwn(d.closed, ly) ? variableAvg(d, ly) : null;
+  if (lyBase != null && lyBase >= FC_MIN_BASE) factor = Math.min(FC_MAX, Math.max(FC_MIN, variableAt(d, ly) / lyBase));
+  const variable = Math.round(base * factor);
+  return { left: monthTotals(d, m).left - variable, variable, base, factor };
+}
+
 // Savings account balance at month m: the latest entered balance up to and including m.
 // Returns { amount, month } or null; prevBalance gives the one before that.
 function balanceAt(acc, m) {
