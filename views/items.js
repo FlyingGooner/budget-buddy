@@ -35,10 +35,10 @@ function setupAddForm(form) {
     if (f.balance && f.balance.value.trim() && (bal == null || !isAmount(bal))) { err.textContent = 'Skriv ett saldo, t.ex. 45 000 eller 1250,50.'; f.balance.focus(); return; }
     const id = newId();
     data.recurring.push({ id, name, amount, type, category: f.category.value, person: personValue(f.person),
-      every: type === 'income' ? 1 : Number(f.every.value), start: month, end: null, ...(f.pre && f.pre.checked ? { pre: true } : {}) });
+      every: type === 'income' ? 1 : Number(f.every.value), start: month, end: null, ...(f.src && f.src.value ? { src: f.src.value } : {}) });
     if (bal != null && data.accounts.length < MAX_ACCOUNTS)   // sparande med saldo = eget sparkonto som räknas upp
       data.accounts.push({ id: 'a' + newId().slice(-10), name: cleanName(name, 30), currency: f.currency && CURRENCIES.includes(f.currency.value) ? f.currency.value : home(), balances: { [month]: bal }, feeds: [id] });
-    if (f.balance) f.balance.value = ''; if (f.pre) f.pre.checked = false;
+    if (f.balance) f.balance.value = ''; if (f.src) f.src.value = '';
     data = loadData(data);
     save();
     if (f.name) f.name.value = ''; f.amount.value = '';

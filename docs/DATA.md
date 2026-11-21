@@ -8,7 +8,7 @@ Belopp är heltal i ören (minsta enheten) i hemvalutan, utom sparkontons saldon
 
 | Fält | Typ | Betydelse |
 |---|---|---|
-| `version` | heltal | Dataversion, nu `2` (`DATA_VERSION`). Äldre data går genom `migrate()`. |
+| `version` | heltal | Dataversion, nu `3` (`DATA_VERSION`). Äldre data går genom `migrate()`. |
 | `settings` | objekt | Se nedan. |
 | `recurring` | lista | Återkommande poster (max `MAX_RECURRING`). |
 | `oneOffs` | lista | Avvikelser – engångsposter en viss månad (max `MAX_ONEOFFS`). |
@@ -32,15 +32,15 @@ Belopp är heltal i ören (minsta enheten) i hemvalutan, utom sparkontons saldon
 
 ## recurring
 
-`{ id, name, type: 'income'|'expense', amount, category, person, every: 1|2|3|6|12, start, end, pre? }`
+`{ id, name, type: 'income'|'expense', amount, category, person, every: 1|2|3|12, start, end, src? }`
 
 - `every`: varannan, var tredje … månad räknat från `start`. Inkomster är alltid `1`.
 - `end`: sista månaden (eller `null`).
-- `pre: true`: bara för kostnader i kategorin Sparande – dras före nettolönen. Räknas som sparat men minskar inte Kvar.
+- `src` (v3): bara för kostnader i kategorin Sparande – varifrån sparandet kommer. Saknas = från lönen (en vanlig kostnad, minskar Efter räkningar). `'pre'` = dras före nettolönen, `'extra'` = utöver lönen (t.ex. en gåva direkt till sparkontot). Båda räknas som sparat men minskar inte Efter räkningar. Äldre data med `pre: true` blir `src: 'pre'`.
 
 ## oneOffs
 
-`{ id, month, name, type, amount, category, person, pre? }` – gäller bara `month`. `pre` som ovan.
+`{ id, month, name, type, amount, category, person, src? }` – gäller bara `month`. `src` som ovan.
 
 ## accounts
 

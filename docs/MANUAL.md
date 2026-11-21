@@ -9,7 +9,7 @@ Samma text finns i appen under **Inställningar → Allmänt → Hjälp och manu
 
 ## Månad
 - **Efter räkningar** överst är det som blir över efter kostnader och sparande – pengarna att leva på (mat, nöjen och annat rörligt). När månaden är stängd står **Kvar på kontot** i stället: det som faktiskt fanns kvar. Under det jämförelsen med förra månaden, och stapeln visar vart inkomsten går. Beloppen finns i korten nedanför.
-- **Inkomster**, **Kostnader** och **Totalt sparat** ligger i samma kort och är hopfällda – tryck på en rad för att se den. Kostnaderna är grupperade per kategori. Under dem står **Summa** (inkomster minus kostnader, med sparande som dras före lönen inräknat) och **Varav sparande** med andel av inkomsten.
+- **Inkomster**, **Kostnader** och **Totalt sparat** ligger i samma kort och är hopfällda – tryck på en rad för att se den. Kostnaderna är grupperade per kategori. Under dem står **Efter räkningar** (inkomster minus kostnader, samma belopp som överst) och **Sparat i månaden** med andel av inkomsten.
 - Tryck på en rad för att ändra beloppet bara den här månaden, hoppa över den eller **Ändra posten** (namn, belopp, kategori, period). **+ Lägg till i Boende** lägger till en kostnad med samma kategori, person och hur ofta.
 - Byt månad med **◀ ▶** eller svep. Tryck på **Månad** i menyn för att komma tillbaka till aktuell månad.
 - **＋ Lägg till**, **☰ Alla poster** och **🔒 Stäng** (eller **🔓 Ändra** i en stängd månad) ligger på en rad längst ner. **☰ Alla poster** visar alla återkommande poster, även avslutade och kommande. Posterna står med störst belopp först, både där och i Månad. Tryck på en för att ändra den.
@@ -21,10 +21,10 @@ Samma text finns i appen under **Inställningar → Allmänt → Hjälp och manu
 - Vill du avsluta en post, fyll i **Till månad**. Poster som har slutat eller inte börjat syns i de månader de gäller.
 
 ## Sparande
-- Sparande är inte en kostnad, men dras av från det som blir kvar. Lägg till med **+ Sparande**: namn, belopp, hur ofta och gärna **Saldo nu**. Då skapas ett sparkonto som räknas upp av sig självt varje månad.
+- Sparande från lönen är en kostnad: pengarna lämnar kontot. Lägg till med **+ Sparande**: namn, belopp, hur ofta och gärna **Saldo nu**. Då skapas ett sparkonto som räknas upp av sig självt varje månad.
 - Raden **Totalt sparat** i Månad visar summan på sparkontona i din valuta. Tryck för att fälla ut en rad per konto: saldo i din valuta, månadssparandet och ändringen sedan förra månaden. Konton i annan valuta visar sitt eget belopp inom parentes, t.ex. (730 USD).
 - Tryck på en rad för att ändra belopp, välja vilket **Sparkonto** pengarna går till eller rätta saldot. Saldot märkt ≈ är beräknat: senast ifyllt plus sparandet.
-- Dras sparandet innan nettolönen betalas ut (t.ex. aktier via jobbet), bocka i **Dras före lönen**. Då räknas det som sparat men minskar inte Kvar. Samma val finns på en avvikelse i kategorin Sparande.
+- Sparande är en kostnad när pengarna lämnar lönekontot. Välj **Varifrån** på varje sparpost: **Från lönen** (förval – står bland kostnaderna och minskar Efter räkningar), **Före lön** (dras innan nettolönen, t.ex. aktier via jobbet) eller **Utöver lönen** (t.ex. en gåva direkt till Avanza). Före och utöver räknas som sparat och ökar sparkontot, men minskar inte Efter räkningar. **Sparat i månaden** under Efter räkningar visar allt sparande och hur det fördelar sig.
 - Konton som inte rörs (t.ex. barnens) kan döljas från Månad: tryck på kontot och bocka ur **Visa i Månad**. Tryck på namnet under "+ 1 dolt konto" för att visa det igen. Det räknas fortfarande i Totalt sparat.
 - **Inställningar → Sparkonton** listar alla konton, även dolda. Tryck på ett för att byta namn, valuta, saldo eller vilket sparande som går dit (även engångssparande), eller ta bort det (det hamnar i papperskorgen). **+ Nytt sparkonto** skapar ett konto med bara saldo, t.ex. ett konto du inte sparar till varje månad. Samma knapp finns som **+ Sparkonto** under Totalt sparat. Två konton kan inte heta likadant. När du sparar visas **Ångra** en stund.
 - Summan och en graf över alla konton finns under **Översikt → Sparkonton**.

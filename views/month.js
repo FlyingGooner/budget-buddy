@@ -48,7 +48,8 @@ function renderMonth() {
   const bal = balanceAfter(data, month);
 
   const income = rows.filter((r) => r.type === 'income');
-  const expense = rows.filter((r) => r.type === 'expense' && r.category !== SAVINGS_CAT);
+  // 2026-11-21: sparande från lönen är en kostnad och står bland kostnaderna (kategorin Sparande); före och utöver lönen inte.
+  const expense = rows.filter((r) => r.type === 'expense' && !(r.category === SAVINGS_CAT && r.src));
   const saving = rows.filter((r) => r.type === 'expense' && r.category === SAVINGS_CAT);   // eget kort (2026-11-17)
 
   // Nothing at all this month: one welcoming card instead of three empty ones.
@@ -86,7 +87,8 @@ function renderMonth() {
   // 2026-11-21: jämför lika med lika – kvar på kontot bara när båda månaderna är stängda, annars efter räkningar.
   const both = t.closed && prevT.closed, plan = (x) => (x.closed ? x.planned : x.left);
   const delta = (both ? t.left - prevT.left : plan(t) - plan(prevT)), hasPrev = prevT.income || prevT.expense;
-  const base = Math.max(t.income, t.expense + varSpend, 1);
+  const savPay = t.savings - (t.pre || 0) - (t.extra || 0);   // bara sparande från lönen syns i stapeln (2026-11-21)
+  const base = Math.max(t.income, t.expense - t.savings + savPay + varSpend, 1);
   const seg = (cls, v, label) => { const x = el('span', { class: 'seg ' + cls, title: label }); x.style.width = Math.max(0, (v / base) * 100) + '%'; return x; };
   // 2026-11-21: öppen månad = vad som finns efter räkningar och sparande; stängd = det som faktiskt fanns kvar på kontot.
   const leftWord = t.closed ? 'Kvar på kontot' : 'Efter räkningar';
@@ -97,9 +99,9 @@ function renderMonth() {
     t.closed ? closeLine(t) : null,
     // 2026-11-18: beloppen står i korten nedan – här bara jämförelsen, stapeln och färgernas namn.
     hasPrev && delta ? el('p', { class: 'delta ' + (delta < 0 ? 'neg' : 'pos'), text: `${delta > 0 ? '▲' : '▼'} ${kr(Math.abs(delta))} mot ${monthShortLabel(addMonths(month, -1)).toLowerCase()}` }) : null,
-    el('div', { class: 'segbar', role: 'img', 'aria-label': `Av inkomsten: kostnader ${kr(t.expense - t.savings)}, sparande ${kr(t.savings)}, ${leftWord.toLowerCase()} ${kr(Math.max(0, t.left))}` },
-      seg('s-exp', t.expense - t.savings, 'Kostnader'), seg('s-sav', t.savings, 'Sparande'), seg('s-var', varSpend, 'Rörligt'), seg('s-left', Math.max(0, t.left), leftWord)),
-    el('div', { class: 'lgds' }, legend('s-exp', 'Kostnader'), t.savings ? legend('s-sav', 'Sparande') : null, varSpend ? legend('s-var', 'Rörligt') : null,
+    el('div', { class: 'segbar', role: 'img', 'aria-label': `Av inkomsten: kostnader ${kr(t.expense - t.savings)}, sparande ${kr(savPay)}, ${leftWord.toLowerCase()} ${kr(Math.max(0, t.left))}` },
+      seg('s-exp', t.expense - t.savings, 'Kostnader'), seg('s-sav', savPay, 'Sparande'), seg('s-var', varSpend, 'Rörligt'), seg('s-left', Math.max(0, t.left), leftWord)),
+    el('div', { class: 'lgds' }, legend('s-exp', 'Kostnader'), savPay ? legend('s-sav', 'Sparande') : null, varSpend ? legend('s-var', 'Rörligt') : null,
       t.left > 0 ? legend('s-left', leftWord) : null),
     // 2026-11-21: förra månadens kvar (faktiskt om den är stängd) – för att följa ekonomin över tid.
     // 2026-11-21: prognos på samma rad; tryck för förklaringen.
@@ -116,8 +118,10 @@ function renderMonth() {
   const emptyMsg = (text, label, type) => el('p', { class: 'empty-line muted' }, text + ' ',
     el('button', { type: 'button', class: 'link', text: label, on: { click: () => focusAdd(type) } }));
 
-  const fromPay = t.savings - (t.pre || 0);   // sparande som dras från nettolönen
+  const fromPay = t.savings - (t.pre || 0) - (t.extra || 0);   // sparande som dras från nettolönen
+  const costs = t.expense - (t.pre || 0) - (t.extra || 0);      // allt som lämnar lönekontot, sparande från lönen inräknat
   const pctSaved = t.income + (t.pre || 0) ? Math.round((t.savings / (t.income + (t.pre || 0))) * 100) : 0;
+  const savedParts = [fromPay ? `${kr(fromPay)} från lönen` : null, t.pre ? `${kr(t.pre)} före lön` : null, t.extra ? `${kr(t.extra)} utöver` : null].filter(Boolean);
   // 2026-11-21: inkomster och kostnader i samma kort, två rader som fälls ut var för sig.
   fill($('income-card'), fold('inc',
     el('h2', { class: 'split' }, el('span', {}, 'Inkomster ', el('small', { class: 'netto', text: '(netto)' }), payNote() ? el('small', { class: 'netto', text: ' · ' }) : null, payNote() ? el('small', { class: 'netto', text: payNote() }) : null), el('span', { text: kr(t.income) })),
@@ -128,17 +132,14 @@ function renderMonth() {
       : el('p', { class: 'carry-add' }, el('button', { type: 'button', class: 'link', text: '+ Kvar från förra månaden', on: { click: openCarryDialog } }))),
     fold('exp',
     el('h2', { class: 'split' }, el('span', { text: 'Kostnader' }),
-      el('span', { text: kr(t.expense - t.savings) })),   // hopfällt: bara summan (2026-11-21)
+      el('span', { text: kr(costs) })),   // hopfällt: bara summan (2026-11-21)
     expense.length ? expenseGroups(expense)
       : emptyMsg('Inga kostnader den här månaden.', 'Lägg till', 'expense')),
-    // 2026-11-21: räknas ner till samma belopp som överst – inkomster − kostnader − sparande från lönen = efter räkningar.
-    // Sparande som dras före lönen har aldrig kommit in på kontot och står bara i noten om månadens sparande.
+    // 2026-11-21: inkomster − kostnader (sparande från lönen inräknat) = efter räkningar, samma belopp som överst.
+    // Sparat i månaden = allt sparande: från lönen, före lön och utöver.
     el('div', { class: 'ie-sum' },
-      fromPay ? el('h2', { class: 'split' }, el('span', { text: 'Sparande' }), el('span', { text: '−' + kr(fromPay) })) : null,
       el('h2', { class: 'split ie-total' }, el('span', { text: 'Efter räkningar' }), el('span', { class: t.left < 0 ? 'neg' : null, text: kr(t.left, true) })),
-      t.savings ? el('p', { class: 'ie-sav muted' }, t.pre
-        ? `Sparat i månaden: ${kr(t.savings)} (${pctSaved} %), varav ${kr(t.pre)} före lön`
-        : `Sparat i månaden: ${kr(t.savings)} (${pctSaved} %)`) : null));
+      t.savings ? el('p', { class: 'ie-sav muted' }, `Sparat i månaden: ${kr(t.savings)} (${pctSaved} %)` + (savedParts.length > 1 ? ` – ${savedParts.join(', ')}` : '')) : null));
   $('expense-card').hidden = true;
   const cb = $('close-month');   // 2026-11-21: Stäng månad som knapp bredvid Lägg till / Alla poster
   if (cb) { cb.hidden = month > activeMonth() && !t.closed; cb.textContent = t.closed ? '🔓 Ändra' : '🔒 Stäng'; cb.setAttribute('aria-label', t.closed ? 'Ändra / öppna igen' : 'Stäng månad'); cb.onclick = openCloseDialog; $('add-pair').classList.toggle('three', !cb.hidden); }
@@ -473,7 +474,7 @@ function openRowDialog(r) {
   $('rd-type').value = isOne && !isNew ? r.type : 'expense';
   fillCategorySelect($('rd-cat'), isOne && !isNew ? r.category : null, $('rd-type').value);
   fillPersonSelect($('rd-person'), isOne && !isNew ? r.person : null);
-  $('rd-pre').checked = !!(r && r.pre); showPre();
+  $('rd-pre').value = (r && r.src) || ''; showPre();
   $('rd-amount').value = isNew ? '' : krInput(r.amount);
   $('rd-delete').hidden = isNew;
   $('rd-delete').textContent = r && r.kind === 'rec' ? 'Ta bort posten' : 'Ta bort';
@@ -585,12 +586,12 @@ $('rd-form').addEventListener('submit', (e) => {
     const name = cleanName($('rd-name').value);
     if (!name) { $('rd-error').textContent = 'Skriv ett namn.'; return; }
     const o = { id: r ? r.id : newId(), month, name, type: $('rd-type').value === 'income' ? 'income' : 'expense',
-      amount, category: $('rd-cat').value, person: personValue($('rd-person')), ...(!$('rd-pre-wrap').hidden && $('rd-pre').checked ? { pre: true } : {}) };
+      amount, category: $('rd-cat').value, person: personValue($('rd-person')), ...(!$('rd-pre-wrap').hidden && $('rd-pre').value ? { src: $('rd-pre').value } : {}) };
     if (r) data.oneOffs = data.oneOffs.map((x) => (x.id === r.id ? o : x)); else data.oneOffs.push(o);
   } else {
     // Sparpost: "Dras före lönen" gäller posten (alla månader).
     if (item) {
-      if (!$('rd-pre-wrap').hidden && $('rd-pre').checked && item.category === SAVINGS_CAT) item.pre = true; else delete item.pre;
+      delete item.pre; if (!$('rd-pre-wrap').hidden && $('rd-pre').value && item.category === SAVINGS_CAT) item.src = $('rd-pre').value; else delete item.src;
       data.recurring = data.recurring.map((x) => (x.id === item.id ? item : x));
       // Månadens belopp: oförändrat fält följer ordinarie (eller behåller en tidigare avvikelse); ändrat = avvikelse.
       const changed = $('rd-amount').value !== $('rd-amount').dataset.orig;

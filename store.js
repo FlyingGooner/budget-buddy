@@ -67,11 +67,13 @@ const CATS_V = 2; // settings.catsV: one-time additions to older saved category 
 
 // Dataversion (2026-11-21): loadData() kör MIGRATIONS i ordning från den sparade versionen och sparar alltid den senaste.
 // Lägg en ny funktion här när fält byter betydelse; nya valfria fält behöver ingen (loadData fyller i standardvärden).
-const DATA_VERSION = 2;
+const DATA_VERSION = 3;
 const MIGRATIONS = {
   // 1 → 2: sparkonton kan fyllas på av engångssparande (feeds kan peka på avvikelser), papperskorgen minns kontokopplingar.
   // Inga gamla fält ändrar betydelse, så inget behöver skrivas om.
   2: (d) => d,
+  // 2 → 3: pre: true blir src: 'pre' (görs i srcOf, som också läser gamla backuper).
+  3: (d) => d,
 };
 function migrate(d) {
   let v = Number.isInteger(d.version) && d.version >= 1 ? d.version : 1;
@@ -94,6 +96,15 @@ function emptyData() {
     carry: [],
   };
 }
+
+// Sparandets källa (v3, 2026-11-21): saknas = från lönen (en kostnad som lämnar kontot), 'pre' = dras före lönen
+// (aldrig på kontot), 'extra' = utöver lönen, t.ex. en gåva direkt till sparkontot. Bara på kostnader i kategorin Sparande.
+const SAVING_SRC = ['pre', 'extra'];
+const srcOf = (r, category) => {
+  if (r.type !== 'expense' || category !== SAVINGS_CAT) return {};
+  const src = SAVING_SRC.includes(r.src) ? r.src : r.pre === true ? 'pre' : null;   // pre: true = äldre data (v1–v2)
+  return src ? { src } : {};
+};
 
 function loadData(d) {
   const out = emptyData();
@@ -161,7 +172,7 @@ function loadData(d) {
       ids.add(r.id);
       out.recurring.push({ id: r.id, name, type: r.type, amount: r.amount, category: cat(r.category, r.type), person: person(r.person),
         every: r.type === 'income' ? 1 : EVERY.includes(r.every) ? r.every : 1, start: r.start, end,
-        ...(r.pre === true && r.type === 'expense' && cat(r.category, r.type) === SAVINGS_CAT ? { pre: true } : {}) }); // income: always monthly; pre (2026-11-18): sparande dras före nettolönen
+        ...srcOf(r, cat(r.category, r.type)) }); // income: always monthly; src: varifrån sparandet kommer (se SAVING_SRC)
     }
   }
   const recIds = new Set(out.recurring.map((r) => r.id));
@@ -174,7 +185,7 @@ function loadData(d) {
       if (!name) continue;
       ids.add(o.id);
       out.oneOffs.push({ id: o.id, month: o.month, name, type: o.type, amount: o.amount, category: cat(o.category, o.type), person: person(o.person),
-        ...(o.pre === true && o.type === 'expense' && cat(o.category, o.type) === SAVINGS_CAT ? { pre: true } : {}) });
+        ...srcOf(o, cat(o.category, o.type)) });
     }
   }
 
@@ -318,7 +329,7 @@ function packData(d) {
   const item = (r) => {
     const o = { id: r.id, name: r.name, type: t(r.type), amount: r.amount, category: r.category };
     if (r.person) o.person = r.person;
-    if (r.pre) o.pre = true;   // 2026-11-21: "Dras före lönen" följer med i backupen
+    if (r.src) o.src = r.src;   // varifrån sparandet kommer följer med i backupen
     return o;
   };
   if (d.recurring.length) out.recurring = d.recurring.map((r) => Object.assign(item(r),
@@ -343,7 +354,7 @@ function unpackData(p) {
   if (Array.isArray(s.categories)) settings.categories = list(s.categories).map((c) => ({ id: c.id, name: c.name, type: type(c.type) }));
   if (Array.isArray(s.people)) settings.people = list(s.people).map((x) => ({ id: x.id, name: x.name }));
   if (isObj(s.rates)) { settings.rates = { ...s.rates }; settings.ratesDate = s.ratesDate; settings.ratesOwn = true; }
-  const item = (r) => ({ id: r.id, name: r.name, type: type(r.type), amount: r.amount, category: r.category, person: r.person ?? null, pre: r.pre === true });
+  const item = (r) => ({ id: r.id, name: r.name, type: type(r.type), amount: r.amount, category: r.category, person: r.person ?? null, src: r.src, pre: r.pre === true });
   return {
     version: DATA_VERSION,
     settings,
@@ -441,17 +452,17 @@ function rowsForMonth(data, m) {
   for (const r of data.recurring) {
     if (!applies(r, m)) continue;
     const adjusted = Object.hasOwn(adj, r.id);
-    rows.push({ id: r.id, kind: 'rec', name: r.name, type: r.type, category: r.category, person: r.person, pre: !!r.pre,
+    rows.push({ id: r.id, kind: 'rec', name: r.name, type: r.type, category: r.category, person: r.person, src: r.src || null,
       amount: adjusted ? adj[r.id] : r.amount, base: r.amount, adjusted });
   }
   for (const o of data.oneOffs) {
     if (o.month !== m) continue;
-    rows.push({ id: o.id, kind: 'one', name: o.name, type: o.type, category: o.category, person: o.person, pre: !!o.pre,
+    rows.push({ id: o.id, kind: 'one', name: o.name, type: o.type, category: o.category, person: o.person, src: o.src || null,
       amount: o.amount, base: o.amount, adjusted: false });
   }
   const c = rows.some((r) => r.kind === 'one' && r.name === 'Kvar från förra månaden') ? 0 : carryIn(data, m);   // ifyllt för hand går före
   if (c) rows.push({ id: 'carry', kind: 'carry', name: 'Kvar från förra månaden', type: c > 0 ? 'income' : 'expense', category: c > 0 ? 'income-other' : 'other',
-    person: null, pre: false, amount: Math.abs(c), base: Math.abs(c), adjusted: false });
+    person: null, src: null, amount: Math.abs(c), base: Math.abs(c), adjusted: false });
   return rows;
 }
 // Kvar från förra månaden (2026-11-21): stängt belopp i m−1 om det följer med (data.carry), annars 0. Negativt = underskott.
@@ -461,14 +472,15 @@ function carryIn(data, m) {
 }
 
 // savings = the part of expense in the "Sparande" category (still counted as expense: it leaves the account).
-// pre (2026-11-18) = sparande som dras innan nettolönen betalas ut: räknas som sparat men minskar inte Kvar.
+// pre = sparande före lönen, extra = sparande utöver lönen: båda räknas som sparat men lämnar aldrig lönekontot,
+// så de minskar inte Kvar. Sparande från lönen är en vanlig kostnad.
 function totals(rows) {
-  let income = 0, expense = 0, savings = 0, pre = 0;
+  let income = 0, expense = 0, savings = 0, pre = 0, extra = 0;
   for (const r of rows) {
     if (r.type === 'income') income += r.amount;
-    else { expense += r.amount; if (r.category === SAVINGS_CAT) { savings += r.amount; if (r.pre) pre += r.amount; } }
+    else { expense += r.amount; if (r.category === SAVINGS_CAT) { savings += r.amount; if (r.src === 'pre') pre += r.amount; if (r.src === 'extra') extra += r.amount; } }
   }
-  return { income, expense, savings, pre, left: income - expense + pre };
+  return { income, expense, savings, pre, extra, left: income - expense + pre + extra };
 }
 
 // Månadens summor; är månaden stängd ersätts planerat kvar av det faktiska (planned = det planerade, closed = true).
