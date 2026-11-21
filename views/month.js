@@ -118,7 +118,10 @@ function renderMonth() {
   fill($('income-card'), fold('inc',
     el('h2', { class: 'split' }, el('span', {}, 'Inkomster ', el('small', { class: 'netto', text: '(netto)' }), payNote() ? el('small', { class: 'netto', text: ' · ' }) : null, payNote() ? el('small', { class: 'netto', text: payNote() }) : null), el('span', { text: kr(t.income) })),
     income.length ? el('ul', { class: 'list' }, income.map(monthRow))
-      : emptyMsg('Inga inkomster den här månaden.', 'Lägg till', 'income')));
+      : emptyMsg('Inga inkomster den här månaden.', 'Lägg till', 'income'),
+    // 2026-11-21: kvar från förra månaden kan fyllas i för hand (t.ex. första månaden, före någon stängning).
+    income.some((r) => r.kind === 'carry' || r.name === CARRY_NAME) ? null
+      : el('p', { class: 'carry-add' }, el('button', { type: 'button', class: 'link', text: '+ Kvar från förra månaden', on: { click: openCarryDialog } }))));
   fill($('expense-card'), fold('exp', [
     el('h2', { class: 'split' }, el('span', { text: 'Kostnader' }),
       el('span', { text: kr(t.expense - t.savings) })),
@@ -417,6 +420,18 @@ function fillPersonSelect(sel, value) {
 }
 const personValue = (sel) => sel.value || null;
 
+// Kvar från förra månaden för hand (2026-11-21): en avvikelse (inkomst, Övrig inkomst) i den här månaden.
+const CARRY_NAME = 'Kvar från förra månaden';
+function openCarryDialog() {
+  openRowDialog(null);
+  $('rd-title').textContent = CARRY_NAME;
+  $('rd-name').value = CARRY_NAME;
+  $('rd-type').value = 'income';
+  $('rd-type').dispatchEvent(new Event('change'));
+  $('rd-cat').value = 'income-other';
+  $('rd-sub').textContent = `Det som fanns kvar på kontot när ${monthLabel(month).toLowerCase()} började. Gäller bara den här månaden.`;
+  $('rd-amount').focus();
+}
 function openRowDialog(r) {
   dialogRow = r || null;
   const isNew = !r, isOne = isNew || r.kind === 'one';

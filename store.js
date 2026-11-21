@@ -426,7 +426,7 @@ function rowsForMonth(data, m) {
     rows.push({ id: o.id, kind: 'one', name: o.name, type: o.type, category: o.category, person: o.person, pre: !!o.pre,
       amount: o.amount, base: o.amount, adjusted: false });
   }
-  const c = carryIn(data, m);
+  const c = rows.some((r) => r.kind === 'one' && r.name === 'Kvar från förra månaden') ? 0 : carryIn(data, m);   // ifyllt för hand går före
   if (c) rows.push({ id: 'carry', kind: 'carry', name: 'Kvar från förra månaden', type: c > 0 ? 'income' : 'expense', category: c > 0 ? 'income-other' : 'other',
     person: null, pre: false, amount: Math.abs(c), base: Math.abs(c), adjusted: false });
   return rows;

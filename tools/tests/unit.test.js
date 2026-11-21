@@ -279,3 +279,10 @@ T.test('kvar följer med: rad i nästa månad, exporteras, saldot räknas inte d
   T.eq([n.type, n.amount], ['expense', 50000]);
   T.eq(loadData({ ...d, closed: {} }).carry, []);
 });
+
+T.test('kvar ifyllt för hand går före det som följer med', () => {
+  const d = loadData({ ...rich(), closed: { '2026-10': 300000 }, carry: ['2026-10'],
+    oneOffs: [{ id: 'oc', month: '2026-11', name: 'Kvar från förra månaden', type: 'income', amount: 120000, category: 'income-other', person: null }] });
+  const rs = rowsForMonth(d, '2026-11').filter((r) => r.name === 'Kvar från förra månaden');
+  T.eq(rs.map((r) => [r.kind, r.amount]), [['one', 120000]]);
+});

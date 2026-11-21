@@ -621,3 +621,5 @@ body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; 
 .prev-fc .link { padding: 4px 0; font-size: inherit; text-align: left; }
 .close-line { flex-wrap: wrap; }
 .close-line .link.cl-btn { padding: 10px 14px; min-height: 44px; border-radius: var(--r-md); background: var(--surface-container-high); color: var(--primary); }
+
+.carry-add { margin: 4px 0 0; }
