@@ -667,3 +667,4 @@ body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; 
 .close-line.cl-due span.link { color: var(--primary) !important; font-weight: 600; }
 .sv-foot { display: flex; gap: 16px; flex-wrap: wrap; }
 .sv-foot > :last-child { margin-left: auto; }
+dialog:focus { outline: none; }

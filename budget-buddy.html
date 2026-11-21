@@ -684,6 +684,7 @@ body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; 
 .close-line.cl-due span.link { color: var(--primary) !important; font-weight: 600; }
 .sv-foot { display: flex; gap: 16px; flex-wrap: wrap; }
 .sv-foot > :last-child { margin-left: auto; }
+dialog:focus { outline: none; }
 
 </style>
 </head>
@@ -1097,7 +1098,7 @@ body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; 
   </div>
   <div class="actions"><span class="spacer"></span><button type="button" class="btn text" id="add-cancel">Avbryt</button></div>
 </dialog>
-<dialog id="row-dialog" aria-labelledby="rd-title">
+<dialog id="row-dialog" tabindex="-1" autofocus aria-labelledby="rd-title">
   <form method="dialog" id="rd-form" novalidate>
     <h2 id="rd-title"></h2>
     <p class="muted" id="rd-sub"></p>
@@ -1151,7 +1152,7 @@ body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; 
 <!-- Dialog: avsluta flera markerade poster -->
 
 <!-- Dialog: saldo på sparkonto -->
-<dialog id="close-dialog" aria-labelledby="cd-title">
+<dialog id="close-dialog" tabindex="-1" autofocus aria-labelledby="cd-title">
   <form method="dialog" id="cd-form" novalidate>
     <h2 id="cd-title"></h2>
     <label class="field"><span id="cd-label">Kvar på kontot</span><input id="cd-amount" inputmode="decimal" autocomplete="off"></label>
@@ -1168,7 +1169,7 @@ body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; 
     </div>
   </form>
 </dialog>
-<dialog id="acc-dialog" aria-labelledby="ad-title">
+<dialog id="acc-dialog" tabindex="-1" autofocus aria-labelledby="ad-title">
   <form method="dialog" id="ad-form" novalidate>
     <h2 id="ad-title"></h2>
     <label class="field"><span>Namn</span><input id="ad-name" maxlength="30" autocomplete="off"></label>
@@ -1860,7 +1861,7 @@ I18N.add({
 </script>
 <script>
 // ---- version.js ----
-﻿self.APP_VERSION = '0.12.145';
+﻿self.APP_VERSION = '0.12.146';
 
 </script>
   <script>
@@ -3320,7 +3321,7 @@ function openCloseDialog() {
     }))] : null);
   $('cd-error').textContent = '';
   $('close-dialog').showModal();
-  $('cd-amount').focus();
+  $('close-dialog').focus();   // 2026-11-21: tangentbordet öppnas först när man trycker i fältet
 }
 $('cd-cancel').addEventListener('click', () => $('close-dialog').close());
 $('cd-form').addEventListener('submit', (e) => {
@@ -3528,7 +3529,7 @@ function openRowDialog(r) {
   }
   $('rd-error').textContent = '';
   $('row-dialog').showModal();
-  (isOne ? $('rd-name') : $('rd-amount')).focus();
+  if (!r) $('rd-name').focus(); else $('row-dialog').focus();   // befintlig post: inget tangentbord direkt (2026-11-21)
 }
 
 // 2026-11-18: en knapp ＋ Lägg till; rutan frågar vad. Avvikelse öppnar radrutan, resten rutan Ny post.
@@ -3830,7 +3831,7 @@ function openAccDialog(a) {
   $('ad-goal-month').value = g?.month || '';
   $('ad-error').textContent = '';
   $('acc-dialog').showModal();
-  (isNew ? $('ad-name') : $('ad-amount')).focus();
+  if (isNew) $('ad-name').focus(); else $('acc-dialog').focus();   // 2026-11-21: inget tangentbord när man öppnar ett befintligt konto
 }
 function setAccCurrencyLabel() {
   const c = $('ad-currency').value;

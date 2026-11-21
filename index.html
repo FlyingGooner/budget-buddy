@@ -427,7 +427,7 @@
   </div>
   <div class="actions"><span class="spacer"></span><button type="button" class="btn text" id="add-cancel">Avbryt</button></div>
 </dialog>
-<dialog id="row-dialog" aria-labelledby="rd-title">
+<dialog id="row-dialog" tabindex="-1" autofocus aria-labelledby="rd-title">
   <form method="dialog" id="rd-form" novalidate>
     <h2 id="rd-title"></h2>
     <p class="muted" id="rd-sub"></p>
@@ -481,7 +481,7 @@
 <!-- Dialog: avsluta flera markerade poster -->
 
 <!-- Dialog: saldo på sparkonto -->
-<dialog id="close-dialog" aria-labelledby="cd-title">
+<dialog id="close-dialog" tabindex="-1" autofocus aria-labelledby="cd-title">
   <form method="dialog" id="cd-form" novalidate>
     <h2 id="cd-title"></h2>
     <label class="field"><span id="cd-label">Kvar på kontot</span><input id="cd-amount" inputmode="decimal" autocomplete="off"></label>
@@ -498,7 +498,7 @@
     </div>
   </form>
 </dialog>
-<dialog id="acc-dialog" aria-labelledby="ad-title">
+<dialog id="acc-dialog" tabindex="-1" autofocus aria-labelledby="ad-title">
   <form method="dialog" id="ad-form" novalidate>
     <h2 id="ad-title"></h2>
     <label class="field"><span>Namn</span><input id="ad-name" maxlength="30" autocomplete="off"></label>

@@ -290,7 +290,7 @@ function openCloseDialog() {
     }))] : null);
   $('cd-error').textContent = '';
   $('close-dialog').showModal();
-  $('cd-amount').focus();
+  $('close-dialog').focus();   // 2026-11-21: tangentbordet öppnas först när man trycker i fältet
 }
 $('cd-cancel').addEventListener('click', () => $('close-dialog').close());
 $('cd-form').addEventListener('submit', (e) => {
@@ -498,7 +498,7 @@ function openRowDialog(r) {
   }
   $('rd-error').textContent = '';
   $('row-dialog').showModal();
-  (isOne ? $('rd-name') : $('rd-amount')).focus();
+  if (!r) $('rd-name').focus(); else $('row-dialog').focus();   // befintlig post: inget tangentbord direkt (2026-11-21)
 }
 
 // 2026-11-18: en knapp ＋ Lägg till; rutan frågar vad. Avvikelse öppnar radrutan, resten rutan Ny post.

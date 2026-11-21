@@ -70,7 +70,7 @@ function openAccDialog(a) {
   $('ad-goal-month').value = g?.month || '';
   $('ad-error').textContent = '';
   $('acc-dialog').showModal();
-  (isNew ? $('ad-name') : $('ad-amount')).focus();
+  if (isNew) $('ad-name').focus(); else $('acc-dialog').focus();   // 2026-11-21: inget tangentbord när man öppnar ett befintligt konto
 }
 function setAccCurrencyLabel() {
   const c = $('ad-currency').value;
