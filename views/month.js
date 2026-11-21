@@ -112,7 +112,7 @@ function renderMonth() {
     el('button', { type: 'button', class: 'link', text: label, on: { click: () => focusAdd(type) } }));
 
   fill($('income-card'), fold('inc',
-    el('h2', { class: 'split' }, el('span', {}, 'Inkomster ', el('small', { class: 'netto', text: '(netto)' })), el('span', { text: kr(t.income) })),
+    el('h2', { class: 'split' }, el('span', {}, 'Inkomster ', el('small', { class: 'netto', text: '(netto)' }), payNote() ? el('small', { class: 'netto', text: ' · ' }) : null, payNote() ? el('small', { class: 'netto', text: payNote() }) : null), el('span', { text: kr(t.income) })),
     income.length ? el('ul', { class: 'list' }, income.map(monthRow))
       : emptyMsg('Inga inkomster den här månaden.', 'Lägg till', 'income')));
   fill($('expense-card'), fold('exp', [
@@ -204,6 +204,14 @@ function closeIso() {   // dagen före nästa lön (eller sista dagen i månaden
   return closeIso.pay ? isoOf(pay) : isoOf(d);
 }
 const isoOf = (d) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+// 2026-11-21: vilken lön månaden bygger på – lönedagen i nyckelmånaden (helg → fredagen före), t.ex. " · lön 25 okt".
+function payNote() {
+  const p = data.settings.payday;
+  if (!(p > 1)) return '';
+  const [y, mo] = month.split('-').map(Number), d = new Date(y, mo - 1, p);
+  while (d.getDay() === 0 || d.getDay() === 6) d.setDate(d.getDate() - 1);
+  return `lön ${d.getDate()} ${shortOf(isoOf(d).slice(0, 7))}`;
+}
 function payIso() { closeIso.pay = true; try { return closeIso(); } finally { closeIso.pay = false; } }
 
 // 2026-11-21: två korta rader under knapparna – dagar till nästa lön (innevarande månad) och största kostnadsförändringen mot förra månaden.

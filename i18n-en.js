@@ -258,6 +258,7 @@ I18N.add({
   [/^(.+) börjar efter den månaden – välj en senare månad eller avmarkera den\.$/, '$1 starts after that month – choose a later month or deselect it.'],
   [/^(\d+) procent av inkomsterna går till kostnader$/, '$1 percent of the income goes to expenses'],
   [/^Saldo efter månaden: (.+)$/, 'Balance after the month: $1'],
+  [/^lön (\d+) (\S+)$/, (g, tr) => `pay ${g[1]} ${tr(g[2])}`],
   [/^Sparmål \((.+)\)$/, 'Savings goal ($1)'],
   [/^✓ Målet (.+) är nått$/, '✓ Goal $1 reached'],
   [/^(\d+) % av (.+?)((?: · .+)?)$/, (g, tr) => `${g[1]} % of ${g[2]}` + g[3].replace(/klart ≈ (\S+) (\d+)/, (x, mo, y) => `done ≈ ${tr(mo)} ${y}`)
