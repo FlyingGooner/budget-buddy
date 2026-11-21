@@ -6,7 +6,10 @@ function renderAccounts() {
   const total = (m) => Math.round(accs.reduce((s, a) => s + toSek(estBalance(data, a, m)?.amount || 0, a.currency), 0) / 100) * 100;   // hela kronor
   const foreign = accs.some((a) => a.currency !== home());
   // Hemvalutan i fokus (2026-11-17): stor total, varje konto i hemvalutan, egen valuta inom parentes.
-  const tNow = total(month), tDiff = accs.length ? tNow - total(addMonths(month, -1)) : 0;
+  // 2026-11-21: ändringen räknas bara på konton som hade ett värde förra månaden (annars blev hela saldot "ändring").
+  const pm = addMonths(month, -1), cmp = accs.filter((a) => estBalance(data, a, pm) && estBalance(data, a, month));
+  const sumOf = (list, m) => Math.round(list.reduce((s, a) => s + toSek(estBalance(data, a, m).amount, a.currency), 0) / 100) * 100;
+  const tNow = total(month), tDiff = cmp.length ? sumOf(cmp, month) - sumOf(cmp, pm) : 0;
   $('acc-total').textContent = accs.length ? (foreign ? '≈ ' : '') + kr(tNow) : '';
   $('acc-total-diff').textContent = tDiff ? `${tDiff > 0 ? '+' : '−'}${kr(Math.abs(tDiff))} sedan ${monthShortLabel(addMonths(month, -1)).toLowerCase()}` : '';
   $('acc-total-diff').className = 'acc-total-diff ' + (tDiff < 0 ? 'neg' : 'pos');
@@ -129,7 +132,7 @@ function openAccPick() {
   if (!data.accounts.length) { newAccount(); return; }
   fill($('ap-list'), data.accounts.map((a) => el('li', {}, el('button', { type: 'button', class: 'acc-set-row',
     on: { click: () => { $('accpick-dialog').close(); setTimeout(() => openAccDialog(a), 0); } } },
-    el('span', { text: a.name }), el('span', { class: 'muted', text: a.pre ? `${kr(a.pre.amount)}/mån före lön` : '' })))));
+    el('span', { text: a.name }), el('span', { class: 'muted', text: (() => { const e = estBalance(data, a, month); return e ? (e.estimated ? '≈ ' : '') + money(e.amount, a.currency) : '–'; })() })))));   // värdet, så att man ser vilket konto
   $('accpick-dialog').showModal();
 }
 $('ap-new').addEventListener('click', () => { $('accpick-dialog').close(); setTimeout(newAccount, 0); });

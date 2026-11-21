@@ -702,3 +702,9 @@ dialog:focus { outline: none; }
 #row-dialog .rd-more { display: flex; flex-direction: column; align-items: flex-start; gap: 0; margin-top: 4px; }
 #row-dialog .rd-more .btn { padding-left: 0; }
 #row-dialog #rd-error:empty { display: none; }
+
+/* 2026-11-21: fält i två kolumner krymper i stället för att gå utanför rutan (t.ex. Till månad) */
+.row2 > .field { min-width: 0; }
+.row2 > .field input, .row2 > .field select { min-width: 0; width: 100%; box-sizing: border-box; }
+#ap-list li + li { border-top: 1px solid var(--outline-variant); }
+#ap-list .acc-set-row { display: flex; justify-content: space-between; align-items: center; width: 100%; min-height: 48px; border: 0; background: none; color: inherit; font: inherit; text-align: left; cursor: pointer; padding: 0; }
