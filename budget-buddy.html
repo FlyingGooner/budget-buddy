@@ -708,6 +708,7 @@ dialog:focus { outline: none; }
 #income-card .ie-total span:last-child { font-weight: 700; color: var(--on-surface); }
 #income-card p.ie-sav.muted { display: block; font-size: .8125rem; margin: 4px 0 2px; }
 #income-card p.ie-sav.muted { color: var(--on-surface-variant); }
+.sv-name small { white-space: normal; overflow: visible; text-overflow: clip; }
 
 </style>
 </head>
@@ -922,7 +923,8 @@ dialog:focus { outline: none; }
           <p>Sparande från lönen är en kostnad: pengarna lämnar kontot. Lägg till med + Sparande: namn, belopp, hur ofta och gärna Saldo nu. Då skapas ett sparkonto som räknas upp av sig självt varje månad.</p>
           <p>Raden Totalt sparat i Månad visar summan på sparkontona i din valuta. Tryck för att fälla ut en rad per konto: saldo i din valuta, månadssparandet och ändringen sedan förra månaden. Konton i annan valuta visar sitt eget belopp inom parentes, t.ex. (730 USD).</p>
           <p>Tryck på en rad för att ändra belopp, välja vilket Sparkonto pengarna går till eller rätta saldot. Saldot märkt ≈ är beräknat: senast ifyllt plus sparandet.</p>
-          <p>Sparande är en kostnad när pengarna lämnar lönekontot. Välj Varifrån på varje sparpost: Från lönen (förval – står bland kostnaderna och minskar Efter räkningar), Före lön (dras innan nettolönen, t.ex. aktier via jobbet) eller Utöver lönen (t.ex. en gåva direkt till Avanza). Före och utöver räknas som sparat och ökar sparkontot, men minskar inte Efter räkningar. Sparat i månaden under Efter räkningar visar allt sparande och hur det fördelar sig.</p>
+          <p>Sparande från lönen (＋ Lägg till → 🐷 Sparande från lönen) är en kostnad: det står bland kostnaderna och minskar Efter räkningar.</p>
+          <p>Före lön och insättningar (＋ Lägg till → 🏦 Före lön / insättning, eller tryck på kontot under Totalt sparat) fylls i på sparkontot: Före lön varje månad (t.ex. aktier via jobbet) och Insättning den här månaden (t.ex. en gåva). De räknas som sparat och ökar kontot, men påverkar inte budgeten. Sparat i månaden visar allt sparande och hur det fördelar sig.</p>
           <p>Konton som inte rörs (t.ex. barnens) kan döljas från Månad: tryck på kontot och bocka ur Visa i Månad. Tryck på namnet under &quot;+ 1 dolt konto&quot; för att visa det igen. Det räknas fortfarande i Totalt sparat.</p>
           <p>Inställningar → Sparkonton listar alla konton, även dolda. Tryck på ett för att byta namn, valuta, saldo eller vilket sparande som går dit (även engångssparande), eller ta bort det (det hamnar i papperskorgen). + Nytt sparkonto skapar ett konto med bara saldo, t.ex. ett konto du inte sparar till varje månad. Samma knapp finns som + Sparkonto under Totalt sparat. Två konton kan inte heta likadant. När du sparar visas Ångra en stund.</p>
           <p>Summan och en graf över alla konton finns under Översikt → Sparkonton.</p>
@@ -1005,7 +1007,8 @@ dialog:focus { outline: none; }
           <p>Saving from pay is a cost: the money leaves your account. Add with + Saving: name, amount, frequency and preferably Balance now. A savings account is then created that counts up by itself every month.</p>
           <p>The Total saved row in Month shows the sum of your savings accounts in your currency. Tap to unfold one row per account: balance in your currency, the monthly saving and the change since last month. Accounts in another currency show their own amount in brackets, e.g. (730 USD).</p>
           <p>Tap a row to change the amount, choose which Savings account the money goes to, or correct the balance. A balance marked ≈ is estimated: last entered plus the savings.</p>
-          <p>Choose Source on each saving: From pay (default – listed among the expenses and reduces After bills), Before pay (taken before your net salary, e.g. shares through work) or On top of pay (e.g. a gift straight to your broker). Before and on top of pay count as saved and increase the savings account, but don't reduce After bills. Saved this month below After bills shows all saving and how it splits.</p>
+          <p>Saving from pay (＋ Add → 🐷 Saving from pay) is a cost: it is listed among the expenses and reduces After bills.</p>
+          <p>Before pay and deposits (＋ Add → 🏦 Before pay / deposit, or tap the account under Total saved) are entered on the savings account: Before pay each month (e.g. shares through work) and Deposit this month (e.g. a gift). They count as saved and increase the account, but don't affect the budget. Saved this month shows all saving and how it splits.</p>
           <p>Accounts you never touch (e.g. the children's) can be hidden from Month: tap the account and untick Show in Month. Tap the name under &quot;+ 1 hidden account&quot; to show it again. It still counts in Total saved.</p>
           <p>Settings → Savings accounts lists all accounts, including hidden ones. Tap one to change its name, currency, balance or which savings go there (one-off savings too), or delete it (it goes to the trash). + New savings account creates an account with just a balance, e.g. one you don't save to every month. The same button is + Account under Total saved. Two accounts can't have the same name. When you save, Undo is shown for a moment.</p>
           <p>The total and a chart of all accounts are under Overview → Savings accounts.</p>
@@ -1098,8 +1101,7 @@ dialog:focus { outline: none; }
         <label class="field person-field"><span>Person (valfritt)</span><select name="person"></select></label>
         <label class="field amt"><span>Saldo nu (valfritt)</span><input name="balance" inputmode="decimal" autocomplete="off"></label>
         <label class="field"><span>Kontots valuta</span><select name="currency"></select></label>
-        <label class="field"><span>Varifrån</span><select name="src"><option value="">Från lönen</option><option value="pre">Före lön (dras innan nettolönen)</option><option value="extra">Utöver lönen (t.ex. gåva)</option></select></label>
-        <p class="muted small hint-row">Sparande från lönen är en kostnad – pengarna lämnar kontot. Före lön och utöver lönen räknas som sparat men minskar inte det som blir kvar. Fyller du i saldot skapas ett sparkonto som räknas upp varje månad – i annan valuta räknas sparandet om med kurserna.</p>
+        <p class="muted small hint-row">Sparande från lönen är en kostnad – pengarna lämnar kontot. Sparande före lön och insättningar fyller du i på sparkontot. Fyller du i saldot skapas ett sparkonto som räknas upp varje månad – i annan valuta räknas sparandet om med kurserna.</p>
         <button type="submit" class="btn filled">Lägg till</button>
         <p class="error" role="alert"></p>
       </form>
@@ -1116,10 +1118,16 @@ dialog:focus { outline: none; }
   <div class="add-pick">
     <button type="button" class="extra" data-add="income"><b>Inkomst</b><span class="muted">Lön efter skatt, bidrag …</span></button>
     <button type="button" class="extra" data-add="expense"><b>Kostnad</b><span class="muted">Hyra, el, lån – varje månad</span></button>
-    <button type="button" class="extra" data-add="savings"><b>🐷 Sparande</b><span class="muted">Till ett sparkonto</span></button>
+    <button type="button" class="extra" data-add="savings"><b>🐷 Sparande från lönen</b><span class="muted">En kostnad som går till ett sparkonto</span></button>
+    <button type="button" class="extra" data-add="account"><b>🏦 Före lön / insättning</b><span class="muted">Direkt till ett sparkonto, påverkar inte budgeten</span></button>
     <button type="button" class="extra" data-add="oneoff"><b>Bara den här månaden</b><span class="muted">Avvikelse, t.ex. en resa</span></button>
   </div>
   <div class="actions"><span class="spacer"></span><button type="button" class="btn text" id="add-cancel">Avbryt</button></div>
+</dialog>
+<dialog id="accpick-dialog" aria-labelledby="ap-title">
+  <h2 id="ap-title">Vilket sparkonto?</h2>
+  <ul class="list" id="ap-list"></ul>
+  <div class="actions"><button type="button" class="btn tonal" id="ap-new">+ Nytt sparkonto</button><span class="spacer"></span><button type="button" class="btn text" id="ap-cancel">Avbryt</button></div>
 </dialog>
 <dialog id="row-dialog" tabindex="-1" autofocus aria-labelledby="rd-title">
   <form method="dialog" id="rd-form" novalidate>
@@ -1201,6 +1209,11 @@ dialog:focus { outline: none; }
       <label class="field"><span>Valuta</span><select id="ad-currency"></select></label>
       <label class="field"><span id="ad-amount-label">Saldo (kr)</span><input id="ad-amount" inputmode="decimal" autocomplete="off"></label>
     </div>
+    <div class="row2">
+      <label class="field"><span>Före lön varje månad (<span class="cur-unit">kr</span>)</span><input id="ad-pre" inputmode="decimal" autocomplete="off" placeholder="0"></label>
+      <label class="field"><span id="ad-dep-label">Insättning</span><input id="ad-dep" inputmode="decimal" autocomplete="off" placeholder="0"></label>
+    </div>
+    <p class="muted small ad-hint">Före lön: dras innan nettolönen, t.ex. aktier via jobbet. Insättning: utöver lönen den här månaden, t.ex. en gåva. Båda räknas som sparat men påverkar inte budgeten.</p>
     <div class="ad-feeds" id="ad-feeds"></div>
     <button type="button" class="link" id="ad-goal-add">+ Sparmål</button>
     <div class="row2" id="ad-goal" hidden>
@@ -1732,7 +1745,7 @@ I18N.add({
   'Kvar av inkomst': 'Left of income', '🐷 Sparkvot (sparande av inkomst)': '🐷 Savings rate (savings of income)', 'Största kostnad': 'Largest expense',
   '🐷 Sparat 12 mån': '🐷 Saved 12 mo', '🐷 Sparat den här månaden': '🐷 Saved this month', 'Gå till kostnader': 'Go to expenses', 'In och ut, 12 månader': 'In and out, 12 months',
   'Inga poster än – lägg till inkomster och kostnader så syns trenden här.': 'No items yet – add income and expenses and the trend shows here.',
-  'Avsluta markering': 'End selection', 'In': 'In', 'Ut': 'Out', 'Inkomster': 'Income', '(netto)': '(net)', 'Kostnader': 'Expenses', 'Kostnader per kategori': 'Expenses by category', 'Kvar': 'Left', 'Lön i dag': 'Payday today', 'Varifrån': 'Source', 'Från lönen': 'From pay', 'Före lön (dras innan nettolönen)': 'Before pay (deducted before net pay)', 'Utöver lönen (t.ex. gåva)': 'On top of pay (e.g. a gift)', 'Sparande från lönen är en kostnad – pengarna lämnar kontot. Före lön och utöver lönen räknas som sparat men minskar inte det som blir kvar.': 'Saving from pay is a cost – the money leaves the account. Before pay and on top of pay count as saved but do not reduce what is left.', 'dagar till lön': 'days to payday', 'dag till lön': 'day to payday', 'stäng i dag': 'close today', 'stäng månaden': 'close the month', 'Nästa lön i morgon': 'Next payday tomorrow',
+  'Avsluta markering': 'End selection', 'In': 'In', 'Ut': 'Out', 'Inkomster': 'Income', '(netto)': '(net)', 'Kostnader': 'Expenses', 'Kostnader per kategori': 'Expenses by category', 'Kvar': 'Left', 'Lön i dag': 'Payday today', 'Vilket sparkonto?': 'Which savings account?', '🏦 Före lön / insättning': '🏦 Before pay / deposit', 'Direkt till ett sparkonto, påverkar inte budgeten': 'Straight to a savings account, does not affect the budget', '🐷 Sparande från lönen': '🐷 Saving from pay', 'En kostnad som går till ett sparkonto': 'A cost that goes to a savings account', 'Före lön varje månad (': 'Before pay each month (', 'Före lön: dras innan nettolönen, t.ex. aktier via jobbet. Insättning: utöver lönen den här månaden, t.ex. en gåva. Båda räknas som sparat men påverkar inte budgeten.': 'Before pay: taken before your net salary, e.g. shares through work. Deposit: on top of pay this month, e.g. a gift. Both count as saved but do not affect the budget.', 'Skriv ett belopp, t.ex. 3 400 – eller lämna fältet tomt.': 'Enter an amount, e.g. 3 400 – or leave the field empty.', 'Sparande från lönen är en kostnad – pengarna lämnar kontot. Sparande före lön och insättningar fyller du i på sparkontot.': 'Saving from pay is a cost – the money leaves the account. Enter saving before pay and deposits on the savings account.', 'Varifrån': 'Source', 'Från lönen': 'From pay', 'Före lön (dras innan nettolönen)': 'Before pay (deducted before net pay)', 'Utöver lönen (t.ex. gåva)': 'On top of pay (e.g. a gift)', 'Sparande från lönen är en kostnad – pengarna lämnar kontot. Före lön och utöver lönen räknas som sparat men minskar inte det som blir kvar.': 'Saving from pay is a cost – the money leaves the account. Before pay and on top of pay count as saved but do not reduce what is left.', 'dagar till lön': 'days to payday', 'dag till lön': 'day to payday', 'stäng i dag': 'close today', 'stäng månaden': 'close the month', 'Nästa lön i morgon': 'Next payday tomorrow',
   'Markerade poster': 'Selected items', 'Nyckeltal': 'Key figures', 'Personens poster blir gemensamma': "The person's items become shared", 'standard': 'default',
   'Totalt sparsaldo': 'Total savings', 'Saldo': 'Balance', 'Namn': 'Name', 'Period': 'Period', 'Från': 'From', 'Till': 'To', 'Avsluta': 'End', 'Avslutade': 'Ended', 'Aktiva': 'Active',
   'Kronor (SEK)': 'Swedish kronor (SEK)', 'Euro (EUR)': 'Euro (EUR)', 'Dollar (USD)': 'US dollar (USD)', 'Pund (GBP)': 'British pound (GBP)', 'Norska kronor (NOK)': 'Norwegian kroner (NOK)', 'Danska kronor (DKK)': 'Danish kroner (DKK)',
@@ -1746,6 +1759,9 @@ I18N.add({
   [/^Sparat i månaden: (.+) \((\d+) %\) – (.+)$/, (g) => `Saved this month: ${g[1]} (${g[2]} %) – ${g[3].replace(/från lönen/g, 'from pay').replace(/före lön/g, 'before pay').replace(/utöver/g, 'extra')}`],
   [/^Sparat i månaden: (.+) \((\d+) %\), varav (.+) före lön$/, 'Saved this month: $1 ($2 %), of which $3 before pay'],
   [/^Sparat i månaden: (.+) \((\d+) %\)$/, 'Saved this month: $1 ($2 %)'],
+  [/^Insättning i (.+) \((.+)\)$/, (g, tr) => `Deposit in ${tr(g[1])} (${g[2]})`],
+  [/^(.+)\/mån före lön$/, '$1/mo before pay'],
+  [/^\+(.+) extra$/, '+$1 extra'],
   [/^Dag (\d+) av (\d+)$/, 'Day $1 of $2'],
   [/^Lön om (\d+) dagar$/, 'Payday in $1 days'],
   [/^(.+) skapat$/, '$1 created'],
@@ -1894,7 +1910,7 @@ I18N.add({
 </script>
 <script>
 // ---- version.js ----
-﻿self.APP_VERSION = '0.12.156';
+﻿self.APP_VERSION = '0.12.158';
 
 </script>
   <script>
@@ -2416,13 +2432,37 @@ const CATS_V = 2; // settings.catsV: one-time additions to older saved category 
 
 // Dataversion (2026-11-21): loadData() kör MIGRATIONS i ordning från den sparade versionen och sparar alltid den senaste.
 // Lägg en ny funktion här när fält byter betydelse; nya valfria fält behöver ingen (loadData fyller i standardvärden).
-const DATA_VERSION = 3;
+const DATA_VERSION = 4;
 const MIGRATIONS = {
   // 1 → 2: sparkonton kan fyllas på av engångssparande (feeds kan peka på avvikelser), papperskorgen minns kontokopplingar.
   // Inga gamla fält ändrar betydelse, så inget behöver skrivas om.
   2: (d) => d,
   // 2 → 3: pre: true blir src: 'pre' (görs i srcOf, som också läser gamla backuper).
   3: (d) => d,
+  // 3 → 4: sparande före lön och utöver lönen ligger på sparkontot (pre, deposits) i stället för som poster.
+  4: (d) => {
+    const accs = Array.isArray(d.accounts) ? d.accounts.filter(isObj) : [], drop = new Set();
+    const src = (r) => (r.src === 'pre' || r.pre === true ? 'pre' : r.src === 'extra' ? 'extra' : null);
+    for (const r of Array.isArray(d.recurring) ? d.recurring.filter(isObj) : []) {
+      const a = src(r) && accs.find((x) => Array.isArray(x.feeds) && x.feeds.includes(r.id));
+      if (!a) continue;
+      const adj = isObj(d.adjustments) ? Object.keys(d.adjustments).sort().map((m) => d.adjustments[m]?.[r.id]).filter((v) => isAmount(v) && v > 0) : [];
+      const amount = isAmount(r.amount) && r.amount > 0 ? r.amount : adj.length ? adj[adj.length - 1] : 0;   // ordinarie 0 + avvikelse: ta avvikelsen
+      if (src(r) === 'pre' && amount && isMonth(r.start)) a.pre = { amount: (a.pre?.amount || 0) + amount, from: r.start };
+      drop.add(r.id);
+    }
+    for (const o of Array.isArray(d.oneOffs) ? d.oneOffs.filter(isObj) : []) {
+      const a = src(o) && accs.find((x) => Array.isArray(x.feeds) && x.feeds.includes(o.id));
+      if (!a || !isMonth(o.month) || !isAmount(o.amount)) continue;
+      a.deposits = { ...(isObj(a.deposits) ? a.deposits : {}), [o.month]: ((isObj(a.deposits) && a.deposits[o.month]) || 0) + o.amount };
+      drop.add(o.id);
+    }
+    if (drop.size) {
+      d = { ...d, recurring: (d.recurring || []).filter((r) => !drop.has(r?.id)), oneOffs: (d.oneOffs || []).filter((o) => !drop.has(o?.id)) };
+      for (const a of accs) if (Array.isArray(a.feeds)) a.feeds = a.feeds.filter((x) => !drop.has(x));
+    }
+    return d;
+  },
 };
 function migrate(d) {
   let v = Number.isInteger(d.version) && d.version >= 1 ? d.version : 1;
@@ -2577,7 +2617,13 @@ function loadData(d) {
       // goal (2026-11-21, valfritt): { amount, month? } – sparmål i kontots valuta, ev. klart till en månad. Finns bara när det är satt.
       const goal = isObj(a.goal) && isAmount(a.goal.amount) && a.goal.amount > 0
         ? { amount: a.goal.amount, ...(isMonth(a.goal.month) ? { month: a.goal.month } : {}) } : null;
-      out.accounts.push({ id: a.id, name, currency, balances, feeds, hidden: a.hidden === true, ...(goal ? { goal } : {}) });   // hidden: visas inte i Månad
+      // pre (v4, 2026-11-21): { amount, from } – sätts in före lönen varje månad från och med from (i hemvalutan).
+      // deposits (v4): { månad: belopp } – insättningar utöver lönen, t.ex. en gåva (i hemvalutan).
+      const pre = isObj(a.pre) && isAmount(a.pre.amount) && a.pre.amount > 0 && isMonth(a.pre.from) ? { amount: a.pre.amount, from: a.pre.from } : null;
+      const deposits = {};
+      if (isObj(a.deposits)) for (const m of Object.keys(a.deposits).filter((m) => isMonth(m) && isAmount(a.deposits[m]) && a.deposits[m] > 0).sort().slice(-MAX_BALANCES)) deposits[m] = a.deposits[m];
+      out.accounts.push({ id: a.id, name, currency, balances, feeds, hidden: a.hidden === true, ...(goal ? { goal } : {}), ...(pre ? { pre } : {}),
+        ...(Object.keys(deposits).length ? { deposits } : {}) });   // hidden: visas inte i Månad
     }
   }
   // Papperskorg (v0.13): [{ d: removed date, rec | one | acc: the item, adj?: { month: amount } for rec }]. Each entry is
@@ -2689,7 +2735,7 @@ function packData(d) {
   if ((d.carry || []).length) out.carry = d.carry;
   if (d.accounts.length) out.accounts = d.accounts.map((a) => Object.assign({ id: a.id, name: a.name },
     a.currency !== 'SEK' ? { currency: a.currency } : {}, Object.keys(a.balances).length ? { balances: a.balances } : {},
-    a.feeds && a.feeds.length ? { feeds: a.feeds } : {}, a.hidden ? { hidden: true } : {}, a.goal ? { goal: a.goal } : {}));
+    a.feeds && a.feeds.length ? { feeds: a.feeds } : {}, a.hidden ? { hidden: true } : {}, a.goal ? { goal: a.goal } : {}, a.pre ? { pre: a.pre } : {}, a.deposits ? { deposits: a.deposits } : {}));
   return out;
 }
 
@@ -2712,7 +2758,7 @@ function unpackData(p) {
     adjustments: isObj(p.adjustments) ? p.adjustments : {},
     closed: isObj(p.closed) ? p.closed : {},
     carry: Array.isArray(p.carry) ? p.carry : [],
-    accounts: list(p.accounts).map((a) => ({ id: a.id, name: a.name, currency: a.currency ?? 'SEK', balances: isObj(a.balances) ? a.balances : {}, feeds: Array.isArray(a.feeds) ? a.feeds : [], hidden: a.hidden === true, goal: a.goal })),
+    accounts: list(p.accounts).map((a) => ({ id: a.id, name: a.name, currency: a.currency ?? 'SEK', balances: isObj(a.balances) ? a.balances : {}, feeds: Array.isArray(a.feeds) ? a.feeds : [], hidden: a.hidden === true, goal: a.goal, pre: a.pre, deposits: a.deposits })),
   };
 }
 
@@ -2833,8 +2879,18 @@ function totals(rows) {
 }
 
 // Månadens summor; är månaden stängd ersätts planerat kvar av det faktiska (planned = det planerade, closed = true).
+// Sparkontons insättningar en månad i hemvalutan (v4): före lön och utöver lönen. Lämnar aldrig lönekontot.
+function accountIn(d, m) {
+  let pre = 0, extra = 0;
+  for (const a of d.accounts || []) {
+    if (a.pre && a.pre.from <= m) pre += a.pre.amount;
+    if (a.deposits && a.deposits[m]) extra += a.deposits[m];
+  }
+  return { pre, extra };
+}
 function monthTotals(d, m) {
-  const t = totals(rowsForMonth(d, m));
+  const t0 = totals(rowsForMonth(d, m)), ai = accountIn(d, m);
+  const t = { ...t0, costs: t0.expense - t0.pre - t0.extra, savings: t0.savings + ai.pre + ai.extra, pre: t0.pre + ai.pre, extra: t0.extra + ai.extra };   // costs: allt som lämnar lönekontot
   return d.closed && Object.hasOwn(d.closed, m) ? { ...t, planned: t.left, left: d.closed[m], closed: true } : t;
 }
 
@@ -2880,12 +2936,14 @@ function estBalance(d, acc, m) {
   const cur = balanceAt(acc, m);
   if (!cur) return null;
   const feeds = acc.feeds || [];
-  if (!feeds.length || cur.month === m) return { ...cur, estimated: false };
+  if ((!feeds.length && !acc.pre && !acc.deposits) || cur.month === m) return { ...cur, estimated: false };
   // 2026-11-17: konto i annan valuta räknas också upp – sparandet (i hemvalutan) räknas om med kurserna.
   const homeCur = d.settings.home || 'SEK';
   let amount = cur.amount, n = 0;
   for (let x = addMonths(cur.month, 1); x <= m && n < 600; x = addMonths(x, 1), n++) {
     for (const r of rowsForMonth(d, x)) if (feeds.includes(r.id)) amount += convert(d, r.amount, homeCur, acc.currency);
+    if (acc.pre && acc.pre.from <= x) amount += convert(d, acc.pre.amount, homeCur, acc.currency);   // före lön (v4)
+    if (acc.deposits && acc.deposits[x]) amount += convert(d, acc.deposits[x], homeCur, acc.currency);   // insättning (v4)
   }
   return { month: m, amount, estimated: amount !== cur.amount, from: cur.month };
 }
@@ -2897,7 +2955,8 @@ function goalStatus(d, acc, m) {
   const pct = Math.max(0, Math.min(100, Math.floor((cur / goal) * 100)));
   if (left <= 0) return { goal, cur, pct: 100, reached: true };
   const homeCur = d.settings.home || 'SEK', feeds = acc.feeds || [];
-  const rate = rowsForMonth(d, m).filter((r) => feeds.includes(r.id)).reduce((x, r) => x + convert(d, r.amount, homeCur, acc.currency), 0);
+  const rate = rowsForMonth(d, m).filter((r) => feeds.includes(r.id)).reduce((x, r) => x + convert(d, r.amount, homeCur, acc.currency), 0)
+    + (acc.pre && acc.pre.from <= m ? convert(d, acc.pre.amount, homeCur, acc.currency) : 0);
   const eta = rate > 0 ? addMonths(m, Math.ceil(left / rate)) : null;
   const target = acc.goal.month || null;
   let n = 0;
@@ -3187,7 +3246,7 @@ function renderMonth() {
   const both = t.closed && prevT.closed, plan = (x) => (x.closed ? x.planned : x.left);
   const delta = (both ? t.left - prevT.left : plan(t) - plan(prevT)), hasPrev = prevT.income || prevT.expense;
   const savPay = t.savings - (t.pre || 0) - (t.extra || 0);   // bara sparande från lönen syns i stapeln (2026-11-21)
-  const base = Math.max(t.income, t.expense - t.savings + savPay + varSpend, 1);
+  const base = Math.max(t.income, t.costs + varSpend, 1);
   const seg = (cls, v, label) => { const x = el('span', { class: 'seg ' + cls, title: label }); x.style.width = Math.max(0, (v / base) * 100) + '%'; return x; };
   // 2026-11-21: öppen månad = vad som finns efter räkningar och sparande; stängd = det som faktiskt fanns kvar på kontot.
   const leftWord = t.closed ? 'Kvar på kontot' : 'Efter räkningar';
@@ -3198,8 +3257,8 @@ function renderMonth() {
     t.closed ? closeLine(t) : null,
     // 2026-11-18: beloppen står i korten nedan – här bara jämförelsen, stapeln och färgernas namn.
     hasPrev && delta ? el('p', { class: 'delta ' + (delta < 0 ? 'neg' : 'pos'), text: `${delta > 0 ? '▲' : '▼'} ${kr(Math.abs(delta))} mot ${monthShortLabel(addMonths(month, -1)).toLowerCase()}` }) : null,
-    el('div', { class: 'segbar', role: 'img', 'aria-label': `Av inkomsten: kostnader ${kr(t.expense - t.savings)}, sparande ${kr(savPay)}, ${leftWord.toLowerCase()} ${kr(Math.max(0, t.left))}` },
-      seg('s-exp', t.expense - t.savings, 'Kostnader'), seg('s-sav', savPay, 'Sparande'), seg('s-var', varSpend, 'Rörligt'), seg('s-left', Math.max(0, t.left), leftWord)),
+    el('div', { class: 'segbar', role: 'img', 'aria-label': `Av inkomsten: kostnader ${kr(t.costs - savPay)}, sparande ${kr(savPay)}, ${leftWord.toLowerCase()} ${kr(Math.max(0, t.left))}` },
+      seg('s-exp', t.costs - savPay, 'Kostnader'), seg('s-sav', savPay, 'Sparande'), seg('s-var', varSpend, 'Rörligt'), seg('s-left', Math.max(0, t.left), leftWord)),
     el('div', { class: 'lgds' }, legend('s-exp', 'Kostnader'), savPay ? legend('s-sav', 'Sparande') : null, varSpend ? legend('s-var', 'Rörligt') : null,
       t.left > 0 ? legend('s-left', leftWord) : null),
     // 2026-11-21: förra månadens kvar (faktiskt om den är stängd) – för att följa ekonomin över tid.
@@ -3218,7 +3277,7 @@ function renderMonth() {
     el('button', { type: 'button', class: 'link', text: label, on: { click: () => focusAdd(type) } }));
 
   const fromPay = t.savings - (t.pre || 0) - (t.extra || 0);   // sparande som dras från nettolönen
-  const costs = t.expense - (t.pre || 0) - (t.extra || 0);      // allt som lämnar lönekontot, sparande från lönen inräknat
+  const costs = t.costs;      // allt som lämnar lönekontot, sparande från lönen inräknat
   const pctSaved = t.income + (t.pre || 0) ? Math.round((t.savings / (t.income + (t.pre || 0))) * 100) : 0;
   const savedParts = [fromPay ? `${kr(fromPay)} från lönen` : null, t.pre ? `${kr(t.pre)} före lön` : null, t.extra ? `${kr(t.extra)} utöver` : null].filter(Boolean);
   // 2026-11-21: inkomster och kostnader i samma kort, två rader som fälls ut var för sig.
@@ -3280,7 +3339,7 @@ function renderSavingsCard(saving, t) {
     totalDiff ? el('p', { class: 'sv-diff ' + (totalDiff < 0 ? 'neg' : 'pos'), text: `${totalDiff > 0 ? '+' : '−'}${kr(Math.abs(totalDiff))} sedan ${monthShortLabel(prev).toLowerCase()}` }) : null,
     el('ul', { class: 'sv-accs' }, rowsOut.map((r) => {
       const foreign = r.a && r.a.currency !== home();
-      const sub = [r.monthly ? `+${kr(r.monthly)}/mån` : null, foreign && r.cur ? `(${money(r.cur.amount, r.a.currency)})` : null].filter(Boolean).join(' · ');
+      const sub = [r.monthly ? `+${kr(r.monthly)}/mån` : null, r.a?.pre && r.a.pre.from <= month ? `+${kr(r.a.pre.amount)}/mån före lön` : null, r.a?.deposits?.[month] ? `+${kr(r.a.deposits[month])} extra` : null, foreign && r.cur ? `(${money(r.cur.amount, r.a.currency)})` : null].filter(Boolean).join(' · ');
       return el('li', {}, el('button', { type: 'button', class: 'sv-row', 'aria-label': `${r.name}. Ändra`, on: { click: () => open(r) } },
         el('span', { class: 'sv-name' }, el('span', { text: r.name }), sub ? el('small', { text: sub }) : null),
         el('span', { class: 'sv-val' }, el('span', { text: r.a ? (r.cur ? ((r.cur.estimated || foreign) ? '≈ ' : '') + kr(r.now) : '–') : '' }),
@@ -3619,7 +3678,7 @@ $('add-dialog').addEventListener('click', (e) => {
   const kind = e.target.closest('button[data-add]')?.dataset.add;
   if (!kind) return;
   $('add-dialog').close();
-  setTimeout(() => (kind === 'oneoff' ? openRowDialog(null) : focusAdd(kind)), 0);
+  setTimeout(() => (kind === 'oneoff' ? openRowDialog(null) : kind === 'account' ? openAccPick() : focusAdd(kind)), 0);
 });
 $('rd-account').addEventListener('click', () => {
   const acc = dialogRow && data.accounts.find((a) => (a.feeds || []).includes(dialogRow.id));
@@ -3642,7 +3701,7 @@ $('rd-acc-pick').addEventListener('change', showAccBalance);
 // Sparande före lönen (2026-11-18): bara för avvikelser i kategorin Sparande.
 function showPre() {
   const r = dialogRow;
-  $('rd-pre-wrap').hidden = r && r.kind === 'rec' ? r.category !== SAVINGS_CAT : $('rd-type').value !== 'expense' || $('rd-cat').value !== SAVINGS_CAT;
+  $('rd-pre-wrap').hidden = !(r && r.src);   // v4: bara äldre poster som fortfarande har en källa – nytt sparande före lön ligger på kontot
 }
 $('rd-type').addEventListener('change', () => { fillCategorySelect($('rd-cat'), null, $('rd-type').value); showPre(); });
 $('rd-cat').addEventListener('change', showPre);
@@ -3906,6 +3965,9 @@ function openAccDialog(a) {
   // Sparmål (2026-11-21): valfritt – fälten visas först efter + Sparmål, eller när kontot redan har ett mål.
   const g = a.goal;
   $('ad-goal').hidden = !g; $('ad-goal-add').hidden = !!g;
+  $('ad-pre').value = a.pre ? krInput(a.pre.amount) : '';   // v4: före lön och insättning ligger på kontot
+  $('ad-dep').value = a.deposits?.[month] ? krInput(a.deposits[month]) : '';
+  $('ad-dep-label').textContent = `Insättning i ${monthShortLabel(month).toLowerCase()} (${unit()})`;
   $('ad-goal-amount').value = g ? krInput(g.amount) : '';
   { // appens månadsnamn (lönedag), 3 år framåt från vald månad
     const ms = Array.from({ length: 36 }, (_, i) => addMonths(month, i + 1));
@@ -3935,6 +3997,9 @@ $('ad-form').addEventListener('submit', (e) => {
   const gRaw = $('ad-goal-amount').value.trim(), gAmount = gRaw ? parseKr(gRaw) : null;
   if (gRaw && (gAmount == null || !isAmount(gAmount) || gAmount <= 0)) { $('ad-error').textContent = 'Skriv ett sparmål, t.ex. 15 000 – eller lämna fältet tomt.'; return; }
   const gMonth = $('ad-goal-month').value;
+  const num = (id) => { const v = $(id).value.trim(); return v ? parseKr(v) : 0; };
+  const preAmt = num('ad-pre'), depAmt = num('ad-dep');
+  if (preAmt == null || depAmt == null || preAmt < 0 || depAmt < 0) { $('ad-error').textContent = 'Skriv ett belopp, t.ex. 3 400 – eller lämna fältet tomt.'; return; }
   const name = cleanName($('ad-name').value, 30);
   if (!name) { $('ad-error').textContent = 'Skriv ett namn på kontot.'; return; }
   if (data.accounts.some((x) => x.id !== dialogAcc.id && x.name.toLowerCase() === name.toLowerCase())) { $('ad-error').textContent = `Det finns redan ett konto som heter ${name}.`; return; }
@@ -3943,12 +4008,15 @@ $('ad-form').addEventListener('submit', (e) => {
   const before = JSON.stringify(data);   // Ångra (2026-11-21)
   const feeds = [...$('ad-feeds').querySelectorAll('input:checked')].map((i) => i.value);
   const old = data.accounts.find((x) => x.id === dialogAcc.id);
-  if (!raw && !old?.feeds?.length && !feeds.length && !Object.keys(old?.balances || {}).length) { $('ad-error').textContent = 'Skriv ett saldo, t.ex. 45 000 eller 1250,50.'; return; }
+  if (!raw && !old?.feeds?.length && !feeds.length && !preAmt && !Object.keys(old?.balances || {}).length) { $('ad-error').textContent = 'Skriv ett saldo, t.ex. 45 000 eller 1250,50.'; return; }
   let a = old;
   if (!a) { a = { id: dialogAcc.id, name, currency: home(), balances: {}, feeds: [] }; data.accounts.push(a); }
   a.name = name;
   if (a) { if (raw) a.balances[month] = amount; a.currency = $('ad-currency').value; a.feeds = feeds; a.hidden = !$('ad-show').checked;
-    if (gAmount) a.goal = { amount: gAmount, ...(isMonth(gMonth) ? { month: gMonth } : {}) }; else delete a.goal; }
+    if (gAmount) a.goal = { amount: gAmount, ...(isMonth(gMonth) ? { month: gMonth } : {}) }; else delete a.goal;
+    if (preAmt) a.pre = { amount: preAmt, from: a.pre?.from && a.pre.from <= month ? a.pre.from : month }; else delete a.pre;
+    a.deposits = { ...(a.deposits || {}) }; if (depAmt) a.deposits[month] = depAmt; else delete a.deposits[month];
+    if (!Object.keys(a.deposits).length) delete a.deposits; }
   data = loadData(data);
   $('acc-dialog').close();
   save();
@@ -3983,6 +4051,17 @@ function newAccount() {
   openAccDialog({ id: 'a' + newId().slice(-10), name: '', currency: home(), balances: {}, feeds: [] });
 }
 $('acc-new').addEventListener('click', newAccount);
+
+// ＋ Lägg till → Före lön / insättning (2026-11-21): välj konto (eller skapa nytt), kontodialogen öppnas.
+function openAccPick() {
+  if (!data.accounts.length) { newAccount(); return; }
+  fill($('ap-list'), data.accounts.map((a) => el('li', {}, el('button', { type: 'button', class: 'acc-set-row',
+    on: { click: () => { $('accpick-dialog').close(); setTimeout(() => openAccDialog(a), 0); } } },
+    el('span', { text: a.name }), el('span', { class: 'muted', text: a.pre ? `${kr(a.pre.amount)}/mån före lön` : '' })))));
+  $('accpick-dialog').showModal();
+}
+$('ap-new').addEventListener('click', () => { $('accpick-dialog').close(); setTimeout(newAccount, 0); });
+$('ap-cancel').addEventListener('click', () => $('accpick-dialog').close());
 
 </script>
 <script>

@@ -65,6 +65,9 @@ function openAccDialog(a) {
   // Sparmål (2026-11-21): valfritt – fälten visas först efter + Sparmål, eller när kontot redan har ett mål.
   const g = a.goal;
   $('ad-goal').hidden = !g; $('ad-goal-add').hidden = !!g;
+  $('ad-pre').value = a.pre ? krInput(a.pre.amount) : '';   // v4: före lön och insättning ligger på kontot
+  $('ad-dep').value = a.deposits?.[month] ? krInput(a.deposits[month]) : '';
+  $('ad-dep-label').textContent = `Insättning i ${monthShortLabel(month).toLowerCase()} (${unit()})`;
   $('ad-goal-amount').value = g ? krInput(g.amount) : '';
   { // appens månadsnamn (lönedag), 3 år framåt från vald månad
     const ms = Array.from({ length: 36 }, (_, i) => addMonths(month, i + 1));
@@ -94,6 +97,9 @@ $('ad-form').addEventListener('submit', (e) => {
   const gRaw = $('ad-goal-amount').value.trim(), gAmount = gRaw ? parseKr(gRaw) : null;
   if (gRaw && (gAmount == null || !isAmount(gAmount) || gAmount <= 0)) { $('ad-error').textContent = 'Skriv ett sparmål, t.ex. 15 000 – eller lämna fältet tomt.'; return; }
   const gMonth = $('ad-goal-month').value;
+  const num = (id) => { const v = $(id).value.trim(); return v ? parseKr(v) : 0; };
+  const preAmt = num('ad-pre'), depAmt = num('ad-dep');
+  if (preAmt == null || depAmt == null || preAmt < 0 || depAmt < 0) { $('ad-error').textContent = 'Skriv ett belopp, t.ex. 3 400 – eller lämna fältet tomt.'; return; }
   const name = cleanName($('ad-name').value, 30);
   if (!name) { $('ad-error').textContent = 'Skriv ett namn på kontot.'; return; }
   if (data.accounts.some((x) => x.id !== dialogAcc.id && x.name.toLowerCase() === name.toLowerCase())) { $('ad-error').textContent = `Det finns redan ett konto som heter ${name}.`; return; }
@@ -102,12 +108,15 @@ $('ad-form').addEventListener('submit', (e) => {
   const before = JSON.stringify(data);   // Ångra (2026-11-21)
   const feeds = [...$('ad-feeds').querySelectorAll('input:checked')].map((i) => i.value);
   const old = data.accounts.find((x) => x.id === dialogAcc.id);
-  if (!raw && !old?.feeds?.length && !feeds.length && !Object.keys(old?.balances || {}).length) { $('ad-error').textContent = 'Skriv ett saldo, t.ex. 45 000 eller 1250,50.'; return; }
+  if (!raw && !old?.feeds?.length && !feeds.length && !preAmt && !Object.keys(old?.balances || {}).length) { $('ad-error').textContent = 'Skriv ett saldo, t.ex. 45 000 eller 1250,50.'; return; }
   let a = old;
   if (!a) { a = { id: dialogAcc.id, name, currency: home(), balances: {}, feeds: [] }; data.accounts.push(a); }
   a.name = name;
   if (a) { if (raw) a.balances[month] = amount; a.currency = $('ad-currency').value; a.feeds = feeds; a.hidden = !$('ad-show').checked;
-    if (gAmount) a.goal = { amount: gAmount, ...(isMonth(gMonth) ? { month: gMonth } : {}) }; else delete a.goal; }
+    if (gAmount) a.goal = { amount: gAmount, ...(isMonth(gMonth) ? { month: gMonth } : {}) }; else delete a.goal;
+    if (preAmt) a.pre = { amount: preAmt, from: a.pre?.from && a.pre.from <= month ? a.pre.from : month }; else delete a.pre;
+    a.deposits = { ...(a.deposits || {}) }; if (depAmt) a.deposits[month] = depAmt; else delete a.deposits[month];
+    if (!Object.keys(a.deposits).length) delete a.deposits; }
   data = loadData(data);
   $('acc-dialog').close();
   save();
@@ -142,3 +151,14 @@ function newAccount() {
   openAccDialog({ id: 'a' + newId().slice(-10), name: '', currency: home(), balances: {}, feeds: [] });
 }
 $('acc-new').addEventListener('click', newAccount);
+
+// ＋ Lägg till → Före lön / insättning (2026-11-21): välj konto (eller skapa nytt), kontodialogen öppnas.
+function openAccPick() {
+  if (!data.accounts.length) { newAccount(); return; }
+  fill($('ap-list'), data.accounts.map((a) => el('li', {}, el('button', { type: 'button', class: 'acc-set-row',
+    on: { click: () => { $('accpick-dialog').close(); setTimeout(() => openAccDialog(a), 0); } } },
+    el('span', { text: a.name }), el('span', { class: 'muted', text: a.pre ? `${kr(a.pre.amount)}/mån före lön` : '' })))));
+  $('accpick-dialog').showModal();
+}
+$('ap-new').addEventListener('click', () => { $('accpick-dialog').close(); setTimeout(newAccount, 0); });
+$('ap-cancel').addEventListener('click', () => $('accpick-dialog').close());

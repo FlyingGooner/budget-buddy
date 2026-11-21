@@ -8,7 +8,7 @@ Belopp är heltal i ören (minsta enheten) i hemvalutan, utom sparkontons saldon
 
 | Fält | Typ | Betydelse |
 |---|---|---|
-| `version` | heltal | Dataversion, nu `3` (`DATA_VERSION`). Äldre data går genom `migrate()`. |
+| `version` | heltal | Dataversion, nu `4` (`DATA_VERSION`). Äldre data går genom `migrate()`. |
 | `settings` | objekt | Se nedan. |
 | `recurring` | lista | Återkommande poster (max `MAX_RECURRING`). |
 | `oneOffs` | lista | Avvikelser – engångsposter en viss månad (max `MAX_ONEOFFS`). |
@@ -36,7 +36,7 @@ Belopp är heltal i ören (minsta enheten) i hemvalutan, utom sparkontons saldon
 
 - `every`: varannan, var tredje … månad räknat från `start`. Inkomster är alltid `1`.
 - `end`: sista månaden (eller `null`).
-- `src` (v3): bara för kostnader i kategorin Sparande – varifrån sparandet kommer. Saknas = från lönen (en vanlig kostnad, minskar Efter räkningar). `'pre'` = dras före nettolönen, `'extra'` = utöver lönen (t.ex. en gåva direkt till sparkontot). Båda räknas som sparat men minskar inte Efter räkningar. Äldre data med `pre: true` blir `src: 'pre'`.
+- `src` (v3): bara för kostnader i kategorin Sparande – varifrån sparandet kommer. Saknas = från lönen (en vanlig kostnad, minskar Efter räkningar). `'pre'` = dras före nettolönen, `'extra'` = utöver lönen (t.ex. en gåva direkt till sparkontot). Båda räknas som sparat men minskar inte Efter räkningar. Äldre data med `pre: true` blir `src: 'pre'`. Från v4 flyttas poster med `src` som är kopplade till ett sparkonto dit (`pre` resp. `deposits`) och tas bort som poster; nytt sparande före lön och insättningar fylls i på kontot.
 
 ## oneOffs
 
@@ -44,12 +44,14 @@ Belopp är heltal i ören (minsta enheten) i hemvalutan, utom sparkontons saldon
 
 ## accounts
 
-`{ id, name, currency, balances: { månad: belopp }, feeds: [postId], hidden, goal? }`
+`{ id, name, currency, balances: { månad: belopp }, feeds: [postId], hidden, goal?, pre?, deposits? }`
 
 - `balances`: ifyllda saldon. Saldot en senare månad beräknas som senaste ifyllda plus det som `feeds` sparar (omräknat från hemvalutan).
 - `feeds`: id på återkommande sparposter eller avvikelser (från version 2) som fyller på kontot.
 - `hidden`: visas inte i Månad men räknas i Totalt sparat.
 - `goal`: `{ amount, month? }` – sparmål i kontots valuta, ev. klart till en månad.
+- `pre` (v4): `{ amount, from }` – sätts in före lönen varje månad från och med `from`, i hemvalutan. Räknas som sparat, påverkar inte budgeten.
+- `deposits` (v4): `{ månad: belopp }` – insättningar utöver lönen (t.ex. en gåva), i hemvalutan. Räknas som sparat den månaden.
 - Namnen är unika (kontrolleras i dialogen, inte i `loadData`).
 
 ## trash

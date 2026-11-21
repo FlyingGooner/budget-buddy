@@ -691,3 +691,4 @@ dialog:focus { outline: none; }
 #income-card .ie-total span:last-child { font-weight: 700; color: var(--on-surface); }
 #income-card p.ie-sav.muted { display: block; font-size: .8125rem; margin: 4px 0 2px; }
 #income-card p.ie-sav.muted { color: var(--on-surface-variant); }
+.sv-name small { white-space: normal; overflow: visible; text-overflow: clip; }

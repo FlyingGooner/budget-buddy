@@ -67,13 +67,37 @@ const CATS_V = 2; // settings.catsV: one-time additions to older saved category 
 
 // Dataversion (2026-11-21): loadData() kör MIGRATIONS i ordning från den sparade versionen och sparar alltid den senaste.
 // Lägg en ny funktion här när fält byter betydelse; nya valfria fält behöver ingen (loadData fyller i standardvärden).
-const DATA_VERSION = 3;
+const DATA_VERSION = 4;
 const MIGRATIONS = {
   // 1 → 2: sparkonton kan fyllas på av engångssparande (feeds kan peka på avvikelser), papperskorgen minns kontokopplingar.
   // Inga gamla fält ändrar betydelse, så inget behöver skrivas om.
   2: (d) => d,
   // 2 → 3: pre: true blir src: 'pre' (görs i srcOf, som också läser gamla backuper).
   3: (d) => d,
+  // 3 → 4: sparande före lön och utöver lönen ligger på sparkontot (pre, deposits) i stället för som poster.
+  4: (d) => {
+    const accs = Array.isArray(d.accounts) ? d.accounts.filter(isObj) : [], drop = new Set();
+    const src = (r) => (r.src === 'pre' || r.pre === true ? 'pre' : r.src === 'extra' ? 'extra' : null);
+    for (const r of Array.isArray(d.recurring) ? d.recurring.filter(isObj) : []) {
+      const a = src(r) && accs.find((x) => Array.isArray(x.feeds) && x.feeds.includes(r.id));
+      if (!a) continue;
+      const adj = isObj(d.adjustments) ? Object.keys(d.adjustments).sort().map((m) => d.adjustments[m]?.[r.id]).filter((v) => isAmount(v) && v > 0) : [];
+      const amount = isAmount(r.amount) && r.amount > 0 ? r.amount : adj.length ? adj[adj.length - 1] : 0;   // ordinarie 0 + avvikelse: ta avvikelsen
+      if (src(r) === 'pre' && amount && isMonth(r.start)) a.pre = { amount: (a.pre?.amount || 0) + amount, from: r.start };
+      drop.add(r.id);
+    }
+    for (const o of Array.isArray(d.oneOffs) ? d.oneOffs.filter(isObj) : []) {
+      const a = src(o) && accs.find((x) => Array.isArray(x.feeds) && x.feeds.includes(o.id));
+      if (!a || !isMonth(o.month) || !isAmount(o.amount)) continue;
+      a.deposits = { ...(isObj(a.deposits) ? a.deposits : {}), [o.month]: ((isObj(a.deposits) && a.deposits[o.month]) || 0) + o.amount };
+      drop.add(o.id);
+    }
+    if (drop.size) {
+      d = { ...d, recurring: (d.recurring || []).filter((r) => !drop.has(r?.id)), oneOffs: (d.oneOffs || []).filter((o) => !drop.has(o?.id)) };
+      for (const a of accs) if (Array.isArray(a.feeds)) a.feeds = a.feeds.filter((x) => !drop.has(x));
+    }
+    return d;
+  },
 };
 function migrate(d) {
   let v = Number.isInteger(d.version) && d.version >= 1 ? d.version : 1;
@@ -228,7 +252,13 @@ function loadData(d) {
       // goal (2026-11-21, valfritt): { amount, month? } – sparmål i kontots valuta, ev. klart till en månad. Finns bara när det är satt.
       const goal = isObj(a.goal) && isAmount(a.goal.amount) && a.goal.amount > 0
         ? { amount: a.goal.amount, ...(isMonth(a.goal.month) ? { month: a.goal.month } : {}) } : null;
-      out.accounts.push({ id: a.id, name, currency, balances, feeds, hidden: a.hidden === true, ...(goal ? { goal } : {}) });   // hidden: visas inte i Månad
+      // pre (v4, 2026-11-21): { amount, from } – sätts in före lönen varje månad från och med from (i hemvalutan).
+      // deposits (v4): { månad: belopp } – insättningar utöver lönen, t.ex. en gåva (i hemvalutan).
+      const pre = isObj(a.pre) && isAmount(a.pre.amount) && a.pre.amount > 0 && isMonth(a.pre.from) ? { amount: a.pre.amount, from: a.pre.from } : null;
+      const deposits = {};
+      if (isObj(a.deposits)) for (const m of Object.keys(a.deposits).filter((m) => isMonth(m) && isAmount(a.deposits[m]) && a.deposits[m] > 0).sort().slice(-MAX_BALANCES)) deposits[m] = a.deposits[m];
+      out.accounts.push({ id: a.id, name, currency, balances, feeds, hidden: a.hidden === true, ...(goal ? { goal } : {}), ...(pre ? { pre } : {}),
+        ...(Object.keys(deposits).length ? { deposits } : {}) });   // hidden: visas inte i Månad
     }
   }
   // Papperskorg (v0.13): [{ d: removed date, rec | one | acc: the item, adj?: { month: amount } for rec }]. Each entry is
@@ -340,7 +370,7 @@ function packData(d) {
   if ((d.carry || []).length) out.carry = d.carry;
   if (d.accounts.length) out.accounts = d.accounts.map((a) => Object.assign({ id: a.id, name: a.name },
     a.currency !== 'SEK' ? { currency: a.currency } : {}, Object.keys(a.balances).length ? { balances: a.balances } : {},
-    a.feeds && a.feeds.length ? { feeds: a.feeds } : {}, a.hidden ? { hidden: true } : {}, a.goal ? { goal: a.goal } : {}));
+    a.feeds && a.feeds.length ? { feeds: a.feeds } : {}, a.hidden ? { hidden: true } : {}, a.goal ? { goal: a.goal } : {}, a.pre ? { pre: a.pre } : {}, a.deposits ? { deposits: a.deposits } : {}));
   return out;
 }
 
@@ -363,7 +393,7 @@ function unpackData(p) {
     adjustments: isObj(p.adjustments) ? p.adjustments : {},
     closed: isObj(p.closed) ? p.closed : {},
     carry: Array.isArray(p.carry) ? p.carry : [],
-    accounts: list(p.accounts).map((a) => ({ id: a.id, name: a.name, currency: a.currency ?? 'SEK', balances: isObj(a.balances) ? a.balances : {}, feeds: Array.isArray(a.feeds) ? a.feeds : [], hidden: a.hidden === true, goal: a.goal })),
+    accounts: list(p.accounts).map((a) => ({ id: a.id, name: a.name, currency: a.currency ?? 'SEK', balances: isObj(a.balances) ? a.balances : {}, feeds: Array.isArray(a.feeds) ? a.feeds : [], hidden: a.hidden === true, goal: a.goal, pre: a.pre, deposits: a.deposits })),
   };
 }
 
@@ -484,8 +514,18 @@ function totals(rows) {
 }
 
 // Månadens summor; är månaden stängd ersätts planerat kvar av det faktiska (planned = det planerade, closed = true).
+// Sparkontons insättningar en månad i hemvalutan (v4): före lön och utöver lönen. Lämnar aldrig lönekontot.
+function accountIn(d, m) {
+  let pre = 0, extra = 0;
+  for (const a of d.accounts || []) {
+    if (a.pre && a.pre.from <= m) pre += a.pre.amount;
+    if (a.deposits && a.deposits[m]) extra += a.deposits[m];
+  }
+  return { pre, extra };
+}
 function monthTotals(d, m) {
-  const t = totals(rowsForMonth(d, m));
+  const t0 = totals(rowsForMonth(d, m)), ai = accountIn(d, m);
+  const t = { ...t0, costs: t0.expense - t0.pre - t0.extra, savings: t0.savings + ai.pre + ai.extra, pre: t0.pre + ai.pre, extra: t0.extra + ai.extra };   // costs: allt som lämnar lönekontot
   return d.closed && Object.hasOwn(d.closed, m) ? { ...t, planned: t.left, left: d.closed[m], closed: true } : t;
 }
 
@@ -531,12 +571,14 @@ function estBalance(d, acc, m) {
   const cur = balanceAt(acc, m);
   if (!cur) return null;
   const feeds = acc.feeds || [];
-  if (!feeds.length || cur.month === m) return { ...cur, estimated: false };
+  if ((!feeds.length && !acc.pre && !acc.deposits) || cur.month === m) return { ...cur, estimated: false };
   // 2026-11-17: konto i annan valuta räknas också upp – sparandet (i hemvalutan) räknas om med kurserna.
   const homeCur = d.settings.home || 'SEK';
   let amount = cur.amount, n = 0;
   for (let x = addMonths(cur.month, 1); x <= m && n < 600; x = addMonths(x, 1), n++) {
     for (const r of rowsForMonth(d, x)) if (feeds.includes(r.id)) amount += convert(d, r.amount, homeCur, acc.currency);
+    if (acc.pre && acc.pre.from <= x) amount += convert(d, acc.pre.amount, homeCur, acc.currency);   // före lön (v4)
+    if (acc.deposits && acc.deposits[x]) amount += convert(d, acc.deposits[x], homeCur, acc.currency);   // insättning (v4)
   }
   return { month: m, amount, estimated: amount !== cur.amount, from: cur.month };
 }
@@ -548,7 +590,8 @@ function goalStatus(d, acc, m) {
   const pct = Math.max(0, Math.min(100, Math.floor((cur / goal) * 100)));
   if (left <= 0) return { goal, cur, pct: 100, reached: true };
   const homeCur = d.settings.home || 'SEK', feeds = acc.feeds || [];
-  const rate = rowsForMonth(d, m).filter((r) => feeds.includes(r.id)).reduce((x, r) => x + convert(d, r.amount, homeCur, acc.currency), 0);
+  const rate = rowsForMonth(d, m).filter((r) => feeds.includes(r.id)).reduce((x, r) => x + convert(d, r.amount, homeCur, acc.currency), 0)
+    + (acc.pre && acc.pre.from <= m ? convert(d, acc.pre.amount, homeCur, acc.currency) : 0);
   const eta = rate > 0 ? addMonths(m, Math.ceil(left / rate)) : null;
   const target = acc.goal.month || null;
   let n = 0;
