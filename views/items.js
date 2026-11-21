@@ -59,7 +59,7 @@ function focusAdd(type) {
   $('nd-title').textContent = NEW_TITLES[type];
   if (!$('new-dialog').open) $('new-dialog').showModal();
   const els = $(id).elements;
-  (els.name || els.category).focus();
+  $('new-dialog').focus();   // 2026-11-21: inget tangentbord direkt
 }
 $('nd-cancel').addEventListener('click', () => $('new-dialog').close());
 

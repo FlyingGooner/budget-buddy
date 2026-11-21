@@ -449,7 +449,7 @@ function openCarryDialog() {
   $('rd-type').dispatchEvent(new Event('change'));
   $('rd-cat').value = 'income-other';
   $('rd-sub').textContent = `Det som fanns kvar på kontot när ${monthLabel(month).toLowerCase()} började. Gäller bara den här månaden.`;
-  $('rd-amount').focus();
+  $('row-dialog').focus();
 }
 function openRowDialog(r) {
   dialogRow = r || null;
@@ -498,7 +498,7 @@ function openRowDialog(r) {
   }
   $('rd-error').textContent = '';
   $('row-dialog').showModal();
-  if (!r) $('rd-name').focus(); else $('row-dialog').focus();   // befintlig post: inget tangentbord direkt (2026-11-21)
+  $('row-dialog').focus();   // inget tangentbord direkt (2026-11-21)
 }
 
 // 2026-11-18: en knapp ＋ Lägg till; rutan frågar vad. Avvikelse öppnar radrutan, resten rutan Ny post.

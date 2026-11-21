@@ -1048,7 +1048,7 @@ dialog:focus { outline: none; }
 </main>
 
 <!-- Dialog: belopp för en månad / avvikelse -->
-<dialog id="new-dialog" aria-labelledby="nd-title">
+<dialog id="new-dialog" tabindex="-1" autofocus aria-labelledby="nd-title">
   <h2 id="nd-title">Ny post</h2>
   <form class="add-form" id="inc-form" data-type="income" novalidate>
         <label class="field"><span>Ny inkomst (per månad)</span><select name="category"></select></label>
@@ -1861,7 +1861,7 @@ I18N.add({
 </script>
 <script>
 // ---- version.js ----
-﻿self.APP_VERSION = '0.12.146';
+﻿self.APP_VERSION = '0.12.147';
 
 </script>
   <script>
@@ -3480,7 +3480,7 @@ function openCarryDialog() {
   $('rd-type').dispatchEvent(new Event('change'));
   $('rd-cat').value = 'income-other';
   $('rd-sub').textContent = `Det som fanns kvar på kontot när ${monthLabel(month).toLowerCase()} började. Gäller bara den här månaden.`;
-  $('rd-amount').focus();
+  $('row-dialog').focus();
 }
 function openRowDialog(r) {
   dialogRow = r || null;
@@ -3529,7 +3529,7 @@ function openRowDialog(r) {
   }
   $('rd-error').textContent = '';
   $('row-dialog').showModal();
-  if (!r) $('rd-name').focus(); else $('row-dialog').focus();   // befintlig post: inget tangentbord direkt (2026-11-21)
+  $('row-dialog').focus();   // inget tangentbord direkt (2026-11-21)
 }
 
 // 2026-11-18: en knapp ＋ Lägg till; rutan frågar vad. Avvikelse öppnar radrutan, resten rutan Ny post.
@@ -3831,7 +3831,7 @@ function openAccDialog(a) {
   $('ad-goal-month').value = g?.month || '';
   $('ad-error').textContent = '';
   $('acc-dialog').showModal();
-  if (isNew) $('ad-name').focus(); else $('acc-dialog').focus();   // 2026-11-21: inget tangentbord när man öppnar ett befintligt konto
+  $('acc-dialog').focus();   // 2026-11-21: inget tangentbord direkt
 }
 function setAccCurrencyLabel() {
   const c = $('ad-currency').value;
@@ -3955,7 +3955,7 @@ function focusAdd(type) {
   $('nd-title').textContent = NEW_TITLES[type];
   if (!$('new-dialog').open) $('new-dialog').showModal();
   const els = $(id).elements;
-  (els.name || els.category).focus();
+  $('new-dialog').focus();   // 2026-11-21: inget tangentbord direkt
 }
 $('nd-cancel').addEventListener('click', () => $('new-dialog').close());
 
