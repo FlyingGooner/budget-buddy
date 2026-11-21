@@ -650,3 +650,10 @@ body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; 
 #close-dialog .actions #cd-cancel { justify-self: end; }
 #close-dialog .actions button[type=submit] { grid-column: 1 / -1; order: 3; width: 100%; min-height: 48px; }
 #close-dialog #cd-error:empty { display: none; }
+/* Kontodialogen: samma knapplayout som Stäng månad (2026-11-21) */
+#acc-dialog .actions { display: grid; grid-template-columns: 1fr 1fr; gap: 4px 8px; margin-top: 16px; }
+#acc-dialog .actions .spacer { display: none; }
+#acc-dialog .actions #ad-delete { justify-self: start; }
+#acc-dialog .actions #ad-cancel { justify-self: end; }
+#acc-dialog .actions button[type=submit] { grid-column: 1 / -1; order: 3; width: 100%; min-height: 48px; }
+#acc-dialog #ad-error:empty { display: none; }
