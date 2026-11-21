@@ -8,13 +8,13 @@ Samma text finns i appen under **Inställningar → Allmänt → Hjälp och manu
 - Får du lön en annan dag än den 1:a: välj **Lönedag** under Inställningar → Hushåll.
 
 ## Månad
-- **Kvar** överst är det som blir över efter kostnader och sparande. Under det jämförelsen med förra månaden, och stapeln visar vart inkomsten går. Beloppen finns i korten nedanför.
+- **Efter räkningar** överst är det som blir över efter kostnader och sparande – pengarna att leva på (mat, nöjen och annat rörligt). När månaden är stängd står **Kvar på kontot** i stället: det som faktiskt fanns kvar. Under det jämförelsen med förra månaden, och stapeln visar vart inkomsten går. Beloppen finns i korten nedanför.
 - **Inkomster** och **Kostnader** är hopfällda – tryck för att se dem. Kostnaderna är grupperade per kategori, och de tre största syns direkt.
 - Tryck på en rad för att ändra beloppet bara den här månaden, hoppa över den eller **Ändra posten** (namn, belopp, kategori, period). **+ Lägg till i Boende** lägger till en kostnad med samma kategori, person och hur ofta.
 - Byt månad med **◀ ▶** eller svep. Tryck på **Månad** i menyn för att komma tillbaka till aktuell månad.
 - **☰ Alla poster** bredvid Lägg till visar alla återkommande poster, även avslutade och kommande. Posterna står med störst belopp först, både där och i Månad. Tryck på en för att ändra den.
-- Under knapparna står hur många dagar det är kvar till nästa lön (innevarande månad) och vilken kategori som ändrats mest mot förra månaden. I kortet Kvar står också vad som blev kvar förra månaden – det faktiska beloppet om den månaden är stängd.
-- **Prognos** står på samma rad som förra månadens kvar, när minst en tidigare månad är stängd: planerat kvar minus de rörliga utgifterna (snittet av de tre senaste stängda månaderna). Är samma månad förra året stängd räknas den med i procent – är december 65 % dyrare än vanligt, räknas det in. Tryck på prognosen för förklaringen.
+- Under knapparna står hur många dagar det är kvar till nästa lön (innevarande månad) och vilken kategori som ändrats mest mot förra månaden. I kortet står också förra månaden: kvar på kontot om den är stängd, annars efter räkningar.
+- **Kvar vid stängning** (prognos) står på samma rad, när minst en tidigare månad är stängd: efter räkningar minus de rörliga utgifterna (snittet av de tre senaste stängda månaderna). Är samma månad förra året stängd räknas den med i procent – är december 65 % dyrare än vanligt, räknas det in. Tryck på prognosen för förklaringen.
 - **Kommande 12 månader** (Översikt): planerat kvar för varje månad framåt och, när någon månad är stängd, prognosen bredvid. Med startsaldo visas också saldot om ett år. Tryck på en månad för att öppna den.
 - **Sparmål** (valfritt): öppna ett sparkonto och tryck **+ Sparmål**. Skriv ett belopp och, om du vill, en månad det ska vara klart. Under kontot visas hur långt du har kommit, när du når målet i nuvarande takt och – med datum – vad som behövs per månad för att hinna. Töm fältet för att ta bort målet.
 - Tryck på en post för att ändra den. Beloppet överst gäller bara månaden du tittar på. Under **Ändra posten (alla månader)** ändrar du namn, ordinarie belopp, hur ofta, kategori och period. **Ta bort posten** lägger den i papperskorgen.
@@ -30,10 +30,10 @@ Samma text finns i appen under **Inställningar → Allmänt → Hjälp och manu
 - Summan och en graf över alla konton finns under **Översikt → Sparkonton**.
 
 ## Stäng månaden
-- Det som står under Kvar är planerat. Mat, nöjen och oväntade utgifter syns inte där.
-- Under Kvar står när det är dags att stänga (t.ex. *Stäng månaden tis 24 nov · om 6 dagar*). Tre dagar innan blir raden färgad, och när dagen har kommit står det **Dags att stänga månaden**.
-- Dagen före lön trycker du **✓ Stäng månaden** under Kvar och skriver in vad som faktiskt fanns kvar på kontot. I samma ruta stämmer du av sparkontona (förifyllda – ändra bara det som skiljer).
-- Kvar visar då det faktiska beloppet, och skillnaden visas som **Rörligt** i stapeln. Nästa månad blir den aktuella direkt.
+- Efter räkningar är planerat. Mat, nöjen och oväntade utgifter syns inte där.
+- Under beloppet står när det är dags att stänga (t.ex. *Stäng månaden tis 24 nov · om 6 dagar*). Tre dagar innan blir raden färgad, och när dagen har kommit står det **Dags att stänga månaden**.
+- Dagen före lön trycker du **✓ Stäng månaden** under beloppet och skriver in vad som faktiskt fanns kvar på kontot. I samma ruta stämmer du av sparkontona (förifyllda – ändra bara det som skiljer).
+- Rubriken blir då **Kvar på kontot** med det faktiska beloppet, och skillnaden visas som **Rörligt** i stapeln. Nästa månad blir den aktuella direkt.
 - Har du börjat stänga månader visas överst i Månad de som inte är stängda (**Inte stängd: Okt**) – tryck för att gå dit. **Ändra** rättar beloppet, **Öppna igen** tar bort stängningen.
 
 ## Lönedag

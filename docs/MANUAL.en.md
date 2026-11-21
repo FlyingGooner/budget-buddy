@@ -8,13 +8,13 @@ The same text is in the app under **Settings → General → Help and manual**. 
 - Paid on another day than the 1st? Choose **Payday** under Settings → Household.
 
 ## Month
-- **Left** at the top is what remains after costs and savings. Below it the comparison with last month, and the bar shows where the income goes. The amounts are in the cards below.
+- **After bills** at the top is what remains after costs and savings – the money to live on (food, fun and other variable spending). When the month is closed it says **Left in the account** instead: what was actually left. Below it the comparison with last month, and the bar shows where the income goes. The amounts are in the cards below.
 - **Income** and **Expenses** are folded – tap to see them. Expenses are grouped by category, and the three largest are shown right away.
 - Tap a row to change the amount for this month only, skip it or **Edit item** (name, amount, category, period). **+ Add to Housing** adds a cost with the same category, person and frequency.
 - Change month with **◀ ▶** or swipe. Tap **Month** in the menu to return to the current month.
 - **☰ All items** next to Add shows all recurring items, including ended and upcoming ones. Items are listed largest amount first, there and in Month. Tap one to change it.
-- Below the buttons you see how many days are left until the next payday (current month) and which category changed the most since last month. The Left card also shows what was left last month – the actual amount if that month is closed.
-- **Forecast** is on the same line as last month's left, once at least one earlier month is closed: planned left minus variable spending (average of the three latest closed months). If the same month last year is closed it is included as a percentage – if December was 65 % more expensive than usual, that is included. Tap the forecast for the explanation.
+- Below the buttons you see how many days are left until the next payday (current month) and which category changed the most since last month. The card also shows last month: left in the account if it is closed, otherwise after bills.
+- **Left at close** (forecast) is on the same line, once at least one earlier month is closed: after bills minus variable spending (average of the three latest closed months). If the same month last year is closed it is included as a percentage – if December was 65 % more expensive than usual, that is included. Tap the forecast for the explanation.
 - **Next 12 months** (Overview): planned left for each month ahead and, once a month is closed, the forecast next to it. With a starting balance you also see the balance in a year. Tap a month to open it.
 - **Savings goal** (optional): open a savings account and tap **+ Savings goal**. Enter an amount and, if you like, a month it should be done by. Below the account you see how far you have come, when you reach the goal at the current pace and – with a date – what is needed per month to make it. Empty the field to remove the goal.
 - Tap an item to change it. The amount at the top applies only to the month you are viewing. Under **Edit the item (all months)** you change name, regular amount, how often, category and period. **Delete the item** moves it to the trash.
@@ -30,10 +30,10 @@ The same text is in the app under **Settings → General → Help and manual**. 
 - The total and a chart of all accounts are under **Overview → Savings accounts**.
 
 ## Close the month
-- What is shown under Left is planned. Food, fun and unexpected spending do not show there.
+- After bills is planned. Food, fun and unexpected spending do not show there.
 - Below Left it says when it is time to close (e.g. *Close the month Tue 24 Nov · in 6 days*). Three days before, the line gets a colour, and when the day has come it says **Time to close the month**.
-- The day before payday, tap **✓ Close the month** under Left and enter what was actually left in the account. In the same dialog you reconcile the savings accounts (prefilled – only change what differs).
-- Left then shows the actual amount, and the difference is shown as **Variable** in the bar. The next month becomes the current one right away.
+- The day before payday, tap **✓ Close the month** under the amount and enter what was actually left in the account. In the same dialog you reconcile the savings accounts (prefilled – only change what differs).
+- The heading then becomes **Left in the account** with the actual amount, and the difference is shown as **Variable** in the bar. The next month becomes the current one right away.
 - Once you have started closing months, months that are not closed are shown at the top of Month (**Not closed: Oct**) – tap to go there. **Edit** corrects the amount, **Reopen** removes the closing.
 
 ## Payday

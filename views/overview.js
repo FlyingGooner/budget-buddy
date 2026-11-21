@@ -30,13 +30,13 @@ function aheadCard() {
   return el('div', { class: 'card' },
     el('h2', { text: 'Kommande 12 månader' }),
     el('table', { class: 'ahead' },
-      el('thead', {}, el('tr', {}, el('th', { scope: 'col', text: 'Månad' }), el('th', { scope: 'col', text: 'Planerat' }),
-        hasFc ? el('th', { scope: 'col', text: 'Prognos' }) : null)),
+      el('thead', {}, el('tr', {}, el('th', { scope: 'col', text: 'Månad' }), el('th', { scope: 'col', text: 'Efter räkningar' }),
+        hasFc ? el('th', { scope: 'col', text: 'Kvar (prognos)' }) : null)),
       el('tbody', {}, rows.map((r) => el('tr', { on: { click: () => { showTab('month'); setMonth(r.m); } } },
         el('td', { text: monthShortYear(r.m) }), cell(r.plan),
         hasFc ? (r.fc ? cell(r.fc.left, 'fc') : el('td', { class: 'fc', text: '–' })) : null))),
       el('tfoot', {}, el('tr', {}, el('td', { text: 'Summa' }), cell(sum('plan')), hasFc ? cell(sum('fc'), 'fc') : null),
         bal == null ? null : el('tr', {}, el('td', { text: 'Saldo om ett år' }), el('td', { text: kr(endBal('plan')) }),
           hasFc ? el('td', { class: 'fc', text: '≈ ' + kr(endBal('fc')) }) : null))),
-    hasFc ? el('p', { class: 'muted small', text: 'Prognos = planerat kvar minus rörliga utgifter (snittet av de senaste stängda månaderna, med säsong).' }) : null);
+    hasFc ? el('p', { class: 'muted small', text: 'Kvar (prognos) = efter räkningar minus rörliga utgifter (snittet av de senaste stängda månaderna, med säsong).' }) : null);
 }

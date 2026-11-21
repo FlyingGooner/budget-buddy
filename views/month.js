@@ -83,25 +83,29 @@ function renderMonth() {
   const prevT = monthTotals(data, addMonths(month, -1));
   const varSpend = t.closed ? Math.max(0, t.planned - t.left) : 0;   // rörliga utgifter = planerat − faktiskt
   const fc = forecast(data, month);
-  const delta = t.left - prevT.left, hasPrev = prevT.income || prevT.expense;
+  // 2026-11-21: jämför lika med lika – kvar på kontot bara när båda månaderna är stängda, annars efter räkningar.
+  const both = t.closed && prevT.closed, plan = (x) => (x.closed ? x.planned : x.left);
+  const delta = (both ? t.left - prevT.left : plan(t) - plan(prevT)), hasPrev = prevT.income || prevT.expense;
   const base = Math.max(t.income, t.expense + varSpend, 1);
   const seg = (cls, v, label) => { const x = el('span', { class: 'seg ' + cls, title: label }); x.style.width = Math.max(0, (v / base) * 100) + '%'; return x; };
+  // 2026-11-21: öppen månad = vad som finns efter räkningar och sparande; stängd = det som faktiskt fanns kvar på kontot.
+  const leftWord = t.closed ? 'Kvar på kontot' : 'Efter räkningar';
   const legend = (cls, label) => el('span', { class: 'lgd' }, el('span', { class: 'dot ' + cls }), label);
-  fill($('summary'), fold('kvar', [el('h2', { text: 'Kvar' }),
+  fill($('summary'), fold('kvar', [el('h2', { text: leftWord }),
     el('p', { class: 'big ' + (t.left < 0 ? 'neg' : 'pos'), text: kr(t.left, true) }),
     closeLine(t),
     // 2026-11-18: beloppen står i korten nedan – här bara jämförelsen, stapeln och färgernas namn.
     hasPrev && delta ? el('p', { class: 'delta ' + (delta < 0 ? 'neg' : 'pos'), text: `${delta > 0 ? '▲' : '▼'} ${kr(Math.abs(delta))} mot ${monthShortLabel(addMonths(month, -1)).toLowerCase()}` }) : null,
-    el('div', { class: 'segbar', role: 'img', 'aria-label': `Av inkomsten: kostnader ${kr(t.expense - t.savings)}, sparande ${kr(t.savings)}, kvar ${kr(Math.max(0, t.left))}` },
-      seg('s-exp', t.expense - t.savings, 'Kostnader'), seg('s-sav', t.savings, 'Sparande'), seg('s-var', varSpend, 'Rörligt'), seg('s-left', Math.max(0, t.left), 'Kvar')),
+    el('div', { class: 'segbar', role: 'img', 'aria-label': `Av inkomsten: kostnader ${kr(t.expense - t.savings)}, sparande ${kr(t.savings)}, ${leftWord.toLowerCase()} ${kr(Math.max(0, t.left))}` },
+      seg('s-exp', t.expense - t.savings, 'Kostnader'), seg('s-sav', t.savings, 'Sparande'), seg('s-var', varSpend, 'Rörligt'), seg('s-left', Math.max(0, t.left), leftWord)),
     el('div', { class: 'lgds' }, legend('s-exp', 'Kostnader'), t.savings ? legend('s-sav', 'Sparande') : null, varSpend ? legend('s-var', 'Rörligt') : null,
-      t.left > 0 ? legend('s-left', 'Kvar') : null),
+      t.left > 0 ? legend('s-left', leftWord) : null),
     // 2026-11-21: förra månadens kvar (faktiskt om den är stängd) – för att följa ekonomin över tid.
     // 2026-11-21: prognos på samma rad; tryck för förklaringen.
     hasPrev || fc ? el('p', { class: 'muted small' },
-      hasPrev ? el('span', { text: `Kvar i ${monthShortLabel(addMonths(month, -1)).toLowerCase()}${prevT.closed ? ' (faktiskt)' : ''}: ${kr(prevT.left, true)}` }) : null,
+      hasPrev ? el('span', { text: `${prevT.closed ? 'Kvar på kontot' : 'Efter räkningar'} i ${monthShortLabel(addMonths(month, -1)).toLowerCase()}: ${kr(prevT.left, true)}` }) : null,
       hasPrev && fc ? ' · ' : null,
-      fc ? el('button', { type: 'button', class: 'link', 'aria-expanded': String(fcOpen), text: `Prognos: ≈ ${kr(fc.left, true)}`,
+      fc ? el('button', { type: 'button', class: 'link', 'aria-expanded': String(fcOpen), text: `Kvar vid stängning: ≈ ${kr(fc.left, true)}`,
         on: { click: (e) => { e.preventDefault(); e.stopPropagation(); fcOpen = !fcOpen; renderMonth(); } } }) : null) : null,
     fc && fcOpen ? el('p', { class: 'muted small', text: fcText(fc) }) : null,
     bal == null ? null : el('p', { class: 'muted small', text: `Saldo efter månaden: ${kr(bal)}` })],
@@ -182,7 +186,7 @@ function goalLine(a) {
 // Stäng månaden (2026-11-17): skriv in vad som faktiskt var kvar dagen före nästa lön. Ersätter planerat kvar i Historik och saldo.
 function closeLine(t) {
   const stop = (fn) => (e) => { e.preventDefault(); e.stopPropagation(); fn(); };   // knappen ligger i rubriken (summary)
-  if (t.closed) return el('p', { class: 'close-line' }, el('span', { text: `✓ Stängd · planerat ${kr(t.planned, true)}` }),
+  if (t.closed) return el('p', { class: 'close-line' }, el('span', { text: `✓ Stängd · efter räkningar ${kr(t.planned, true)}` }),
     el('button', { type: 'button', class: 'link', text: 'Ändra', on: { click: stop(openCloseDialog) } }));
   if (month > activeMonth()) return null;
   // 2026-11-18: när ska månaden stängas? Lugn text långt innan, färg 3 dagar innan, tydlig påminnelse när dagen har kommit.
@@ -574,5 +578,5 @@ let fcOpen = false;
 function fcText(fc) {
   const pct = Math.round((fc.factor - 1) * 100), name = monthShortLabel(month);   // stor bokstav, står först i meningen
   const season = pct > 0 ? ` ${name} brukar kosta ${pct} % mer.` : pct < 0 ? ` ${name} brukar kosta ${-pct} % mindre.` : '';
-  return `Planerat kvar minus rörliga utgifter ≈ ${kr(fc.variable)} (snitt för de senaste stängda månaderna).${season}`;
+  return `Efter räkningar minus rörliga utgifter ≈ ${kr(fc.variable)} (snitt för de senaste stängda månaderna).${season}`;
 }
