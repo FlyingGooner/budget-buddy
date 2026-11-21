@@ -298,16 +298,10 @@ function openCloseDialog() {
       // 2026-11-21: visa resultatet – vad kontot blir nästa månad med sparandet – och uppdatera medan man skriver.
       const nm = addMonths(month, 1), onN = (x) => x && x.from <= nm && (!x.end || x.end >= nm);
       const nextAdd = (onN(a.pay) ? convert(data, a.pay.amount, home(), a.currency) : 0) + (onN(a.pre) ? convert(data, a.pre.amount, home(), a.currency) : 0);
-      const what = onN(a.pay) && onN(a.pre) ? 'sparande' : onN(a.pay) ? 'från lönen' : 'före lön';
-      const next = el('p', { class: 'cd-next' });
-      const showNext = () => {
-        const v = parseKr(inp.value.trim()), r = (x) => Math.round(x / 100) * 100;   // hela enheter
-        next.textContent = !nextAdd ? '' : v == null ? `${monthShortLabel(nm)}: värdet + ${money(r(nextAdd), a.currency)}`
-          : `${monthShortLabel(nm)}: ≈ ${money(r(v + nextAdd), a.currency)} (${money(v, a.currency)} + ${money(r(nextAdd), a.currency)} ${what})`;
-      };
-      inp.addEventListener('input', showNext); showNext();
+      // 2026-11-21: summan som läggs till nästa månad står direkt under rutan, t.ex. "+2 000 kr".
+      const plus = nextAdd ? el('small', { class: 'cd-plus', text: `+${money(Math.round(nextAdd / 100) * 100, a.currency)}` }) : null;
       return el('li', {}, el('label', { class: 'cd-acc' }, el('span', { class: 'cd-acc-name' }, el('span', { text: a.name }), el('small', { class: 'muted', text: note })),
-        el('span', { class: 'cd-acc-in' }, inp, el('small', { class: 'muted', text: unit(a.currency) }))), next);
+        el('span', { class: 'cd-acc-in' }, el('span', { class: 'cd-in-col' }, inp, plus), el('small', { class: 'muted', text: unit(a.currency) }))));
     }))] : null);
   $('cd-error').textContent = '';
   $('close-dialog').showModal();

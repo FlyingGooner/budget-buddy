@@ -710,3 +710,6 @@ dialog:focus { outline: none; }
 #ap-list .acc-set-row { display: flex; justify-content: space-between; align-items: center; width: 100%; min-height: 48px; border: 0; background: none; color: inherit; font: inherit; text-align: left; cursor: pointer; padding: 0; }
 .cd-next { margin: 0 0 8px; font-size: .8125rem; color: var(--primary); }
 .cd-next:empty { display: none; }
+.cd-in-col { display: flex; flex-direction: column; align-items: flex-end; }
+.cd-plus { margin-top: 2px; font-size: .8125rem; font-weight: 600; color: var(--primary); }
+#close-dialog .cd-acc-in { align-items: flex-start; } #close-dialog .cd-acc-in > small { line-height: 40px; }
