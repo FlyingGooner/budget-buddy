@@ -55,6 +55,7 @@ function renderMonth() {
   const blank = !rows.length;
   $('income-card').hidden = $('expense-card').hidden = blank;
   $('savings-card').hidden = blank || (!saving.length && !data.accounts.length);
+  monthHints(blank ? [] : rows);
   if (blank) {
     const any = data.recurring.length || data.oneOffs.length;
     const step = (n, text) => el('li', {}, el('span', { class: 'step-n', text: n }), el('span', { text }));
@@ -180,7 +181,31 @@ function closeIso() {   // dagen före nästa lön (eller sista dagen i månaden
   const wk = (x) => { while (x.getDay() === 0 || x.getDay() === 6) x.setDate(x.getDate() - 1); return x; };
   const pay = wk(new Date(y, mo - 1, p > 1 ? p : 1)), d = new Date(pay);
   d.setDate(d.getDate() - 1); wk(d);
-  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+  return closeIso.pay ? isoOf(pay) : isoOf(d);
+}
+const isoOf = (d) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+function payIso() { closeIso.pay = true; try { return closeIso(); } finally { closeIso.pay = false; } }
+
+// 2026-11-21: två korta rader under knapparna – dagar till nästa lön (innevarande månad) och största kostnadsförändringen mot förra månaden.
+function monthHints(rows) {
+  const box = $('month-hints'), out = [];
+  if (month === activeMonth()) {
+    const days = Math.round((new Date(payIso() + 'T12:00') - new Date(isoToday() + 'T12:00')) / 864e5);
+    if (days >= 0) out.push(days === 0 ? 'Lön i dag' : days === 1 ? 'Nästa lön i morgon' : `Nästa lön om ${days} dagar`);
+  }
+  const byCat = (rs) => { const m = {}; for (const r of rs) if (r.type === 'expense' && r.category !== SAVINGS_CAT) m[r.category] = (m[r.category] || 0) + r.amount; return m; };
+  const prevRows = rowsForMonth(data, addMonths(month, -1));
+  if (prevRows.length) {
+    const a = byCat(rows), b = byCat(prevRows);
+    let best = null;
+    for (const c of new Set([...Object.keys(a), ...Object.keys(b)])) {
+      const d = (a[c] || 0) - (b[c] || 0);
+      if (d && (!best || Math.abs(d) > Math.abs(best.d))) best = { c, d };
+    }
+    if (best) out.push(`Största förändring: ${catName(best.c)} ${kr(best.d, true)} mot ${monthShortLabel(addMonths(month, -1)).toLowerCase()}`);
+  }
+  box.hidden = !out.length;
+  box.replaceChildren(...out.map((t) => el('p', { class: 'muted small', text: t })));
 }
 function openCloseDialog() {
   const t = monthTotals(data, month);

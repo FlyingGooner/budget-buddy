@@ -613,6 +613,10 @@ body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; 
 .cd-acc-in small { min-width: 2em; font-size: .75rem; }
 .cd-feed { margin: -2px 0 6px; color: var(--primary); font-size: .75rem; }
 
+/* 2026-11-21: rader under Lägg till / Alla poster */
+.month-hints { text-align: center; margin-top: 4px; }
+.month-hints p { margin: 4px 0; }
+
 </style>
 </head>
 <body>
@@ -643,6 +647,7 @@ body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; 
         <button type="button" class="btn filled add-any" id="add-any">＋ Lägg till</button>
         <button type="button" class="btn tonal add-all" id="all-items">☰ Alla poster</button>
       </div>
+      <div class="month-hints" id="month-hints" hidden></div>
     </div>
   </section>
 
@@ -806,6 +811,7 @@ body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; 
           <p>Tryck på en rad för att ändra beloppet bara den här månaden, hoppa över den eller Ändra posten (namn, belopp, kategori, period). + Lägg till i Boende lägger till en kostnad med samma kategori, person och hur ofta.</p>
           <p>Byt månad med ◀ ▶ eller svep. Tryck på Månad i menyn för att komma tillbaka till aktuell månad.</p>
           <p>☰ Alla poster bredvid Lägg till visar alla återkommande poster, även avslutade och kommande. Posterna står med störst belopp först, både där och i Månad. Tryck på en för att ändra den.</p>
+          <p>Under knapparna står hur många dagar det är kvar till nästa lön (innevarande månad) och vilken kategori som ändrats mest mot förra månaden. I kortet Kvar står också vad som blev kvar förra månaden – det faktiska beloppet om den månaden är stängd.</p>
           <p>Tryck på en post för att ändra den. Beloppet överst gäller bara månaden du tittar på. Under Ändra posten (alla månader) ändrar du namn, ordinarie belopp, hur ofta, kategori och period. Ta bort posten lägger den i papperskorgen.</p>
           <p>Vill du avsluta en post, fyll i Till månad. Poster som har slutat eller inte börjat syns i de månader de gäller.</p>
         </details>
@@ -885,6 +891,7 @@ body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; 
           <p>Tap a row to change the amount for this month only, skip it or Edit item (name, amount, category, period). + Add to Housing adds a cost with the same category, person and frequency.</p>
           <p>Change month with ◀ ▶ or swipe. Tap Month in the menu to return to the current month.</p>
           <p>☰ All items next to Add shows all recurring items, including ended and upcoming ones. Items are listed largest amount first, there and in Month. Tap one to change it.</p>
+          <p>Below the buttons you see how many days are left until the next payday (current month) and which category changed the most since last month. The Left card also shows what was left last month – the actual amount if that month is closed.</p>
           <p>Tap an item to change it. The amount at the top applies only to the month you are viewing. Under Edit the item (all months) you change name, regular amount, how often, category and period. Delete the item moves it to the trash.</p>
           <p>To end an item, fill in To month. Items that have ended or not started show in the months they apply to.</p>
         </details>
@@ -1609,7 +1616,7 @@ I18N.add({
   'Kvar av inkomst': 'Left of income', '🐷 Sparkvot (sparande av inkomst)': '🐷 Savings rate (savings of income)', 'Största kostnad': 'Largest expense',
   '🐷 Sparat 12 mån': '🐷 Saved 12 mo', '🐷 Sparat den här månaden': '🐷 Saved this month', 'Gå till kostnader': 'Go to expenses', 'In och ut, 12 månader': 'In and out, 12 months',
   'Inga poster än – lägg till inkomster och kostnader så syns trenden här.': 'No items yet – add income and expenses and the trend shows here.',
-  'Avsluta markering': 'End selection', 'In': 'In', 'Ut': 'Out', 'Inkomster': 'Income', '(netto)': '(net)', 'Kostnader': 'Expenses', 'Kostnader per kategori': 'Expenses by category', 'Kvar': 'Left',
+  'Avsluta markering': 'End selection', 'In': 'In', 'Ut': 'Out', 'Inkomster': 'Income', '(netto)': '(net)', 'Kostnader': 'Expenses', 'Kostnader per kategori': 'Expenses by category', 'Kvar': 'Left', 'Lön i dag': 'Payday today', 'Nästa lön i morgon': 'Next payday tomorrow',
   'Markerade poster': 'Selected items', 'Nyckeltal': 'Key figures', 'Personens poster blir gemensamma': "The person's items become shared", 'standard': 'default',
   'Totalt sparsaldo': 'Total savings', 'Saldo': 'Balance', 'Namn': 'Name', 'Period': 'Period', 'Från': 'From', 'Till': 'To', 'Avsluta': 'End', 'Avslutade': 'Ended', 'Aktiva': 'Active',
   'Kronor (SEK)': 'Swedish kronor (SEK)', 'Euro (EUR)': 'Euro (EUR)', 'Dollar (USD)': 'US dollar (USD)', 'Pund (GBP)': 'British pound (GBP)', 'Norska kronor (NOK)': 'Norwegian kroner (NOK)', 'Danska kronor (DKK)': 'Danish kroner (DKK)',
@@ -1714,6 +1721,8 @@ I18N.add({
   [/^(\d+) procent av inkomsterna går till kostnader$/, '$1 percent of the income goes to expenses'],
   [/^Saldo efter månaden: (.+)$/, 'Balance after the month: $1'],
   [/^Kvar i (\S+) \(faktiskt\): (.+)$/, (g, tr) => `Left in ${tr(g[1])} (actual): ${g[2]}`],
+  [/^Nästa lön om (\d+) dagar$/, 'Next payday in $1 days'],
+  [/^Största förändring: (.+?) ([+−-].+) mot (\S+)$/, (g, tr) => `Biggest change: ${tr(g[1])} ${g[2]} vs ${tr(g[3])}`],
   [/^Kvar i (\S+): (.+)$/, (g, tr) => `Left in ${tr(g[1])}: ${g[2]}`],
   [/^Gäller bara (.+)\.$/, 'Applies only to $1.'],
   [/^Belopp för (.+)\. Ordinarie (.+)\.$/, 'Amount for $1. Usual $2.'],
@@ -1744,7 +1753,7 @@ I18N.add({
 </script>
 <script>
 // ---- version.js ----
-﻿self.APP_VERSION = '0.12.117';
+﻿self.APP_VERSION = '0.12.118';
 
 </script>
   <script>
@@ -2914,6 +2923,7 @@ function renderMonth() {
   const blank = !rows.length;
   $('income-card').hidden = $('expense-card').hidden = blank;
   $('savings-card').hidden = blank || (!saving.length && !data.accounts.length);
+  monthHints(blank ? [] : rows);
   if (blank) {
     const any = data.recurring.length || data.oneOffs.length;
     const step = (n, text) => el('li', {}, el('span', { class: 'step-n', text: n }), el('span', { text }));
@@ -3039,7 +3049,31 @@ function closeIso() {   // dagen före nästa lön (eller sista dagen i månaden
   const wk = (x) => { while (x.getDay() === 0 || x.getDay() === 6) x.setDate(x.getDate() - 1); return x; };
   const pay = wk(new Date(y, mo - 1, p > 1 ? p : 1)), d = new Date(pay);
   d.setDate(d.getDate() - 1); wk(d);
-  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+  return closeIso.pay ? isoOf(pay) : isoOf(d);
+}
+const isoOf = (d) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+function payIso() { closeIso.pay = true; try { return closeIso(); } finally { closeIso.pay = false; } }
+
+// 2026-11-21: två korta rader under knapparna – dagar till nästa lön (innevarande månad) och största kostnadsförändringen mot förra månaden.
+function monthHints(rows) {
+  const box = $('month-hints'), out = [];
+  if (month === activeMonth()) {
+    const days = Math.round((new Date(payIso() + 'T12:00') - new Date(isoToday() + 'T12:00')) / 864e5);
+    if (days >= 0) out.push(days === 0 ? 'Lön i dag' : days === 1 ? 'Nästa lön i morgon' : `Nästa lön om ${days} dagar`);
+  }
+  const byCat = (rs) => { const m = {}; for (const r of rs) if (r.type === 'expense' && r.category !== SAVINGS_CAT) m[r.category] = (m[r.category] || 0) + r.amount; return m; };
+  const prevRows = rowsForMonth(data, addMonths(month, -1));
+  if (prevRows.length) {
+    const a = byCat(rows), b = byCat(prevRows);
+    let best = null;
+    for (const c of new Set([...Object.keys(a), ...Object.keys(b)])) {
+      const d = (a[c] || 0) - (b[c] || 0);
+      if (d && (!best || Math.abs(d) > Math.abs(best.d))) best = { c, d };
+    }
+    if (best) out.push(`Största förändring: ${catName(best.c)} ${kr(best.d, true)} mot ${monthShortLabel(addMonths(month, -1)).toLowerCase()}`);
+  }
+  box.hidden = !out.length;
+  box.replaceChildren(...out.map((t) => el('p', { class: 'muted small', text: t })));
 }
 function openCloseDialog() {
   const t = monthTotals(data, month);

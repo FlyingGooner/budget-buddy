@@ -13,6 +13,7 @@ The same text is in the app under **Settings → General → Help and manual**. 
 - Tap a row to change the amount for this month only, skip it or **Edit item** (name, amount, category, period). **+ Add to Housing** adds a cost with the same category, person and frequency.
 - Change month with **◀ ▶** or swipe. Tap **Month** in the menu to return to the current month.
 - **☰ All items** next to Add shows all recurring items, including ended and upcoming ones. Items are listed largest amount first, there and in Month. Tap one to change it.
+- Below the buttons you see how many days are left until the next payday (current month) and which category changed the most since last month. The Left card also shows what was left last month – the actual amount if that month is closed.
 - Tap an item to change it. The amount at the top applies only to the month you are viewing. Under **Edit the item (all months)** you change name, regular amount, how often, category and period. **Delete the item** moves it to the trash.
 - To end an item, fill in **To month**. Items that have ended or not started show in the months they apply to.
 
