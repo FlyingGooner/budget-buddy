@@ -293,6 +293,7 @@ I18N.add({
   [/^Största: (.+)$/, (g, tr) => `Largest: ${tr(g[1])}`],
   [/^Inkomster och kostnader per månad, (.+) till (.+)$/, 'Income and expenses per month, $1 to $2'],
   [/^\(tusental (.+)\)$/, '(thousands $1)'],
+  [/^Totalt sparsaldo, tusental (.+)$/, 'Total savings, thousands $1'],
   [/^Saldo \((.+)\)$/, 'Balance ($1)'],
   [/^(.+) kr \(SEK\)$/, '$1 kr (SEK)'],
   [/^varav sparande (.+)$/, 'of which savings $1'],

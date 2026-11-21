@@ -1794,6 +1794,7 @@ I18N.add({
   [/^Största: (.+)$/, (g, tr) => `Largest: ${tr(g[1])}`],
   [/^Inkomster och kostnader per månad, (.+) till (.+)$/, 'Income and expenses per month, $1 to $2'],
   [/^\(tusental (.+)\)$/, '(thousands $1)'],
+  [/^Totalt sparsaldo, tusental (.+)$/, 'Total savings, thousands $1'],
   [/^Saldo \((.+)\)$/, 'Balance ($1)'],
   [/^(.+) kr \(SEK\)$/, '$1 kr (SEK)'],
   [/^varav sparande (.+)$/, 'of which savings $1'],
@@ -1805,7 +1806,7 @@ I18N.add({
 </script>
 <script>
 // ---- version.js ----
-﻿self.APP_VERSION = '0.12.133';
+﻿self.APP_VERSION = '0.12.134';
 
 </script>
   <script>
@@ -3720,7 +3721,8 @@ function renderAccounts() {
   });
   fill($('acc-chart'), svg('svg', { class: 'chart', viewBox: `0 0 ${W} ${H}`, role: 'img',
     'aria-label': `Totalt sparsaldo per månad, ${monthLabel(ms[0])} till ${monthLabel(month)}` }, kids),
-  el('div', { class: 'legend' }, el('span', { class: 'lg lg-in' }), 'Totalt sparsaldo', el('span', { class: 'muted', text: `(tusental ${unit()})` })));
+  // En serie (2026-11-21): ingen färgförklaring, bara enheten.
+  el('div', { class: 'legend' }, el('span', { class: 'muted', text: `Totalt sparsaldo, tusental ${unit()}` })));
 }
 
 function openAccDialog(a) {

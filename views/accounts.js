@@ -34,7 +34,8 @@ function renderAccounts() {
   });
   fill($('acc-chart'), svg('svg', { class: 'chart', viewBox: `0 0 ${W} ${H}`, role: 'img',
     'aria-label': `Totalt sparsaldo per månad, ${monthLabel(ms[0])} till ${monthLabel(month)}` }, kids),
-  el('div', { class: 'legend' }, el('span', { class: 'lg lg-in' }), 'Totalt sparsaldo', el('span', { class: 'muted', text: `(tusental ${unit()})` })));
+  // En serie (2026-11-21): ingen färgförklaring, bara enheten.
+  el('div', { class: 'legend' }, el('span', { class: 'muted', text: `Totalt sparsaldo, tusental ${unit()}` })));
 }
 
 function openAccDialog(a) {
