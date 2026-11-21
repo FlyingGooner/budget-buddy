@@ -530,13 +530,13 @@ $('rd-account').addEventListener('click', () => {
 });
 function showAccBalance() {
   const pick = $('rd-acc-pick').value, acc = data.accounts.find((a) => a.id === pick), est = acc ? estBalance(data, acc, month) : null;
-  $('rd-balance').closest('label').hidden = !pick;
-  $('rd-show-wrap').hidden = !acc;
+  $('rd-balance').closest('label').hidden = pick !== 'new';   // 2026-11-21: saldot ändras på kontot, här bara för ett nytt konto
+  $('rd-show-wrap').hidden = true;
   $('rd-show').checked = acc ? !acc.hidden : true;
   $('rd-bal-label').textContent = acc ? `Saldo på ${acc.name} (${unit(acc.currency)})` : 'Saldo på kontot nu';
   $('rd-balance').value = est ? krInput(est.amount) : '';
   $('rd-balance').dataset.orig = $('rd-balance').value;
-  $('rd-acc-note').textContent = !pick ? '' : !acc ? 'Fyll i saldot så skapas kontot. Det räknas upp med sparandet varje månad.'
+  $('rd-acc-note').textContent = !pick ? '' : !acc ? 'Fyll i saldot så skapas kontot. Det räknas upp med sparandet varje månad.' : acc ? '' 
     : est && est.estimated ? 'Beräknat från senaste saldot + sparandet – ändra om det inte stämmer.' : 'Räknas upp med sparandet varje månad.';
 }
 $('rd-acc-pick').addEventListener('change', showAccBalance);

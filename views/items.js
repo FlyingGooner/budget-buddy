@@ -13,8 +13,14 @@ function renderItems() {
     fillPersonSelect(f.elements.person, f.elements.person.value);
   }
   fillPersonSelect($('sav-form').elements.person, $('sav-form').elements.person.value);
-  { const c = $('sav-form').elements.currency, v = c.value || home();   // kontots valuta, förval hemvalutan
-    c.replaceChildren(...CURRENCIES.map((x) => el('option', { value: x, text: CUR_NAMES[x] }))); c.value = v; }
+  { // 2026-11-21: välj sparkonto (befintligt, nytt eller inget) i stället för saldo och valuta – inga dubbla konton
+    const f = $('sav-form').elements, v = f.acc.value;
+    f.acc.replaceChildren(...data.accounts.map((a) => el('option', { value: a.id, text: a.name })),
+      ...(data.accounts.length < MAX_ACCOUNTS ? [el('option', { value: 'new', text: '+ Nytt sparkonto' })] : []), el('option', { value: '', text: 'Inget sparkonto' }));
+    f.acc.value = v && [...f.acc.options].some((o) => o.value === v) ? v : f.acc.options[0].value;
+    f.balance.closest('label').hidden = f.acc.value !== 'new';
+    f.acc.onchange = () => { f.balance.closest('label').hidden = f.acc.value !== 'new'; };
+  }
 }
 
 // Quick add: name + amount (+ category) + how often. Starts the month being viewed.
@@ -36,8 +42,14 @@ function setupAddForm(form) {
     const id = newId();
     data.recurring.push({ id, name, amount, type, category: f.category.value, person: personValue(f.person),
       every: type === 'income' ? 1 : Number(f.every.value), start: month, end: null, ...(f.src && f.src.value ? { src: f.src.value } : {}) });
-    if (bal != null && data.accounts.length < MAX_ACCOUNTS)   // sparande med saldo = eget sparkonto som räknas upp
-      data.accounts.push({ id: 'a' + newId().slice(-10), name: cleanName(name, 30), currency: f.currency && CURRENCIES.includes(f.currency.value) ? f.currency.value : home(), balances: { [month]: bal }, feeds: [id] });
+    if (f.acc) {   // 2026-11-21: koppla till valt konto, eller skapa ett nytt (saldo 0 om inget fylls i)
+      const acc = data.accounts.find((a) => a.id === f.acc.value);
+      if (acc) (acc.feeds ||= []).push(id);
+      else if (f.acc.value === 'new' && data.accounts.length < MAX_ACCOUNTS) {
+        let nm = cleanName(name, 30), n = 2; while (data.accounts.some((a) => a.name.toLowerCase() === nm.toLowerCase())) nm = `${cleanName(name, 27)} ${n++}`;
+        data.accounts.push({ id: 'a' + newId().slice(-10), name: nm, currency: home(), balances: { [month]: bal ?? 0 }, feeds: [id] });
+      }
+    }
     if (f.balance) f.balance.value = ''; if (f.src) f.src.value = '';
     data = loadData(data);
     save();

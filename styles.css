@@ -692,3 +692,6 @@ dialog:focus { outline: none; }
 #income-card p.ie-sav.muted { display: block; font-size: .8125rem; margin: 4px 0 2px; }
 #income-card p.ie-sav.muted { color: var(--on-surface-variant); }
 .sv-name small { white-space: normal; overflow: visible; text-overflow: clip; }
+#acc-dialog .actions #ad-cancel { grid-column: 1 / -1; justify-self: end; }
+#acc-dialog .ad-more { margin-top: 8px; } #acc-dialog .ad-more > summary { cursor: pointer; padding: 8px 0; color: var(--primary); font-weight: 500; }
+#acc-dialog #ad-delete { margin-top: 8px; padding-left: 0; }

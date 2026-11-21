@@ -231,7 +231,7 @@
           <p>Sparande från lönen (＋ Lägg till → 🐷 Sparande från lönen) är en kostnad: det står bland kostnaderna och minskar Efter räkningar.</p>
           <p>Före lön och insättningar (＋ Lägg till → 🏦 Före lön / insättning, eller tryck på kontot under Totalt sparat) fylls i på sparkontot: Före lön varje månad (t.ex. aktier via jobbet) och Insättning den här månaden (t.ex. en gåva). De räknas som sparat och ökar kontot, men påverkar inte budgeten. Sparat i månaden visar allt sparande och hur det fördelar sig.</p>
           <p>Konton som inte rörs (t.ex. barnens) kan döljas från Månad: tryck på kontot och bocka ur Visa i Månad. Tryck på namnet under &quot;+ 1 dolt konto&quot; för att visa det igen. Det räknas fortfarande i Totalt sparat.</p>
-          <p>Inställningar → Sparkonton listar alla konton, även dolda. Tryck på ett för att byta namn, valuta, saldo eller vilket sparande som går dit (även engångssparande), eller ta bort det (det hamnar i papperskorgen). + Nytt sparkonto skapar ett konto med bara saldo, t.ex. ett konto du inte sparar till varje månad. Samma knapp finns som + Sparkonto under Totalt sparat. Två konton kan inte heta likadant. När du sparar visas Ångra en stund.</p>
+          <p>Inställningar → Sparkonton listar alla konton, även dolda. Tryck på ett: överst saldo, före lön och insättning; under Fler inställningar namn, valuta, vilket sparande som går dit, sparmål, Visa i Månad och Ta bort konto. När du lägger till ett sparande från lönen väljer du Sparkonto direkt (befintligt eller + Nytt sparkonto). Ta bort ett konto (det hamnar i papperskorgen). + Nytt sparkonto skapar ett konto med bara saldo, t.ex. ett konto du inte sparar till varje månad. Samma knapp finns som + Sparkonto under Totalt sparat. Två konton kan inte heta likadant. När du sparar visas Ångra en stund.</p>
           <p>Summan och en graf över alla konton finns under Översikt → Sparkonton.</p>
         </details>
         <details><summary>Stäng månaden</summary>
@@ -315,7 +315,7 @@
           <p>Saving from pay (＋ Add → 🐷 Saving from pay) is a cost: it is listed among the expenses and reduces After bills.</p>
           <p>Before pay and deposits (＋ Add → 🏦 Before pay / deposit, or tap the account under Total saved) are entered on the savings account: Before pay each month (e.g. shares through work) and Deposit this month (e.g. a gift). They count as saved and increase the account, but don't affect the budget. Saved this month shows all saving and how it splits.</p>
           <p>Accounts you never touch (e.g. the children's) can be hidden from Month: tap the account and untick Show in Month. Tap the name under &quot;+ 1 hidden account&quot; to show it again. It still counts in Total saved.</p>
-          <p>Settings → Savings accounts lists all accounts, including hidden ones. Tap one to change its name, currency, balance or which savings go there (one-off savings too), or delete it (it goes to the trash). + New savings account creates an account with just a balance, e.g. one you don't save to every month. The same button is + Account under Total saved. Two accounts can't have the same name. When you save, Undo is shown for a moment.</p>
+          <p>Settings → Savings accounts lists all accounts, including hidden ones. Tap one: balance, before pay and deposit at the top; under More settings name, currency, which savings go there, savings goal, Show in Month and Delete account. When you add saving from pay you pick the Savings account right away (an existing one or + New savings account). Delete an account (it goes to the trash). + New savings account creates an account with just a balance, e.g. one you don't save to every month. The same button is + Account under Total saved. Two accounts can't have the same name. When you save, Undo is shown for a moment.</p>
           <p>The total and a chart of all accounts are under Overview → Savings accounts.</p>
         </details>
         <details><summary>Close the month</summary>
@@ -404,9 +404,9 @@
         <label class="field amt"><span>Per gång (<span class="cur-unit">kr</span>)</span><input name="amount" inputmode="decimal" autocomplete="off"></label>
         <label class="field"><span>Hur ofta</span><select name="every"></select></label>
         <label class="field person-field"><span>Person (valfritt)</span><select name="person"></select></label>
-        <label class="field amt"><span>Saldo nu (valfritt)</span><input name="balance" inputmode="decimal" autocomplete="off"></label>
-        <label class="field"><span>Kontots valuta</span><select name="currency"></select></label>
-        <p class="muted small hint-row">Sparande från lönen är en kostnad – pengarna lämnar kontot. Sparande före lön och insättningar fyller du i på sparkontot. Fyller du i saldot skapas ett sparkonto som räknas upp varje månad – i annan valuta räknas sparandet om med kurserna.</p>
+        <label class="field"><span>Sparkonto</span><select name="acc"></select></label>
+        <label class="field amt" hidden><span>Saldo nu</span><input name="balance" inputmode="decimal" autocomplete="off"></label>
+        <p class="muted small hint-row">Sparande från lönen är en kostnad – pengarna lämnar kontot och räknas upp på sparkontot varje månad. Sparande före lön och insättningar fyller du i på kontot.</p>
         <button type="submit" class="btn filled">Lägg till</button>
         <p class="error" role="alert"></p>
       </form>
@@ -508,27 +508,30 @@
 <dialog id="acc-dialog" tabindex="-1" autofocus aria-labelledby="ad-title">
   <form method="dialog" id="ad-form" novalidate>
     <h2 id="ad-title"></h2>
-    <label class="field"><span>Namn</span><input id="ad-name" maxlength="30" autocomplete="off"></label>
-    <p class="muted" id="ad-sub"></p>
+    <!-- 2026-11-21: förenklat – saldo och det som sätts in syns direkt, resten under Fler inställningar -->
+    <div id="ad-name-new"></div>
+    <label class="field"><span id="ad-amount-label">Saldo (kr)</span><input id="ad-amount" inputmode="decimal" autocomplete="off"></label>
+    <p class="muted small" id="ad-sub"></p>
     <div class="row2">
-      <label class="field"><span>Valuta</span><select id="ad-currency"></select></label>
-      <label class="field"><span id="ad-amount-label">Saldo (kr)</span><input id="ad-amount" inputmode="decimal" autocomplete="off"></label>
-    </div>
-    <div class="row2">
-      <label class="field"><span>Före lön varje månad (<span class="cur-unit">kr</span>)</span><input id="ad-pre" inputmode="decimal" autocomplete="off" placeholder="0"></label>
+      <label class="field"><span>Före lön / mån (<span class="cur-unit">kr</span>)</span><input id="ad-pre" inputmode="decimal" autocomplete="off" placeholder="0"></label>
       <label class="field"><span id="ad-dep-label">Insättning</span><input id="ad-dep" inputmode="decimal" autocomplete="off" placeholder="0"></label>
     </div>
-    <p class="muted small ad-hint">Före lön: dras innan nettolönen, t.ex. aktier via jobbet. Insättning: utöver lönen den här månaden, t.ex. en gåva. Båda räknas som sparat men påverkar inte budgeten.</p>
-    <div class="ad-feeds" id="ad-feeds"></div>
-    <button type="button" class="link" id="ad-goal-add">+ Sparmål</button>
-    <div class="row2" id="ad-goal" hidden>
-      <label class="field"><span id="ad-goal-label">Sparmål (kr)</span><input id="ad-goal-amount" inputmode="decimal" autocomplete="off"></label>
-      <label class="field"><span>Klart till (valfritt)</span><select id="ad-goal-month"></select></label>
-    </div>
-    <label class="check"><input type="checkbox" id="ad-show"><span>Visa i Månad</span></label>
+    <p class="muted small ad-hint">Räknas som sparat men påverkar inte budgeten. Sparande från lönen lägger du till som en post.</p>
+    <p class="small" id="ad-feeds-sum"></p>
+    <details class="ad-more" id="ad-more"><summary>Fler inställningar</summary>
+      <label class="field" id="ad-name-wrap"><span>Namn</span><input id="ad-name" maxlength="30" autocomplete="off"></label>
+      <label class="field"><span>Valuta</span><select id="ad-currency"></select></label>
+      <div class="ad-feeds" id="ad-feeds"></div>
+      <button type="button" class="link" id="ad-goal-add">+ Sparmål</button>
+      <div class="row2" id="ad-goal" hidden>
+        <label class="field"><span id="ad-goal-label">Sparmål (kr)</span><input id="ad-goal-amount" inputmode="decimal" autocomplete="off"></label>
+        <label class="field"><span>Klart till (valfritt)</span><select id="ad-goal-month"></select></label>
+      </div>
+      <label class="check"><input type="checkbox" id="ad-show"><span>Visa i Månad</span></label>
+      <button type="button" class="btn text danger" id="ad-delete">Ta bort konto</button>
+    </details>
     <p class="error" id="ad-error" role="alert"></p>
     <div class="actions wrap">
-      <button type="button" class="btn text danger" id="ad-delete">Ta bort konto</button>
       <span class="spacer"></span>
       <button type="button" class="btn text" id="ad-cancel">Avbryt</button>
       <button type="submit" class="btn filled">Spara</button>

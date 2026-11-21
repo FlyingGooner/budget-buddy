@@ -45,6 +45,11 @@ function openAccDialog(a) {
   $('ad-title').textContent = isNew ? 'Nytt sparkonto' : a.name;
   $('ad-name').value = a.name || '';
   $('ad-delete').hidden = isNew;
+  // Nytt konto: namnet överst; befintligt: namnet under Fler inställningar (2026-11-21).
+  if (isNew) $('ad-name-new').append($('ad-name-wrap')); else $('ad-more').querySelector('summary').after($('ad-name-wrap'));
+  $('ad-more').open = false;
+  const fed = data.recurring.filter((r) => (a.feeds || []).includes(r.id));
+  $('ad-feeds-sum').textContent = fed.length ? `Från lönen: ${fed.map((r) => `${r.name} ${kr(r.amount)}/mån`).join(', ')}` : '';
   $('ad-sub').textContent = `Saldo i ${monthLabel(month).toLowerCase()}.` + (cur && cur.month !== month ? ` Senast: ${money(cur.amount, a.currency)} (${monthLabel(cur.month).toLowerCase()}).` : '');
   $('ad-currency').value = a.currency;
   $('ad-show').checked = !a.hidden;
