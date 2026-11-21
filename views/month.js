@@ -115,6 +115,7 @@ function renderMonth() {
   const emptyMsg = (text, label, type) => el('p', { class: 'empty-line muted' }, text + ' ',
     el('button', { type: 'button', class: 'link', text: label, on: { click: () => focusAdd(type) } }));
 
+  const sumAll = t.income + (t.pre || 0) - (t.expense - t.savings);
   // 2026-11-21: inkomster och kostnader i samma kort, två rader som fälls ut var för sig.
   fill($('income-card'), fold('inc',
     el('h2', { class: 'split' }, el('span', {}, 'Inkomster ', el('small', { class: 'netto', text: '(netto)' }), payNote() ? el('small', { class: 'netto', text: ' · ' }) : null, payNote() ? el('small', { class: 'netto', text: payNote() }) : null), el('span', { text: kr(t.income) })),
@@ -129,10 +130,11 @@ function renderMonth() {
     expense.length ? expenseGroups(expense)
       : emptyMsg('Inga kostnader den här månaden.', 'Lägg till', 'expense')),
     // 2026-11-21: summa (inkomster − kostnader) och hur mycket av den som går till sparande.
+    // 2026-11-21: sparande som dras före lönen räknas med – det har aldrig kommit in i nettolönen.
     el('div', { class: 'ie-sum' },
-      el('h2', { class: 'split' }, el('span', { text: 'Summa' }), el('span', { class: t.income - (t.expense - t.savings) < 0 ? 'neg' : null, text: kr(t.income - (t.expense - t.savings), true) })),
-      t.savings ? el('p', { class: 'split ie-sav' }, el('span', { text: 'Varav sparande' }),
-        el('span', { text: kr(t.savings) + (t.income ? ` (${Math.round((t.savings / t.income) * 100)} %)` : '') })) : null));
+      el('h2', { class: 'split' }, el('span', { text: 'Summa' }), el('span', { class: sumAll < 0 ? 'neg' : null, text: kr(sumAll, true) })),
+      t.savings ? el('p', { class: 'split ie-sav' }, el('span', { text: t.pre ? `Varav sparande (${kr(t.pre)} före lön)` : 'Varav sparande' }),
+        el('span', { text: kr(t.savings) + (t.income + t.pre ? ` (${Math.round((t.savings / (t.income + t.pre)) * 100)} %)` : '') })) : null));
   $('expense-card').hidden = true;
   const cb = $('close-month');   // 2026-11-21: Stäng månad som knapp bredvid Lägg till / Alla poster
   if (cb) { cb.hidden = month > activeMonth() && !t.closed; cb.textContent = t.closed ? '🔓 Ändra' : '🔒 Stäng'; cb.setAttribute('aria-label', t.closed ? 'Ändra / öppna igen' : 'Stäng månad'); cb.onclick = openCloseDialog; $('add-pair').classList.toggle('three', !cb.hidden); }

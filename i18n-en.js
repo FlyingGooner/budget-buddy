@@ -164,6 +164,7 @@ I18N.add({
   'Ta bort konto': 'Remove account', 'Byt namn': 'Rename', 'Klistra in text': 'Paste text', 'Data': 'Data',
   'varav sparande': 'of which savings', 'Varav sparande': 'Of which savings', '🔒 Stäng månad': '🔒 Close month', '🔒 Stäng': '🔒 Close', '🔓 Ändra': '🔓 Edit', 'Stäng månad': 'Close month', 'kvar': 'left', 'Kvar varje månad': 'Left each month', 'Snitt': 'Average', 'Summa': 'Total', 'mån': 'mo',
 }, [
+  [/^Varav sparande \((.+) före lön\)$/, 'Of which savings ($1 before pay)'],
   [/^Egna kurser från (.+)$/, 'Own rates from $1'],
   [/^ECB:s referenskurser (.+)$/, 'ECB reference rates $1'],
   [/^(\d+) st$/, '$1'],
