@@ -20,7 +20,7 @@ function renderOverview() {
 // Kommande 12 månader (2026-11-21): planerat kvar och prognos (planerat minus rörligt, se forecast() i store.js).
 // Prognoskolumnen visas först när minst en månad är stängd. Tryck på en rad → öppnar månaden.
 // 2026-11-21: tre månader syns, resten fälls ut (Summa gäller alltid alla 12).
-// 2026-11-21: de tre senaste månaderna står överst (utfall: kvar på kontot om stängd). Ingen summarad, bara saldo om ett år.
+// 2026-11-21: de tre senaste månaderna står överst (utfall: kvar på kontot om stängd). Ingen summarad och inget saldo om ett år.
 const AHEAD_SHOWN = 3, PAST_SHOWN = 3;
 let aheadOpen = false;
 function aheadCard() {
@@ -32,10 +32,8 @@ function aheadCard() {
   }).filter((r) => r.plan || r.done != null);
   if (!rows.some((r) => r.plan) && !past.length) return null;
   const hasPastDone = past.some((r) => r.done != null);
-  const hasFc = rows.some((r) => r.fc) || hasPastDone, sum = (k) => rows.reduce((x, r) => x + (k === 'plan' ? r.plan : r.fc ? r.fc.left : r.plan), 0);
+  const hasFc = rows.some((r) => r.fc) || hasPastDone;
   const cell = (v, cls = '') => el('td', { class: (cls + (v < 0 ? ' neg' : '')).trim(), text: kr(v, true) });
-  const bal = balanceAfter(data, addMonths(start, -1));
-  const endBal = (k) => (bal == null ? null : bal + sum(k));
   const open = (m) => () => { showTab('month'); setMonth(m); };
   return el('div', { class: 'card' },
     el('h2', { text: 'Senaste och kommande månader' }),
@@ -48,9 +46,7 @@ function aheadCard() {
           hasFc ? (r.done != null ? cell(r.done) : el('td', { class: 'fc', text: '–' })) : null)),
         rows.slice(0, aheadOpen ? 12 : AHEAD_SHOWN).map((r, i) => el('tr', { class: i === 0 && past.length ? 'now' : '', on: { click: open(r.m) } },
           el('td', { text: monthShortYear(r.m) }), cell(r.plan),
-          hasFc ? (r.fc ? cell(r.fc.left, 'fc') : el('td', { class: 'fc', text: '–' })) : null))),
-      bal == null ? null : el('tfoot', {}, el('tr', {}, el('td', { text: 'Saldo om ett år' }), el('td', { text: kr(endBal('plan')) }),
-          hasFc ? el('td', { class: 'fc', text: '≈ ' + kr(endBal('fc')) }) : null))),
+          hasFc ? (r.fc ? cell(r.fc.left, 'fc') : el('td', { class: 'fc', text: '–' })) : null)))),
     el('button', { type: 'button', class: 'link ahead-more', 'aria-expanded': String(aheadOpen), text: aheadOpen ? 'Visa färre' : `Visa alla 12 månader ›`,
       on: { click: () => { aheadOpen = !aheadOpen; renderOverview(); } } }),
     hasFc ? el('p', { class: 'muted small', text: hasPastDone
