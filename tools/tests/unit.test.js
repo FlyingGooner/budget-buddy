@@ -48,11 +48,17 @@ T.test('applies: varje kvartal och slutmånad', () => {
 });
 T.test('rowsForMonth + totals: avvikelse, engångspost och sparande', () => {
   const t = totals(rowsForMonth(loadData(rich()), '2026-11'));
-  T.eq(t, { income: 3200000, expense: 250000 + 400000 + 95000, savings: 400000, pre: 0, left: 3200000 - 745000 });
+  T.eq(t, { income: 3200000, expense: 250000 + 400000 + 95000, savings: 400000, pre: 0, extra: 0, left: 3200000 - 745000 });
   { const d = loadData({ recurring: [{ id: 'p1', name: 'Aktier', type: 'expense', amount: 100000, category: 'savings', every: 1, start: '2026-01', pre: true }] });
     T.eq(totals(rowsForMonth(d, '2026-03')).left, 0); }
   { const d = loadData({ oneOffs: [{ id: 'p2', month: '2026-03', name: 'Aktier', type: 'expense', amount: 50000, category: 'savings', pre: true }] });
     T.eq(totals(rowsForMonth(d, '2026-03')).left, 0); }
+  // v3 (2026-11-21): src – gamla pre blir 'pre', 'extra' minskar inte heller kvar, och båda följer med i backupen.
+  { const d = loadData({ recurring: [{ id: 'p3', name: 'Aktier', type: 'expense', amount: 100000, category: 'savings', every: 1, start: '2026-01', pre: true }],
+      oneOffs: [{ id: 'p4', month: '2026-03', name: 'Gåva', type: 'expense', amount: 50000, category: 'savings', src: 'extra' }] });
+    T.eq(d.recurring[0].src, 'pre'); T.eq(d.oneOffs[0].src, 'extra');
+    const t3 = totals(rowsForMonth(d, '2026-03')); T.eq(t3.left, 0); T.eq(t3.savings, 150000);
+    const r = loadData(unpackData(JSON.parse(JSON.stringify(packData(d))))); T.eq(r.recurring[0].src, 'pre'); T.eq(r.oneOffs[0].src, 'extra'); }
 });
 T.test('balanceAfter: startsaldo + kvar per månad', () => {
   const d = loadData(rich());
