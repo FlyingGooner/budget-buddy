@@ -668,3 +668,11 @@ body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; 
 .sv-foot { display: flex; gap: 16px; flex-wrap: wrap; }
 .sv-foot > :last-child { margin-left: auto; }
 dialog:focus { outline: none; }
+
+/* Månadens gång (2026-11-21) och tre största kostnader hopfällt */
+.mprog { margin: 4px 4px 8px; }
+.mp-top { display: flex; justify-content: space-between; font-size: .8125rem; color: var(--on-surface-variant); margin-bottom: 4px; }
+.mp-track { display: block; height: 6px; border-radius: 3px; background: var(--surface-container-high); overflow: hidden; }
+.mp-fill { display: block; height: 100%; border-radius: 3px; background: var(--primary); }
+#income-card .fold[open] .top-cats { display: none; }
+#income-card .top-cats { margin: 6px 28px 2px 0; }

@@ -125,8 +125,9 @@ function renderMonth() {
     income.some((r) => r.kind === 'carry' || r.name === CARRY_NAME) ? null
       : el('p', { class: 'carry-add' }, el('button', { type: 'button', class: 'link', text: '+ Kvar från förra månaden', on: { click: openCarryDialog } }))),
     fold('exp',
-    el('h2', { class: 'split' }, el('span', { text: 'Kostnader' }),
+    [el('h2', { class: 'split' }, el('span', { text: 'Kostnader' }),
       el('span', { text: kr(t.expense - t.savings) })),
+      expense.length ? topCats(expense.filter((r) => r.category !== SAVINGS_CAT)) : null],   // 2026-11-21: tre största syns hopfällt
     expense.length ? expenseGroups(expense)
       : emptyMsg('Inga kostnader den här månaden.', 'Lägg till', 'expense')),
     // 2026-11-21: summa (inkomster − kostnader) och hur mycket av den som går till sparande.
@@ -243,9 +244,20 @@ function payIso() { closeIso.pay = true; try { return closeIso(); } finally { cl
 // 2026-11-21: två korta rader under knapparna – dagar till nästa lön (innevarande månad) och största kostnadsförändringen mot förra månaden.
 function monthHints(rows) {
   const box = $('month-hints'), out = [];
+  let prog = null;
   if (month === activeMonth()) {
     const days = Math.round((new Date(payIso() + 'T12:00') - new Date(isoToday() + 'T12:00')) / 864e5);
-    if (days >= 0) out.push(days === 0 ? 'Lön i dag' : days === 1 ? 'Nästa lön i morgon' : `Nästa lön om ${days} dagar`);
+    if (days >= 0) {
+      // 2026-11-21: stapel över hur långt månaden har kommit (från förra lönen till nästa).
+      const saved = month; let p0;
+      try { month = addMonths(month, -1); p0 = payIso(); } finally { month = saved; }
+      const total = Math.max(1, Math.round((new Date(payIso() + 'T12:00') - new Date(p0 + 'T12:00')) / 864e5)), done = Math.min(total, total - days);
+      const f = el('span', { class: 'mp-fill' }); f.style.width = Math.round((done / total) * 100) + '%';
+      prog = el('div', { class: 'mprog', role: 'img', 'aria-label': `Dag ${done} av ${total}` },
+        el('div', { class: 'mp-top' }, el('span', { text: `Dag ${done} av ${total}` }),
+          el('span', { text: days === 0 ? 'Lön i dag' : days === 1 ? 'Lön i morgon' : `Lön om ${days} dagar` })),
+        el('span', { class: 'mp-track' }, f));
+    }
   }
   const byCat = (rs) => { const m = {}; for (const r of rs) if (r.type === 'expense' && r.category !== SAVINGS_CAT) m[r.category] = (m[r.category] || 0) + r.amount; return m; };
   const prevRows = rowsForMonth(data, addMonths(month, -1));
@@ -258,8 +270,8 @@ function monthHints(rows) {
     }
     if (best) out.push(`Största förändring: ${catName(best.c)} ${kr(best.d, true)} mot ${monthShortLabel(addMonths(month, -1)).toLowerCase()}`);
   }
-  box.hidden = !out.length;
-  box.replaceChildren(...out.map((t) => el('p', { class: 'muted small', text: t })));
+  box.hidden = !out.length && !prog;
+  box.replaceChildren(...(prog ? [prog] : []), ...out.map((t) => el('p', { class: 'muted small', text: t })));
 }
 function openCloseDialog() {
   const t = monthTotals(data, month);

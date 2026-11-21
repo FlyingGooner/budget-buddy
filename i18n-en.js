@@ -162,9 +162,11 @@ I18N.add({
   '+ Avvikelse': '+ Deviation', 'Person (valfritt)': 'Person (optional)', 'Varje kvartal': 'Every quarter', 'varje kvartal': 'every quarter', 'App': 'App', 'Typ': 'Type',
   'Avsluta poster': 'End items', 'konto': 'account', 'Version': 'Version', 'Huvudmeny': 'Main menu', 't.ex. Buffert': 'e.g. Buffer', 't.ex. Hyra': 'e.g. Rent', 'Startmånad': 'Start month', 'Start': 'Start',
   'Ta bort konto': 'Remove account', 'Byt namn': 'Rename', 'Klistra in text': 'Paste text', 'Data': 'Data',
-  'varav sparande': 'of which savings', 'Varav sparande': 'Of which savings', 'Sparande som går hit:': 'Savings that go here:', 'Sparkonton': 'Savings accounts', '+ Nytt sparkonto': '+ New savings account', 'Nytt sparkonto': 'New savings account', '+ Sparkonto': '+ Account', 'Namn': 'Name', 'Skriv ett namn på kontot.': 'Enter a name for the account.', 'Inga sparkonton än.': 'No savings accounts yet.', 'Inga': 'None', ' · dolt': ' · hidden', '🔒 Stäng månad': '🔒 Close month', '🔒 Stäng': '🔒 Close', '🔓 Ändra': '🔓 Edit', 'Stäng månad': 'Close month', 'kvar': 'left', 'Kvar varje månad': 'Left each month', 'Snitt': 'Average', 'Summa': 'Total', 'mån': 'mo',
+  'varav sparande': 'of which savings', 'Varav sparande': 'Of which savings', 'Lön i dag': 'Payday today', 'Lön i morgon': 'Payday tomorrow', 'Sparande som går hit:': 'Savings that go here:', 'Sparkonton': 'Savings accounts', '+ Nytt sparkonto': '+ New savings account', 'Nytt sparkonto': 'New savings account', '+ Sparkonto': '+ Account', 'Namn': 'Name', 'Skriv ett namn på kontot.': 'Enter a name for the account.', 'Inga sparkonton än.': 'No savings accounts yet.', 'Inga': 'None', ' · dolt': ' · hidden', '🔒 Stäng månad': '🔒 Close month', '🔒 Stäng': '🔒 Close', '🔓 Ändra': '🔓 Edit', 'Stäng månad': 'Close month', 'kvar': 'left', 'Kvar varje månad': 'Left each month', 'Snitt': 'Average', 'Summa': 'Total', 'mån': 'mo',
 }, [
   [/^Varav sparande \((.+) före lön\)$/, 'Of which savings ($1 before pay)'],
+  [/^Dag (\d+) av (\d+)$/, 'Day $1 of $2'],
+  [/^Lön om (\d+) dagar$/, 'Payday in $1 days'],
   [/^(.+) skapat$/, '$1 created'],
   [/^(.+) sparat$/, '$1 saved'],
   [/^Det finns redan ett konto som heter (.+)\.$/, 'There is already an account called $1.'],
