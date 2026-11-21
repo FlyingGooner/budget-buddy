@@ -415,7 +415,7 @@ function openRowDialog(r) {
   const isNew = !r, isOne = isNew || r.kind === 'one';
   $('rd-title').textContent = isNew ? 'Ny avvikelse' : r.name;
   $('rd-sub').textContent = isNew ? `Gäller bara ${monthLabel(month).toLowerCase()}.`
-    : r.kind === 'rec' ? `Belopp för ${monthLabel(month).toLowerCase()}. Ordinarie ${kr(r.base)}.` : `Avvikelse i ${monthLabel(month).toLowerCase()}.`;
+    : r.kind === 'rec' ? `Belopp för ${monthLabel(month).toLowerCase()}${r.type === 'income' && r.category === 'salary' && payNote() ? ` (${payNote().replace('lön', 'lönen')})` : ''}. Ordinarie ${kr(r.base)}.` : `Avvikelse i ${monthLabel(month).toLowerCase()}.`;
   $('rd-oneoff-fields').hidden = !isOne;
   $('rd-name').value = isOne && !isNew ? r.name : '';
   $('rd-type').value = isOne && !isNew ? r.type : 'expense';

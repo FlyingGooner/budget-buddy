@@ -271,7 +271,7 @@ I18N.add({
   [/^Största förändring: (.+?) ([+−-].+) mot (\S+)$/, (g, tr) => `Biggest change: ${tr(g[1])} ${g[2]} vs ${tr(g[3])}`],
   [/^Kvar i (\S+): (.+)$/, (g, tr) => `Left in ${tr(g[1])}: ${g[2]}`],
   [/^Gäller bara (.+)\.$/, 'Applies only to $1.'],
-  [/^Belopp för (.+)\. Ordinarie (.+)\.$/, 'Amount for $1. Usual $2.'],
+  [/^Belopp för (.+?)(?: \(lönen (\d+) (\S+)\))?\. Ordinarie (.+)\.$/, (g, tr) => `Amount for ${tr(g[1])}${g[2] ? ` (the pay of ${g[2]} ${tr(g[3])})` : ''}. Usual ${g[4]}.`],
   [/^(.+) hoppas över i (.+)$/, '$1 is skipped in $2'],
   [/^Kommande 12 månader$/, 'Next 12 months'],
   [/^(.+): kvar (.+)\. Öppna månaden$/, '$1: left $2. Open the month'],
