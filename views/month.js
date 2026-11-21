@@ -166,7 +166,7 @@ function renderSavingsCard(saving, t) {
     const items = saving.filter((r) => (a.feeds || []).includes(r.id)); items.forEach((r) => used.add(r.id));
     return { name: a.name, a, items, monthly: items.reduce((x, r) => x + r.amount, 0), cur,
       now: cur ? round(toSek(cur.amount, a.currency)) : null, diff: cur && was ? round(toSek(cur.amount - was.amount, a.currency)) : null };
-  }).concat(saving.filter((r) => !used.has(r.id)).map((r) => ({ name: r.name, items: [r], monthly: r.amount })));
+  }).concat(saving.filter((r) => r.kind !== 'acc' && !used.has(r.id)).map((r) => ({ name: r.name, items: [r], monthly: r.amount })));
   const rowsOut = rowsAll.filter((r) => !r.a || !r.a.hidden);
   const total = rowsAll.reduce((x, r) => x + (r.now || 0), 0), totalDiff = rowsAll.reduce((x, r) => x + (r.diff || 0), 0);
   const approx = rowsAll.some((r) => r.cur?.estimated || (r.a && r.a.currency !== home()));
