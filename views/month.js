@@ -156,6 +156,9 @@ function renderSavingsCard(saving, t) {
   const rowsOut = rowsAll.filter((r) => !r.a || !r.a.hidden);
   const total = rowsAll.reduce((x, r) => x + (r.now || 0), 0), totalDiff = rowsAll.reduce((x, r) => x + (r.diff || 0), 0);
   const approx = rowsAll.some((r) => r.cur?.estimated || (r.a && r.a.currency !== home()));
+  // 2026-11-21: Totalt sparat också i inkomst/kostnadskortet.
+  const ie = document.querySelector('#income-card .ie-sum');
+  if (ie && data.accounts.length) ie.append(el('p', { class: 'split ie-sav' }, el('span', { text: 'Totalt sparat' }), el('span', { text: (approx ? '≈ ' : '') + kr(total) })));
   const open = (r) => (r.items.length === 1 ? openRowDialog(r.items[0]) : r.a ? openAccDialog(r.a) : null);
   // Hopfällt (2026-11-17): rubrik och Totalt sparat syns, kontona fälls ut.
   fill($('savings-card'), fold('sav', [
