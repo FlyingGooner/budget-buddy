@@ -278,6 +278,7 @@ function render() {
   renderStats();
   renderItems();
   renderSettings();
+  renderAccSettings();
   renderPwd();
 }
 

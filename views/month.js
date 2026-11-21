@@ -145,7 +145,12 @@ function renderMonth() {
 // Sparande-kortet (2026-11-17, förenklat): en lista där varje rad är ett sparkonto med sitt månadssparande
 // (sparpost + konto hör ihop). Sparposter utan konto får en egen rad. Tryck på en rad för att ändra.
 function renderSavingsCard(saving, t) {
-  if (!saving.length && !data.accounts.length) return;
+  if (!saving.length && !data.accounts.length) {   // 2026-11-21: synlig ingång även utan sparande
+    const ie0 = document.querySelector('#income-card .ie-sum');
+    if (ie0) ie0.append(el('p', { class: 'split ie-sav' }, el('span', { text: 'Sparkonton' }),
+      el('button', { type: 'button', class: 'link', text: '+ Nytt sparkonto', on: { click: newAccount } })));
+    return;
+  }
   const share = t.income ? Math.round((t.savings / t.income) * 100) : 0;
   const prev = addMonths(month, -1), round = (v) => Math.round(v / 100) * 100;
   const used = new Set();
@@ -182,6 +187,7 @@ function renderSavingsCard(saving, t) {
       ...hiddenAcc.map((a, i) => el('button', { type: 'button', class: 'link', text: (i ? ', ' : '') + a.name, on: { click: () => openAccDialog(a) } }))) : null,
     el('div', { class: 'sv-foot' },
       el('button', { type: 'button', class: 'link', text: '+ Nytt sparande', on: { click: () => focusAdd('savings') } }),
+      el('button', { type: 'button', class: 'link', text: '+ Sparkonto', on: { click: newAccount } }),
       data.accounts.length ? el('button', { type: 'button', class: 'link', text: 'Utveckling ›', on: { click: () => { showTab('stats'); $('stats-accounts').scrollIntoView({ block: 'start' }); } } }) : null));
   $('savings-card').hidden = true;
   if (ie) ie.append(savFold);

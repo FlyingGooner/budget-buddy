@@ -121,6 +121,13 @@
           </div>
         </details>
       </details>
+      <details class="set-group-wrap" id="acc-set">
+        <summary class="set-group"><span class="set-title">Sparkonton</span><span class="sect-sub" id="g-accounts"></span></summary>
+        <div class="card set-body">
+          <ul class="list" id="acc-set-list"></ul>
+          <div class="actions"><button type="button" class="btn tonal" id="acc-new">+ Nytt sparkonto</button></div>
+        </div>
+      </details>
       <details class="set-group-wrap">
         <summary class="set-group"><span class="set-title">Valuta</span><span class="sect-sub" id="g-currency"></span></summary>
         <details class="card set-sec">
@@ -494,6 +501,7 @@
 <dialog id="acc-dialog" aria-labelledby="ad-title">
   <form method="dialog" id="ad-form" novalidate>
     <h2 id="ad-title"></h2>
+    <label class="field"><span>Namn</span><input id="ad-name" maxlength="30" autocomplete="off"></label>
     <p class="muted" id="ad-sub"></p>
     <div class="row2">
       <label class="field"><span>Valuta</span><select id="ad-currency"></select></label>

@@ -41,7 +41,10 @@ function renderAccounts() {
 function openAccDialog(a) {
   dialogAcc = a;
   const cur = balanceAt(a, month);
-  $('ad-title').textContent = a.name;
+  const isNew = !data.accounts.some((x) => x.id === a.id);   // 2026-11-21: nytt konto direkt, utan sparpost
+  $('ad-title').textContent = isNew ? 'Nytt sparkonto' : a.name;
+  $('ad-name').value = a.name || '';
+  $('ad-delete').hidden = isNew;
   $('ad-sub').textContent = `Saldo i ${monthLabel(month).toLowerCase()}.` + (cur && cur.month !== month ? ` Senast: ${money(cur.amount, a.currency)} (${monthLabel(cur.month).toLowerCase()}).` : '');
   $('ad-currency').value = a.currency;
   $('ad-show').checked = !a.hidden;
@@ -67,7 +70,7 @@ function openAccDialog(a) {
   $('ad-goal-month').value = g?.month || '';
   $('ad-error').textContent = '';
   $('acc-dialog').showModal();
-  $('ad-amount').focus();
+  (isNew ? $('ad-name') : $('ad-amount')).focus();
 }
 function setAccCurrencyLabel() {
   const c = $('ad-currency').value;
@@ -87,7 +90,11 @@ $('ad-form').addEventListener('submit', (e) => {
   const gRaw = $('ad-goal-amount').value.trim(), gAmount = gRaw ? parseKr(gRaw) : null;
   if (gRaw && (gAmount == null || !isAmount(gAmount) || gAmount <= 0)) { $('ad-error').textContent = 'Skriv ett sparmål, t.ex. 15 000 – eller lämna fältet tomt.'; return; }
   const gMonth = $('ad-goal-month').value;
-  const a = data.accounts.find((x) => x.id === dialogAcc.id);
+  const name = cleanName($('ad-name').value, 30);
+  if (!name) { $('ad-error').textContent = 'Skriv ett namn på kontot.'; return; }
+  let a = data.accounts.find((x) => x.id === dialogAcc.id);
+  if (!a) { a = { id: dialogAcc.id, name, currency: home(), balances: {}, feeds: [] }; data.accounts.push(a); }
+  a.name = name;
   const feeds = [...$('ad-feeds').querySelectorAll('input:checked')].map((i) => i.value);
   if (!raw && !a?.feeds?.length && !feeds.length && !Object.keys(a?.balances || {}).length) { $('ad-error').textContent = 'Skriv ett saldo, t.ex. 45 000 eller 1250,50.'; return; }
   if (a) { if (raw) a.balances[month] = amount; a.currency = $('ad-currency').value; a.feeds = feeds; a.hidden = !$('ad-show').checked;
@@ -107,3 +114,18 @@ $('acc-manage').addEventListener('click', () => {
   if (d) d.open = true;
   c.scrollIntoView({ behavior: 'smooth', block: 'start' });
 });
+
+// Inställningar → Sparkonton (2026-11-21): alla konton, även dolda, och + Nytt sparkonto.
+function renderAccSettings() {
+  const accs = data.accounts;
+  $('g-accounts').textContent = accs.length ? `${accs.length} st` : 'Inga';
+  fill($('acc-set-list'), accs.length ? accs.map((a) => {
+    const est = estBalance(data, a, month);
+    return el('li', {}, el('button', { type: 'button', class: 'acc-set-row', on: { click: () => openAccDialog(a) } },
+      el('span', {}, el('span', { text: a.name }), a.hidden ? el('small', { class: 'muted', text: ' · dolt' }) : null),
+      el('span', { class: 'muted', text: est ? (est.estimated ? '≈ ' : '') + money(est.amount, a.currency) : '–' })));
+  }) : el('li', { class: 'muted small', text: 'Inga sparkonton än.' }));
+  $('acc-new').disabled = accs.length >= MAX_ACCOUNTS;
+}
+function newAccount() { openAccDialog({ id: 'a' + newId().slice(-10), name: '', currency: home(), balances: {}, feeds: [] }); }
+$('acc-new').addEventListener('click', newAccount);

@@ -657,3 +657,13 @@ body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; 
 #acc-dialog .actions #ad-cancel { justify-self: end; }
 #acc-dialog .actions button[type=submit] { grid-column: 1 / -1; order: 3; width: 100%; min-height: 48px; }
 #acc-dialog #ad-error:empty { display: none; }
+
+/* Inställningar → Sparkonton (2026-11-21) */
+#acc-set .set-body { padding: 8px 16px 12px; }
+.acc-set-row { display: flex; justify-content: space-between; align-items: center; gap: 8px; width: 100%; min-height: 48px; padding: 0; border: 0; background: none; color: inherit; font: inherit; text-align: left; cursor: pointer; }
+#acc-set-list li + li { border-top: 1px solid var(--outline-variant); }
+/* Stäng-texten är inte längre en knapp – visa den som vanlig text (2026-11-21) */
+.close-line span.link { background: none !important; padding: 0 !important; min-height: 0 !important; color: var(--on-surface-variant) !important; font-weight: 500; }
+.close-line.cl-due span.link { color: var(--primary) !important; font-weight: 600; }
+.sv-foot { display: flex; gap: 16px; flex-wrap: wrap; }
+.sv-foot > :last-child { margin-left: auto; }

@@ -162,7 +162,7 @@ I18N.add({
   '+ Avvikelse': '+ Deviation', 'Person (valfritt)': 'Person (optional)', 'Varje kvartal': 'Every quarter', 'varje kvartal': 'every quarter', 'App': 'App', 'Typ': 'Type',
   'Avsluta poster': 'End items', 'konto': 'account', 'Version': 'Version', 'Huvudmeny': 'Main menu', 't.ex. Buffert': 'e.g. Buffer', 't.ex. Hyra': 'e.g. Rent', 'Startmånad': 'Start month', 'Start': 'Start',
   'Ta bort konto': 'Remove account', 'Byt namn': 'Rename', 'Klistra in text': 'Paste text', 'Data': 'Data',
-  'varav sparande': 'of which savings', 'Varav sparande': 'Of which savings', '🔒 Stäng månad': '🔒 Close month', '🔒 Stäng': '🔒 Close', '🔓 Ändra': '🔓 Edit', 'Stäng månad': 'Close month', 'kvar': 'left', 'Kvar varje månad': 'Left each month', 'Snitt': 'Average', 'Summa': 'Total', 'mån': 'mo',
+  'varav sparande': 'of which savings', 'Varav sparande': 'Of which savings', 'Sparkonton': 'Savings accounts', '+ Nytt sparkonto': '+ New savings account', 'Nytt sparkonto': 'New savings account', '+ Sparkonto': '+ Account', 'Namn': 'Name', 'Skriv ett namn på kontot.': 'Enter a name for the account.', 'Inga sparkonton än.': 'No savings accounts yet.', 'Inga': 'None', ' · dolt': ' · hidden', '🔒 Stäng månad': '🔒 Close month', '🔒 Stäng': '🔒 Close', '🔓 Ändra': '🔓 Edit', 'Stäng månad': 'Close month', 'kvar': 'left', 'Kvar varje månad': 'Left each month', 'Snitt': 'Average', 'Summa': 'Total', 'mån': 'mo',
 }, [
   [/^Varav sparande \((.+) före lön\)$/, 'Of which savings ($1 before pay)'],
   [/^Egna kurser från (.+)$/, 'Own rates from $1'],

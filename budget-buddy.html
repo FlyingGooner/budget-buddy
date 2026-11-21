@@ -675,6 +675,16 @@ body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; 
 #acc-dialog .actions button[type=submit] { grid-column: 1 / -1; order: 3; width: 100%; min-height: 48px; }
 #acc-dialog #ad-error:empty { display: none; }
 
+/* Inställningar → Sparkonton (2026-11-21) */
+#acc-set .set-body { padding: 8px 16px 12px; }
+.acc-set-row { display: flex; justify-content: space-between; align-items: center; gap: 8px; width: 100%; min-height: 48px; padding: 0; border: 0; background: none; color: inherit; font: inherit; text-align: left; cursor: pointer; }
+#acc-set-list li + li { border-top: 1px solid var(--outline-variant); }
+/* Stäng-texten är inte längre en knapp – visa den som vanlig text (2026-11-21) */
+.close-line span.link { background: none !important; padding: 0 !important; min-height: 0 !important; color: var(--on-surface-variant) !important; font-weight: 500; }
+.close-line.cl-due span.link { color: var(--primary) !important; font-weight: 600; }
+.sv-foot { display: flex; gap: 16px; flex-wrap: wrap; }
+.sv-foot > :last-child { margin-left: auto; }
+
 </style>
 </head>
 <body>
@@ -780,6 +790,13 @@ body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; 
           <div class="actions"><span class="spacer"></span><button type="button" class="btn tonal" id="s-save">Spara</button></div>
           </div>
         </details>
+      </details>
+      <details class="set-group-wrap" id="acc-set">
+        <summary class="set-group"><span class="set-title">Sparkonton</span><span class="sect-sub" id="g-accounts"></span></summary>
+        <div class="card set-body">
+          <ul class="list" id="acc-set-list"></ul>
+          <div class="actions"><button type="button" class="btn tonal" id="acc-new">+ Nytt sparkonto</button></div>
+        </div>
       </details>
       <details class="set-group-wrap">
         <summary class="set-group"><span class="set-title">Valuta</span><span class="sect-sub" id="g-currency"></span></summary>
@@ -1154,6 +1171,7 @@ body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; 
 <dialog id="acc-dialog" aria-labelledby="ad-title">
   <form method="dialog" id="ad-form" novalidate>
     <h2 id="ad-title"></h2>
+    <label class="field"><span>Namn</span><input id="ad-name" maxlength="30" autocomplete="off"></label>
     <p class="muted" id="ad-sub"></p>
     <div class="row2">
       <label class="field"><span>Valuta</span><select id="ad-currency"></select></label>
@@ -1698,7 +1716,7 @@ I18N.add({
   '+ Avvikelse': '+ Deviation', 'Person (valfritt)': 'Person (optional)', 'Varje kvartal': 'Every quarter', 'varje kvartal': 'every quarter', 'App': 'App', 'Typ': 'Type',
   'Avsluta poster': 'End items', 'konto': 'account', 'Version': 'Version', 'Huvudmeny': 'Main menu', 't.ex. Buffert': 'e.g. Buffer', 't.ex. Hyra': 'e.g. Rent', 'Startmånad': 'Start month', 'Start': 'Start',
   'Ta bort konto': 'Remove account', 'Byt namn': 'Rename', 'Klistra in text': 'Paste text', 'Data': 'Data',
-  'varav sparande': 'of which savings', 'Varav sparande': 'Of which savings', '🔒 Stäng månad': '🔒 Close month', '🔒 Stäng': '🔒 Close', '🔓 Ändra': '🔓 Edit', 'Stäng månad': 'Close month', 'kvar': 'left', 'Kvar varje månad': 'Left each month', 'Snitt': 'Average', 'Summa': 'Total', 'mån': 'mo',
+  'varav sparande': 'of which savings', 'Varav sparande': 'Of which savings', 'Sparkonton': 'Savings accounts', '+ Nytt sparkonto': '+ New savings account', 'Nytt sparkonto': 'New savings account', '+ Sparkonto': '+ Account', 'Namn': 'Name', 'Skriv ett namn på kontot.': 'Enter a name for the account.', 'Inga sparkonton än.': 'No savings accounts yet.', 'Inga': 'None', ' · dolt': ' · hidden', '🔒 Stäng månad': '🔒 Close month', '🔒 Stäng': '🔒 Close', '🔓 Ändra': '🔓 Edit', 'Stäng månad': 'Close month', 'kvar': 'left', 'Kvar varje månad': 'Left each month', 'Snitt': 'Average', 'Summa': 'Total', 'mån': 'mo',
 }, [
   [/^Varav sparande \((.+) före lön\)$/, 'Of which savings ($1 before pay)'],
   [/^Egna kurser från (.+)$/, 'Own rates from $1'],
@@ -1842,7 +1860,7 @@ I18N.add({
 </script>
 <script>
 // ---- version.js ----
-﻿self.APP_VERSION = '0.12.144';
+﻿self.APP_VERSION = '0.12.145';
 
 </script>
   <script>
@@ -3157,7 +3175,12 @@ function renderMonth() {
 // Sparande-kortet (2026-11-17, förenklat): en lista där varje rad är ett sparkonto med sitt månadssparande
 // (sparpost + konto hör ihop). Sparposter utan konto får en egen rad. Tryck på en rad för att ändra.
 function renderSavingsCard(saving, t) {
-  if (!saving.length && !data.accounts.length) return;
+  if (!saving.length && !data.accounts.length) {   // 2026-11-21: synlig ingång även utan sparande
+    const ie0 = document.querySelector('#income-card .ie-sum');
+    if (ie0) ie0.append(el('p', { class: 'split ie-sav' }, el('span', { text: 'Sparkonton' }),
+      el('button', { type: 'button', class: 'link', text: '+ Nytt sparkonto', on: { click: newAccount } })));
+    return;
+  }
   const share = t.income ? Math.round((t.savings / t.income) * 100) : 0;
   const prev = addMonths(month, -1), round = (v) => Math.round(v / 100) * 100;
   const used = new Set();
@@ -3194,6 +3217,7 @@ function renderSavingsCard(saving, t) {
       ...hiddenAcc.map((a, i) => el('button', { type: 'button', class: 'link', text: (i ? ', ' : '') + a.name, on: { click: () => openAccDialog(a) } }))) : null,
     el('div', { class: 'sv-foot' },
       el('button', { type: 'button', class: 'link', text: '+ Nytt sparande', on: { click: () => focusAdd('savings') } }),
+      el('button', { type: 'button', class: 'link', text: '+ Sparkonto', on: { click: newAccount } }),
       data.accounts.length ? el('button', { type: 'button', class: 'link', text: 'Utveckling ›', on: { click: () => { showTab('stats'); $('stats-accounts').scrollIntoView({ block: 'start' }); } } }) : null));
   $('savings-card').hidden = true;
   if (ie) ie.append(savFold);
@@ -3777,7 +3801,10 @@ function renderAccounts() {
 function openAccDialog(a) {
   dialogAcc = a;
   const cur = balanceAt(a, month);
-  $('ad-title').textContent = a.name;
+  const isNew = !data.accounts.some((x) => x.id === a.id);   // 2026-11-21: nytt konto direkt, utan sparpost
+  $('ad-title').textContent = isNew ? 'Nytt sparkonto' : a.name;
+  $('ad-name').value = a.name || '';
+  $('ad-delete').hidden = isNew;
   $('ad-sub').textContent = `Saldo i ${monthLabel(month).toLowerCase()}.` + (cur && cur.month !== month ? ` Senast: ${money(cur.amount, a.currency)} (${monthLabel(cur.month).toLowerCase()}).` : '');
   $('ad-currency').value = a.currency;
   $('ad-show').checked = !a.hidden;
@@ -3803,7 +3830,7 @@ function openAccDialog(a) {
   $('ad-goal-month').value = g?.month || '';
   $('ad-error').textContent = '';
   $('acc-dialog').showModal();
-  $('ad-amount').focus();
+  (isNew ? $('ad-name') : $('ad-amount')).focus();
 }
 function setAccCurrencyLabel() {
   const c = $('ad-currency').value;
@@ -3823,7 +3850,11 @@ $('ad-form').addEventListener('submit', (e) => {
   const gRaw = $('ad-goal-amount').value.trim(), gAmount = gRaw ? parseKr(gRaw) : null;
   if (gRaw && (gAmount == null || !isAmount(gAmount) || gAmount <= 0)) { $('ad-error').textContent = 'Skriv ett sparmål, t.ex. 15 000 – eller lämna fältet tomt.'; return; }
   const gMonth = $('ad-goal-month').value;
-  const a = data.accounts.find((x) => x.id === dialogAcc.id);
+  const name = cleanName($('ad-name').value, 30);
+  if (!name) { $('ad-error').textContent = 'Skriv ett namn på kontot.'; return; }
+  let a = data.accounts.find((x) => x.id === dialogAcc.id);
+  if (!a) { a = { id: dialogAcc.id, name, currency: home(), balances: {}, feeds: [] }; data.accounts.push(a); }
+  a.name = name;
   const feeds = [...$('ad-feeds').querySelectorAll('input:checked')].map((i) => i.value);
   if (!raw && !a?.feeds?.length && !feeds.length && !Object.keys(a?.balances || {}).length) { $('ad-error').textContent = 'Skriv ett saldo, t.ex. 45 000 eller 1250,50.'; return; }
   if (a) { if (raw) a.balances[month] = amount; a.currency = $('ad-currency').value; a.feeds = feeds; a.hidden = !$('ad-show').checked;
@@ -3843,6 +3874,21 @@ $('acc-manage').addEventListener('click', () => {
   if (d) d.open = true;
   c.scrollIntoView({ behavior: 'smooth', block: 'start' });
 });
+
+// Inställningar → Sparkonton (2026-11-21): alla konton, även dolda, och + Nytt sparkonto.
+function renderAccSettings() {
+  const accs = data.accounts;
+  $('g-accounts').textContent = accs.length ? `${accs.length} st` : 'Inga';
+  fill($('acc-set-list'), accs.length ? accs.map((a) => {
+    const est = estBalance(data, a, month);
+    return el('li', {}, el('button', { type: 'button', class: 'acc-set-row', on: { click: () => openAccDialog(a) } },
+      el('span', {}, el('span', { text: a.name }), a.hidden ? el('small', { class: 'muted', text: ' · dolt' }) : null),
+      el('span', { class: 'muted', text: est ? (est.estimated ? '≈ ' : '') + money(est.amount, a.currency) : '–' })));
+  }) : el('li', { class: 'muted small', text: 'Inga sparkonton än.' }));
+  $('acc-new').disabled = accs.length >= MAX_ACCOUNTS;
+}
+function newAccount() { openAccDialog({ id: 'a' + newId().slice(-10), name: '', currency: home(), balances: {}, feeds: [] }); }
+$('acc-new').addEventListener('click', newAccount);
 
 </script>
 <script>
@@ -4396,6 +4442,7 @@ function render() {
   renderStats();
   renderItems();
   renderSettings();
+  renderAccSettings();
   renderPwd();
 }
 
