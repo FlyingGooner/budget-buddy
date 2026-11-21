@@ -34,7 +34,7 @@ The same text is in the app under **Settings → General → Help and manual**. 
 - Below Left it says when it is time to close (e.g. *Close the month Tue 24 Nov · in 6 days*). Three days before, the line gets a colour, and when the day has come it says **Time to close the month**.
 - The day before payday, tap **✓ Close the month** under the amount and enter what was actually left in the account. In the same dialog you reconcile the savings accounts (prefilled – only change what differs).
 - The heading then becomes **Left in the account** with the actual amount, and the difference is shown as **Variable** in the bar. The next month becomes the current one right away.
-- Once you have started closing months, months that are not closed are shown at the top of Month (**Not closed: Oct**) – tap to go there. **Edit** corrects the amount, **Reopen** removes the closing.
+- Once you have started closing months, months that are not closed are shown at the top of Month (**Not closed: Oct**) – tap to go there. In a closed month, tap **Edit / reopen**: correct the amount there, or remove the closing with **Reopen**.
 
 ## Payday
 - Under **Settings → Household → Payday** you choose which day the budget month starts. The 1st means normal calendar months.

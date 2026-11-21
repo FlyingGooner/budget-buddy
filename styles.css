@@ -617,3 +617,5 @@ body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; 
 .ahead-more { margin-top: 8px; }
 .prev-fc { display: flex; flex-direction: column; align-items: flex-start; gap: 2px; margin: 8px 0 0; }
 .prev-fc .link { padding: 4px 0; font-size: inherit; text-align: left; }
+.close-line { flex-wrap: wrap; }
+.close-line .link.cl-btn { padding: 10px 14px; min-height: 44px; border-radius: var(--r-md); background: var(--surface-container-high); color: var(--primary); }

@@ -634,6 +634,8 @@ body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; 
 .ahead-more { margin-top: 8px; }
 .prev-fc { display: flex; flex-direction: column; align-items: flex-start; gap: 2px; margin: 8px 0 0; }
 .prev-fc .link { padding: 4px 0; font-size: inherit; text-align: left; }
+.close-line { flex-wrap: wrap; }
+.close-line .link.cl-btn { padding: 10px 14px; min-height: 44px; border-radius: var(--r-md); background: var(--surface-container-high); color: var(--primary); }
 
 </style>
 </head>
@@ -850,7 +852,7 @@ body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; 
           <p>Under beloppet står när det är dags att stänga (t.ex. *Stäng månaden tis 24 nov · om 6 dagar*). Tre dagar innan blir raden färgad, och när dagen har kommit står det Dags att stänga månaden.</p>
           <p>Dagen före lön trycker du ✓ Stäng månaden under beloppet och skriver in vad som faktiskt fanns kvar på kontot. I samma ruta stämmer du av sparkontona (förifyllda – ändra bara det som skiljer).</p>
           <p>Rubriken blir då Kvar på kontot med det faktiska beloppet, och skillnaden visas som Rörligt i stapeln. Nästa månad blir den aktuella direkt.</p>
-          <p>Har du börjat stänga månader visas överst i Månad de som inte är stängda (Inte stängd: Okt) – tryck för att gå dit. Ändra rättar beloppet, Öppna igen tar bort stängningen.</p>
+          <p>Har du börjat stänga månader visas överst i Månad de som inte är stängda (Inte stängd: Okt) – tryck för att gå dit. I en stängd månad trycker du Ändra / öppna igen: där rättar du beloppet eller tar bort stängningen med Öppna igen.</p>
         </details>
         <details><summary>Lönedag</summary>
           <p>Under Inställningar → Hushåll → Lönedag väljer du vilken dag budgetmånaden börjar. Den 1:a är vanliga kalendermånader.</p>
@@ -933,7 +935,7 @@ body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; 
           <p>Below Left it says when it is time to close (e.g. *Close the month Tue 24 Nov · in 6 days*). Three days before, the line gets a colour, and when the day has come it says Time to close the month.</p>
           <p>The day before payday, tap ✓ Close the month under the amount and enter what was actually left in the account. In the same dialog you reconcile the savings accounts (prefilled – only change what differs).</p>
           <p>The heading then becomes Left in the account with the actual amount, and the difference is shown as Variable in the bar. The next month becomes the current one right away.</p>
-          <p>Once you have started closing months, months that are not closed are shown at the top of Month (Not closed: Oct) – tap to go there. Edit corrects the amount, Reopen removes the closing.</p>
+          <p>Once you have started closing months, months that are not closed are shown at the top of Month (Not closed: Oct) – tap to go there. In a closed month, tap Edit / reopen: correct the amount there, or remove the closing with Reopen.</p>
         </details>
         <details><summary>Payday</summary>
           <p>Under Settings → Household → Payday you choose which day the budget month starts. The 1st means normal calendar months.</p>
@@ -1582,7 +1584,7 @@ I18N.add({
   '🐷 Sparkvot': '🐷 Savings rate', '🐷 Sparat i månaden': '🐷 Saved this month',
   'Delat lika: ': 'Split evenly: ', 'Delat lika:': 'Split evenly:',
   'Månad för månad': 'Month by month', 'Hela året': 'The whole year', 'Kvar helår (prognos)': 'Left full year (forecast)', '🐷 Sparat': '🐷 Saved',
-  'Rörligt': 'Variable', 'Ändra': 'Edit', 'Öppna igen': 'Reopen', 'Stäng månaden': 'Close month', '✓ Stäng månaden – hur mycket blev kvar?': '✓ Close the month – how much was left?', 'Skillnaden mot det planerade visas som rörliga utgifter (mat, nöjen, oväntat). Historik och saldo använder det faktiska beloppet.': 'The difference from the plan is shown as variable spending (food, fun, the unexpected). History and balance use the actual amount.', 'Skriv beloppet, t.ex. 3 250 eller -500.': 'Enter the amount, e.g. 3 250 or -500.',
+  'Rörligt': 'Variable', 'Ändra': 'Edit', 'Öppna igen': 'Reopen', 'Ändra / öppna igen': 'Edit / reopen', 'Stäng månaden': 'Close month', '✓ Stäng månaden – hur mycket blev kvar?': '✓ Close the month – how much was left?', 'Skillnaden mot det planerade visas som rörliga utgifter (mat, nöjen, oväntat). Historik och saldo använder det faktiska beloppet.': 'The difference from the plan is shown as variable spending (food, fun, the unexpected). History and balance use the actual amount.', 'Skriv beloppet, t.ex. 3 250 eller -500.': 'Enter the amount, e.g. 3 250 or -500.',
   'Saldo på sparkontona': 'Savings account balances',
   'Kvar + sparat över tid': 'Left + saved over time',
   'Saldo på kontot nu (valfritt)': 'Account balance now (optional)', 'Beräknat – ändra om det inte stämmer.': 'Estimated – change it if it is wrong.', 'Räknas upp med sparandet varje månad.': 'Counts up with the savings every month.', 'Fyll i så skapas ett sparkonto som räknas upp med sparandet varje månad.': 'Fill in and a savings account is created that counts up with the savings every month.',
@@ -1795,7 +1797,7 @@ I18N.add({
 </script>
 <script>
 // ---- version.js ----
-﻿self.APP_VERSION = '0.12.127';
+﻿self.APP_VERSION = '0.12.128';
 
 </script>
   <script>
@@ -3138,7 +3140,7 @@ function goalLine(a) {
 function closeLine(t) {
   const stop = (fn) => (e) => { e.preventDefault(); e.stopPropagation(); fn(); };   // knappen ligger i rubriken (summary)
   if (t.closed) return el('p', { class: 'close-line' }, el('span', { text: `✓ Stängd · efter räkningar ${kr(t.planned, true)}` }),
-    el('button', { type: 'button', class: 'link', text: 'Ändra', on: { click: stop(openCloseDialog) } }));
+    el('button', { type: 'button', class: 'link cl-btn', text: 'Ändra / öppna igen', on: { click: stop(openCloseDialog) } }));
   if (month > activeMonth()) return null;
   // 2026-11-18: när ska månaden stängas? Lugn text långt innan, färg 3 dagar innan, tydlig påminnelse när dagen har kommit.
   const iso = closeIso(), days = Math.round((new Date(iso + 'T12:00') - new Date(isoToday() + 'T12:00')) / 864e5);

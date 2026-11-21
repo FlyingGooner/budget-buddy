@@ -187,7 +187,7 @@ function goalLine(a) {
 function closeLine(t) {
   const stop = (fn) => (e) => { e.preventDefault(); e.stopPropagation(); fn(); };   // knappen ligger i rubriken (summary)
   if (t.closed) return el('p', { class: 'close-line' }, el('span', { text: `✓ Stängd · efter räkningar ${kr(t.planned, true)}` }),
-    el('button', { type: 'button', class: 'link', text: 'Ändra', on: { click: stop(openCloseDialog) } }));
+    el('button', { type: 'button', class: 'link cl-btn', text: 'Ändra / öppna igen', on: { click: stop(openCloseDialog) } }));
   if (month > activeMonth()) return null;
   // 2026-11-18: när ska månaden stängas? Lugn text långt innan, färg 3 dagar innan, tydlig påminnelse när dagen har kommit.
   const iso = closeIso(), days = Math.round((new Date(iso + 'T12:00') - new Date(isoToday() + 'T12:00')) / 864e5);
