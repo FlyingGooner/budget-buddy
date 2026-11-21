@@ -629,6 +629,6 @@ body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; 
 #income-card .ie-sum { border-top: 1px solid var(--line, rgba(0,0,0,.08)); margin-top: 8px; padding: 8px 28px 0 0; }
 #income-card .ie-sum h2 { margin: 0; }
 #income-card .ie-sav { display: flex; justify-content: space-between; margin: 4px 0 0; font-size: .875rem; color: var(--muted); }
-.add-pair.three { grid-template-columns: 1fr 1fr; }
-.add-pair.three #add-any { grid-column: 1 / -1; }
+.add-pair.three { grid-template-columns: 1.2fr 1fr 1fr; gap: 6px; }
+.add-pair.three .btn { font-size: .9375rem; padding: 0 6px; white-space: nowrap; }
 .close-line span.link { display: block; }
