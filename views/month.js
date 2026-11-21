@@ -127,7 +127,12 @@ function renderMonth() {
     el('h2', { class: 'split' }, el('span', { text: 'Kostnader' }),
       el('span', { text: kr(t.expense - t.savings) })),
     expense.length ? expenseGroups(expense)
-      : emptyMsg('Inga kostnader den här månaden.', 'Lägg till', 'expense')));
+      : emptyMsg('Inga kostnader den här månaden.', 'Lägg till', 'expense')),
+    // 2026-11-21: summa (inkomster − kostnader) och hur mycket av den som går till sparande.
+    el('div', { class: 'ie-sum' },
+      el('h2', { class: 'split' }, el('span', { text: 'Summa' }), el('span', { class: t.income - (t.expense - t.savings) < 0 ? 'neg' : null, text: kr(t.income - (t.expense - t.savings), true) })),
+      t.savings ? el('p', { class: 'split ie-sav' }, el('span', { text: 'Varav sparande' }),
+        el('span', { text: kr(t.savings) + (t.income ? ` (${Math.round((t.savings / t.income) * 100)} %)` : '') })) : null));
   $('expense-card').hidden = true;
   renderSavingsCard(saving, t);
 }

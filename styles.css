@@ -626,3 +626,6 @@ body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; 
 
 /* Inkomster + kostnader i ett kort (2026-11-21) */
 #income-card > .fold + .fold { border-top: 1px solid var(--line, rgba(0,0,0,.08)); margin-top: 8px; padding-top: 8px; }
+#income-card .ie-sum { border-top: 1px solid var(--line, rgba(0,0,0,.08)); margin-top: 8px; padding: 8px 28px 0 0; }
+#income-card .ie-sum h2 { margin: 0; }
+#income-card .ie-sav { display: flex; justify-content: space-between; margin: 4px 0 0; font-size: .875rem; color: var(--muted); }
