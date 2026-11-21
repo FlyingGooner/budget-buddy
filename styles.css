@@ -708,3 +708,5 @@ dialog:focus { outline: none; }
 .row2 > .field input, .row2 > .field select { min-width: 0; width: 100%; box-sizing: border-box; }
 #ap-list li + li { border-top: 1px solid var(--outline-variant); }
 #ap-list .acc-set-row { display: flex; justify-content: space-between; align-items: center; width: 100%; min-height: 48px; border: 0; background: none; color: inherit; font: inherit; text-align: left; cursor: pointer; padding: 0; }
+.cd-next { margin: 0 0 8px; font-size: .8125rem; color: var(--primary); }
+.cd-next:empty { display: none; }

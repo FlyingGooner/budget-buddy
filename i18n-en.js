@@ -174,6 +174,8 @@ I18N.add({
   [/^(.+)\/mån från lönen$/, '$1/mo from pay'],
   [/^Poster som också går hit: (.+)$/, (g) => `Items that also go here: ${g[1].replace(/\/mån/g, '/mo')}`],
   [/^ifyllt (\S+) · (.+)$/, (g, tr) => `entered ${tr(g[1])} · ${g[2].replace(/\/mån/g, '/mo').replace(/från lönen/g, 'from pay').replace(/före lön/g, 'before pay')}`],
+  [/^(\S+): ≈ (.+) \((.+) \+ (.+) (sparande|från lönen|före lön)\)$/, (g, tr) => `${tr(g[1])}: ≈ ${g[2]} (${g[3]} + ${g[4]} ${({ sparande: 'saving', 'från lönen': 'from pay', 'före lön': 'before pay' })[g[5]]})`],
+  [/^(\S+): värdet \+ (.+)$/, (g, tr) => `${tr(g[1])}: the value + ${g[2]}`],
   [/^förslag: (.+) \+ (.+)$/, 'suggested: $1 + $2'],
   [/^Värde \((.+)\)$/, 'Value ($1)'],
   [/^Ifyllt i (.+)\.$/, (g, tr) => `Entered in ${tr(g[1])}.`],

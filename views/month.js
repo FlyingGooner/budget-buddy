@@ -293,13 +293,21 @@ function openCloseDialog() {
       inp.dataset.orig = inp.value;
       // 2026-11-21: förslaget = förra värdet + månadens sparande; skriv över med det verkliga värdet (fonder rör sig).
       const prev = estBalance(data, a, addMonths(month, -1)), add = est && prev ? est.amount - prev.amount : 0;
-      // 2026-11-21: visa alltid vad kontot fylls på med varje månad, även när värdet redan är ifyllt.
-      const on = (x) => x && x.from <= month && (!x.end || x.end >= month);
-      const fill2 = [on(a.pay) ? `+${kr(a.pay.amount)}/mån från lönen` : null, on(a.pre) ? `+${kr(a.pre.amount)}/mån före lön` : null].filter(Boolean).join(' · ');
       const head = !est ? 'Inget värde än' : add > 0 ? `förslag: ${money(prev.amount, a.currency)} + ${money(add, a.currency)}` : `ifyllt ${monthShortLabel(balanceAt(a, month).month).toLowerCase()}`;
-      const note = fill2 && !(add > 0) ? `${head} · ${fill2}` : head;
+      const note = head;   // 2026-11-21: sparandet syns i raden under (nästa månad)
+      // 2026-11-21: visa resultatet – vad kontot blir nästa månad med sparandet – och uppdatera medan man skriver.
+      const nm = addMonths(month, 1), onN = (x) => x && x.from <= nm && (!x.end || x.end >= nm);
+      const nextAdd = (onN(a.pay) ? convert(data, a.pay.amount, home(), a.currency) : 0) + (onN(a.pre) ? convert(data, a.pre.amount, home(), a.currency) : 0);
+      const what = onN(a.pay) && onN(a.pre) ? 'sparande' : onN(a.pay) ? 'från lönen' : 'före lön';
+      const next = el('p', { class: 'cd-next' });
+      const showNext = () => {
+        const v = parseKr(inp.value.trim()), r = (x) => Math.round(x / 100) * 100;   // hela enheter
+        next.textContent = !nextAdd ? '' : v == null ? `${monthShortLabel(nm)}: värdet + ${money(r(nextAdd), a.currency)}`
+          : `${monthShortLabel(nm)}: ≈ ${money(r(v + nextAdd), a.currency)} (${money(v, a.currency)} + ${money(r(nextAdd), a.currency)} ${what})`;
+      };
+      inp.addEventListener('input', showNext); showNext();
       return el('li', {}, el('label', { class: 'cd-acc' }, el('span', { class: 'cd-acc-name' }, el('span', { text: a.name }), el('small', { class: 'muted', text: note })),
-        el('span', { class: 'cd-acc-in' }, inp, el('small', { class: 'muted', text: unit(a.currency) }))));
+        el('span', { class: 'cd-acc-in' }, inp, el('small', { class: 'muted', text: unit(a.currency) }))), next);
     }))] : null);
   $('cd-error').textContent = '';
   $('close-dialog').showModal();

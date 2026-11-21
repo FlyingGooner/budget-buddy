@@ -725,6 +725,8 @@ dialog:focus { outline: none; }
 .row2 > .field input, .row2 > .field select { min-width: 0; width: 100%; box-sizing: border-box; }
 #ap-list li + li { border-top: 1px solid var(--outline-variant); }
 #ap-list .acc-set-row { display: flex; justify-content: space-between; align-items: center; width: 100%; min-height: 48px; border: 0; background: none; color: inherit; font: inherit; text-align: left; cursor: pointer; padding: 0; }
+.cd-next { margin: 0 0 8px; font-size: .8125rem; color: var(--primary); }
+.cd-next:empty { display: none; }
 
 </style>
 </head>
@@ -1753,6 +1755,8 @@ I18N.add({
   [/^(.+)\/mån från lönen$/, '$1/mo from pay'],
   [/^Poster som också går hit: (.+)$/, (g) => `Items that also go here: ${g[1].replace(/\/mån/g, '/mo')}`],
   [/^ifyllt (\S+) · (.+)$/, (g, tr) => `entered ${tr(g[1])} · ${g[2].replace(/\/mån/g, '/mo').replace(/från lönen/g, 'from pay').replace(/före lön/g, 'before pay')}`],
+  [/^(\S+): ≈ (.+) \((.+) \+ (.+) (sparande|från lönen|före lön)\)$/, (g, tr) => `${tr(g[1])}: ≈ ${g[2]} (${g[3]} + ${g[4]} ${({ sparande: 'saving', 'från lönen': 'from pay', 'före lön': 'before pay' })[g[5]]})`],
+  [/^(\S+): värdet \+ (.+)$/, (g, tr) => `${tr(g[1])}: the value + ${g[2]}`],
   [/^förslag: (.+) \+ (.+)$/, 'suggested: $1 + $2'],
   [/^Värde \((.+)\)$/, 'Value ($1)'],
   [/^Ifyllt i (.+)\.$/, (g, tr) => `Entered in ${tr(g[1])}.`],
@@ -1907,7 +1911,7 @@ I18N.add({
 </script>
 <script>
 // ---- version.js ----
-﻿self.APP_VERSION = '0.12.166';
+﻿self.APP_VERSION = '0.12.167';
 
 </script>
   <script>
@@ -3480,13 +3484,21 @@ function openCloseDialog() {
       inp.dataset.orig = inp.value;
       // 2026-11-21: förslaget = förra värdet + månadens sparande; skriv över med det verkliga värdet (fonder rör sig).
       const prev = estBalance(data, a, addMonths(month, -1)), add = est && prev ? est.amount - prev.amount : 0;
-      // 2026-11-21: visa alltid vad kontot fylls på med varje månad, även när värdet redan är ifyllt.
-      const on = (x) => x && x.from <= month && (!x.end || x.end >= month);
-      const fill2 = [on(a.pay) ? `+${kr(a.pay.amount)}/mån från lönen` : null, on(a.pre) ? `+${kr(a.pre.amount)}/mån före lön` : null].filter(Boolean).join(' · ');
       const head = !est ? 'Inget värde än' : add > 0 ? `förslag: ${money(prev.amount, a.currency)} + ${money(add, a.currency)}` : `ifyllt ${monthShortLabel(balanceAt(a, month).month).toLowerCase()}`;
-      const note = fill2 && !(add > 0) ? `${head} · ${fill2}` : head;
+      const note = head;   // 2026-11-21: sparandet syns i raden under (nästa månad)
+      // 2026-11-21: visa resultatet – vad kontot blir nästa månad med sparandet – och uppdatera medan man skriver.
+      const nm = addMonths(month, 1), onN = (x) => x && x.from <= nm && (!x.end || x.end >= nm);
+      const nextAdd = (onN(a.pay) ? convert(data, a.pay.amount, home(), a.currency) : 0) + (onN(a.pre) ? convert(data, a.pre.amount, home(), a.currency) : 0);
+      const what = onN(a.pay) && onN(a.pre) ? 'sparande' : onN(a.pay) ? 'från lönen' : 'före lön';
+      const next = el('p', { class: 'cd-next' });
+      const showNext = () => {
+        const v = parseKr(inp.value.trim()), r = (x) => Math.round(x / 100) * 100;   // hela enheter
+        next.textContent = !nextAdd ? '' : v == null ? `${monthShortLabel(nm)}: värdet + ${money(r(nextAdd), a.currency)}`
+          : `${monthShortLabel(nm)}: ≈ ${money(r(v + nextAdd), a.currency)} (${money(v, a.currency)} + ${money(r(nextAdd), a.currency)} ${what})`;
+      };
+      inp.addEventListener('input', showNext); showNext();
       return el('li', {}, el('label', { class: 'cd-acc' }, el('span', { class: 'cd-acc-name' }, el('span', { text: a.name }), el('small', { class: 'muted', text: note })),
-        el('span', { class: 'cd-acc-in' }, inp, el('small', { class: 'muted', text: unit(a.currency) }))));
+        el('span', { class: 'cd-acc-in' }, inp, el('small', { class: 'muted', text: unit(a.currency) }))), next);
     }))] : null);
   $('cd-error').textContent = '';
   $('close-dialog').showModal();
