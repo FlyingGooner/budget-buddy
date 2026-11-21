@@ -37,7 +37,7 @@ function renderStats() {
     fill(box, el('h2', { class: 'split' }, el('span', { text: monthLabel(c.m) }), el('span', { text: '✓ Stängd' })),
       el('div', { class: 'lm-stats' }, big(c.spent, 'Konsumtion', 'spent', false), (accTotal(c.m) != null
         ? big(accTotal(c.m), '🐷 Totalt sparat', 'total', true, accTotal(addMonths(c.m, -1)))   // 2026-11-18: summan på kontona mot månaden innan
-        : big(c.saved, '🐷 Sparat', 'saved', true)), big(c.left, 'Kvar', 'left', true)),
+        : big(c.saved, '🐷 Sparat', 'saved', true)), big(c.left, 'Kvar på kontot', 'left', true)),
       el('p', { class: 'muted small', text: `▲▼ mot ${monthLabel(addMonths(c.m, -1)).toLowerCase()}` }));
   }
   renderAccounts();

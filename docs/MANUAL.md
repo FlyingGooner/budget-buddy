@@ -43,12 +43,12 @@ Samma text finns i appen under **Inställningar → Allmänt → Hjälp och manu
 - Infaller lönedagen på en lördag eller söndag räknar appen med att lönen kommer fredagen före, och den nya månaden börjar då redan på fredagen (även sparandet räknas in då). **Stäng månaden** frågar alltid efter saldot sista vardagen före lönen, oftast torsdagen när lönen kommer på fredag.
 
 ## Översikt
-- Överst **förra månaden** – den senaste du har stängt: **Konsumtion** (det som blev kvar efter räkningar och sparande minus det som faktiskt blev över – mat, nöjen och annat), **🐷 Totalt sparat** (summan på sparkontona) och **Kvar**. ▲▼ visar skillnaden mot månaden innan.
+- Överst **förra månaden** – den senaste du har stängt: **Konsumtion** (det som blev kvar efter räkningar och sparande minus det som faktiskt blev över – mat, nöjen och annat), **🐷 Totalt sparat** (summan på sparkontona) och **Kvar på kontot**. ▲▼ visar skillnaden mot månaden innan.
 - Sedan sparkontonas summa med graf, och **Månad för månad**: konsumtion och sparat för varje stängd månad. Tryck på en månad för att öppna den.
 - Översikten bygger på stängda månader – stäng månaden dagen före lön (se ovan).
 
 ## Personer och kategorier
-- Valfritt: lägg till personerna i hushållet under **Inställningar → Hushåll**. Varje post kan då höra till en person eller vara gemensam, och Kvar visar In, Ut och Kvar per person. **Delat lika** visar vad som blir kvar per person om det gemensamma delas lika.
+- Valfritt: lägg till personerna i hushållet under **Inställningar → Hushåll**. Varje post kan då höra till en person eller vara gemensam, och kortet visar In, Ut och Efter räkningar per person. **Delat lika** visar vad som blir kvar per person om det gemensamma delas lika.
 - Kategorierna kan byta namn, läggas till och tas bort.
 
 ## Valuta och kurser

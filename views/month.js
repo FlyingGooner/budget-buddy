@@ -358,7 +358,7 @@ function perPerson(rows) {
   if (!lines.length) return null;
   return el('table', { class: 'per-person' },
     el('thead', {}, el('tr', {}, el('th', { scope: 'col', text: 'Person' }), el('th', { scope: 'col', text: 'In' }),
-      el('th', { scope: 'col', text: 'Ut' }), el('th', { scope: 'col', text: 'Kvar' }))),
+      el('th', { scope: 'col', text: 'Ut' }), el('th', { scope: 'col', text: 'Efter räkningar' }))),   // planerat per person (2026-11-21)
     el('tbody', {}, lines.map((g) => el('tr', {}, el('th', { scope: 'row', text: g.name }),
       el('td', { text: kr(g.income) }), el('td', { text: kr(g.expense) }),
       el('td', { class: g.left < 0 ? 'neg' : '', text: kr(g.left, true) })))),

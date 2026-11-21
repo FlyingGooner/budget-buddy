@@ -43,12 +43,12 @@ The same text is in the app under **Settings → General → Help and manual**. 
 - If payday falls on a Saturday or Sunday, the app assumes the salary arrives the Friday before, and the new month (with its savings) starts on that Friday. **Close month** always asks for the balance on the last weekday before payday, usually the Thursday when the salary comes on Friday.
 
 ## Overview
-- At the top **last month** – the latest one you have closed: **Spending** (what was left after bills and savings minus what was actually left over – food, fun and the rest), **🐷 Total saved** (the total in the savings accounts) and **Left**. ▲▼ shows the difference from the month before.
+- At the top **last month** – the latest one you have closed: **Spending** (what was left after bills and savings minus what was actually left over – food, fun and the rest), **🐷 Total saved** (the total in the savings accounts) and **Left in the account**. ▲▼ shows the difference from the month before.
 - Then the savings accounts total with a chart, and **Month by month**: spending and saved for each closed month. Tap a month to open it.
 - The overview is based on closed months – close the month the day before payday (see above).
 
 ## People and categories
-- Optional: add the people in the household under **Settings → Household**. Each item can then belong to a person or be shared, and Left shows In, Out and Left per person. **Split evenly** shows what is left per person if the shared part is split evenly.
+- Optional: add the people in the household under **Settings → Household**. Each item can then belong to a person or be shared, and the card shows In, Out and After bills per person. **Split evenly** shows what is left per person if the shared part is split evenly.
 - Categories can be renamed, added and removed.
 
 ## Currency and rates
