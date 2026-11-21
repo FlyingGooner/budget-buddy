@@ -421,7 +421,7 @@
   <div class="add-pick">
     <button type="button" class="extra" data-add="income"><b>Inkomst</b><span class="muted">Lön efter skatt, bidrag …</span></button>
     <button type="button" class="extra" data-add="expense"><b>Kostnad</b><span class="muted">Hyra, el, lån – varje månad</span></button>
-    <button type="button" class="extra" data-add="account"><b>🐷 Sparande</b><span class="muted">Ett sparkonto: från lönen, före lön eller en insättning</span></button>
+    <button type="button" class="extra" data-add="account"><b>🐷 Sparande</b><span class="muted">Ett sparkonto: från lönen och/eller före lön</span></button>
     <button type="button" class="extra" data-add="oneoff"><b>Bara den här månaden</b><span class="muted">Avvikelse, t.ex. en resa</span></button>
   </div>
   <div class="actions"><span class="spacer"></span><button type="button" class="btn text" id="add-cancel">Avbryt</button></div>
@@ -507,19 +507,19 @@
     <h2 id="ad-title"></h2>
     <!-- 2026-11-21: förenklat – saldo och det som sätts in syns direkt, resten under Fler inställningar -->
     <div id="ad-name-new"></div>
-    <label class="field"><span id="ad-amount-label">Saldo (kr)</span><input id="ad-amount" inputmode="decimal" autocomplete="off"></label>
+    <label class="field"><span id="ad-amount-label">Värde (kr)</span><input id="ad-amount" inputmode="decimal" autocomplete="off"></label>
     <p class="muted small" id="ad-sub"></p>
     <div class="row2">
       <label class="field"><span>Från lönen / mån (<span class="cur-unit">kr</span>)</span><input id="ad-pay" inputmode="decimal" autocomplete="off" placeholder="0"></label>
       <label class="field"><span>Före lön / mån (<span class="cur-unit">kr</span>)</span><input id="ad-pre" inputmode="decimal" autocomplete="off" placeholder="0"></label>
     </div>
-    <label class="field"><span id="ad-dep-label">Insättning</span><input id="ad-dep" inputmode="decimal" autocomplete="off" placeholder="0"></label>
-    <p class="muted small ad-hint">Från lönen är en kostnad i budgeten. Före lön (t.ex. aktier via jobbet) och insättningar (t.ex. en gåva) räknas som sparat men påverkar inte budgeten.</p>
+    <input type="hidden" id="ad-dep"><span hidden id="ad-dep-label"></span>
+    <p class="muted small ad-hint">Från lönen är en kostnad i budgeten; före lön (t.ex. aktier via jobbet) påverkar den inte. Värdet räknas upp med båda varje månad – när du stänger månaden skriver du in det verkliga värdet.</p>
     <p class="small" id="ad-feeds-sum"></p>
     <details class="ad-more" id="ad-more"><summary>Fler inställningar</summary>
       <label class="field" id="ad-name-wrap"><span>Namn</span><input id="ad-name" maxlength="30" autocomplete="off"></label>
       <label class="field"><span>Valuta</span><select id="ad-currency"></select></label>
-      <div class="ad-feeds" id="ad-feeds"></div>
+      <div class="ad-feeds" id="ad-feeds" hidden></div>
       <button type="button" class="link" id="ad-goal-add">+ Sparmål</button>
       <div class="row2" id="ad-goal" hidden>
         <label class="field"><span id="ad-goal-label">Sparmål (kr)</span><input id="ad-goal-amount" inputmode="decimal" autocomplete="off"></label>

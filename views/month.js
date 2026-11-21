@@ -285,19 +285,17 @@ function openCloseDialog() {
   $('cd-carry').checked = t.closed ? data.carry.includes(month) : true;
   // Sparkonton (2026-11-17): fyll i saldona samtidigt – förifyllt med beräknat/senaste saldo, t.ex. efter en extra överföring.
   // 2026-11-18: en rad per konto – namn och var siffran kommer ifrån till vänster, saldot till höger.
-  fill($('cd-accounts'), data.accounts.length ? [el('p', { class: 'cd-acc-h' }, el('span', { text: 'Sparkonton' }), el('small', { class: 'muted', text: 'Ändra bara det som skiljer mot banken' })),
+  fill($('cd-accounts'), data.accounts.length ? [el('p', { class: 'cd-acc-h' }, el('span', { text: 'Sparkonton' }), el('small', { class: 'muted', text: 'Skriv in värdet från banken' })),
     el('ul', { class: 'cd-accs' }, data.accounts.map((a) => {
       const est = estBalance(data, a, month);
       const inp = el('input', { inputmode: 'decimal', autocomplete: 'off', 'data-acc': a.id, 'aria-label': `Saldo ${a.name}` });
       inp.value = est ? krInput(est.amount) : '';
       inp.dataset.orig = inp.value;
-      const from = (a.feeds || []).map((id) => data.recurring.find((x) => x.id === id)?.name).filter(Boolean);
-      const note = !est ? 'Inget saldo än' : est.estimated ? '≈ beräknat' : `ifyllt ${monthShortLabel(balanceAt(a, month).month).toLowerCase()}`;
-      // 2026-11-18: vad som fyllde på kontot den här månaden, per sparpost.
-      const feeds = rowsForMonth(data, month).filter((r) => (a.feeds || []).includes(r.id) && r.amount);
+      // 2026-11-21: förslaget = förra värdet + månadens sparande; skriv över med det verkliga värdet (fonder rör sig).
+      const prev = estBalance(data, a, addMonths(month, -1)), add = est && prev ? est.amount - prev.amount : 0;
+      const note = !est ? 'Inget värde än' : add > 0 ? `förslag: ${money(prev.amount, a.currency)} + ${money(add, a.currency)}` : `ifyllt ${monthShortLabel(balanceAt(a, month).month).toLowerCase()}`;
       return el('li', {}, el('label', { class: 'cd-acc' }, el('span', { class: 'cd-acc-name' }, el('span', { text: a.name }), el('small', { class: 'muted', text: note })),
-        el('span', { class: 'cd-acc-in' }, inp, el('small', { class: 'muted', text: unit(a.currency) }))),
-      feeds.length ? el('p', { class: 'cd-feed small' }, feeds.map((r) => `+${kr(r.amount)} från ${r.name}`).join(' · ') + ` i ${monthLabel(month).toLowerCase().replace(/ \d{4}$/, '')}`) : null);
+        el('span', { class: 'cd-acc-in' }, inp, el('small', { class: 'muted', text: unit(a.currency) }))));
     }))] : null);
   $('cd-error').textContent = '';
   $('close-dialog').showModal();
@@ -310,7 +308,7 @@ $('cd-form').addEventListener('submit', (e) => {
   if (ore == null) { $('cd-error').textContent = 'Skriv beloppet, t.ex. 3 250 eller -500.'; return; }
   for (const inp of $('cd-accounts').querySelectorAll('input[data-acc]')) {
     const v = inp.value.trim();
-    if (!v || v === inp.dataset.orig && !Object.hasOwn(data.accounts.find((a) => a.id === inp.dataset.acc)?.balances || {}, month)) continue;
+    if (!v) continue;   // 2026-11-21: värdet vid stängning sparas alltid – nästa månad räknas upp därifrån
     const amt = parseKr(v);
     if (amt == null || !isAmount(amt)) { $('cd-error').textContent = 'Skriv ett saldo, t.ex. 45 000 eller 1250,50.'; return; }
     const a = data.accounts.find((x) => x.id === inp.dataset.acc);

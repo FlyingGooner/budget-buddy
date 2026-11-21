@@ -48,9 +48,8 @@ function openAccDialog(a) {
   // Nytt konto: namnet överst; befintligt: namnet under Fler inställningar (2026-11-21).
   if (isNew) $('ad-name-new').append($('ad-name-wrap')); else $('ad-more').querySelector('summary').after($('ad-name-wrap'));
   $('ad-more').open = false;
-  const fed = data.recurring.filter((r) => (a.feeds || []).includes(r.id));
-  $('ad-feeds-sum').textContent = fed.length ? `Poster som också går hit: ${fed.map((r) => `${r.name} ${kr(r.amount)}/mån`).join(', ')}` : '';
-  $('ad-sub').textContent = `Saldo i ${monthLabel(month).toLowerCase()}.` + (cur && cur.month !== month ? ` Senast: ${money(cur.amount, a.currency)} (${monthLabel(cur.month).toLowerCase()}).` : '');
+  $('ad-feeds-sum').textContent = '';   // 2026-11-21: inga kopplingar att visa – kontot har sitt eget sparande
+  $('ad-sub').textContent = !cur ? '' : cur.month === month ? `Ifyllt i ${monthLabel(month).toLowerCase()}.` : `Senast ifyllt ${money(cur.amount, a.currency)} i ${monthLabel(cur.month).toLowerCase()} – förslaget här är det plus sparandet sedan dess.`;
   $('ad-currency').value = a.currency;
   $('ad-show').checked = !a.hidden;
   setAccCurrencyLabel();
@@ -88,7 +87,7 @@ function openAccDialog(a) {
 }
 function setAccCurrencyLabel() {
   const c = $('ad-currency').value;
-  $('ad-amount-label').textContent = `Saldo (${unit(c)})`;
+  $('ad-amount-label').textContent = `Värde (${unit(c)})`;
   $('ad-goal-label').textContent = `Sparmål (${unit(c)})`;
 }
 $('ad-currency').replaceChildren(...CURRENCIES.map((c) => el('option', { value: c, text: CUR_NAMES[c] })));
