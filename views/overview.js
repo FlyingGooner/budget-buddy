@@ -20,7 +20,7 @@ function renderOverview() {
 // Kommande 12 månader (2026-11-21): planerat kvar och prognos (planerat minus rörligt, se forecast() i store.js).
 // Prognoskolumnen visas först när minst en månad är stängd. Tryck på en rad → öppnar månaden.
 // 2026-11-21: tre månader syns, resten fälls ut (Summa gäller alltid alla 12).
-// 2026-11-21: de tre senaste månaderna står överst (utfall: kvar på kontot om stängd), Summa gäller bara framåt.
+// 2026-11-21: de tre senaste månaderna står överst (utfall: kvar på kontot om stängd). Ingen summarad, bara saldo om ett år.
 const AHEAD_SHOWN = 3, PAST_SHOWN = 3;
 let aheadOpen = false;
 function aheadCard() {
@@ -49,8 +49,7 @@ function aheadCard() {
         rows.slice(0, aheadOpen ? 12 : AHEAD_SHOWN).map((r, i) => el('tr', { class: i === 0 && past.length ? 'now' : '', on: { click: open(r.m) } },
           el('td', { text: monthShortYear(r.m) }), cell(r.plan),
           hasFc ? (r.fc ? cell(r.fc.left, 'fc') : el('td', { class: 'fc', text: '–' })) : null))),
-      el('tfoot', {}, el('tr', {}, el('td', { text: 'Summa 12 mån' }), cell(sum('plan')), hasFc ? cell(sum('fc'), 'fc') : null),
-        bal == null ? null : el('tr', {}, el('td', { text: 'Saldo om ett år' }), el('td', { text: kr(endBal('plan')) }),
+      bal == null ? null : el('tfoot', {}, el('tr', {}, el('td', { text: 'Saldo om ett år' }), el('td', { text: kr(endBal('plan')) }),
           hasFc ? el('td', { class: 'fc', text: '≈ ' + kr(endBal('fc')) }) : null))),
     el('button', { type: 'button', class: 'link ahead-more', 'aria-expanded': String(aheadOpen), text: aheadOpen ? 'Visa färre' : `Visa alla 12 månader ›`,
       on: { click: () => { aheadOpen = !aheadOpen; renderOverview(); } } }),
