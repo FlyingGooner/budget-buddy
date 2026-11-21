@@ -125,9 +125,8 @@ function renderMonth() {
     income.some((r) => r.kind === 'carry' || r.name === CARRY_NAME) ? null
       : el('p', { class: 'carry-add' }, el('button', { type: 'button', class: 'link', text: '+ Kvar från förra månaden', on: { click: openCarryDialog } }))),
     fold('exp',
-    [el('h2', { class: 'split' }, el('span', { text: 'Kostnader' }),
-      el('span', { text: kr(t.expense - t.savings) })),
-      expense.length ? topCats(expense.filter((r) => r.category !== SAVINGS_CAT)) : null],   // 2026-11-21: tre största syns hopfällt
+    el('h2', { class: 'split' }, el('span', { text: 'Kostnader' }),
+      el('span', { text: kr(t.expense - t.savings) })),   // hopfällt: bara summan (2026-11-21)
     expense.length ? expenseGroups(expense)
       : emptyMsg('Inga kostnader den här månaden.', 'Lägg till', 'expense')),
     // 2026-11-21: summa (inkomster − kostnader) och hur mycket av den som går till sparande.
