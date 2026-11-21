@@ -704,6 +704,10 @@ dialog:focus { outline: none; }
 .pay-chip.pc-soon strong { color: var(--on-primary-container); }
 .pay-chip.pc-due { background: var(--primary); color: var(--on-primary); }
 .pay-chip.pc-due strong { color: var(--on-primary); }
+#income-card .ie-sum h2 + h2.ie-total { border-top: 1px solid var(--outline-variant); margin-top: 6px; padding-top: 6px; }
+#income-card .ie-total span:last-child { font-weight: 700; color: var(--on-surface); }
+#income-card p.ie-sav.muted { display: block; font-size: .8125rem; margin: 4px 0 2px; }
+#income-card p.ie-sav.muted { color: var(--on-surface-variant); }
 
 </style>
 </head>
@@ -1739,6 +1743,8 @@ I18N.add({
   'varav sparande': 'of which savings', 'Varav sparande': 'Of which savings', 'Lön i dag': 'Payday today', 'dagar till lön': 'days to payday', 'dag till lön': 'day to payday', 'stäng i dag': 'close today', 'stäng månaden': 'close the month', 'Lön i morgon': 'Payday tomorrow', 'Sparande som går hit:': 'Savings that go here:', 'Sparkonton': 'Savings accounts', '+ Nytt sparkonto': '+ New savings account', 'Nytt sparkonto': 'New savings account', '+ Sparkonto': '+ Account', 'Namn': 'Name', 'Skriv ett namn på kontot.': 'Enter a name for the account.', 'Inga sparkonton än.': 'No savings accounts yet.', 'Inga': 'None', ' · dolt': ' · hidden', '🔒 Stäng månad': '🔒 Close month', '🔒 Stäng': '🔒 Close', '🔓 Ändra': '🔓 Edit', 'Stäng månad': 'Close month', 'kvar': 'left', 'Kvar varje månad': 'Left each month', 'Snitt': 'Average', 'Summa': 'Total', 'mån': 'mo',
 }, [
   [/^Varav sparande \((.+) före lön\)$/, 'Of which savings ($1 before pay)'],
+  [/^Sparat i månaden: (.+) \((\d+) %\), varav (.+) före lön$/, 'Saved this month: $1 ($2 %), of which $3 before pay'],
+  [/^Sparat i månaden: (.+) \((\d+) %\)$/, 'Saved this month: $1 ($2 %)'],
   [/^Dag (\d+) av (\d+)$/, 'Day $1 of $2'],
   [/^Lön om (\d+) dagar$/, 'Payday in $1 days'],
   [/^(.+) skapat$/, '$1 created'],
@@ -1887,7 +1893,7 @@ I18N.add({
 </script>
 <script>
 // ---- version.js ----
-﻿self.APP_VERSION = '0.12.154';
+﻿self.APP_VERSION = '0.12.155';
 
 </script>
   <script>
@@ -3196,7 +3202,8 @@ function renderMonth() {
   const emptyMsg = (text, label, type) => el('p', { class: 'empty-line muted' }, text + ' ',
     el('button', { type: 'button', class: 'link', text: label, on: { click: () => focusAdd(type) } }));
 
-  const sumAll = t.income + (t.pre || 0) - (t.expense - t.savings);
+  const fromPay = t.savings - (t.pre || 0);   // sparande som dras från nettolönen
+  const pctSaved = t.income + (t.pre || 0) ? Math.round((t.savings / (t.income + (t.pre || 0))) * 100) : 0;
   // 2026-11-21: inkomster och kostnader i samma kort, två rader som fälls ut var för sig.
   fill($('income-card'), fold('inc',
     el('h2', { class: 'split' }, el('span', {}, 'Inkomster ', el('small', { class: 'netto', text: '(netto)' }), payNote() ? el('small', { class: 'netto', text: ' · ' }) : null, payNote() ? el('small', { class: 'netto', text: payNote() }) : null), el('span', { text: kr(t.income) })),
@@ -3210,12 +3217,14 @@ function renderMonth() {
       el('span', { text: kr(t.expense - t.savings) })),   // hopfällt: bara summan (2026-11-21)
     expense.length ? expenseGroups(expense)
       : emptyMsg('Inga kostnader den här månaden.', 'Lägg till', 'expense')),
-    // 2026-11-21: summa (inkomster − kostnader) och hur mycket av den som går till sparande.
-    // 2026-11-21: sparande som dras före lönen räknas med – det har aldrig kommit in i nettolönen.
+    // 2026-11-21: räknas ner till samma belopp som överst – inkomster − kostnader − sparande från lönen = efter räkningar.
+    // Sparande som dras före lönen har aldrig kommit in på kontot och står bara i noten om månadens sparande.
     el('div', { class: 'ie-sum' },
-      el('h2', { class: 'split' }, el('span', { text: 'Summa' }), el('span', { class: sumAll < 0 ? 'neg' : null, text: kr(sumAll, true) })),
-      t.savings ? el('p', { class: 'split ie-sav' }, el('span', { text: t.pre ? `Varav sparande (${kr(t.pre)} före lön)` : 'Varav sparande' }),
-        el('span', { text: kr(t.savings) + (t.income + t.pre ? ` (${Math.round((t.savings / (t.income + t.pre)) * 100)} %)` : '') })) : null));
+      fromPay ? el('h2', { class: 'split' }, el('span', { text: 'Sparande' }), el('span', { text: '−' + kr(fromPay) })) : null,
+      el('h2', { class: 'split ie-total' }, el('span', { text: 'Efter räkningar' }), el('span', { class: t.left < 0 ? 'neg' : null, text: kr(t.left, true) })),
+      t.savings ? el('p', { class: 'ie-sav muted' }, t.pre
+        ? `Sparat i månaden: ${kr(t.savings)} (${pctSaved} %), varav ${kr(t.pre)} före lön`
+        : `Sparat i månaden: ${kr(t.savings)} (${pctSaved} %)`) : null));
   $('expense-card').hidden = true;
   const cb = $('close-month');   // 2026-11-21: Stäng månad som knapp bredvid Lägg till / Alla poster
   if (cb) { cb.hidden = month > activeMonth() && !t.closed; cb.textContent = t.closed ? '🔓 Ändra' : '🔒 Stäng'; cb.setAttribute('aria-label', t.closed ? 'Ändra / öppna igen' : 'Stäng månad'); cb.onclick = openCloseDialog; $('add-pair').classList.toggle('three', !cb.hidden); }

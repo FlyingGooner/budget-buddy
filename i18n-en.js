@@ -165,6 +165,8 @@ I18N.add({
   'varav sparande': 'of which savings', 'Varav sparande': 'Of which savings', 'Lön i dag': 'Payday today', 'dagar till lön': 'days to payday', 'dag till lön': 'day to payday', 'stäng i dag': 'close today', 'stäng månaden': 'close the month', 'Lön i morgon': 'Payday tomorrow', 'Sparande som går hit:': 'Savings that go here:', 'Sparkonton': 'Savings accounts', '+ Nytt sparkonto': '+ New savings account', 'Nytt sparkonto': 'New savings account', '+ Sparkonto': '+ Account', 'Namn': 'Name', 'Skriv ett namn på kontot.': 'Enter a name for the account.', 'Inga sparkonton än.': 'No savings accounts yet.', 'Inga': 'None', ' · dolt': ' · hidden', '🔒 Stäng månad': '🔒 Close month', '🔒 Stäng': '🔒 Close', '🔓 Ändra': '🔓 Edit', 'Stäng månad': 'Close month', 'kvar': 'left', 'Kvar varje månad': 'Left each month', 'Snitt': 'Average', 'Summa': 'Total', 'mån': 'mo',
 }, [
   [/^Varav sparande \((.+) före lön\)$/, 'Of which savings ($1 before pay)'],
+  [/^Sparat i månaden: (.+) \((\d+) %\), varav (.+) före lön$/, 'Saved this month: $1 ($2 %), of which $3 before pay'],
+  [/^Sparat i månaden: (.+) \((\d+) %\)$/, 'Saved this month: $1 ($2 %)'],
   [/^Dag (\d+) av (\d+)$/, 'Day $1 of $2'],
   [/^Lön om (\d+) dagar$/, 'Payday in $1 days'],
   [/^(.+) skapat$/, '$1 created'],
