@@ -256,6 +256,8 @@ I18N.add({
   [/^(.+) börjar efter den månaden – välj en senare månad eller avmarkera den\.$/, '$1 starts after that month – choose a later month or deselect it.'],
   [/^(\d+) procent av inkomsterna går till kostnader$/, '$1 percent of the income goes to expenses'],
   [/^Saldo efter månaden: (.+)$/, 'Balance after the month: $1'],
+  [/^Kvar i (\S+) \(faktiskt\): (.+)$/, (g, tr) => `Left in ${tr(g[1])} (actual): ${g[2]}`],
+  [/^Kvar i (\S+): (.+)$/, (g, tr) => `Left in ${tr(g[1])}: ${g[2]}`],
   [/^Gäller bara (.+)\.$/, 'Applies only to $1.'],
   [/^Belopp för (.+)\. Ordinarie (.+)\.$/, 'Amount for $1. Usual $2.'],
   [/^(.+) hoppas över i (.+)$/, '$1 is skipped in $2'],

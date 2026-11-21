@@ -1713,6 +1713,8 @@ I18N.add({
   [/^(.+) börjar efter den månaden – välj en senare månad eller avmarkera den\.$/, '$1 starts after that month – choose a later month or deselect it.'],
   [/^(\d+) procent av inkomsterna går till kostnader$/, '$1 percent of the income goes to expenses'],
   [/^Saldo efter månaden: (.+)$/, 'Balance after the month: $1'],
+  [/^Kvar i (\S+) \(faktiskt\): (.+)$/, (g, tr) => `Left in ${tr(g[1])} (actual): ${g[2]}`],
+  [/^Kvar i (\S+): (.+)$/, (g, tr) => `Left in ${tr(g[1])}: ${g[2]}`],
   [/^Gäller bara (.+)\.$/, 'Applies only to $1.'],
   [/^Belopp för (.+)\. Ordinarie (.+)\.$/, 'Amount for $1. Usual $2.'],
   [/^(.+) hoppas över i (.+)$/, '$1 is skipped in $2'],
@@ -1742,7 +1744,7 @@ I18N.add({
 </script>
 <script>
 // ---- version.js ----
-﻿self.APP_VERSION = '0.12.116';
+﻿self.APP_VERSION = '0.12.117';
 
 </script>
   <script>
@@ -2951,6 +2953,8 @@ function renderMonth() {
       seg('s-exp', t.expense - t.savings, 'Kostnader'), seg('s-sav', t.savings, 'Sparande'), seg('s-var', varSpend, 'Rörligt'), seg('s-left', Math.max(0, t.left), 'Kvar')),
     el('div', { class: 'lgds' }, legend('s-exp', 'Kostnader'), t.savings ? legend('s-sav', 'Sparande') : null, varSpend ? legend('s-var', 'Rörligt') : null,
       t.left > 0 ? legend('s-left', 'Kvar') : null),
+    // 2026-11-21: förra månadens kvar (faktiskt om den är stängd) – för att följa ekonomin över tid.
+    hasPrev ? el('p', { class: 'muted small', text: `Kvar i ${monthShortLabel(addMonths(month, -1)).toLowerCase()}${prevT.closed ? ' (faktiskt)' : ''}: ${kr(prevT.left, true)}` }) : null,
     bal == null ? null : el('p', { class: 'muted small', text: `Saldo efter månaden: ${kr(bal)}` })],
     perPerson(rows)));
 

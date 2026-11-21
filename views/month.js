@@ -94,6 +94,8 @@ function renderMonth() {
       seg('s-exp', t.expense - t.savings, 'Kostnader'), seg('s-sav', t.savings, 'Sparande'), seg('s-var', varSpend, 'Rörligt'), seg('s-left', Math.max(0, t.left), 'Kvar')),
     el('div', { class: 'lgds' }, legend('s-exp', 'Kostnader'), t.savings ? legend('s-sav', 'Sparande') : null, varSpend ? legend('s-var', 'Rörligt') : null,
       t.left > 0 ? legend('s-left', 'Kvar') : null),
+    // 2026-11-21: förra månadens kvar (faktiskt om den är stängd) – för att följa ekonomin över tid.
+    hasPrev ? el('p', { class: 'muted small', text: `Kvar i ${monthShortLabel(addMonths(month, -1)).toLowerCase()}${prevT.closed ? ' (faktiskt)' : ''}: ${kr(prevT.left, true)}` }) : null,
     bal == null ? null : el('p', { class: 'muted small', text: `Saldo efter månaden: ${kr(bal)}` })],
     perPerson(rows)));
 
