@@ -91,7 +91,7 @@ function renderMonth() {
   // 2026-11-21: öppen månad = vad som finns efter räkningar och sparande; stängd = det som faktiskt fanns kvar på kontot.
   const leftWord = t.closed ? 'Kvar på kontot' : 'Efter räkningar';
   const legend = (cls, label) => el('span', { class: 'lgd' }, el('span', { class: 'dot ' + cls }), label);
-  fill($('summary'), [el('h2', { text: leftWord }),   // 2026-11-21: inget hopfällbart – kortet visar bara data
+  fill($('summary'), fold('kvar', [el('h2', { text: leftWord }),
     // 2026-11-21: liten ruta till höger med dagar till lön (färgad när det är dags att stänga), i stället för den stora raden.
     el('div', { class: 'big-row' }, el('p', { class: 'big ' + (t.left < 0 ? 'neg' : 'pos'), text: kr(t.left, true) }), t.closed ? null : payChip()),
     t.closed ? closeLine(t) : null,
@@ -106,9 +106,11 @@ function renderMonth() {
     // 2026-11-21: en rad var – " · " mellan dem bröts fult på telefonen.
     hasPrev || fc ? el('div', { class: 'muted small prev-fc' },
       hasPrev ? el('span', { text: `${prevT.closed ? 'Kvar på kontot' : 'Efter räkningar'} i ${monthShortLabel(addMonths(month, -1)).toLowerCase()}: ${kr(prevT.left, true)}` }) : null,
-      fc ? el('span', { title: fcText(fc), text: `Kvar vid stängning: ≈ ${kr(fc.left, true)}` }) : null) : null,
-    bal == null ? null : el('p', { class: 'muted small', text: `Saldo efter månaden: ${kr(bal)}` }),
-    perPerson(rows)]);
+      fc ? el('button', { type: 'button', class: 'link', 'aria-expanded': String(fcOpen), text: `Kvar vid stängning: ≈ ${kr(fc.left, true)}`,
+        on: { click: (e) => { e.preventDefault(); e.stopPropagation(); fcOpen = !fcOpen; renderMonth(); } } }) : null) : null,
+    fc && fcOpen ? el('p', { class: 'muted small', text: fcText(fc) }) : null,
+    bal == null ? null : el('p', { class: 'muted small', text: `Saldo efter månaden: ${kr(bal)}` })],
+    perPerson(rows)));
 
   // Empty card: one quiet line with a text link to Poster (like follow-diet-tracker), not a big button.
   const emptyMsg = (text, label, type) => el('p', { class: 'empty-line muted' }, text + ' ',
@@ -629,6 +631,7 @@ $('rd-delete').addEventListener('click', () => {
 });
 
 // Förklaring till prognosen (2026-11-21).
+let fcOpen = false;
 function fcText(fc) {
   const pct = Math.round((fc.factor - 1) * 100), name = monthShortLabel(month);   // stor bokstav, står först i meningen
   const season = pct > 0 ? ` ${name} brukar kosta ${pct} % mer.` : pct < 0 ? ` ${name} brukar kosta ${-pct} % mindre.` : '';
