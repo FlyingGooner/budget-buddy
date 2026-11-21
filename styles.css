@@ -634,3 +634,19 @@ body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; 
 .close-line span.link { display: block; }
 #income-card .ie-sum > .fold { margin: 6px -28px 0 0; }
 #income-card .ie-sum .sv-diff { display: block; margin: 0 0 4px; font-size: .8125rem; }
+/* Stäng månad-formuläret snyggare (2026-11-21) */
+#close-dialog .check { font-size: .9375rem; line-height: 1.35; align-items: flex-start; gap: 10px; margin-top: 12px; }
+#close-dialog .check input { margin-top: 2px; }
+#close-dialog .check + .cd-hint { padding-left: 30px; }
+#close-dialog .cd-acc-h { flex-wrap: wrap; border-top: 1px solid var(--outline-variant); padding-top: 12px; }
+#close-dialog .cd-acc { padding: 8px 0 2px; }
+#close-dialog .cd-acc-in input { width: 6.5em; min-height: 40px; }
+#close-dialog .cd-acc-in small { min-width: 1.5em; }
+#close-dialog .cd-acc-note { margin: 0 0 8px; }
+#close-dialog .actions { display: grid; grid-template-columns: 1fr 1fr; gap: 4px 8px; margin-top: 16px; }
+#close-dialog .actions .spacer { display: none; }
+#close-dialog .actions #cd-reopen { justify-self: start; }
+#close-dialog .actions #cd-reopen[hidden] + .spacer + #cd-cancel { grid-column: 1 / -1; }
+#close-dialog .actions #cd-cancel { justify-self: end; }
+#close-dialog .actions button[type=submit] { grid-column: 1 / -1; order: 3; width: 100%; min-height: 48px; }
+#close-dialog #cd-error:empty { display: none; }
