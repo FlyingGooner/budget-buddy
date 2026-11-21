@@ -1,6 +1,6 @@
 // Unit tests for store.js (loaded as a classic script before this file). Run: tools\test.ps1 budget-buddy
 const rich = () => ({
-  version: 5,
+  version: 6,
   settings: { categories: DEFAULT_CATEGORIES.map((c) => ({ ...c })), people: [{ id: 'p1', name: 'Anna' }], startBalance: 1500000, startMonth: '2026-01',
     catsV: CATS_V, rates: { USD: 1000, EUR: 1100, GBP: 1300, NOK: 100, DKK: 150 }, ratesDate: '2026-11-01', ratesOwn: true },
   recurring: [
@@ -320,4 +320,10 @@ T.test('v5: export utan version uppgraderas vid import', () => {
   const p = { recurring: [{ id: 's1', name: 'Spar', type: 'e', amount: 100000, category: 'savings', start: '2026-01' }] };
   const d = loadData(unpackData(p));
   T.eq(d.recurring.length, 0); T.eq(d.accounts[0].pay.amount, 100000);
+});
+
+T.test('v6: kategorin Försäkringskassan byter namn, ett eget namn behålls', () => {
+  const cats = (name) => ({ version: 5, settings: { categories: [{ id: 'fk', name, type: 'income' }, { id: 'salary', name: 'Lön', type: 'income' }] } });
+  T.eq(loadData(cats('Försäkringskassan')).settings.categories.find((c) => c.id === 'fk').name, 'Bidrag och ersättningar');
+  T.eq(loadData(cats('FK')).settings.categories.find((c) => c.id === 'fk').name, 'FK');
 });

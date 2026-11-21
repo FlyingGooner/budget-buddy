@@ -8,7 +8,7 @@ Belopp är heltal i ören (minsta enheten) i hemvalutan, utom sparkontons saldon
 
 | Fält | Typ | Betydelse |
 |---|---|---|
-| `version` | heltal | Dataversion, nu `5` (`DATA_VERSION`). Äldre data går genom `migrate()`. |
+| `version` | heltal | Dataversion, nu `6` (`DATA_VERSION`). Äldre data går genom `migrate()`. |
 | `settings` | objekt | Se nedan. |
 | `recurring` | lista | Återkommande poster (max `MAX_RECURRING`). |
 | `oneOffs` | lista | Avvikelser – engångsposter en viss månad (max `MAX_ONEOFFS`). |

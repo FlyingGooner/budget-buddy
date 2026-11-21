@@ -1902,7 +1902,7 @@ I18N.add({
 </script>
 <script>
 // ---- version.js ----
-﻿self.APP_VERSION = '0.12.169';
+﻿self.APP_VERSION = '0.12.170';
 
 </script>
   <script>
@@ -2424,7 +2424,7 @@ const CATS_V = 2; // settings.catsV: one-time additions to older saved category 
 
 // Dataversion (2026-11-21): loadData() kör MIGRATIONS i ordning från den sparade versionen och sparar alltid den senaste.
 // Lägg en ny funktion här när fält byter betydelse; nya valfria fält behöver ingen (loadData fyller i standardvärden).
-const DATA_VERSION = 5;
+const DATA_VERSION = 6;
 const MIGRATIONS = {
   // 1 → 2: sparkonton kan fyllas på av engångssparande (feeds kan peka på avvikelser), papperskorgen minns kontokopplingar.
   // Inga gamla fält ändrar betydelse, så inget behöver skrivas om.
@@ -2475,6 +2475,12 @@ const MIGRATIONS = {
     if (!drop.size) return d;
     for (const a of accs) if (Array.isArray(a.feeds)) a.feeds = a.feeds.filter((x) => !drop.has(x));
     return { ...d, accounts: accs, recurring: d.recurring.filter((r) => !drop.has(r?.id)) };
+  },
+  // 5 → 6: standardkategorin Försäkringskassan heter Bidrag och ersättningar (krockade med postnamn). Bara om namnet är orört.
+  6: (d) => {
+    if (!isObj(d.settings) || !Array.isArray(d.settings.categories)) return d;
+    const categories = d.settings.categories.map((c) => (isObj(c) && c.id === 'fk' && c.name === 'Försäkringskassan' ? { ...c, name: 'Bidrag och ersättningar' } : c));
+    return { ...d, settings: { ...d.settings, categories } };
   },
 };
 function migrate(d) {
