@@ -794,6 +794,9 @@ dialog::backdrop { background: rgba(0,0,0,.25); }
 .add-pair { grid-template-columns: minmax(0, 3fr) minmax(0, 2fr); }
 .add-pair.three { grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr) minmax(0, 1fr); }
 .add-pair .btn { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+/* Mindre apprubrik, tydligt versionsnummer (2026-11-21) */
+.brand { font-size: 1.25rem; font-weight: 600; letter-spacing: 0; }
+#version { font-size: .8125rem; font-weight: 600; line-height: 1; padding: 6px 12px; background: var(--fill-2); color: var(--text); -webkit-backdrop-filter: none; backdrop-filter: none; border: 0; box-shadow: none; } #version { top: calc(env(safe-area-inset-top) + 22px); }
 
 </style>
 </head>
@@ -1975,7 +1978,7 @@ I18N.add({
 </script>
 <script>
 // ---- version.js ----
-﻿self.APP_VERSION = '0.12.174';
+﻿self.APP_VERSION = '0.12.175';
 
 </script>
   <script>
