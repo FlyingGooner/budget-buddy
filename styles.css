@@ -779,3 +779,7 @@ details[open] > :not(summary) { animation: m3e-in .35s var(--spring); }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition-duration: 0s !important; }
 }
+/* Mindre glapp överst (2026-11-22): tom statusrad tar ingen plats (den lade till säker yta + 32 px ovanför rubriken) */
+#status:empty { display: none; }
+#status:not(:empty) { padding-bottom: 0; }
+#status:not(:empty) + * .topbar, #status:not(:empty) ~ .topbar { padding-top: 4px; }
