@@ -743,6 +743,8 @@ body { font-family: var(--font); letter-spacing: -.01em; }
 #nav::before { content: ''; position: absolute; inset: 0; border-radius: inherit; pointer-events: none; background: linear-gradient(180deg, rgba(255,255,255,.22), rgba(255,255,255,0) 45%); }
 @media (prefers-color-scheme: dark) { #nav::before { background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,0) 50%); } }
 #version { color: var(--text); }
+/* Dialoger läsbara (2026-11-22): nästan helt täckande glas och kraftig suddighet, så innehållet bakom inte stör texten. */
+dialog { background: color-mix(in srgb, var(--card) 94%, transparent); -webkit-backdrop-filter: blur(40px) saturate(150%); backdrop-filter: blur(40px) saturate(150%); }
 #snackbar { color: var(--text); }
 #snackbar .btn.text, #snackbar button { color: var(--tint); }
 dialog { border-radius: var(--r-xl); color: var(--text); }
