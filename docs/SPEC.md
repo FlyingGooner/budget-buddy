@@ -216,7 +216,7 @@ Allt i `localStorage` under nyckeln `bb.data`. Belopp lagras som **heltal i öre
 - Testfil för `file://`: `dist/budget-buddy.html`, byggs med `tools/build-single.ps1`.
 
 ## Design
-Material Design 3 enligt `../STIL.md` (beslut 2026-11-22, åter efter Apple-stilen 2026-11-21); bara menyraden nertill är genomskinligt glas. Nyckelfärg `#2a6fb0`. Bottenmeny, bara mobil (390 px).
+Material 3 Expressive (Googles senaste Material-version) enligt `../STIL.md` (beslut 2026-11-22, åter efter Apple-stilen 2026-11-21); bara menyraden nertill är genomskinligt glas. Nyckelfärg `#2a6fb0`. Bottenmeny, bara mobil (390 px).
 - Belopp med tabellsiffror (`tabular-nums`), högerjusterade, tusentalsavgränsare med mellanslag ("32 000 kr"). Inmatning tillåter både komma och punkt som decimaltecken.
 - "Kvar" stort i kortet överst: grön ton vid överskott, `--error` vid underskott.
 - Markeringar för återkommande (↻), justerad (✎) och avvikelse (★), så att man ser varför en månad avviker.
