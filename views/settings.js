@@ -112,11 +112,11 @@ $('rates-save').addEventListener('click', () => {
     rates[c] = ore;
   }
   const t = new Date();
-  data.settings.rates = rates;
-  data.settings.ratesDate = `${t.getFullYear()}-${String(t.getMonth() + 1).padStart(2, '0')}-${String(t.getDate()).padStart(2, '0')}`;
-  data.settings.ratesOwn = true;
-  save();
-  snackbar('Kurserna sparade', null, null, 3000);
+  withUndo('Kurserna sparade', () => {   // 2026-11-23: Ångra – tidigare kurser skrivs över
+    data.settings.rates = rates;
+    data.settings.ratesDate = `${t.getFullYear()}-${String(t.getMonth() + 1).padStart(2, '0')}-${String(t.getDate()).padStart(2, '0')}`;
+    data.settings.ratesOwn = true;
+  });
 });
 $('rates-reset').addEventListener('click', () => withUndo('Appens kurser används igen', () => {   // 2026-11-23: Ångra – egna kurser skrivs över
   data.settings.rates = { ...DEFAULT_RATES };

@@ -21,7 +21,8 @@ function setupAddForm(form) {
   // 2026-11-23: kryssar man i Kreditkortsfaktura väljs kategorin Kreditkort (om den finns).
   if (form.elements.card) form.elements.card.addEventListener('change', () => {
     const sel = form.elements.category;
-    if (form.elements.card.checked && [...sel.options].some((o) => o.value === CARD_CAT)) sel.value = CARD_CAT;
+    if (form.elements.card.checked) { sel.dataset.prev = sel.value; if ([...sel.options].some((o) => o.value === CARD_CAT)) sel.value = CARD_CAT; }
+    else if (sel.value === CARD_CAT && sel.dataset.prev) sel.value = sel.dataset.prev;   // 2026-11-23: ur-bockad – tillbaka till förra kategorin
     form.elements.amount.placeholder = form.elements.card.checked ? 'valfritt' : '';   // 2026-11-23: beloppet behövs inte för ett kort
   });
   form.addEventListener('submit', (e) => {
@@ -79,7 +80,7 @@ function openAllItems() {
     return rs.length ? [el('h3', { class: 'all-h', text: title }), el('ul', { class: 'list' }, rs.map((r) => el('li', { class: 'row' + (period(r)?.startsWith('avslutad') ? ' ended' : '') },
       el('button', { type: 'button', class: 'row-main', 'aria-label': `${r.name}, ${kr(r.amount)}. Ändra`, on: { click: () => open(r) } },
         el('span', { class: 'row-name' }, el('span', { text: r.name }), el('span', { class: 'row-sub', text: [k === 'expense' ? catName(r.category) : null, r.type === 'expense' ? everyLabel[r.every] : null, period(r)].filter(Boolean).join(' · ') })),
-        el('span', { class: 'amount', text: kr(r.amount) })))))] : null;
+        el('span', { class: 'amount', text: r.card ? `≈ ${kr(cardEstimate(data, r, now))}` : kr(r.amount) })))))] : null;   // 2026-11-23: kort = uppskattning
   }).flat().filter(Boolean) : [el('p', { class: 'muted', text: 'Inga poster än.' })]),
     // v5: sparandet ligger på sparkontona – tryck för att ändra kontot.
     data.accounts.length ? [el('h3', { class: 'all-h', text: '🐷 Sparkonton' }), el('ul', { class: 'list' }, data.accounts.map((a) => el('li', { class: 'row' },

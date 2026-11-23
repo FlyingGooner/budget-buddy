@@ -293,7 +293,10 @@ function openCloseDialog() {
       inp.value = adj != null ? krInput(adj) : '';
       inp.placeholder = krInput(cardEstimate(data, r, nm1));   // 2026-11-23: tomt fält = uppskattningen
       return el('li', {}, el('label', { class: 'cd-acc' }, el('span', { class: 'cd-acc-name' }, el('span', { text: r.name }),
-        el('small', { class: 'muted', text: adj != null ? 'ifylld' : `uppskattat ${kr(cardEstimate(data, r, nm1))}` })),
+        el('small', { class: 'muted', text: adj != null ? 'ifylld' : (() => {   // 2026-11-23: förra fakturan bredvid uppskattningen
+          const prev = data.adjustments[month]?.[r.id];
+          return `uppskattat ${kr(cardEstimate(data, r, nm1))}` + (prev != null ? ` · förra ${kr(prev)}` : '');
+        })() })),
         el('span', { class: 'cd-acc-in' }, el('span', { class: 'cd-in-col' }, inp), el('small', { class: 'muted', text: unit() }))));
     }))] : null);
   // Sparkonton (2026-11-17): fyll i saldona samtidigt – förifyllt med beräknat/senaste saldo, t.ex. efter en extra överföring.
@@ -508,6 +511,7 @@ function openRowDialog(r) {
   $('rd-delete').hidden = isNew;
   $('rd-delete').textContent = r && r.kind === 'rec' ? 'Ta bort posten' : 'Ta bort';
   $('rd-reset').hidden = isNew || r.kind !== 'rec' || !r.adjusted;
+  $('rd-reset').textContent = r && r.kind === 'rec' && data.recurring.find((x) => x.id === r.id)?.card ? 'Använd uppskattningen' : 'Återställ till ordinarie';   // 2026-11-23
   // En ruta per post (2026-11-18): det som gäller alla månader ligger hopfällt under beloppet.
   const rec = r && r.kind === 'rec' ? data.recurring.find((x) => x.id === r.id) : null;
   $('rd-all').hidden = !rec; $('rd-mer').open = false;
