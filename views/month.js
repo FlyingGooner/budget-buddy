@@ -7,6 +7,7 @@ function markers(r) {
 function rowLabel(r) {
   const bits = [r.kind === 'rec' ? 'återkommande' : r.kind === 'carry' ? 'från stängningen av förra månaden' : 'avvikelse'];
   if (r.adjusted) bits.push('justerad denna månad');
+  if (r.est) bits.push('uppskattad faktura');
   return bits.join(', ');
 }
 
@@ -14,8 +15,8 @@ function monthRow(r) {
   const li = el('li', { class: 'row' });
   li.append(el('button', { type: 'button', class: 'row-main', 'aria-label': `${r.name}, ${kr(r.amount)}, ${rowLabel(r)}. Ändra`,
     on: { click: () => (r.kind === 'carry' ? setMonth(addMonths(month, -1)) : r.kind === 'acc' ? openAccDialog(data.accounts.find((a) => a.id === r.id)) : openRowDialog(r)) } },
-    el('span', { class: 'row-name' }, el('span', { text: r.name }), el('span', { class: 'row-sub', text: subLine(r) })),
-    el('span', { class: 'amount', text: kr(r.amount) }), markers(r)));
+    el('span', { class: 'row-name' }, el('span', { text: r.name }), el('span', { class: 'row-sub', text: r.est ? subLine(r, 'uppskattad') : subLine(r) })),
+    el('span', { class: 'amount', text: (r.est ? '≈ ' : '') + kr(r.amount) }), markers(r)));   // 2026-11-23: ≈ = uppskattad kortfaktura
   return li;
 }
 
@@ -290,6 +291,7 @@ function openCloseDialog() {
       const adj = data.adjustments[nm1]?.[r.id];
       const inp = el('input', { inputmode: 'decimal', autocomplete: 'off', 'data-card': r.id, 'aria-label': `Faktura ${r.name}` });
       inp.value = adj != null ? krInput(adj) : '';
+      inp.placeholder = krInput(cardEstimate(data, r, nm1));   // 2026-11-23: tomt fält = uppskattningen
       return el('li', {}, el('label', { class: 'cd-acc' }, el('span', { class: 'cd-acc-name' }, el('span', { text: r.name }),
         el('small', { class: 'muted', text: adj != null ? 'ifylld' : `uppskattat ${kr(cardEstimate(data, r, nm1))}` })),
         el('span', { class: 'cd-acc-in' }, el('span', { class: 'cd-in-col' }, inp), el('small', { class: 'muted', text: unit() }))));
@@ -492,6 +494,7 @@ function openRowDialog(r) {
   const isNew = !r, isOne = isNew || r.kind === 'one';
   $('rd-title').textContent = isNew ? 'Ny avvikelse' : r.name;
   $('rd-sub').textContent = isNew ? `Gäller bara ${monthLabel(month).toLowerCase()}.`
+    : r.kind === 'rec' && r.est ? `Uppskattad faktura för ${monthLabel(month).toLowerCase()}. Den riktiga fyller du i när föregående månad stängs.`
     : r.kind === 'rec' ? `Belopp för ${monthLabel(month).toLowerCase()}${r.type === 'income' && r.category === 'salary' && payNote() ? ` (${payNote().replace('lön', 'lönen')})` : ''}. Ordinarie ${kr(r.base)}.` : `Avvikelse i ${monthLabel(month).toLowerCase()}.`;
   $('rd-oneoff-fields').hidden = !isOne;
   $('rd-name').value = isOne && !isNew ? r.name : '';

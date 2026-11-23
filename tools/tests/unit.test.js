@@ -322,3 +322,21 @@ T.test('v6: kategorin Försäkringskassan byter namn, ett eget namn behålls', (
   T.eq(loadData(cats('Försäkringskassan')).settings.categories.find((c) => c.id === 'fk').name, 'Bidrag och ersättningar');
   T.eq(loadData(cats('FK')).settings.categories.find((c) => c.id === 'fk').name, 'FK');
 });
+
+T.test('kreditkort: uppskattning, backup och kategorin Kreditkort', () => {
+  const r = { id: 'k1', name: 'Kort', type: 'expense', amount: 0, category: 'card', every: 1, start: '2025-01', card: true };
+  const d = loadData({ recurring: [r], adjustments: { '2025-10': { k1: 500000 }, '2025-11': { k1: 400000 }, '2025-12': { k1: 600000 }, '2026-10': { k1: 550000 }, '2026-11': { k1: 440000 } } });
+  T.eq(rowsForMonth(d, '2026-12')[0].amount, 660000);          // 6 000 × 1,1
+  T.eq(rowsForMonth(d, '2026-12')[0].est, true);
+  T.eq(rowsForMonth(d, '2027-01')[0].amount, 530000);          // snitt av 3 senaste
+  T.eq(rowsForMonth(d, '2026-11')[0].est, undefined);          // ifylld
+  T.eq(rowsForMonth(loadData({ recurring: [{ ...r, amount: 120000 }] }), '2026-12')[0].amount, 120000);   // inga fakturor
+  T.eq(loadData(unpackData(JSON.parse(JSON.stringify(packData(d))))).recurring[0].card, true);
+  T.eq(loadData({ recurring: [{ ...r, type: 'income', category: 'salary' }] }).recurring[0].card, undefined);   // bara kostnader
+  // äldre sparad data (catsV 2): Kreditkort läggs till, kortpost i Övrigt flyttas dit
+  const old = loadData({ settings: { catsV: 2, categories: [{ id: 'home', name: 'Boende', type: 'expense' }, { id: 'other', name: 'Övrigt', type: 'expense' }] }, recurring: [{ ...r, category: 'other' }] });
+  T.eq([old.settings.categories.some((c) => c.id === 'card'), old.recurring[0].category], [true, 'card']);
+  // äldre backup med egna kategorier (utan catsV) får också Kreditkort
+  const imp = loadData(unpackData({ settings: { categories: [{ id: 'home', name: 'Boende', type: 'e' }, { id: 'other', name: 'Övrigt', type: 'e' }] } }));
+  T.eq(imp.settings.categories.some((c) => c.id === 'card'), true);
+});

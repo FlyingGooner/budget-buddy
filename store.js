@@ -389,7 +389,7 @@ const MAX_IMPORT_CHARS = 2000000;
 function packData(d) {
   const s = d.settings, out = {}, set = {};
   const t = (type) => (type === 'income' ? 'i' : 'e');
-  if (JSON.stringify(s.categories) !== JSON.stringify(DEFAULT_CATEGORIES)) set.categories = s.categories.map((c) => ({ id: c.id, name: c.name, type: t(c.type) }));
+  if (JSON.stringify(s.categories) !== JSON.stringify(DEFAULT_CATEGORIES)) { set.categories = s.categories.map((c) => ({ id: c.id, name: c.name, type: t(c.type) })); set.catsV = s.catsV; }
   if (s.people.length) set.people = s.people.map((p) => ({ id: p.id, name: p.name }));
   if (s.startMonth) { set.startBalance = s.startBalance; set.startMonth = s.startMonth; }
   if (s.ratesOwn) { set.rates = { ...s.rates }; set.ratesDate = s.ratesDate; }
@@ -421,7 +421,7 @@ function unpackData(p) {
   const type = (v) => (v === 'i' ? 'income' : v === 'e' ? 'expense' : null);
   const list = (v) => (Array.isArray(v) ? v.filter(isObj) : []);
   const s = isObj(p.settings) ? p.settings : {};
-  const settings = { catsV: CATS_V, startBalance: s.startBalance, startMonth: s.startMonth, home: s.home, payday: s.payday };
+  const settings = { catsV: Number.isInteger(s.catsV) ? s.catsV : Array.isArray(s.categories) ? 2 : CATS_V, startBalance: s.startBalance, startMonth: s.startMonth, home: s.home, payday: s.payday };
   if (Array.isArray(s.categories)) settings.categories = list(s.categories).map((c) => ({ id: c.id, name: c.name, type: type(c.type) }));
   if (Array.isArray(s.people)) settings.people = list(s.people).map((x) => ({ id: x.id, name: x.name }));
   if (isObj(s.rates)) { settings.rates = { ...s.rates }; settings.ratesDate = s.ratesDate; settings.ratesOwn = true; }
