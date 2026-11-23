@@ -533,6 +533,7 @@ $('add-dialog').addEventListener('click', (e) => {
   $('add-dialog').close();
   setTimeout(() => (kind === 'oneoff' ? openRowDialog(null) : kind === 'account' ? openAccPick() : focusAdd(kind)), 0);
 });
+$('f-card').addEventListener('change', () => { if ($('f-card').checked && [...$('f-cat').options].some((o) => o.value === CARD_CAT)) $('f-cat').value = CARD_CAT; });
 $('rd-type').addEventListener('change', () => fillCategorySelect($('rd-cat'), null, $('rd-type').value));
 $('rd-cancel').addEventListener('click', () => $('row-dialog').close());
 

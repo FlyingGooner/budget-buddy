@@ -58,12 +58,14 @@ const DEFAULT_EXPENSE_CATEGORIES = [
   { id: 'subs', name: 'Abonnemang', type: 'expense' },
   { id: 'loan', name: 'Lån', type: 'expense' },
   { id: 'household', name: 'Hushåll', type: 'expense' },
+  { id: 'card', name: 'Kreditkort', type: 'expense' },   // CARD_CAT (2026-11-23): kreditkortsfakturor
   { id: 'savings', name: 'Sparande', type: 'expense' }, // SAVINGS_CAT: shown separately ("varav sparande")
   { id: 'other', name: 'Övrigt', type: 'expense' },
 ];
 const DEFAULT_CATEGORIES = [...DEFAULT_INCOME_CATEGORIES, ...DEFAULT_EXPENSE_CATEGORIES];
 const SAVINGS_CAT = 'savings';
-const CATS_V = 2; // settings.catsV: one-time additions to older saved category lists (v2: "Sparande")
+const CARD_CAT = 'card';
+const CATS_V = 3; // settings.catsV: one-time additions to older saved category lists (v2: "Sparande", v3: "Kreditkort")
 
 // Dataversion (2026-11-21): loadData() kör MIGRATIONS i ordning från den sparade versionen och sparar alltid den senaste.
 // Lägg en ny funktion här när fält byter betydelse; nya valfria fält behöver ingen (loadData fyller i standardvärden).
@@ -173,9 +175,16 @@ function loadData(d) {
       // Older data had only expense categories: add the default income categories.
       if (!cats.some((c) => c.type === 'income')) cats.unshift(...DEFAULT_INCOME_CATEGORIES.filter((c) => !seen.has(c.id)).map((c) => ({ ...c })));
       // v2: add "Sparande" once (before "Övrigt"); not re-added if the user removes it later.
-      if (s.catsV !== CATS_V && !seen.has(SAVINGS_CAT)) {
+      const v = Number.isInteger(s.catsV) ? s.catsV : 1;
+      if (v < 2 && !seen.has(SAVINGS_CAT)) {
         const i = cats.findIndex((c) => c.id === 'other');
         cats.splice(i < 0 ? cats.length : i, 0, { id: SAVINGS_CAT, name: 'Sparande', type: 'expense' });
+      }
+      // v3 (2026-11-23): "Kreditkort" en gång (före Sparande/Övrigt); kortposter i Övrigt flyttas dit.
+      if (v < 3 && !seen.has(CARD_CAT)) {
+        const i = cats.findIndex((c) => c.id === SAVINGS_CAT || c.id === 'other');
+        cats.splice(i < 0 ? cats.length : i, 0, { id: CARD_CAT, name: 'Kreditkort', type: 'expense' });
+        if (Array.isArray(d.recurring)) d = { ...d, recurring: d.recurring.map((r) => (isObj(r) && r.card === true && r.category === 'other' ? { ...r, category: CARD_CAT } : r)) };
       }
       out.settings.categories = cats.slice(0, 60);
     }

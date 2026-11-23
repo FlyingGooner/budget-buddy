@@ -18,6 +18,11 @@ function renderItems() {
 function setupAddForm(form) {
   const type = form.dataset.type;
   if (form.elements.every) fillEverySelect(form.elements.every);
+  // 2026-11-23: kryssar man i Kreditkortsfaktura väljs kategorin Kreditkort (om den finns).
+  if (form.elements.card) form.elements.card.addEventListener('change', () => {
+    const sel = form.elements.category;
+    if (form.elements.card.checked && [...sel.options].some((o) => o.value === CARD_CAT)) sel.value = CARD_CAT;
+  });
   form.addEventListener('submit', (e) => {
     e.preventDefault();
     const f = form.elements, err = form.querySelector('.error');
