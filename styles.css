@@ -635,11 +635,10 @@ body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; 
 #close-dialog .cd-acc-in input { width: 6.5em; min-height: 40px; }
 #close-dialog .cd-acc-in small { min-width: 1.5em; }
 #close-dialog .cd-acc-note { margin: 0 0 8px; }
-#close-dialog .actions { display: grid; grid-template-columns: 1fr 1fr; gap: 4px 8px; margin-top: 16px; }
+#close-dialog .actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 16px; }
 #close-dialog .actions .spacer { display: none; }
-#close-dialog .actions #cd-reopen { justify-self: start; }
-#close-dialog .actions #cd-reopen[hidden] + .spacer + #cd-cancel { grid-column: 1 / -1; }
-#close-dialog .actions #cd-cancel { justify-self: end; }
+#close-dialog .actions #cd-reopen { grid-column: 1 / -1; justify-self: start; }
+#close-dialog .actions .btn:not(#cd-reopen) { width: 100%; margin: 0; }   /* 2026-11-23: Avbryt och Stäng månaden sida vid sida */
 #close-dialog .actions button[type=submit] { grid-column: 1 / -1; order: 3; width: 100%; min-height: 48px; }
 #close-dialog #cd-error:empty { display: none; }
 /* Kontodialogen: samma knapplayout som Stäng månad (2026-11-21) */

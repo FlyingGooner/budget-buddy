@@ -507,6 +507,26 @@ function applies(r, m) {
   return (monthIndex(m) - monthIndex(r.start)) % r.every === 0;
 }
 
+// Kreditkort (2026-11-23): uppskattad faktura för en månad utan ifylld faktura. Fakturan samma månad året innan
+// gånger snittökningen: summan av ifyllda fakturor de 12 månaderna före m delat med samma månader året innan
+// (begränsad till 0,5–2). Saknas fakturan året innan: snittet av de 3 senaste ifyllda. Inga fakturor: ordinarie belopp.
+// Bygger bara på ifyllda fakturor (adjustments), aldrig på andra uppskattningar.
+function cardEstimate(data, r, m) {
+  const bill = (x) => (data.adjustments[x] && Object.hasOwn(data.adjustments[x], r.id) ? data.adjustments[x][r.id] : null);
+  const ly = bill(addMonths(m, -12));
+  if (ly != null) {
+    let now = 0, before = 0;
+    for (let i = 1; i <= 12; i++) {
+      const x = addMonths(m, -i), a = bill(x), b = bill(addMonths(x, -12));
+      if (a != null && b != null && b > 0) { now += a; before += b; }
+    }
+    const f = before > 0 ? Math.min(2, Math.max(0.5, now / before)) : 1;
+    return Math.round(ly * f / 100) * 100;
+  }
+  const last = Object.keys(data.adjustments).filter((x) => x < m && bill(x) != null).sort().slice(-3);
+  return last.length ? Math.round(last.reduce((s, x) => s + bill(x), 0) / last.length / 100) * 100 : r.amount;
+}
+
 // All rows for a month: recurring (with any adjustment) + one-offs.
 function rowsForMonth(data, m) {
   const adj = data.adjustments[m] || {};
@@ -515,7 +535,7 @@ function rowsForMonth(data, m) {
     if (!applies(r, m)) continue;
     const adjusted = Object.hasOwn(adj, r.id);
     rows.push({ id: r.id, kind: 'rec', name: r.name, type: r.type, category: r.category, person: r.person, src: r.src || null,
-      amount: adjusted ? adj[r.id] : r.amount, base: r.amount, adjusted });
+      amount: adjusted ? adj[r.id] : r.card ? cardEstimate(data, r, m) : r.amount, base: r.amount, adjusted, ...(r.card && !adjusted ? { est: true } : {}) });
   }
   for (const o of data.oneOffs) {
     if (o.month !== m) continue;

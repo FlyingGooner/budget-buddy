@@ -291,7 +291,7 @@ function openCloseDialog() {
       const inp = el('input', { inputmode: 'decimal', autocomplete: 'off', 'data-card': r.id, 'aria-label': `Faktura ${r.name}` });
       inp.value = adj != null ? krInput(adj) : '';
       return el('li', {}, el('label', { class: 'cd-acc' }, el('span', { class: 'cd-acc-name' }, el('span', { text: r.name }),
-        el('small', { class: 'muted', text: adj != null ? 'ifylld' : `uppskattat ${kr(r.amount)}` })),
+        el('small', { class: 'muted', text: adj != null ? 'ifylld' : `uppskattat ${kr(cardEstimate(data, r, nm1))}` })),
         el('span', { class: 'cd-acc-in' }, el('span', { class: 'cd-in-col' }, inp), el('small', { class: 'muted', text: unit() }))));
     }))] : null);
   // Sparkonton (2026-11-17): fyll i saldona samtidigt – förifyllt med beräknat/senaste saldo, t.ex. efter en extra överföring.

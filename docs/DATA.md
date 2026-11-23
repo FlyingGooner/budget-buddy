@@ -34,7 +34,7 @@ Belopp är heltal i ören (minsta enheten) i hemvalutan, utom sparkontons saldon
 
 `{ id, name, type: 'income'|'expense', amount, category, person, every: 1|2|3|12, card?, start, end, src? }`
 
-- `card` (2026-11-23): bara kostnader. `true` = kreditkortsfaktura: fakturans belopp fylls i när föregående månad stängs och sparas som justering (`adjustments`) i månaden då den betalas. `amount` är uppskattningen för månader längre fram.
+- `card` (2026-11-23): bara kostnader. `true` = kreditkortsfaktura: fakturans belopp fylls i när föregående månad stängs och sparas som justering (`adjustments`) i månaden då den betalas. Månader utan ifylld faktura får en uppskattning (`cardEstimate()` i `store.js`): fakturan samma månad året innan × snittökningen de senaste 12 månaderna mot året innan (0,5–2), annars snittet av de 3 senaste fakturorna, annars `amount`.
 - `every`: varannan, var tredje … månad räknat från `start`. Inkomster är alltid `1`.
 - `end`: sista månaden (eller `null`).
 - `src` (v3): bara för kostnader i kategorin Sparande – varifrån sparandet kommer. Saknas = från lönen (en vanlig kostnad, minskar Efter räkningar). `'pre'` = dras före nettolönen, `'extra'` = utöver lönen (t.ex. en gåva direkt till sparkontot). Båda räknas som sparat men minskar inte Efter räkningar. Äldre data med `pre: true` blir `src: 'pre'`. Från v4 flyttas poster med `src` som är kopplade till ett sparkonto dit (`pre` resp. `deposits`) och tas bort som poster; nytt sparande före lön och insättningar fylls i på kontot.
