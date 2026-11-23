@@ -22,6 +22,7 @@ function setupAddForm(form) {
   if (form.elements.card) form.elements.card.addEventListener('change', () => {
     const sel = form.elements.category;
     if (form.elements.card.checked && [...sel.options].some((o) => o.value === CARD_CAT)) sel.value = CARD_CAT;
+    form.elements.amount.placeholder = form.elements.card.checked ? 'valfritt' : '';   // 2026-11-23: beloppet behövs inte för ett kort
   });
   form.addEventListener('submit', (e) => {
     e.preventDefault();
@@ -39,7 +40,7 @@ function setupAddForm(form) {
       every: type === 'income' ? 1 : Number(f.every.value), start: month, end: null, card });
     data = loadData(data);
     save();
-    if (f.name) f.name.value = ''; f.amount.value = ''; if (f.card) f.card.checked = false;
+    if (f.name) f.name.value = ''; f.amount.value = ''; if (f.card) { f.card.checked = false; f.amount.placeholder = ''; }
     $('new-dialog').close();
     snackbar(`${name} lades till`, null, null, 3000);
   });

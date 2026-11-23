@@ -83,6 +83,9 @@ Visar aktuell månad. Runda ◀ ▶-knappar och svep var som helst på skärmen 
 - Underskott markeras med `--error`. Tryck på en månad → öppnar den i Månad.
 - Valfritt startsaldo i Inställningar → visar även löpande saldo per månad.
 
+### Prognos (2026-11-23)
+"Kvar vid stängning ≈" i Månad och kolumnen Kvar (prognos) i Översikt: efter räkningar minus rörliga utgifter (planerat kvar − faktiskt kvar i stängda månader). Är samma månad förra året stängd används dess rörliga; annars snittet av de 3 senaste stängda månaderna (`forecast()` i `store.js`). Ingen säsongsprocent och ingen inflationsuppräkning – räkningarna uppdateras för hand.
+
 ### Kreditkort (2026-11-23)
 En återkommande kostnad kan markeras som kreditkortsfaktura (`card`, kryssruta i Ny kostnad och under Mer). Kostnadskategorin **Kreditkort** (id `card`, standard sedan 0.12.189, `settings.catsV` = 3) väljs automatiskt när rutan kryssas i; äldre kortposter i Övrigt flyttas dit en gång. Stäng månad visar en rad per sådan post som gäller nästa månad: "Fakturan som betalas i <nästa månad>". Ifyllt belopp sparas som justering i nästa månad (✎); tomt = uppskattningen gäller. Uppskattning (`cardEstimate()`): fakturan samma månad året innan gånger snittökningen (ifyllda fakturor de 12 senaste månaderna delat med samma månader året innan, begränsad till 0,5–2) – så följer säsong och inflation med. Saknas fakturan året innan: snittet av de 3 senaste fakturorna; inga fakturor alls: ordinarie belopp. Med lön den 25:e: fakturan som dras 25 nov fylls i när november stängs och blir en kostnad i december (25 nov – 24 dec).
 
@@ -249,6 +252,7 @@ Bockade punkter täcks av automatiska tester (`tools/test.ps1`). Obockade kräve
 - [ ] Fungerar offline.
 - [ ] Ljust och mörkt tema.
 - [ ] Layout fungerar på 390 px (mobil). Surfplatta och dator är inte krav (beslut 2026-11-09).
+- [x] Kreditkort: uppskattning från samma månad året innan × ökningen, annars snitt av 3; ifylld faktura vid stängning blir nästa månads belopp. *(test: kreditkort: uppskattning, backup och kategorin Kreditkort)*
 - [ ] Sparkonto: saldo för två månader visar förändring och summa; nytt saldo samma månad ersätter det gamla; ta bort konto går att ångra.
 - [ ] `granskning` utan anmärkning.
 

@@ -35,21 +35,24 @@ function aheadCard() {
   const hasFc = rows.some((r) => r.fc) || hasPastDone;
   const cell = (v, cls = '') => el('td', { class: (cls + (v < 0 ? ' neg' : '')).trim(), text: kr(v, true) });
   const open = (m) => () => { showTab('month'); setMonth(m); };
+  // 2026-11-23: raderna går att nå med tangentbord och skärmläsare (Enter/mellanslag öppnar månaden).
+  const rowAttrs = (m, cls = '') => ({ class: cls, tabindex: '0', role: 'link', 'aria-label': `Öppna ${monthLabel(m).toLowerCase()}`,
+    on: { click: open(m), keydown: (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(m)(); } } } });
   return el('div', { class: 'card' },
     el('h2', { text: 'Senaste och kommande månader' }),
     el('table', { class: 'ahead' },
       el('thead', {}, el('tr', {}, el('th', { scope: 'col', text: 'Månad' }), el('th', { scope: 'col', text: 'Efter räkningar' }),
         hasFc ? el('th', { scope: 'col', text: hasPastDone ? 'Kvar' : 'Kvar (prognos)' }) : null)),
       el('tbody', {},
-        past.map((r) => el('tr', { class: 'past', on: { click: open(r.m) } },
+        past.map((r) => el('tr', rowAttrs(r.m, 'past'),
           el('td', { text: monthShortYear(r.m) }), cell(r.plan),
           hasFc ? (r.done != null ? cell(r.done) : el('td', { class: 'fc', text: '–' })) : null)),
-        rows.slice(0, aheadOpen ? 12 : AHEAD_SHOWN).map((r, i) => el('tr', { class: i === 0 && past.length ? 'now' : '', on: { click: open(r.m) } },
+        rows.slice(0, aheadOpen ? 12 : AHEAD_SHOWN).map((r, i) => el('tr', rowAttrs(r.m, i === 0 && past.length ? 'now' : ''),
           el('td', { text: monthShortYear(r.m) }), cell(r.plan),
           hasFc ? (r.fc ? cell(r.fc.left, 'fc') : el('td', { class: 'fc', text: '–' })) : null)))),
     el('button', { type: 'button', class: 'link ahead-more', 'aria-expanded': String(aheadOpen), text: aheadOpen ? 'Visa färre' : `Visa alla 12 månader ›`,
       on: { click: () => { aheadOpen = !aheadOpen; renderOverview(); } } }),
     hasFc ? el('p', { class: 'muted small', text: hasPastDone
-      ? 'Kvar = kvar på kontot för stängda månader, annars prognos: efter räkningar minus rörliga utgifter (snittet av de senaste stängda månaderna, med säsong).'
-      : 'Kvar (prognos) = efter räkningar minus rörliga utgifter (snittet av de senaste stängda månaderna, med säsong).' }) : null);
+      ? 'Kvar = kvar på kontot för stängda månader, annars prognos: efter räkningar minus rörliga utgifter (samma månad förra året om den är stängd, annars snittet av de senaste stängda månaderna).'
+      : 'Kvar (prognos) = efter räkningar minus rörliga utgifter (samma månad förra året om den är stängd, annars snittet av de senaste stängda månaderna).' }) : null);
 }
