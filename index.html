@@ -230,6 +230,7 @@
           <p>Under beloppet står när det är dags att stänga (t.ex. *Stäng månaden tis 24 nov · om 6 dagar*). Tre dagar innan blir raden färgad, och när dagen har kommit står det Dags att stänga månaden.</p>
           <p>Dagen före lön trycker du 🔒 Stäng längst ner och skriver in vad som faktiskt fanns kvar på kontot. Ligger pengarna kvar på kontot låter du Pengarna ligger kvar och följer med vara ibockad – då blir beloppet raden Kvar från förra månaden (⇢) i nästa månad. Flyttar du dem, t.ex. till sparkontot, bockar du ur. Första månaden, eller om förra månaden inte är stängd, fyller du i det själv med + Kvar från förra månaden under Inkomster. I samma ruta stämmer du av sparkontona (förifyllda – ändra bara det som skiljer).</p>
           <p>Rubriken blir då Kvar på kontot med det faktiska beloppet, och skillnaden visas som Rörligt i stapeln. Nästa månad blir den aktuella direkt.</p>
+          <p>Kreditkort: lägg in fakturan som en kostnad och bocka i Kreditkortsfaktura – fylls i när månaden stängs (även under Mer på posten). Beloppet är en uppskattning för månaderna framåt. När du stänger en månad finns en rad per kort: skriv in fakturan som dras på nästa lön – med lön den 25:e skriver du alltså in fakturan som betalas 25 nov (oktobers köp) när du stänger november, och den blir en kostnad i december (25 nov – 24 dec).</p>
           <p>Har du börjat stänga månader visas överst i Månad de som inte är stängda (Inte stängd: Okt) – tryck för att gå dit. I en stängd månad trycker du 🔓 Ändra: där rättar du beloppet eller tar bort stängningen med Öppna igen.</p>
         </details>
         <details><summary>Lönedag</summary>
@@ -312,6 +313,7 @@
           <p>Below Left it says when it is time to close (e.g. *Close the month Tue 24 Nov · in 6 days*). Three days before, the line gets a colour, and when the day has come it says Time to close the month.</p>
           <p>The day before payday, tap 🔒 Close at the bottom and enter what was actually left in the account. If the money stays in the account, leave The money stays and carries over ticked – the amount then becomes the row Left over from last month (⇢) in the next month. If you move it, e.g. to the savings account, untick it. In the first month, or if last month isn't closed, fill it in yourself with + Left over from last month under Income. In the same dialog you reconcile the savings accounts (prefilled – only change what differs).</p>
           <p>The heading then becomes Left in the account with the actual amount, and the difference is shown as Variable in the bar. The next month becomes the current one right away.</p>
+          <p>Credit cards: add the bill as an expense and tick Credit card bill – entered when the month is closed (also under More on the item). The amount is an estimate for the months ahead. When you close a month there is a row per card: enter the bill taken on the next payday – with payday on the 25th you enter the bill paid 25 Nov (October's purchases) when you close November, and it becomes an expense in December (25 Nov – 24 Dec).</p>
           <p>Once you have started closing months, months that are not closed are shown at the top of Month (Not closed: Oct) – tap to go there. In a closed month, tap 🔓 Edit: correct the amount there, or remove the closing with Reopen.</p>
         </details>
         <details><summary>Payday</summary>
@@ -384,6 +386,7 @@
         <label class="field"><span>Kategori</span><select name="category"></select></label>
         <label class="field"><span>Hur ofta</span><select name="every"></select></label>
         <label class="field person-field"><span>Person (valfritt)</span><select name="person"></select></label>
+        <label class="check"><input type="checkbox" name="card"><span>Kreditkortsfaktura – fylls i när månaden stängs</span></label>
         <button type="submit" class="btn filled">Lägg till</button>
         <p class="error" role="alert"></p>
       </form>
@@ -439,6 +442,7 @@
         <label class="field"><span>Från månad</span><input id="f-start" type="month" min="1900-01" max="2099-12"></label>
         <label class="field"><span>Till månad (valfritt)</span><input id="f-end" type="month" min="1900-01" max="2099-12"></label>
       </div>
+      <label class="check" id="f-card-wrap"><input type="checkbox" id="f-card"><span>Kreditkortsfaktura – fylls i när månaden stängs</span></label>
     </div>
     <div class="actions wrap rd-more">
       <button type="button" class="btn text" id="rd-skip">Hoppa över den här månaden</button>
@@ -462,6 +466,7 @@
     <p class="muted small cd-hint" id="cd-sub"></p>
     <label class="check"><input type="checkbox" id="cd-carry"><span id="cd-carry-label">Pengarna ligger kvar och följer med till nästa månad</span></label>
     <p class="muted small cd-hint">Bocka ur om du flyttar dem, t.ex. till sparkontot.</p>
+    <div id="cd-cards"></div>
     <div id="cd-accounts"></div>
     <p class="error" id="cd-error" role="alert"></p>
     <div class="actions wrap">

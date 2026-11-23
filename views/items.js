@@ -30,10 +30,10 @@ function setupAddForm(form) {
     err.textContent = '';
     const id = newId();
     data.recurring.push({ id, name, amount, type, category: f.category.value, person: personValue(f.person),
-      every: type === 'income' ? 1 : Number(f.every.value), start: month, end: null });
+      every: type === 'income' ? 1 : Number(f.every.value), start: month, end: null, card: !!(f.card && f.card.checked) });
     data = loadData(data);
     save();
-    if (f.name) f.name.value = ''; f.amount.value = '';
+    if (f.name) f.name.value = ''; f.amount.value = ''; if (f.card) f.card.checked = false;
     $('new-dialog').close();
     snackbar(`${name} lades till`, null, null, 3000);
   });

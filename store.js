@@ -223,6 +223,7 @@ function loadData(d) {
       ids.add(r.id);
       out.recurring.push({ id: r.id, name, type: r.type, amount: r.amount, category: cat(r.category, r.type), person: person(r.person),
         every: r.type === 'income' ? 1 : EVERY.includes(r.every) ? r.every : 1, start: r.start, end,
+        ...(r.type === 'expense' && r.card === true ? { card: true } : {}),   // 2026-11-23: kreditkortsfaktura, fylls i vid stängning
         ...srcOf(r, cat(r.category, r.type)) }); // income: always monthly; src: varifrån sparandet kommer (se SAVING_SRC)
     }
   }
@@ -394,7 +395,7 @@ function packData(d) {
     return o;
   };
   if (d.recurring.length) out.recurring = d.recurring.map((r) => Object.assign(item(r),
-    r.every !== 1 ? { every: r.every } : {}, { start: r.start }, r.end ? { end: r.end } : {}));
+    r.every !== 1 ? { every: r.every } : {}, r.card ? { card: true } : {}, { start: r.start }, r.end ? { end: r.end } : {}));
   if (d.oneOffs.length) out.oneOffs = d.oneOffs.map((o) => ({ month: o.month, ...item(o) }));
   if (Object.keys(d.adjustments).length) out.adjustments = d.adjustments;
   if (Object.keys(d.closed || {}).length) out.closed = d.closed;
@@ -419,7 +420,7 @@ function unpackData(p) {
   return {
     version: Number.isInteger(p.version) ? p.version : 1,   // export utan version = före v5 – uppgraderas i loadData
     settings,
-    recurring: list(p.recurring).map((r) => ({ ...item(r), every: r.every ?? 1, start: r.start, end: r.end ?? null })),
+    recurring: list(p.recurring).map((r) => ({ ...item(r), every: r.every ?? 1, card: r.card === true, start: r.start, end: r.end ?? null })),
     oneOffs: list(p.oneOffs).map((o) => ({ ...item(o), month: o.month })),
     adjustments: isObj(p.adjustments) ? p.adjustments : {},
     closed: isObj(p.closed) ? p.closed : {},

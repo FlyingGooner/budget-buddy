@@ -283,6 +283,17 @@ function openCloseDialog() {
   $('cd-reopen').hidden = !t.closed;
   $('cd-carry-label').textContent = `Pengarna ligger kvar och följer med till ${monthLabel(addMonths(month, 1)).toLowerCase()}`;
   $('cd-carry').checked = t.closed ? data.carry.includes(month) : true;
+  // Kreditkort (2026-11-23): fakturan som betalas på nästa lön fylls i nu och blir nästa månads belopp för posten.
+  const nm1 = addMonths(month, 1), cards = data.recurring.filter((r) => r.card && applies(r, nm1));
+  fill($('cd-cards'), cards.length ? [el('p', { class: 'cd-acc-h' }, el('span', { text: 'Kreditkort' }), el('small', { class: 'muted', text: `Fakturan som betalas i ${monthLabel(nm1).toLowerCase()}` })),
+    el('ul', { class: 'cd-accs' }, cards.map((r) => {
+      const adj = data.adjustments[nm1]?.[r.id];
+      const inp = el('input', { inputmode: 'decimal', autocomplete: 'off', 'data-card': r.id, 'aria-label': `Faktura ${r.name}` });
+      inp.value = adj != null ? krInput(adj) : '';
+      return el('li', {}, el('label', { class: 'cd-acc' }, el('span', { class: 'cd-acc-name' }, el('span', { text: r.name }),
+        el('small', { class: 'muted', text: adj != null ? 'ifylld' : `uppskattat ${kr(r.amount)}` })),
+        el('span', { class: 'cd-acc-in' }, el('span', { class: 'cd-in-col' }, inp), el('small', { class: 'muted', text: unit() }))));
+    }))] : null);
   // Sparkonton (2026-11-17): fyll i saldona samtidigt – förifyllt med beräknat/senaste saldo, t.ex. efter en extra överföring.
   // 2026-11-18: en rad per konto – namn och var siffran kommer ifrån till vänster, saldot till höger.
   fill($('cd-accounts'), data.accounts.length ? [el('p', { class: 'cd-acc-h' }, el('span', { text: 'Sparkonton' }), el('small', { class: 'muted', text: 'Skriv in värdet från banken' })),
@@ -312,6 +323,14 @@ $('cd-form').addEventListener('submit', (e) => {
   e.preventDefault();
   const raw = $('cd-amount').value.trim(), neg = /^[-−]/.test(raw), ore = parseKr(neg ? raw.slice(1) : raw);
   if (ore == null) { $('cd-error').textContent = 'Skriv beloppet, t.ex. 3 250 eller -500.'; return; }
+  const nm1 = addMonths(month, 1), bills = [];
+  for (const inp of $('cd-cards').querySelectorAll('input[data-card]')) {
+    const v = inp.value.trim();
+    if (!v) continue;
+    const amt = parseKr(v);
+    if (amt == null) { $('cd-error').textContent = 'Skriv fakturans belopp, t.ex. 4 250 eller 0.'; return; }
+    bills.push([inp.dataset.card, amt]);
+  }
   for (const inp of $('cd-accounts').querySelectorAll('input[data-acc]')) {
     const v = inp.value.trim();
     if (!v) continue;   // 2026-11-21: värdet vid stängning sparas alltid – nästa månad räknas upp därifrån
@@ -320,6 +339,7 @@ $('cd-form').addEventListener('submit', (e) => {
     const a = data.accounts.find((x) => x.id === inp.dataset.acc);
     if (a) a.balances[month] = amt;
   }
+  for (const [id, amt] of bills) (data.adjustments[nm1] ||= {})[id] = amt;
   const closing = month, wasActive = month === activeMonth();
   data.closed[month] = neg ? -ore : ore;
   data.carry = data.carry.filter((x) => x !== month).concat($('cd-carry').checked ? [month] : []);
@@ -494,6 +514,7 @@ function openRowDialog(r) {
     fillPersonSelect($('f-person'), rec.person);
     $('f-start').value = rec.start;
     $('f-end').value = rec.end || '';
+    $('f-card').checked = rec.card === true; $('f-card-wrap').hidden = rec.type === 'income';
   }
   $('rd-amount').dataset.orig = $('rd-amount').value;
   $('rd-skip').hidden = isNew || r.kind !== 'rec' || (r.adjusted && r.amount === 0);
@@ -529,7 +550,7 @@ $('rd-form').addEventListener('submit', (e) => {
       : !isMonth(start) ? 'Välj från vilken månad.' : end && (!isMonth(end) || end < start) ? 'Till-månaden måste vara efter från-månaden.' : '';
     if (err) { $('rd-mer').open = true; $('rd-error').textContent = err; return; }
     if (rec) item = { ...rec, name, amount: base, every: rec.type === 'income' ? 1 : Number($('f-every').value), start, end,
-      category: $('f-cat').value, person: personValue($('f-person')) };
+      category: $('f-cat').value, person: personValue($('f-person')), card: rec.type === 'expense' && $('f-card').checked };
   }
   if (!r || r.kind === 'one') {
     const name = cleanName($('rd-name').value);

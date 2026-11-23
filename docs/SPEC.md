@@ -83,6 +83,9 @@ Visar aktuell månad. Runda ◀ ▶-knappar och svep var som helst på skärmen 
 - Underskott markeras med `--error`. Tryck på en månad → öppnar den i Månad.
 - Valfritt startsaldo i Inställningar → visar även löpande saldo per månad.
 
+### Kreditkort (2026-11-23)
+En återkommande kostnad kan markeras som kreditkortsfaktura (`card`, kryssruta i Ny kostnad och under Mer). Stäng månad visar en rad per sådan post som gäller nästa månad: "Fakturan som betalas i <nästa månad>". Ifyllt belopp sparas som justering i nästa månad (✎); tomt = uppskattningen (ordinarie belopp) gäller. Med lön den 25:e: fakturan som dras 25 nov fylls i när november stängs och blir en kostnad i december (25 nov – 24 dec).
+
 ### Sparande
 Kostnadskategorin **Sparande** (id `savings`, standard sedan v0.5.0) är pengar som flyttas till sparande. Den räknas som kostnad (lämnar kontot, minskar Kvar) men visas separat: "Varav sparande" i Kvar-kortet och sparkvot/sparat i Statistik. Äldre sparade kategorilistor får den en gång (`settings.catsV` = 2); tas den bort kommer den inte tillbaka.
 
