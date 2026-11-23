@@ -583,7 +583,8 @@ $('rd-form').addEventListener('submit', (e) => {
       data.recurring = data.recurring.map((x) => (x.id === item.id ? item : x));
       // Månadens belopp: oförändrat fält följer ordinarie (eller behåller en tidigare avvikelse); ändrat = avvikelse.
       const changed = $('rd-amount').value !== $('rd-amount').dataset.orig;
-      if (changed ? amount === item.amount : !r.adjusted) clearAdjustment(r.id);
+      // 2026-11-23: kortpost – ett ifyllt belopp är alltid fakturan (även 0 = ordinarie), aldrig "tillbaka till uppskattningen".
+      if (changed ? amount === item.amount && !item.card : !r.adjusted) clearAdjustment(r.id);
       else if (changed) (data.adjustments[month] ||= {})[r.id] = amount;
     }
   }

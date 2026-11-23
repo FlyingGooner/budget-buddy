@@ -340,3 +340,13 @@ T.test('kreditkort: uppskattning, backup och kategorin Kreditkort', () => {
   const imp = loadData(unpackData({ settings: { categories: [{ id: 'home', name: 'Boende', type: 'e' }, { id: 'other', name: 'Övrigt', type: 'e' }] } }));
   T.eq(imp.settings.categories.some((c) => c.id === 'card'), true);
 });
+
+T.test('shiftMonths flyttar även kontonas sparande, insättningar, mål och papperskorgen', () => {
+  const d = loadData({ version: 6, recurring: [{ id: 'r1', name: 'Hyra', type: 'expense', amount: 100, category: 'home', every: 1, start: '2026-11' }],
+    accounts: [{ id: 'a1', name: 'Spar', currency: 'SEK', balances: { '2026-11': 1000 }, pay: { amount: 200, from: '2026-11', end: '2027-02' }, pre: { amount: 100, from: '2026-11' }, deposits: { '2026-11': 50 }, goal: { amount: 9000, month: '2027-06' } }],
+    trash: [{ d: '2026-11-20', rec: { id: 'r2', name: 'Gym', type: 'expense', amount: 30, category: 'other', every: 1, start: '2026-11' }, adj: { '2026-12': 40 } }] });
+  shiftMonths(d, -1);
+  const a = d.accounts[0];
+  T.eq([a.pay.from, a.pay.end, a.pre.from, Object.keys(a.deposits)[0], a.goal.month], ['2026-10', '2027-01', '2026-10', '2026-10', '2027-05']);
+  T.eq([d.trash[0].rec.start, Object.keys(d.trash[0].adj)[0]], ['2026-10', '2026-11']);
+});

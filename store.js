@@ -475,7 +475,22 @@ function shiftMonths(d, n) {
   d.adjustments = keys(d.adjustments);
   d.closed = keys(d.closed);
   d.carry = (d.carry || []).map(sh);
-  for (const a of d.accounts) a.balances = keys(a.balances);
+  // 2026-11-23: även kontonas sparande, insättningar, mål och papperskorgen – annars hamnar de en månad fel.
+  for (const a of d.accounts) {
+    a.balances = keys(a.balances);
+    if (a.deposits) a.deposits = keys(a.deposits);
+    if (a.pay) { a.pay.from = sh(a.pay.from); if (a.pay.end) a.pay.end = sh(a.pay.end); }
+    if (a.pre) a.pre.from = sh(a.pre.from);
+    if (a.goal?.month) a.goal.month = sh(a.goal.month);
+  }
+  for (const t of d.trash || []) {
+    if (t.rec) { t.rec.start = sh(t.rec.start); if (t.rec.end) t.rec.end = sh(t.rec.end); }
+    if (t.one) t.one.month = sh(t.one.month);
+    if (t.adj) t.adj = keys(t.adj);
+    if (t.acc) { t.acc.balances = keys(t.acc.balances); if (t.acc.deposits) t.acc.deposits = keys(t.acc.deposits);
+      if (t.acc.pay) { t.acc.pay.from = sh(t.acc.pay.from); if (t.acc.pay.end) t.acc.pay.end = sh(t.acc.pay.end); }
+      if (t.acc.pre) t.acc.pre.from = sh(t.acc.pre.from); if (t.acc.goal?.month) t.acc.goal.month = sh(t.acc.goal.month); }
+  }
   if (d.settings.startMonth) d.settings.startMonth = sh(d.settings.startMonth);
 }
 function changeHome(d, to) {
