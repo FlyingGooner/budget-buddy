@@ -23,14 +23,15 @@ function setupAddForm(form) {
     const f = form.elements, err = form.querySelector('.error');
     // Income has no name field: the category is the name ("Lön", "Barnbidrag" …).
     const name = f.name ? cleanName(f.name.value) : catName(f.category.value);
-    const amount = parseKr(f.amount.value);
+    const card = !!(f.card && f.card.checked);
+    const amount = card && !f.amount.value.trim() ? 0 : parseKr(f.amount.value);   // kreditkort: tomt = 0, fakturan fylls i vid stängning
     if (!name) { err.textContent = 'Skriv ett namn.'; (f.name || f.category).focus(); return; }
     if (amount == null) { err.textContent = 'Skriv ett belopp, t.ex. 1 250 eller 99,50.'; f.amount.focus(); return; }
     if (data.recurring.length >= MAX_RECURRING) { err.textContent = `Max ${MAX_RECURRING} poster.`; return; }
     err.textContent = '';
     const id = newId();
     data.recurring.push({ id, name, amount, type, category: f.category.value, person: personValue(f.person),
-      every: type === 'income' ? 1 : Number(f.every.value), start: month, end: null, card: !!(f.card && f.card.checked) });
+      every: type === 'income' ? 1 : Number(f.every.value), start: month, end: null, card });
     data = loadData(data);
     save();
     if (f.name) f.name.value = ''; f.amount.value = ''; if (f.card) f.card.checked = false;
