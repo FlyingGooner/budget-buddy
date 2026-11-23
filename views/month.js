@@ -282,6 +282,7 @@ function openCloseDialog() {
     + (data.settings.payday > 1 ? '' : ' Lön en annan dag än den 1:a? Välj Lönedag under Inställningar.');
   $('cd-amount').value = t.closed ? (t.left < 0 ? '-' : '') + krInput(Math.abs(t.left)) : '';
   $('cd-reopen').hidden = !t.closed;
+  $('cd-ok-close').textContent = t.closed ? 'Spara' : 'Stäng månaden';   // 2026-11-23: stängd månad = rätta beloppet
   $('cd-carry-label').textContent = `Pengarna ligger kvar och följer med till ${monthLabel(addMonths(month, 1)).toLowerCase()}`;
   $('cd-carry').checked = t.closed ? data.carry.includes(month) : true;
   // Kreditkort (2026-11-23): fakturan som betalas på nästa lön fylls i nu och blir nästa månads belopp för posten.

@@ -811,3 +811,8 @@ body { padding-bottom: calc(96px + env(safe-area-inset-bottom)); }
 
 /* Fokus (State layers / focus indicator). */
 :focus-visible { outline: 3px solid var(--primary); outline-offset: 2px; }
+
+/* 2026-11-23: Stäng månad – Öppna igen på egen rad överst (tre knappar får inte plats), Avbryt + Spara/Stäng högerställda under. */
+#close-dialog .actions .spacer { display: none; }
+#close-dialog #cd-reopen { flex-basis: 100%; justify-content: flex-start; text-align: left; margin-inline-start: -12px; }
+#close-dialog #cd-reopen[hidden] { display: none; }
