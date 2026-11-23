@@ -331,7 +331,7 @@ $('cd-form').addEventListener('submit', (e) => {
   const nm1 = addMonths(month, 1), bills = [];
   for (const inp of $('cd-cards').querySelectorAll('input[data-card]')) {
     const v = inp.value.trim();
-    if (!v) continue;
+    if (!v) { bills.push([inp.dataset.card, null]); continue; }   // 2026-11-23: tomt = ingen ifylld faktura (uppskattningen gäller)
     const amt = parseKr(v);
     if (amt == null) { $('cd-error').textContent = 'Skriv fakturans belopp, t.ex. 4 250 eller 0.'; return; }
     bills.push([inp.dataset.card, amt]);
@@ -346,7 +346,10 @@ $('cd-form').addEventListener('submit', (e) => {
   }
   const before = JSON.stringify(data);   // 2026-11-23: för Ångra
   for (const [id, amt] of bals) { const a = data.accounts.find((x) => x.id === id); if (a) a.balances[month] = amt; }
-  for (const [id, amt] of bills) (data.adjustments[nm1] ||= {})[id] = amt;
+  for (const [id, amt] of bills) {
+    if (amt != null) (data.adjustments[nm1] ||= {})[id] = amt;
+    else if (data.adjustments[nm1]) { delete data.adjustments[nm1][id]; if (!Object.keys(data.adjustments[nm1]).length) delete data.adjustments[nm1]; }
+  }
   const closing = month, wasActive = month === activeMonth();
   data.closed[month] = neg ? -ore : ore;
   data.carry = data.carry.filter((x) => x !== month).concat($('cd-carry').checked ? [month] : []);
@@ -359,7 +362,12 @@ $('cd-form').addEventListener('submit', (e) => {
 });
 $('cd-reopen').addEventListener('click', () => {
   $('close-dialog').close();
-  withUndo(`${monthLabel(month)} är öppen igen`, () => { delete data.closed[month]; });
+  // 2026-11-23: kortfakturorna som fylldes i vid stängningen (nästa månad) tas bort också – annars fastnar de. Ångra tar tillbaka allt.
+  withUndo(`${monthLabel(month)} är öppen igen`, () => {
+    delete data.closed[month];
+    const nm = addMonths(month, 1), adj = data.adjustments[nm];
+    if (adj) { for (const r of data.recurring) if (r.card) delete adj[r.id]; if (!Object.keys(adj).length) delete data.adjustments[nm]; }
+  });
 });
 
 // Största kategorierna som små rader under rubriken (syns även hopfällt).
