@@ -333,14 +333,16 @@ $('cd-form').addEventListener('submit', (e) => {
     if (amt == null) { $('cd-error').textContent = 'Skriv fakturans belopp, t.ex. 4 250 eller 0.'; return; }
     bills.push([inp.dataset.card, amt]);
   }
+  const bals = [];   // 2026-11-23: allt kontrolleras först – ett fel ändrar ingenting
   for (const inp of $('cd-accounts').querySelectorAll('input[data-acc]')) {
     const v = inp.value.trim();
     if (!v) continue;   // 2026-11-21: värdet vid stängning sparas alltid – nästa månad räknas upp därifrån
     const amt = parseKr(v);
     if (amt == null || !isAmount(amt)) { $('cd-error').textContent = 'Skriv ett saldo, t.ex. 45 000 eller 1250,50.'; return; }
-    const a = data.accounts.find((x) => x.id === inp.dataset.acc);
-    if (a) a.balances[month] = amt;
+    bals.push([inp.dataset.acc, amt]);
   }
+  const before = JSON.stringify(data);   // 2026-11-23: för Ångra
+  for (const [id, amt] of bals) { const a = data.accounts.find((x) => x.id === id); if (a) a.balances[month] = amt; }
   for (const [id, amt] of bills) (data.adjustments[nm1] ||= {})[id] = amt;
   const closing = month, wasActive = month === activeMonth();
   data.closed[month] = neg ? -ore : ore;
@@ -349,7 +351,8 @@ $('cd-form').addEventListener('submit', (e) => {
   $('close-dialog').close();
   if (wasActive) { month = activeMonth(); overviewStart = month; }   // nästa månad blir den aktuella
   save();
-  snackbar(wasActive ? `${monthLabel(closing)} är stängd – nu gäller ${monthLabel(month).toLowerCase()}` : `${monthLabel(closing)} är stängd`, null, null, 4000);
+  snackbar(wasActive ? `${monthLabel(closing)} är stängd – nu gäller ${monthLabel(month).toLowerCase()}` : `${monthLabel(closing)} är stängd`, 'Ångra',
+    () => { data = loadData(JSON.parse(before)); month = closing; save(); }, 6000);
 });
 $('cd-reopen').addEventListener('click', () => {
   $('close-dialog').close();

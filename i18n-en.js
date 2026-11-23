@@ -181,6 +181,7 @@ I18N.add({
   [/^Fakturan som betalas i (.+)$/, (g, tr) => `The bill paid in ${tr(g[1])}`],
   [/^uppskattat (.+)$/, 'estimated $1'],
   [/^Faktura (.+)$/, 'Bill $1'],
+  [/^(.+) finns redan$/, '$1 already exists'],
   [/^Öppna (\S+ \d{4})$/, (g, tr) => `Open ${tr(g[1])}`],
   [/^Uppskattad faktura för (.+)\. Den riktiga fyller du i när föregående månad stängs\.$/, (g, tr) => `Estimated bill for ${tr(g[1])}. Enter the real one when the month before is closed.`],
   [/^Värde \((.+)\)$/, 'Value ($1)'],

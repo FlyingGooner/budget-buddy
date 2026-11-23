@@ -118,22 +118,23 @@ $('rates-save').addEventListener('click', () => {
   save();
   snackbar('Kurserna sparade', null, null, 3000);
 });
-$('rates-reset').addEventListener('click', () => {
+$('rates-reset').addEventListener('click', () => withUndo('Appens kurser används igen', () => {   // 2026-11-23: Ångra – egna kurser skrivs över
   data.settings.rates = { ...DEFAULT_RATES };
   data.settings.ratesDate = RATES_DATE;
   data.settings.ratesOwn = false;
-  save();
-  snackbar('Appens kurser används igen', null, null, 3000);
-});
+}));
 document.querySelectorAll('.cat-form').forEach((form) => form.addEventListener('submit', (e) => {
   e.preventDefault();
   const n = cleanName(form.elements.name.value, 40);
   if (!n) return;
   if (data.settings.categories.length >= 60) { snackbar('Max 60 kategorier.', null, null, 3000); return; }
+  const type = form.dataset.type === 'income' ? 'income' : 'expense';   // 2026-11-23: inga dubbletter
+  if (data.settings.categories.some((c) => c.type === type && c.name.toLocaleLowerCase('sv') === n.toLocaleLowerCase('sv'))) { snackbar(`${n} finns redan`, null, null, 3000); return; }
   data.settings.categories.push({ id: 'c' + newId().slice(-10), name: n, type: form.dataset.type === 'income' ? 'income' : 'expense' });
   data = loadData(data);
   form.elements.name.value = '';
   save();
+  snackbar(`${n} lades till`, null, null, 3000);
 }));
 $('person-form').addEventListener('submit', (e) => {
   e.preventDefault();
@@ -148,7 +149,7 @@ $('person-form').addEventListener('submit', (e) => {
 });
 $('s-save').addEventListener('click', () => {
   const raw = $('s-balance').value.trim(), m = $('s-month').value;
-  if (!raw && !m) { data.settings.startBalance = 0; data.settings.startMonth = null; save(); snackbar('Startsaldo borttaget', null, null, 3000); return; }
+  if (!raw && !m) { withUndo('Startsaldo borttaget', () => { data.settings.startBalance = 0; data.settings.startMonth = null; }); return; }   // 2026-11-23: Ångra
   const neg = raw.startsWith('-') || raw.startsWith('−');
   const ore = parseKr(neg ? raw.slice(1) : raw || '0');
   if (ore == null || !isMonth(m)) { snackbar('Fyll i både saldo och månad.', null, null, 4000); return; }
