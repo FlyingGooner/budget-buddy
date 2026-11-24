@@ -243,6 +243,8 @@ I18N.add({
   [/^ifyllt (.+)$/, (g, tr) => `entered ${tr(g[1])}`],
   [/^Börja posterna i (.+)$/, (g, tr) => `Start the items in ${tr(g[1])}`],
   [/^avslutad (.+)$/, (g, tr) => `ended ${tr(g[1])}`],
+  [/^ändrad i (.+), annars (.+)$/, (g, tr) => `changed in ${tr(g[1])}, otherwise ${tr(g[2])}`],
+  [/^Bara (jan|feb|mars|apr|maj|juni|juli|aug|sep|okt|nov|dec)$/, (g, tr) => `Only ${tr(g[1])}`],
   [/^Kvar på kontot (.+) \((.+)\)$/, (g, tr) => `Left in the account ${tr(g[1])} (${g[2]})`],
   [/^Sista vardagen före lönen\. Planerat (.+) – skillnaden blir månadens konsumtion\.$/, 'Last weekday before payday. Planned $1 – the difference becomes the month\'s spending.'],
   [/^Sista vardagen före lönen\. Planerat (.+) – skillnaden blir månadens konsumtion\. Lön en annan dag än den 1:a\? Välj Lönedag under Inställningar\.$/, 'Last weekday before payday. Planned $1 – the difference becomes the month\'s spending. Paid on another day than the 1st? Choose Payday under Settings.'],

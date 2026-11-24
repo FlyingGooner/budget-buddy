@@ -75,13 +75,21 @@ function openAllItems() {
     $('all-dialog').close();
     setTimeout(() => { if (m !== month) setMonth(m); const row = rowsForMonth(data, m).find((x) => x.id === r.id); if (row) openRowDialog(row); }, 0);
   };
+  const monthRows = rowsForMonth(data, now), cur = new Map(monthRows.filter((x) => x.kind === 'rec').map((x) => [x.id, x]));
+  const once = monthRows.filter((x) => x.kind === 'one' || x.kind === 'carry').sort((a, b) => (a.type === b.type ? b.amount - a.amount : a.type === 'income' ? -1 : 1));
   fill($('all-list'), ...(data.recurring.length ? groups.map(([k, title]) => {
     const rs = data.recurring.filter((r) => kind(r) === k).sort((a, b) => b.amount - a.amount || a.name.localeCompare(b.name, 'sv'));
     return rs.length ? [el('h3', { class: 'all-h', text: title }), el('ul', { class: 'list' }, rs.map((r) => el('li', { class: 'row' + (period(r)?.startsWith('avslutad') ? ' ended' : '') },
       el('button', { type: 'button', class: 'row-main', 'aria-label': `${r.name}, ${kr(r.amount)}. Ändra`, on: { click: () => open(r) } },
-        el('span', { class: 'row-name' }, el('span', { text: r.name }), el('span', { class: 'row-sub', text: [k === 'expense' ? catName(r.category) : null, r.type === 'expense' ? everyLabel[r.every] : null, period(r)].filter(Boolean).join(' · ') })),
-        el('span', { class: 'amount', text: r.card ? `≈ ${kr(cardEstimate(data, r, now))}` : kr(r.amount) })))))] : null;   // 2026-11-23: kort = uppskattning
+        el('span', { class: 'row-name' }, el('span', { text: r.name }), el('span', { class: 'row-sub', text: [k === 'expense' ? catName(r.category) : null, hasPeople() ? personName(r.person) : null, r.type === 'expense' ? everyLabel[r.every] : null, period(r), cur.get(r.id)?.adjusted ? `ändrad i ${monthShortLabel(now).toLowerCase()}, annars ${kr(r.amount)}` : null].filter(Boolean).join(' · ') })),
+        // 2026-11-24: beloppet för månaden du tittar på (ändrat belopp går före), så summorna stämmer med månaden.
+        el('span', { class: 'amount', text: cur.has(r.id) ? (cur.get(r.id).est ? '≈ ' : '') + kr(cur.get(r.id).amount) : r.card ? `≈ ${kr(cardEstimate(data, r, now))}` : kr(r.amount) })))))] : null;   // 2026-11-23: kort = uppskattning
   }).flat().filter(Boolean) : [el('p', { class: 'muted', text: 'Inga poster än.' })]),
+    // 2026-11-24: engångsposter och Kvar från förra månaden i månaden du tittar på – utan dem stämde inte inkomsterna.
+    once.length ? [el('h3', { class: 'all-h', text: `Bara ${monthShortLabel(now).toLowerCase()}` }), el('ul', { class: 'list' }, once.map((x) => el('li', { class: 'row' },
+      el('div', { class: 'row-main' },
+        el('span', { class: 'row-name' }, el('span', { text: x.name }), el('span', { class: 'row-sub', text: [x.type === 'income' ? 'Inkomst' : 'Kostnad', hasPeople() && x.person ? personName(x.person) : null].filter(Boolean).join(' · ') })),
+        el('span', { class: 'amount', text: (x.type === 'income' ? '' : '−') + kr(x.amount) })))))] : null,
     // v5: sparandet ligger på sparkontona – tryck för att ändra kontot.
     data.accounts.length ? [el('h3', { class: 'all-h', text: '🐷 Sparkonton' }), el('ul', { class: 'list' }, data.accounts.map((a) => el('li', { class: 'row' },
       el('button', { type: 'button', class: 'row-main', on: { click: () => { $('all-dialog').close(); setTimeout(() => openAccDialog(a), 0); } } },
