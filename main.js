@@ -94,63 +94,11 @@ async function openBackupText(text, slug) {
   }
   return Backup.openText(text, slug, MAX_IMPORT_CHARS);
 }
-/* ---------- Välkommen: välj språk, valuta och lösenord först (2026-11-14, språk och valuta 2026-11-15) ----------
-   Lösenordet skapas automatiskt (autoPassword); läses en krypterad backup in i rutan
-   ersätter dess lösenord det skapade. Lösenordet är bara nyckeln till backup-filerna – det sparas på enheten (bb.pwd), aldrig i
-   datan eller i filen. Bockar man ur Kom ihåg visas rutan inte (man har valt att få frågan varje gång). */
-let welcomeDlg = null;
-const welcomeHasData = () => data.recurring.length || data.oneOffs.length || data.accounts.length;
-const needsPassword = () => !savedPassword() && rememberOn();   // låst tills ett lösenord är valt, även med data
-const needsWelcome = () => !I18N.chosen() || needsPassword();   // språk (och valuta) först, i samma ruta (2026-11-15)
-function closeWelcome() { if (welcomeDlg?.open && !needsWelcome()) welcomeDlg.close(); }
-// Rutan ritas om när språket byts: språkknappar och valuta överst, lösenordet under (döljs om det redan är valt).
-function fillWelcome() {
-  const err = el('p', { class: 'error', role: 'alert' });
-  const file = el('input', { type: 'file', accept: '.txt,.json' });
-  file.addEventListener('change', async () => {
-    const f = file.files && file.files[0]; if (!f) return;
-    let r; try { r = await Backup.read(f, MAX_IMPORT_CHARS); } catch { r = { error: 'Kunde inte läsa filen.' }; }
-    file.value = '';
-    err.textContent = r.error || '';
-    if (!r.error) { I18N.setLang(I18N.lang(), false); openImport(r.text); }
-  });
-  const cur = I18N.lang();
-  const segs = el('div', { class: 'segs', role: 'group', 'aria-label': 'Språk' },
-    Object.entries(I18N.LANGS).map(([k, name]) => el('button', { type: 'button', class: 'seg' + (k === cur ? ' on' : ''), lang: k, 'aria-pressed': String(k === cur), text: name, 'data-no-tr': '',
-      on: { click: () => { I18N.setLang(k); if (!needsWelcome()) welcomeDlg.close(); else fillWelcome(); } } })));
-  // Valuta: bara innan det finns data (byte senare räknar om beloppen, under Inställningar).
-  const curSel = !welcomeHasData() && el('label', { class: 'field' }, el('span', { text: 'Valuta' }),
-    el('select', { on: { change: (e) => { data.settings.home = e.target.value; save(); } } },
-      CURRENCIES.map((c) => el('option', { value: c, selected: c === home(), text: CUR_NAMES[c] }))));
-  welcomeDlg.replaceChildren(...[   // [].filter: replaceChildren writes false as text
-   
-    el('h2', { id: 'wl-title', text: 'Välkommen!' }),
-    segs, curSel,
-    el('p', { text: 'Är du ny räcker det att välja språk.' }),
-    savedPassword() && el('p', { class: 'muted small', text: 'Din personliga kod (lösenordet till dina backup-filer) har skapats åt dig och finns under Inställningar → Data. Spara den på en säker plats, t.ex. i en lösenordshanterare – utan den går en backup inte att öppna på en ny enhet.' }),
-    !welcomeHasData() && el('p', { class: 'muted small', text: 'Har du använt appen förut, på den här eller en annan enhet? Läs in din backup-fil för att få tillbaka din data.' }),
-    el('div', { class: 'welcome-actions' }, ...[el('button', { type: 'button', class: 'btn filled', text: 'Fortsätt', on: { click: () => { I18N.setLang(I18N.lang(), false); closeWelcome(); } } }),
-      !welcomeHasData() && el('label', { class: 'btn tonal btn-file' }, 'Jag har en backup-fil', file)].filter(Boolean)),
-    err].filter(Boolean));
-}
-// 2026-11-15: lösenordet skapas och sparas automatiskt – användaren behöver aldrig välja ett. Visa/Byt under Inställningar.
+// 2026-11-15: lösenordet skapas och sparas automatiskt vid start (och efter Radera all data) – användaren behöver aldrig
+// välja ett. Visa/Byt under Inställningar. Ingen välkomstruta: svenska och lösenordet är förvalda.
 function autoPassword() {
-  if (!needsPassword()) return;
+  if (savedPassword() || !rememberOn()) return;
   try { localStorage.setItem(PWD_KEY, Backup.generatePassword()); } catch { /* blocked: asks at the first backup */ }
-}
-function welcomeCheck() {
-  autoPassword();
-  return;   // 2026-11-15: ingen välkomstruta – svenska och lösenordet är förvalda, allt ändras under Inställningar
-  if (!needsWelcome() || welcomeDlg?.open || typeof HTMLDialogElement !== 'function') return;
-  const other = document.querySelector('dialog[open]');   // t.ex. backup-påminnelsen: fråga när den stängs
-  if (other) { other.addEventListener('close', () => setTimeout(welcomeCheck, 0), { once: true }); return; }
-  if (!welcomeDlg) {
-    welcomeDlg = el('dialog', { class: 'welcome', 'aria-labelledby': 'wl-title' });
-    welcomeDlg.addEventListener('cancel', (e) => e.preventDefault());   // inte Esc/Bakåt: språk och lösenord först
-    document.body.append(welcomeDlg);
-  }
-  fillWelcome();
-  welcomeDlg.showModal();
 }
 // Point 2: the user is told when the remembered password opened the file, and when it did not fit.
 function noteUnlocked() { const s = document.getElementById('imp-sum'); if (s && document.getElementById('import-dialog')?.open) s.textContent += ' Backupen låstes upp med det sparade lösenordet.'; }
@@ -235,7 +183,6 @@ $('imp-ok').addEventListener('click', () => {
   data = next;
   $('import-text').value = '';
   render();
-  closeWelcome();
   snackbar('Data importerad', 'Ångra', () => { data = before; save(); });
 });
 
@@ -247,7 +194,7 @@ $('cd-ok').addEventListener('click', () => {
   forgetPassword();
   save();
   snackbar('All data är raderad', null, null, 3000);
-  setTimeout(welcomeCheck, 0);
+  setTimeout(autoPassword, 0);
 });
 
 // Lösenordet ligger aldrig framme efter flikbyte.
@@ -309,7 +256,7 @@ showTab(location.hash.slice(1) || savedTab || 'month', false);   // okänd flik 
 updateOnline();
 purge();
 render();
-welcomeCheck();
+autoPassword();
 
 // Service worker + update snackbar ("Ny version finns – Ladda om")
 if ('serviceWorker' in navigator && location.protocol === 'https:') {

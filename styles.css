@@ -243,8 +243,6 @@ dialog { width: min(400px, calc(100vw - 32px)); }
 .pw-special { color: var(--error); font-weight: 700; }
 .pwd-box { margin-top: 8px; }
 .pwd-show { margin: 4px 0; padding: 8px 12px; border-radius: var(--r-md); background: var(--surface-container-high); font-family: ui-monospace, monospace; font-size: 1rem; letter-spacing: .04em; overflow-wrap: anywhere; -webkit-user-select: text; user-select: text; }
-.welcome-actions { display: flex; flex-wrap: wrap; gap: 8px; margin: 16px 0 4px; }
-.welcome-actions > * { flex: 1 1 12rem; text-align: center; }
 
 /* Sparat backup-lösenord: en liten ruta med Visa/Byt på samma rad */
 .pwd-card { margin: 4px 0 8px; padding: 6px 6px 10px 14px; border-radius: var(--r-lg); background: var(--surface-container-high); }
@@ -270,7 +268,6 @@ dialog { width: min(400px, calc(100vw - 32px)); }
 .seg { min-height: 40px; border: 0; background: none; font: inherit; font-weight: 500; color: var(--on-surface); }
 .seg + .seg { border-left: 1px solid var(--outline); }
 .seg.on { background: var(--primary-container); color: var(--on-primary-container); }
-.welcome .field { display: grid; gap: 4px; margin-bottom: 8px; }
 /* Hjälp på valt språk (2026-11-15) */
 html[lang="en"] .help[lang="sv"], html:not([lang="en"]) .help[lang="en"] { display: none; }
 
