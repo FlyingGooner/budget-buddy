@@ -182,6 +182,12 @@ T.test('hemvaluta: changeHome räknar om budgetbelopp, inte sparkonton; följer 
   T.eq(e.settings.startBalance, Math.round(1500000 * 100 / 1100));
   d.recurring.forEach((r, i) => T.eq(e.recurring[i].amount, Math.round(r.amount * 100 / 1100)));
   T.eq(JSON.stringify(e.accounts), JSON.stringify(d.accounts), 'sparkonton oförändrade');
+  // Sparande från lönen, före lön och insättningar är i hemvalutan och räknas om; saldo och mål (kontots valuta) inte.
+  const s = loadData({ ...rich(), accounts: [{ id: 'a1', name: 'Spar', balances: { '2026-10': 500000 }, goal: { amount: 900000 },
+    pay: { amount: 110000, from: '2026-10' }, pre: { amount: 220000, from: '2026-10' }, deposits: { '2026-11': 330000 } }] });
+  const se = changeHome(s, 'EUR').accounts[0];
+  T.eq([se.pay.amount, se.pre.amount, se.deposits['2026-11']], [10000, 20000, 30000]);
+  T.eq([se.balances['2026-10'], se.goal.amount], [500000, 900000]);
   T.eq(changeHome(e, 'SEK').settings.home, 'SEK');
   T.eq(importText(exportText(e, '2026-11-15')).data.settings.home, 'EUR');
   T.eq(loadData({ settings: { home: 'XYZ' } }).settings.home, 'SEK', 'okänd valuta → SEK');
@@ -349,4 +355,13 @@ T.test('shiftMonths flyttar även kontonas sparande, insättningar, mål och pap
   const a = d.accounts[0];
   T.eq([a.pay.from, a.pay.end, a.pre.from, Object.keys(a.deposits)[0], a.goal.month], ['2026-10', '2027-01', '2026-10', '2026-10', '2027-05']);
   T.eq([d.trash[0].rec.start, Object.keys(d.trash[0].adj)[0]], ['2026-10', '2026-11']);
+});
+T.test('papperskorg: borttaget sparkonto behåller sina kopplade poster efter omladdning', () => {
+  const d = loadData(rich());
+  const r = d.recurring[0];
+  d.accounts = [{ id: 'a1', name: 'Spar', currency: 'SEK', balances: {}, feeds: [r.id], hidden: false }];
+  trashItems(d, 'acc', ['a1'], '2026-11-20');
+  const back = loadData(JSON.parse(JSON.stringify(d)));
+  T.eq(back.trash[0].acc.feeds, [r.id]);
+  T.eq(restoreItem(back, 0).feeds, [r.id]);
 });

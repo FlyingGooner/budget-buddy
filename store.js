@@ -313,6 +313,8 @@ function loadData(d) {
       const e = sub.recurring[0] ? { d: t.d, rec: sub.recurring[0] } : sub.oneOffs[0] ? { d: t.d, one: sub.oneOffs[0] } : sub.accounts[0] ? { d: t.d, acc: sub.accounts[0] } : null;
       if (!e) continue;
       if (e.rec) { const a = {}; for (const [m, map] of Object.entries(sub.adjustments)) a[m] = map[e.rec.id]; if (Object.keys(a).length) e.adj = a; }
+      // Kontots kopplade poster finns inte i sub: behåll id:na (restoreItem tar bara med dem som finns kvar).
+      if (e.acc && Array.isArray(t.acc.feeds)) e.acc.feeds = [...new Set(t.acc.feeds.filter(isId))].slice(0, 40);
       if (!e.acc && Array.isArray(t.accs)) { const accs = [...new Set(t.accs.filter(isId))].slice(0, MAX_ACCOUNTS); if (accs.length) e.accs = accs; }
       out.trash.push(e);
     }
@@ -365,6 +367,7 @@ function restoreItem(d, i) {
   const x = { ...e[kind] };
   const taken = new Set([...d.recurring, ...d.oneOffs, ...d.accounts].map((y) => y.id));
   if (taken.has(x.id)) x.id = (kind === 'acc' ? 'a' : '') + newId().slice(-10);
+  if (kind === 'acc') x.feeds = (x.feeds || []).filter((id) => taken.has(id));
   d[key].push(x);
   if (e.adj) for (const [m, a] of Object.entries(e.adj)) (d.adjustments[m] ||= {})[x.id] = a;
   for (const a of d.accounts) if ((e.accs || []).includes(a.id) && !(a.feeds ||= []).includes(x.id)) a.feeds.push(x.id);
@@ -463,8 +466,6 @@ function importText(text) {
 // Hemvaluta (2026-11-15). Kurser är öre per enhet (SEK = 100). Belopp i hemvalutan; sparkonton har egen valuta.
 const rateOf = (d, c) => (c === 'SEK' ? 100 : d.settings.rates[c]);
 const convert = (d, v, from, to) => (from === to ? v : Math.round((v * rateOf(d, from)) / rateOf(d, to)));
-// Byter hemvaluta och räknar om alla budgetbelopp (poster, avvikelser, justeringar, startsaldo, papperskorg) med kurserna.
-// Belopp som blir för stora begränsas till MAX_AMOUNT. Sparkonton ändras inte. Returnerar ny, validerad data.
 // Flytta alla månader n steg (2026-11-18): när lönedag slås på/av byter budgetmånaderna namn ("November" = 25 okt–24 nov
 // har nyckeln 2026-10). Flyttas datan med behåller posterna sina månadsnamn. Muterar d.
 function shiftMonths(d, n) {
@@ -493,6 +494,9 @@ function shiftMonths(d, n) {
   }
   if (d.settings.startMonth) d.settings.startMonth = sh(d.settings.startMonth);
 }
+// Byter hemvaluta och räknar om alla budgetbelopp (poster, avvikelser, justeringar, startsaldo, papperskorg, sparkontons
+// sparande i hemvalutan) med kurserna. Belopp som blir för stora begränsas till MAX_AMOUNT. Saldon och mål ändras inte.
+// Returnerar ny, validerad data.
 function changeHome(d, to) {
   if (!CURRENCIES.includes(to) || d.settings.home === to) return d;
   const from = d.settings.home, c = (v) => Math.max(-MAX_AMOUNT, Math.min(MAX_AMOUNT, convert(d, v, from, to)));
@@ -503,7 +507,11 @@ function changeHome(d, to) {
   for (const o of x.oneOffs) o.amount = c(o.amount);
   for (const m of Object.values(x.adjustments)) for (const k of Object.keys(m)) m[k] = c(m[k]);
   for (const k of Object.keys(x.closed || {})) x.closed[k] = c(x.closed[k]);
-  for (const t of x.trash) { if (t.rec) t.rec.amount = c(t.rec.amount); if (t.one) t.one.amount = c(t.one.amount); if (t.adj) for (const k of Object.keys(t.adj)) t.adj[k] = c(t.adj[k]); }
+  // Sparkontons sparande från lönen, före lön och insättningar är i hemvalutan (saldon och mål i kontots valuta).
+  const p = (v) => Math.max(1, c(v));   // måste vara > 0, annars försvinner sparandet i loadData
+  const acc = (a) => { if (a.pay) a.pay.amount = p(a.pay.amount); if (a.pre) a.pre.amount = p(a.pre.amount); for (const k of Object.keys(a.deposits || {})) a.deposits[k] = p(a.deposits[k]); };
+  x.accounts.forEach(acc);
+  for (const t of x.trash) { if (t.rec) t.rec.amount = c(t.rec.amount); if (t.one) t.one.amount = c(t.one.amount); if (t.acc) acc(t.acc); if (t.adj) for (const k of Object.keys(t.adj)) t.adj[k] = c(t.adj[k]); }
   return loadData(x);
 }
 
