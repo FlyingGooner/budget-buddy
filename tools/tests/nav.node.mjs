@@ -39,3 +39,21 @@ test('bakåt: flikbyte släpper lagren', () => {
   Nav.opened(n, 'sel'); Nav.reset(n);
   assert.equal(Nav.depth(n), 0); assert.equal(Nav.closed(n, 'sel'), false);
 });
+test('bakåt: en ruta som öppnas när en annan stängs tar över steget (lösenord → bekräftelse)', () => {
+  const n = Nav.create();
+  Nav.opened(n, 'pw-dialog');
+  assert.equal(Nav.closed(n, 'pw-dialog'), true);
+  assert.equal(Nav.opened(n, 'import-dialog'), false, 'samma steg används');
+  assert.equal(Nav.flush(n), 0, 'inget steg tillbaka');
+  assert.equal(Nav.popped(n), 'import-dialog');
+});
+test('bakåt: ruta som öppnas medan history.go är på väg läggs till igen efter popstate', () => {
+  const n = Nav.create();
+  Nav.opened(n, 'pw-dialog'); Nav.closed(n, 'pw-dialog');
+  assert.equal(Nav.flush(n), 1);
+  assert.equal(Nav.opened(n, 'import-dialog'), false);
+  assert.equal(Nav.popped(n), 'ignore');
+  assert.equal(Nav.repushes(n), 1, 'steget läggs till igen');
+  assert.equal(Nav.repushes(n), 0);
+  assert.equal(Nav.popped(n), 'import-dialog');
+});

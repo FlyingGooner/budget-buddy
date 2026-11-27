@@ -5,12 +5,23 @@
 //   popped  – Bakåt (popstate): returnerar lagret som ska stängas, 'ignore' (vårt eget history.back) eller null (flikbyte).
 'use strict';
 const Nav = {
-  create: () => ({ stack: [], ignore: 0, closing: null, back: 0 }),
-  // Returns true when a history step should be pushed.
+  create: () => ({ stack: [], ignore: 0, closing: null, back: 0, repush: 0 }),
+  // Returns true when a history step should be pushed. A ruta that opens right as another closes (lösenord → bekräftelse)
+  // takes over the step that was about to be taken back; if that history.go is already on its way, the step is pushed
+  // again when its popstate arrives (repushes). Otherwise the next close went back one step too many.
   opened(n, id) {
     if (n.stack.includes(id)) return false;
     n.stack.push(id);
+    if (n.back) { n.back--; return false; }
+    if (n.ignore) { n.repush++; return false; }
     return true;
+  },
+  // After an ignored popstate: how many steps to push again (0 = none).
+  repushes(n) {
+    if (n.ignore) return 0;
+    const k = n.repush;
+    n.repush = 0;
+    return k;
   },
   // Returns true when steps must be taken back (the app closed the layer itself). Several closed at once (a ruta and
   // markeringsläget) are taken back together with flush(): one history.go(-k), one popstate to ignore.

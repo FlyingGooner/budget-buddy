@@ -239,6 +239,7 @@ $('imp-ok').addEventListener('click', () => {
   snackbar('Data importerad', 'Ångra', () => { data = before; save(); });
 });
 
+$('pwd-own').addEventListener('click', ownPassword);   // Välj egen kod (knappen saknade lyssnare)
 $('reset').addEventListener('click', () => $('confirm-dialog').showModal());
 // Runs on the "Radera" click itself (not on the close event), like import.
 $('cd-ok').addEventListener('click', () => {

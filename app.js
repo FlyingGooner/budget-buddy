@@ -169,7 +169,7 @@ new MutationObserver((list) => {
 }).observe(document.body, { subtree: true, attributes: true, attributeFilter: ['open'] });
 addEventListener('popstate', () => {
   const l = Nav.popped(nav);
-  if (l === 'ignore') return;
+  if (l === 'ignore') { for (let k = Nav.repushes(nav); k > 0; k--) history.pushState({ tab: 1, layer: 1 }, '', location.hash); return; }
   if (l) { layerClose[l]?.(); return; }
   showTab(location.hash.slice(1), false);
 });
