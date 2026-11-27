@@ -79,7 +79,7 @@ const monthTitle = (m) => (paySplit() ? [monthLabel(m), el('small', { class: 'm-
 
 // Parse "1 234,50" / "1234.5" → öre (integer, no floats). null if invalid.
 function parseKr(s) {
-  const t = String(s).replace(/[\s ]/g, '').replace(/kr$/i, '').replace(',', '.');
+  const t = String(s).replace(/[\s ]/g, '').replace(/(kr|sek|eur|usd|gbp|nok|dkk|€|\$|£)$/i, '').replace(',', '.');   // enheten får stå med (hemvaluta)
   const m = /^(\d{1,9})(?:\.(\d{1,2}))?$/.exec(t);
   if (!m) return null;
   const ore = Number(m[1]) * 100 + Number((m[2] || '0').padEnd(2, '0'));

@@ -340,8 +340,9 @@ function sortItems(items, spec, catName) {
 
 // ---------- Papperskorg ----------
 // Moves items to the trash (recurring with their month adjustments). kind: 'rec' | 'one' | 'acc'. Mutates d.
+const TRASH_KEY = { rec: 'recurring', one: 'oneOffs', acc: 'accounts' }, TRASH_MAX = { rec: MAX_RECURRING, one: MAX_ONEOFFS, acc: MAX_ACCOUNTS };
 function trashItems(d, kind, ids, today) {
-  const set = new Set(ids), key = { rec: 'recurring', one: 'oneOffs', acc: 'accounts' }[kind];
+  const set = new Set(ids), key = TRASH_KEY[kind];
   for (const x of d[key].filter((x) => set.has(x.id))) {
     const e = { d: today, [kind]: x };
     if (kind !== 'acc') {   // 2026-11-21: kom ihåg vilka konton posten fyllde på, så kopplingen kommer tillbaka vid återställning
@@ -361,8 +362,7 @@ function trashItems(d, kind, ids, today) {
 // Puts trash entry i back. Returns the item, or { error } when a limit is reached. A taken id gets a new one.
 function restoreItem(d, i) {
   const e = d.trash[i]; if (!e) return { error: 'Finns inte längre.' };
-  const kind = e.rec ? 'rec' : e.one ? 'one' : 'acc', key = { rec: 'recurring', one: 'oneOffs', acc: 'accounts' }[kind];
-  const max = { rec: MAX_RECURRING, one: MAX_ONEOFFS, acc: MAX_ACCOUNTS }[kind];
+  const kind = e.rec ? 'rec' : e.one ? 'one' : 'acc', key = TRASH_KEY[kind], max = TRASH_MAX[kind];
   if (d[key].length >= max) return { error: `Max ${max} – ta bort något först.` };
   const x = { ...e[kind] };
   const taken = new Set([...d.recurring, ...d.oneOffs, ...d.accounts].map((y) => y.id));
